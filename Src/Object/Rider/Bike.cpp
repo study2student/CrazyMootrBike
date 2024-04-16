@@ -218,7 +218,7 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetLeft();
 	}
 
-	if (!AsoUtility::EqualsVZero(dir) && (isJump_)) {
+	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_))*/ {
 
 		// à⁄ìÆèàóù
 		speed_ = SPEED_MOVE;
@@ -246,7 +246,7 @@ void Bike::ProcessMove(void)
 		//}
 
 	}
-	else
+	//else
 	{
 		//if (!isJump_ && IsEndLanding())
 		//{
