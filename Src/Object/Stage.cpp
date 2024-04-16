@@ -21,6 +21,15 @@ Stage::Stage(Player* player, Bike* bike, Enemy* enemy)
 	enemy_ = enemy;
 	activeName_ = NAME::MAIN_PLANET;
 	step_ = 0.0f;
+
+	//ループ用のステージ
+	loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
+	loopStage_.pos = { -5000.0f, -5600.0f, 6500.0f };
+	loopStage_.scl = { 1.0f,1.0f,1.0f };
+	loopStage_.quaRot = Quaternion();
+	loopStage_.MakeCollider(Collider::TYPE::STAGE);
+	loopStage_.Update();
+	
 }
 
 Stage::~Stage(void)
@@ -47,6 +56,8 @@ void Stage::Init(void)
 	MakeMainStage();
 	MakeWarpStar();
 
+	
+
 	step_ = -1.0f;
 }
 
@@ -65,6 +76,8 @@ void Stage::Update(void)
 		s.second->Update();
 	}
 
+	//ループ用のステージ
+	loopStage_.Update();
 }
 
 void Stage::Draw(void)
@@ -82,7 +95,12 @@ void Stage::Draw(void)
 		s.second->Draw();
 	}
 
-}
+	//ループ用のステージ
+	MV1DrawModel(loopStage_.modelId);
+
+	
+
+ }
 
 void Stage::ChangeStage(NAME type)
 {
@@ -95,14 +113,17 @@ void Stage::ChangeStage(NAME type)
 	// ステージの当たり判定をプレイヤーに設定
 	player_->ClearCollider();
 	player_->AddCollider(activePlanet_->GetTransform().collider);
+	player_->AddCollider(loopStage_.collider);
 
 	// ステージのあたり判定をバイクに設定
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_->GetTransform().collider);
+	bike_->AddCollider(loopStage_.collider);
 
 	// ステージのあたり判定を敵に設定
 	enemy_->ClearCollider();
 	enemy_->AddCollider(activePlanet_->GetTransform().collider);
+	enemy_->AddCollider(loopStage_.collider);
 
 	step_ = TIME_STAGE_CHANGE;
 

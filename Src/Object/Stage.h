@@ -63,6 +63,9 @@ private:
 	NAME activeName_;
 	Planet* activePlanet_;
 
+	//ループ用のステージ
+	Transform loopStage_;
+
 	// 惑星
 	std::map<NAME, Planet*> planets_;
 
