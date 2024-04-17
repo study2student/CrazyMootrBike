@@ -7,6 +7,7 @@ class Planet;
 class Player;
 class Bike;
 class Enemy;
+class LoopStage;
 
 class Stage
 {
@@ -64,7 +65,9 @@ private:
 	Planet* activePlanet_;
 
 	//ループ用のステージ
-	Transform loopStage_;
+	//Transform loopStage_;
+	//ループ用のステージ
+	std::vector<LoopStage*> loopStage_;
 
 	// 惑星
 	std::map<NAME, Planet*> planets_;
@@ -79,6 +82,9 @@ private:
 
 	// 最初の惑星
 	void MakeMainStage(void);
+
+	//ループ用のステージ(最初)
+	void MakeLoopStage(void);
 
 	// ワープスター
 	void MakeWarpStar(void);

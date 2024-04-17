@@ -9,6 +9,7 @@
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Enemy.h"
 #include "Planet.h"
+#include "LoopStage.h"
 #include "Common/Collider.h"
 #include "Common/Transform.h"
 #include "Stage.h"
@@ -23,12 +24,12 @@ Stage::Stage(Player* player, Bike* bike, Enemy* enemy)
 	step_ = 0.0f;
 
 	//ループ用のステージ
-	loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
+	/*loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
 	loopStage_.pos = { -5000.0f, -5600.0f, 6500.0f };
 	loopStage_.scl = { 1.0f,1.0f,1.0f };
 	loopStage_.quaRot = Quaternion();
 	loopStage_.MakeCollider(Collider::TYPE::STAGE);
-	loopStage_.Update();
+	loopStage_.Update();*/
 	
 }
 
@@ -49,11 +50,19 @@ Stage::~Stage(void)
 	}
 	planets_.clear();
 
+	//ループ用のステージ
+	for (auto loop : loopStage_)
+	{
+		delete loop;
+	}
+	loopStage_.clear();
+
 }
 
 void Stage::Init(void)
 {
 	MakeMainStage();
+	MakeLoopStage();
 	MakeWarpStar();
 
 	
@@ -69,7 +78,7 @@ void Stage::Update(void)
 	{
 		s->Update();
 	}
-
+	
 	// 惑星
 	for (const auto& s : planets_)
 	{
@@ -77,7 +86,12 @@ void Stage::Update(void)
 	}
 
 	//ループ用のステージ
-	loopStage_.Update();
+	for (const auto& ls : loopStage_)
+	{
+		ls->Update();
+	}
+
+
 }
 
 void Stage::Draw(void)
@@ -96,7 +110,10 @@ void Stage::Draw(void)
 	}
 
 	//ループ用のステージ
-	MV1DrawModel(loopStage_.modelId);
+	for (const auto& ls : loopStage_)
+	{
+		ls->Draw();
+	}
 
 	
 
@@ -113,17 +130,30 @@ void Stage::ChangeStage(NAME type)
 	// ステージの当たり判定をプレイヤーに設定
 	player_->ClearCollider();
 	player_->AddCollider(activePlanet_->GetTransform().collider);
-	player_->AddCollider(loopStage_.collider);
+	//ループ用のステージ
+	for (const auto& ls : loopStage_)
+	{
+		player_->AddCollider(ls->GetTransform().collider);
+	}
+	
 
 	// ステージのあたり判定をバイクに設定
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_->GetTransform().collider);
-	bike_->AddCollider(loopStage_.collider);
+	//ループ用のステージ
+	for (const auto& ls : loopStage_)
+	{
+		bike_->AddCollider(ls->GetTransform().collider);
+	}
 
 	// ステージのあたり判定を敵に設定
 	enemy_->ClearCollider();
 	enemy_->AddCollider(activePlanet_->GetTransform().collider);
-	enemy_->AddCollider(loopStage_.collider);
+	//ループ用のステージ
+	for (const auto& ls : loopStage_)
+	{
+		enemy_->AddCollider(ls->GetTransform().collider);
+	}
 
 	step_ = TIME_STAGE_CHANGE;
 
@@ -167,6 +197,40 @@ void Stage::MakeMainStage(void)
 
 }
 
+void Stage::MakeLoopStage(void)
+{
+
+	Transform loopTrans;
+	LoopStage* stage;
+
+	loopTrans.SetModel(
+		resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
+
+	/*if (loopTrans.pos.z + 5000 <= player_->GetTransform().pos.z)
+	{
+		loopTrans.pos.z += 6500;
+
+	}*/
+
+	float scale = 1.0f;
+	loopTrans.scl = { scale,scale,scale };
+	loopTrans.quaRot = Quaternion();
+	loopTrans.pos = { -5000.0f, -5600.0f, 6500.0f };
+
+	// 当たり判定(コライダ)作成
+	loopTrans.MakeCollider(Collider::TYPE::STAGE);
+	loopTrans.Update();
+
+	stage = new LoopStage(player_, loopTrans);
+	stage->Init();
+  	loopStage_.push_back(stage);
+
+	
+
+
+	
+}
+
 void Stage::MakeWarpStar(void)
 {
 
@@ -183,7 +247,7 @@ void Stage::MakeWarpStar(void)
 		AsoUtility::Deg2RadF(0.0f)
 	);
 
-	star = new WarpStar(player_, trans);
+  	star = new WarpStar(player_, trans);
 	star->Init();
 	warpStars_.push_back(star);
 	//------------------------------------------------------------------------------
