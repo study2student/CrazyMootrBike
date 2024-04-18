@@ -5,6 +5,7 @@
 #include <vector>
 class Collider;
 class Capsule;
+class Player;
 
 class Bike : public ActorBase
 {
@@ -41,6 +42,7 @@ public:
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
 private:
+	Player* player_;
 
 	// 状態管理
 	STATE state_;

@@ -8,25 +8,28 @@
 #include "../Object/SkyDome.h"
 #include "../Object/Stage.h"
 #include "../Object/Rider/Player.h"
-#include "../Object/Rider/Enemy.h"
 #include "../Object/Rider/Bike.h"
+#include "../Object/Rider/Rider.h"
+#include "../Object/Rider/Enemy.h"
 #include "../Object/Planet.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
 {
-	player_ = nullptr;
-	enemy_ = nullptr;
+	rider_ = nullptr;
+	//player_ = nullptr;
 	bike_ = nullptr;
+	enemy_ = nullptr;
 	skyDome_ = nullptr;
 	stage_ = nullptr;
 }
 
 GameScene::~GameScene(void)
 {
-	delete player_;
-	delete enemy_;
+	//delete player_;
 	delete bike_;
+	delete enemy_;
+	delete rider_;
 	delete stage_;
 	delete skyDome_;
 }
@@ -35,29 +38,31 @@ void GameScene::Init(void)
 {
 
 	// プレイヤー
-	player_ = new Player();
-	player_->Init();
+	rider_ = new Rider();
+	rider_->Init();
 
 	// 敵
 	enemy_ = new Enemy();
 	enemy_->Init();
 
-	// バイク
+	//player_ = new Player();
+	//player_->Init();
+
 	bike_ = new Bike();
 	bike_->Init();
 
 	// ステージ
-	stage_ = new Stage(player_, bike_, enemy_);
+	stage_ = new Stage(rider_, enemy_);
 	stage_->Init();
 
 	// ステージの初期設定
 	stage_->ChangeStage(Stage::NAME::MAIN_PLANET);
 
 	// スカイドーム
-	skyDome_ = new SkyDome(player_->GetTransform());
+	skyDome_ = new SkyDome(rider_->GetTransform());
 	skyDome_->Init();
 
-	SceneManager::GetInstance().GetCamera()->SetFollow(&player_->GetTransform());
+	SceneManager::GetInstance().GetCamera()->SetFollow(&bike_->GetTransform());
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FOLLOW);
 
 }
@@ -76,11 +81,10 @@ void GameScene::Update(void)
 
 	stage_->Update();
 
-	player_->Update();
+	bike_->Update();
 
 	enemy_->Update();
 
-	bike_->Update();
 }
 
 void GameScene::Draw(void)
@@ -90,11 +94,9 @@ void GameScene::Draw(void)
 	skyDome_->Draw();
 	stage_->Draw();
 
-	player_->Draw();
+	bike_->Draw();
 
 	enemy_->Draw();
-
-	bike_->Draw();
 
 	// ヘルプ
 	DrawFormatString(840, 20, 0x000000, "移動　　：WASD");

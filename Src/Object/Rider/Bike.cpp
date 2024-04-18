@@ -9,10 +9,13 @@
 #include "../Common/Capsule.h"
 #include "../Common/Collider.h"
 #include "../Planet.h"
+#include "Player.h"
 #include "Bike.h"
 
 Bike::Bike(void)
 {
+	player_ = nullptr;
+
 	state_ = STATE::NONE;
 
 	speed_ = 0.0f;
@@ -40,11 +43,16 @@ Bike::Bike(void)
 
 Bike::~Bike(void)
 {
+	delete player_;
 	delete capsule_;
 }
 
 void Bike::Init(void)
 {
+	// プレイヤー
+	player_ = new Player();
+	player_->Init();
+
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::BIKE));
@@ -96,6 +104,8 @@ void Bike::Draw(void)
 	// 丸影描画
 	DrawShadow();
 
+	player_->Draw();
+
 	// デバッグ描画
 	DrawDebug();
 }
@@ -146,6 +156,8 @@ void Bike::UpdateNone(void)
 
 void Bike::UpdatePlay(void)
 {
+	player_->Update();
+
 	// 移動処理
 	ProcessMove();
 
@@ -197,12 +209,12 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetForward();
 	}
 
-	//// カメラ方向から後退したい
-	//if (ins.IsNew(KEY_INPUT_S))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0);
-	//	dir = cameraRot.GetBack();
-	//}
+	// カメラ方向から後退したい
+	if (ins.IsNew(KEY_INPUT_S))
+	{
+		rotRad = AsoUtility::Deg2RadD(180.0);
+		dir = cameraRot.GetBack();
+	}
 
 	// カメラ方向から右側へ移動したい
 	if (ins.IsNew(KEY_INPUT_D))

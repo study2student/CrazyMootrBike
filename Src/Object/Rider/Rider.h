@@ -1,12 +1,21 @@
 #pragma once
 #include <vector>
 #include "../Common/Transform.h"
+#include "../ActorBase.h"
+class Collider;
+class Capsule;
+class Player;
+class Bike;
 
-class Turret
+class Rider : public ActorBase
 {
 public:
-	// 衝突判定：球体半径
-	static constexpr float COLLISION_RADIUS = 200.0f;
+	// スピード
+	static constexpr float SPEED_MOVE = 5.0f;
+	static constexpr float SPEED_RUN = 10.0f;
+
+	// 回転完了までの時間
+	static constexpr float TIME_ROT = 1.0f;
 
 	// タレットの大きさ
 	static constexpr float SCALE = 8.0f;
@@ -15,80 +24,100 @@ public:
 	enum class STATE
 	{
 		NONE,
-		ATTACK,
+		PLAY,
 		DESTROY,
 		END
 	};
 	// コンストラクタ
-	Turret(const Transform& transformParent,
-		VECTOR localPos, VECTOR localRot);
+	Rider(void);
 	// デストラクタ
-	~Turret(void);
+	~Rider(void);
 	void Init(void);
 	void Update(void);
 	void Draw(void);
 	void Release(void);
 
-	// 砲台回転動作制限角(deg)
-	static constexpr float ANGLE_Y_MIN_STAND = -30.0f * DX_PI_F / 180.0f;
-	static constexpr float ANGLE_Y_MAX_STAND = 30.0f * DX_PI_F / 180.0f;
-	// 砲台の回転量(deg)
-	static constexpr float ROT_POW_STAND = 0.2f;
-	// 砲身回転動作制限角(deg)
-	static constexpr float ANGLE_X_MIN_GUN = -10.0f * DX_PI_F / 180.0f;
-	static constexpr float ANGLE_X_MAX_GUN = 20.0f * DX_PI_F / 180.0f;
-
-	// 砲身の回転量(deg)
-	static constexpr float ROT_POW_GUN = 0.2f;
-
-	const Transform& GetTransform(void) const;
+	// 衝突判定に用いられるコライダ制御
+	void AddCollider(Collider* collider);
+	void ClearCollider(void);
 
 	STATE& GetState(void);
 
-	bool IsAlive(void) const;
+	// 衝突用カプセルの取得
+	const Capsule* GetCapsule(void) const;
 private:
-	// モデル制御の基本情報
-	const Transform& transformParent_;
-	// モデル制御の基本情報(砲台)
-	Transform transformStand_;
-	// モデル制御の基本情報(砲身)
-	Transform transformBarrel_;
+	Player* player_;
+	Bike* bike_;
+
+	// 移動スピード
+	float speed_;
+
+	// 移動方向
+	VECTOR moveDir_;
+
+	// 移動量
+	VECTOR movePow_;
+
+	// 移動後の座標
+	VECTOR movedPos_;
+
+	// 回転
+	Quaternion playerRotY_;
+	Quaternion goalQuaRot_;
+	float stepRotTime_;
+
+	// ジャンプ量
+	VECTOR jumpPow_;
+
+	// ジャンプ判定
+	bool isJump_;
+
+	// ジャンプの入力受付時間
+	float stepJump_;
+
 	// 状態
 	STATE state_;
 
-	// 親(戦艦)からの相対座標
-	VECTOR localPos_;
-	// 親(戦艦)からの相対角度
-	VECTOR localRot_;
+	// 衝突判定に用いられるコライダ
+	std::vector<Collider*> colliders_;
+	Capsule* capsule_;
 
-	// 砲台の回転量(deg)
-	float rotPowStand_;
-	// 砲身の回転量(deg)
-	float rotPowBarrel_;
-	// 砲台の回転動作蓄積用
-	VECTOR localRotAddStand_;
-	VECTOR localRotAddBarrel_;
-
-	float deleyShot_;
+	// 衝突チェック
+	VECTOR gravHitPosDown_;
+	VECTOR gravHitPosUp_;
 
 	// 状態遷移
 	void ChangeState(STATE state);
+	void ChangeStateNone(void);
+	void ChangeStatePlay(void);
 
-	// 弾の更新
-	void UpdateShot(void);
-
-	void UpdateAttack(void);
+	// プレイヤーの更新
+	void UpdateNone(void);
+	void UpdatePlay(void);
 	void UpdateDestroy(void);
 
-	// 弾の描画
-	void DrawShot(void);
-	void DrawAttack(void);
+	// プレイヤーの描画
+	void DrawPlay(void);
 	void DrawDestroy(void);
+	void DrawDebug(void);
 
 	// 親(戦艦)との回転と位置の同期
 	void SyncParent(Transform& transform, VECTOR addAxis);
+	// 操作
+	void ProcessMove(void);
 
-	bool isAlive_;
+	// 回転
+	void SetGoalRotate(double rotRad);
+	void Rotate(void);
+
+	// 衝突判定
+	void Collision(void);
+	void CollisionGravity(void);
+	void CollisionCapsule(void);
+
+	// 移動量の計算
+	void CalcGravityPow(void);
+
 };
 
 

@@ -2,9 +2,10 @@
 #include "SceneBase.h"
 class Stage;
 class SkyDome;
-class Player;
-class Enemy;
+class Rider;
+//class Player;
 class Bike;
+class Enemy;
 
 class GameScene : public SceneBase
 {
@@ -30,12 +31,15 @@ private:
 	SkyDome* skyDome_;
 
 	// プレイヤー
-	Player* player_;
+	Rider* rider_;
+
+	//// プレイヤー
+	//Player* player_;
+
+	// プレイヤー
+	Bike* bike_;
 
 	//	敵
 	Enemy* enemy_;
-
-	// バイク
-	Bike* bike_;
 
 };
