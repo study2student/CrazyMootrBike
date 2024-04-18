@@ -14,10 +14,9 @@
 #include "Common/Transform.h"
 #include "Stage.h"
 
-Stage::Stage(Player* player, Bike* bike, Enemy* enemy)
+Stage::Stage(Bike* bike, Enemy* enemy)
 	: resMng_(ResourceManager::GetInstance())
 {
-	player_ = player;
 	bike_ = bike;
 	enemy_ = enemy;
 	activeName_ = NAME::MAIN_PLANET;
@@ -30,7 +29,7 @@ Stage::Stage(Player* player, Bike* bike, Enemy* enemy)
 	loopStage_.quaRot = Quaternion();
 	loopStage_.MakeCollider(Collider::TYPE::STAGE);
 	loopStage_.Update();*/
-	
+
 }
 
 Stage::~Stage(void)
@@ -65,7 +64,7 @@ void Stage::Init(void)
 	MakeLoopStage();
 	MakeWarpStar();
 
-	
+
 
 	step_ = -1.0f;
 }
@@ -78,7 +77,7 @@ void Stage::Update(void)
 	{
 		s->Update();
 	}
-	
+
 	// 惑星
 	for (const auto& s : planets_)
 	{
@@ -115,9 +114,9 @@ void Stage::Draw(void)
 		ls->Draw();
 	}
 
-	
 
- }
+
+}
 
 void Stage::ChangeStage(NAME type)
 {
@@ -128,16 +127,6 @@ void Stage::ChangeStage(NAME type)
 	activePlanet_ = GetPlanet(activeName_);
 
 	// ステージの当たり判定をプレイヤーに設定
-	player_->ClearCollider();
-	player_->AddCollider(activePlanet_->GetTransform().collider);
-	//ループ用のステージ
-	for (const auto& ls : loopStage_)
-	{
-		player_->AddCollider(ls->GetTransform().collider);
-	}
-	
-
-	// ステージのあたり判定をバイクに設定
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_->GetTransform().collider);
 	//ループ用のステージ
@@ -145,6 +134,7 @@ void Stage::ChangeStage(NAME type)
 	{
 		bike_->AddCollider(ls->GetTransform().collider);
 	}
+
 
 	// ステージのあたり判定を敵に設定
 	enemy_->ClearCollider();
@@ -221,35 +211,35 @@ void Stage::MakeLoopStage(void)
 	loopTrans.MakeCollider(Collider::TYPE::STAGE);
 	loopTrans.Update();
 
-	stage = new LoopStage(player_, loopTrans);
+	stage = new LoopStage(bike_, loopTrans);
 	stage->Init();
-  	loopStage_.push_back(stage);
-
-	
+	loopStage_.push_back(stage);
 
 
-	
+
+
+
 }
 
 void Stage::MakeWarpStar(void)
 {
 
-	Transform trans;
-	WarpStar* star;
+	//Transform trans;
+	//WarpStar* star;
 
-	// 落とし穴惑星へのワープスター
-	//------------------------------------------------------------------------------
-	trans.pos = { -910.0f, 200.0f, 894.0f };
-	trans.scl = { 0.6f, 0.6f, 0.6f };
-	trans.quaRot = Quaternion::Euler(
-		AsoUtility::Deg2RadF(-25.0f),
-		AsoUtility::Deg2RadF(-50.0f),
-		AsoUtility::Deg2RadF(0.0f)
-	);
+	//// 落とし穴惑星へのワープスター
+	////------------------------------------------------------------------------------
+	//trans.pos = { -910.0f, 200.0f, 894.0f };
+	//trans.scl = { 0.6f, 0.6f, 0.6f };
+	//trans.quaRot = Quaternion::Euler(
+	//	AsoUtility::Deg2RadF(-25.0f),
+	//	AsoUtility::Deg2RadF(-50.0f),
+	//	AsoUtility::Deg2RadF(0.0f)
+	//);
 
-  	star = new WarpStar(player_, trans);
-	star->Init();
-	warpStars_.push_back(star);
-	//------------------------------------------------------------------------------
+ // 	star = new WarpStar(bike_, trans);
+	//star->Init();
+	//warpStars_.push_back(star);
+	////------------------------------------------------------------------------------
 
 }

@@ -21,7 +21,7 @@ public:
 
 	// コンストラクタ
 	LoopStage(
-		Player* player, const Transform& transform);
+		Bike* bike, const Transform& transform);
 
 	// デストラクタ
 	~LoopStage(void);
@@ -33,7 +33,7 @@ public:
 private:
 
 	// プレイヤー
-	Player* player_;
+	Bike* bike_;
 
 	// 状態管理
 	STATE state_;

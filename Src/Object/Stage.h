@@ -36,7 +36,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(Player* player, Bike* bike, Enemy* enemy);
+	Stage(Bike* bike, Enemy* enemy);
 
 	// デストラクタ
 	~Stage(void);
@@ -56,7 +56,6 @@ private:
 	// シングルトン参照
 	ResourceManager& resMng_;
 
-	Player* player_;
 	Bike* bike_;
 	Enemy* enemy_;
 

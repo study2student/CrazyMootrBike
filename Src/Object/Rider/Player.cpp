@@ -313,33 +313,33 @@ void Player::ProcessMove(void)
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
-	// カメラ方向に前進したい
-	if (ins.IsNew(KEY_INPUT_W))
-	{
-		rotRad = AsoUtility::Deg2RadD(0.0);
-		dir = cameraRot.GetForward();
-	}
+	//// カメラ方向に前進したい
+	//if (ins.IsNew(KEY_INPUT_W))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(0.0);
+	//	dir = cameraRot.GetForward();
+	//}
 
-	// カメラ方向から後退したい
-	if (ins.IsNew(KEY_INPUT_S))
-	{
-		rotRad = AsoUtility::Deg2RadD(180.0);
-		dir = cameraRot.GetBack();
-	}
+	//// カメラ方向から後退したい
+	//if (ins.IsNew(KEY_INPUT_S))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(180.0);
+	//	dir = cameraRot.GetBack();
+	//}
 
-	// カメラ方向から右側へ移動したい
-	if (ins.IsNew(KEY_INPUT_D))
-	{
-		rotRad = AsoUtility::Deg2RadD(90.0);
-		dir = cameraRot.GetRight();
-	}
+	//// カメラ方向から右側へ移動したい
+	//if (ins.IsNew(KEY_INPUT_D))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(90.0);
+	//	dir = cameraRot.GetRight();
+	//}
 
-	// カメラ方向から左側へ移動したい
-	if (ins.IsNew(KEY_INPUT_A))
-	{
-		rotRad = AsoUtility::Deg2RadD(270.0);
-		dir = cameraRot.GetLeft();
-	}
+	//// カメラ方向から左側へ移動したい
+	//if (ins.IsNew(KEY_INPUT_A))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(270.0);
+	//	dir = cameraRot.GetLeft();
+	//}
 
 	if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {
 

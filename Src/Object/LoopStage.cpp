@@ -2,11 +2,12 @@
 #include "../Manager/ResourceManager.h"
 #include "Common/Transform.h"
 #include "../Object/Rider/Player.h"
+#include "../Object/Rider/Bike.h"
 #include "LoopStage.h"
 
-LoopStage::LoopStage(Player* player, const Transform& transform)
+LoopStage::LoopStage(Bike* bike, const Transform& transform)
 {
-	player_ = player;
+	bike_ = bike;
 
 	transform_ = transform;
 
@@ -34,7 +35,7 @@ void LoopStage::Init(void)
 	transform_.MakeCollider(Collider::TYPE::STAGE);
 	transform_.Update();
 
-	
+
 	ChangeState(STATE::IDLE);
 }
 
@@ -114,13 +115,13 @@ void LoopStage::ChangeStateMake(void)
 	transform_.MakeCollider(Collider::TYPE::STAGE);
 	transform_.Update();
 
-	if (transform_.pos.z + 5000 <= player_->GetTransform().pos.z)
+	if (transform_.pos.z + 5000 <= bike_->GetTransform().pos.z)
 	{
 		transform_.pos.z += 6500;
 		ChangeState(STATE::IDLE);
 	}
 
-	
+
 }
 
 void LoopStage::ChangeStateBack(void)
@@ -133,7 +134,7 @@ void LoopStage::UpdateNone(void)
 
 void LoopStage::UpdateIdle(void)
 {
-	if (transform_.pos.z + 5000 <= player_->GetTransform().pos.z)
+	if (transform_.pos.z + 5000 <= bike_->GetTransform().pos.z)
 	{
 		ChangeState(STATE::MAKE);
 	}

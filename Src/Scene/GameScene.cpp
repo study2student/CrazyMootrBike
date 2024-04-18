@@ -52,7 +52,7 @@ void GameScene::Init(void)
 	bike_->Init();
 
 	// ステージ
-	stage_ = new Stage(rider_, enemy_);
+	stage_ = new Stage(bike_, enemy_);
 	stage_->Init();
 
 	// ステージの初期設定
