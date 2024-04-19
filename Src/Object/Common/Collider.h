@@ -8,6 +8,7 @@ public :
 	enum class TYPE
 	{
 		STAGE,
+		ENEMY
 	};
 
 	// コンストラクタ

@@ -90,6 +90,7 @@ void Stage::Update(void)
 		ls->Update();
 	}
 
+	//ステージを生成する
 	MakeLoopStage();
 
 
@@ -195,29 +196,42 @@ void Stage::MakeLoopStage(void)
 	Transform loopTrans;
 	LoopStage* stage;
 
-	if (loopTrans.pos.z + 5000 <= bike_->GetTransform().pos.z)
+
+	float z = bike_->GetTransform().pos.z;
+
+	int mapZ = (int)((z + 6000.0f) / 5000.0f);
+	int size = (int)loopStage_.size();
+
+	if (size <= mapZ)
 	{
-		loopTrans.pos.z += 6500;
+
+		loopTrans.SetModel(
+			resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
+
+
+
+		float scale = 1.0f;
+		loopTrans.scl = { scale,scale,scale };
+		loopTrans.quaRot = Quaternion();
+		loopTrans.pos = { -5000.0f, -5600.0f, 6500.0f * (size + 1) };
+
+		// 当たり判定(コライダ)作成
+		loopTrans.MakeCollider(Collider::TYPE::STAGE);
+		loopTrans.Update();
+
+		//すり抜けるためここでバイクと敵のコライダーも追加しとく
+		for (const auto& ls : loopStage_)
+		{
+			bike_->AddCollider(ls->GetTransform().collider);
+			enemy_->AddCollider(ls->GetTransform().collider);
+		}
+
+		stage = new LoopStage(bike_, loopTrans);
+		stage->Init();
+		loopStage_.push_back(stage);
 
 	}
 
-	loopTrans.SetModel(
-		resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
-
-	
-
-	float scale = 1.0f;
-	loopTrans.scl = { scale,scale,scale };
-	loopTrans.quaRot = Quaternion();
-	loopTrans.pos = { -5000.0f, -5600.0f, 6500.0f };
-
-	// 当たり判定(コライダ)作成
-	loopTrans.MakeCollider(Collider::TYPE::STAGE);
-	loopTrans.Update();
-
-	stage = new LoopStage(bike_, loopTrans);
-	stage->Init();
-	loopStage_.push_back(stage);
 
 
 

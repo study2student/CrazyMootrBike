@@ -53,7 +53,7 @@ public:
 	};
 
 	// コンストラクタ
-	Enemy(Transform bikeTrans);
+	Enemy(Bike* bike);
 
 	// デストラクタ
 	~Enemy(void);
@@ -78,7 +78,7 @@ private:
 	AnimationController* animationController_;
 
 	//バイク情報
-	Transform bikeTrans_;
+	Bike* bike_;
 
 	// 状態管理
 	STATE state_;
@@ -119,6 +119,9 @@ private:
 
 	// 丸影
 	int imgShadow_;
+
+	//プレイヤー(バイク)とあたっているかどうか
+	bool isBikeCol_;
 
 	void InitAnimation(void);
 

@@ -66,9 +66,9 @@ void Bike::Init(void)
 
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
-	capsule_->SetRadius(30.0f);
+	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
+	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
+	capsule_->SetRadius(135.0f);
 
 	// 丸影画像
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
@@ -410,6 +410,7 @@ void Bike::CollisionCapsule(void)
 		MV1CollResultPolyDimTerminate(hits);
 
 	}
+
 }
 
 void Bike::CalcGravityPow(void)

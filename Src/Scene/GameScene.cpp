@@ -48,7 +48,7 @@ void GameScene::Init(void)
 	bike_->Init();
 
 	// 敵
-	enemy_ = new Enemy(bike_->GetTransform());
+	enemy_ = new Enemy(bike_);
 	enemy_->Init();
 
 	// ステージ

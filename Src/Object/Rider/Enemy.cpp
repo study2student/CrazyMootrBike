@@ -12,10 +12,10 @@
 #include "../../Object/Rider/Bike.h"
 #include "Enemy.h"
 
-Enemy::Enemy(Transform bikeTrans)
+Enemy::Enemy(Bike* bike)
 {
 
-	bikeTrans_ = bikeTrans;
+	bike_ = bike;
 
 	animationController_ = nullptr;
 	state_ = STATE::NONE;
@@ -36,6 +36,8 @@ Enemy::Enemy(Transform bikeTrans)
 	// 衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+
+	isBikeCol_ = false;
 
 	imgShadow_ = -1;
 
@@ -127,6 +129,7 @@ const Capsule* Enemy::GetCapsule(void) const
 
 void Enemy::SetBikeTrans(Transform bikeTrans)
 {
+	Transform bikeTrans_;
 	bikeTrans_ = bikeTrans;
 }
 
@@ -331,6 +334,8 @@ void Enemy::ProcessMove(void)
 	//	rotRad = AsoUtility::Deg2RadD(270.0);
 	//	dir = cameraRot.GetLeft();
 	//}
+
+	Transform bikeTrans_ = bike_->GetTransform();
 
 	//
 	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
@@ -552,6 +557,53 @@ void Enemy::CollisionCapsule(void)
 		MV1CollResultPolyDimTerminate(hits);
 
 	}
+
+	//// ステージの当たり判定をプレイヤーに設定
+	//Transform bikeTrans_ = bike_->GetTransform();
+	//bike_->AddCollider(transform_.collider);
+	//transform_.MakeCollider(Collider::TYPE::ENEMY);
+	//Capsule bCap = Capsule(*capsule_, bikeTrans_);
+	//// カプセルとの衝突判定
+	//for (const auto c : colliders_)
+	//{
+
+	//	auto hits = MV1CollCheck_Capsule(
+	//		c->modelId_, -1,
+	//		bCap.GetPosTop(), bCap.GetPosDown(), bCap.GetRadius());
+
+	//	for (int i = 0; i < hits.HitNum; i++)
+	//	{
+
+	//		auto hit = hits.Dim[i];
+
+	//		for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+	//		{
+
+	//			int pHit = HitCheck_Capsule_Triangle(
+	//				bCap.GetPosTop(), bCap.GetPosDown(), bCap.GetRadius(),
+	//				hit.Position[0], hit.Position[1], hit.Position[2]);
+
+	//			if (pHit)
+	//			{
+	//				movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
+	//				// カプセルを移動させる
+	//				trans.pos = movedPos_;
+	//				trans.Update();
+	//				continue;
+	//			}
+
+	//			break;
+
+	//		}
+
+	//	}
+
+	//	// 検出した地面ポリゴン情報の後始末
+	//	MV1CollResultPolyDimTerminate(hits);
+
+	//}
+	
+
 }
 
 void Enemy::CalcGravityPow(void)
