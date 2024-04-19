@@ -7,6 +7,7 @@
 class AnimationController;
 class Collider;
 class Capsule;
+class Bike;
 
 class Enemy : public ActorBase
 {
@@ -52,7 +53,7 @@ public:
 	};
 
 	// コンストラクタ
-	Enemy(void);
+	Enemy(Transform bikeTrans);
 
 	// デストラクタ
 	~Enemy(void);
@@ -68,10 +69,16 @@ public:
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
 
+	//プレイヤー(バイク)の情報設定
+	void SetBikeTrans(Transform bikeTrans);
+
 private:
 
 	// アニメーション
 	AnimationController* animationController_;
+
+	//バイク情報
+	Transform bikeTrans_;
 
 	// 状態管理
 	STATE state_;

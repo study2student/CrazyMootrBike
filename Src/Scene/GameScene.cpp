@@ -41,15 +41,15 @@ void GameScene::Init(void)
 	rider_ = new Rider();
 	rider_->Init();
 
-	// “G
-	enemy_ = new Enemy();
-	enemy_->Init();
-
 	//player_ = new Player();
 	//player_->Init();
 
 	bike_ = new Bike();
 	bike_->Init();
+
+	// “G
+	enemy_ = new Enemy(bike_->GetTransform());
+	enemy_->Init();
 
 	// ƒXƒe[ƒW
 	stage_ = new Stage(bike_, enemy_);
@@ -82,6 +82,7 @@ void GameScene::Update(void)
 	stage_->Update();
 
 	bike_->Update();
+	enemy_->SetBikeTrans(bike_->GetTransform());
 
 	enemy_->Update();
 

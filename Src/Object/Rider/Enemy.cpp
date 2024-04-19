@@ -9,10 +9,14 @@
 #include "../Common/Capsule.h"
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
+#include "../../Object/Rider/Bike.h"
 #include "Enemy.h"
 
-Enemy::Enemy(void)
+Enemy::Enemy(Transform bikeTrans)
 {
+
+	bikeTrans_ = bikeTrans;
+
 	animationController_ = nullptr;
 	state_ = STATE::NONE;
 
@@ -56,6 +60,7 @@ void Enemy::Init(void)
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
+
 	// アニメーションの設定
 	InitAnimation();
 
@@ -87,6 +92,7 @@ void Enemy::Update(void)
 		break;
 	}
 
+
 	// モデル制御更新
 	transform_.Update();
 
@@ -117,6 +123,11 @@ void Enemy::ClearCollider(void)
 const Capsule* Enemy::GetCapsule(void) const
 {
 	return capsule_;
+}
+
+void Enemy::SetBikeTrans(Transform bikeTrans)
+{
+	bikeTrans_ = bikeTrans;
 }
 
 void Enemy::InitAnimation(void)
@@ -290,7 +301,8 @@ void Enemy::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	VECTOR dir = AsoUtility::DIR_F;
+	//VECTOR dir = AsoUtility::DIR_F;
+	VECTOR dir;// = AsoUtility::DIR_F;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
@@ -319,6 +331,11 @@ void Enemy::ProcessMove(void)
 	//	rotRad = AsoUtility::Deg2RadD(270.0);
 	//	dir = cameraRot.GetLeft();
 	//}
+
+	//
+	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	dir = VNorm(len);
+
 
 	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 

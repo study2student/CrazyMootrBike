@@ -57,6 +57,7 @@ void LoopStage::Update(void)
 		UpdateBack();
 		break;
 	}
+
 }
 
 void LoopStage::Draw(void)

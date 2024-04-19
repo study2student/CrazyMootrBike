@@ -90,6 +90,8 @@ void Stage::Update(void)
 		ls->Update();
 	}
 
+	MakeLoopStage();
+
 
 }
 
@@ -193,14 +195,16 @@ void Stage::MakeLoopStage(void)
 	Transform loopTrans;
 	LoopStage* stage;
 
-	loopTrans.SetModel(
-		resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
-
-	/*if (loopTrans.pos.z + 5000 <= player_->GetTransform().pos.z)
+	if (loopTrans.pos.z + 5000 <= bike_->GetTransform().pos.z)
 	{
 		loopTrans.pos.z += 6500;
 
-	}*/
+	}
+
+	loopTrans.SetModel(
+		resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
+
+	
 
 	float scale = 1.0f;
 	loopTrans.scl = { scale,scale,scale };
