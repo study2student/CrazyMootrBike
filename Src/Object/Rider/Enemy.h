@@ -18,6 +18,9 @@ public:
 	static constexpr float SPEED_MOVE = 5.0f;
 	static constexpr float SPEED_RUN = 10.0f;
 
+	//”¼Œa
+	static constexpr float RADIUS = 200.0f;
+
 	// ‰ñ“]Š®—¹‚Ü‚Å‚ÌŽžŠÔ
 	static constexpr float TIME_ROT = 1.0f;
 

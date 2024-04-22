@@ -344,8 +344,21 @@ void Enemy::ProcessMove(void)
 
 	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
-		// 移動処理
-	speed_ = SPEED_MOVE;
+	// 移動処理
+	//speed_ = SPEED_MOVE;
+	//衝突判定
+	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
+	float  dis = AsoUtility::SqrMagnitudeF(diff);
+	if (dis < RADIUS * RADIUS)
+	{
+		//範囲に入った
+		speed_ = 0;
+	}
+	else
+	{
+		speed_ = SPEED_MOVE;
+	}
+
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
 	{
 		speed_ = SPEED_RUN;
@@ -558,50 +571,53 @@ void Enemy::CollisionCapsule(void)
 
 	}
 
-	//// ステージの当たり判定をプレイヤーに設定
-	//Transform bikeTrans_ = bike_->GetTransform();
-	//bike_->AddCollider(transform_.collider);
-	//transform_.MakeCollider(Collider::TYPE::ENEMY);
-	//Capsule bCap = Capsule(*capsule_, bikeTrans_);
-	//// カプセルとの衝突判定
-	//for (const auto c : colliders_)
-	//{
+	/* ステージの当たり判定をプレイヤーに設定
+	Transform bikeTrans_ = bike_->GetTransform();
+	bike_->AddCollider(transform_.collider);
+	transform_.MakeCollider(Collider::TYPE::ENEMY);
+	Capsule bCap = Capsule(*capsule_, bikeTrans_);
+	 カプセルとの衝突判定
+	for (const auto c : colliders_)
+	{
 
-	//	auto hits = MV1CollCheck_Capsule(
-	//		c->modelId_, -1,
-	//		bCap.GetPosTop(), bCap.GetPosDown(), bCap.GetRadius());
+		auto hits = MV1CollCheck_Capsule(
+			c->modelId_, -1,
+			bCap.GetPosTop(), bCap.GetPosDown(), bCap.GetRadius());
 
-	//	for (int i = 0; i < hits.HitNum; i++)
-	//	{
+		for (int i = 0; i < hits.HitNum; i++)
+		{
 
-	//		auto hit = hits.Dim[i];
+			auto hit = hits.Dim[i];
 
-	//		for (int tryCnt = 0; tryCnt < 10; tryCnt++)
-	//		{
+			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+			{
 
-	//			int pHit = HitCheck_Capsule_Triangle(
-	//				bCap.GetPosTop(), bCap.GetPosDown(), bCap.GetRadius(),
-	//				hit.Position[0], hit.Position[1], hit.Position[2]);
+				int pHit = HitCheck_Capsule_Triangle(
+					bCap.GetPosTop(), bCap.GetPosDown(), bCap.GetRadius(),
+					hit.Position[0], hit.Position[1], hit.Position[2]);
 
-	//			if (pHit)
-	//			{
-	//				movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
-	//				// カプセルを移動させる
-	//				trans.pos = movedPos_;
-	//				trans.Update();
-	//				continue;
-	//			}
+				if (pHit)
+				{
+					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
+					 カプセルを移動させる
+					trans.pos = movedPos_;
+					trans.Update();
+					continue;
+				}
 
-	//			break;
+				break;
 
-	//		}
+			}
 
-	//	}
+		}
 
-	//	// 検出した地面ポリゴン情報の後始末
-	//	MV1CollResultPolyDimTerminate(hits);
+		 検出した地面ポリゴン情報の後始末
+		MV1CollResultPolyDimTerminate(hits);
 
-	//}
+	}*/
+
+
+	
 	
 
 }
