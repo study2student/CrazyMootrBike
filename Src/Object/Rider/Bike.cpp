@@ -16,6 +16,8 @@ Bike::Bike(void)
 {
 	player_ = nullptr;
 
+	animationController_ = nullptr;
+
 	state_ = STATE::NONE;
 
 	speed_ = 0.0f;
@@ -31,6 +33,8 @@ Bike::Bike(void)
 	isJump_ = false;
 	stepJump_ = 0.0f;
 
+	isAttack_ = false;
+
 	// 衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
@@ -45,6 +49,7 @@ Bike::~Bike(void)
 {
 	delete player_;
 	delete capsule_;
+	delete animationController_;
 }
 
 void Bike::Init(void)
@@ -74,8 +79,12 @@ void Bike::Init(void)
 	transformPlayer_.quaRot = transform_.quaRot;
 	transformPlayer_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
-	//transform_.Update();
-	//transformPlayer_.Update();
+	transform_.Update();
+	transformPlayer_.Update();
+
+	// アニメーションの設定
+	InitAnimation();
+
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
@@ -106,7 +115,8 @@ void Bike::Update(void)
 	// モデル制御更新
 	transform_.Update();
 	transformPlayer_.Update();
-
+	// アニメーション再生
+	animationController_->Update();
 }
 
 void Bike::Draw(void)
@@ -137,6 +147,22 @@ void Bike::ClearCollider(void)
 const Capsule* Bike::GetCapsule(void) const
 {
 	return capsule_;
+}
+
+void Bike::InitAnimation(void)
+{
+	std::string path = Application::PATH_MODEL + "Player/";
+	animationController_ = new AnimationController(transformPlayer_.modelId);
+	animationController_->Add((int)ANIM_TYPE::IDLE, path + "Idle.mv1", 20.0f);
+	animationController_->Add((int)ANIM_TYPE::RUN, path + "Run.mv1", 20.0f);
+	animationController_->Add((int)ANIM_TYPE::FAST_RUN, path + "FastRun.mv1", 20.0f);
+	animationController_->Add((int)ANIM_TYPE::JUMP, path + "Jump.mv1", 60.0f);
+	animationController_->Add((int)ANIM_TYPE::WARP_PAUSE, path + "WarpPose.mv1", 60.0f);
+	animationController_->Add((int)ANIM_TYPE::FLY, path + "Flying.mv1", 60.0f);
+	animationController_->Add((int)ANIM_TYPE::FALLING, path + "Falling.mv1", 80.0f);
+	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
+
+	animationController_->Play((int)ANIM_TYPE::IDLE);
 }
 
 void Bike::ChangeState(STATE state)
@@ -170,13 +196,16 @@ void Bike::UpdateNone(void)
 
 void Bike::UpdatePlay(void)
 {
-	//player_->Update();
+	player_->Update();
 
 	// 移動処理
 	ProcessMove();
 
 	// ジャンプ処理
 	ProcessJump();
+
+	// 攻撃処理
+	ProcessAttack();
 
 	// 移動方向に応じた回転
 	Rotate();
@@ -186,6 +215,8 @@ void Bike::UpdatePlay(void)
 
 	// 衝突判定
 	Collision();
+
+	// 
 
 	// 回転させる
 	transform_.quaRot = playerRotY_;
@@ -200,6 +231,12 @@ void Bike::DrawDebug(void)
 {
 	capsule_->Draw();
 	DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
+	
+	// 攻撃が当たったか
+	if (isAttack_ == true)
+	{
+		DrawString(0, 0, "Attack", 0x000000);
+	}
 }
 
 void Bike::ProcessMove(void)
@@ -245,7 +282,7 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetLeft();
 	}
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_))*/ {
+	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
 		// 移動処理
 		speed_ = SPEED_MOVE;
@@ -259,32 +296,46 @@ void Bike::ProcessMove(void)
 		// 回転処理
 		SetGoalRotate(rotRad);
 
-		//if (!isJump_ && IsEndLanding())
-		//{
-		//	// アニメーション
-		//	if (ins.IsNew(KEY_INPUT_RSHIFT))
-		//	{
-		//		animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-		//	}
-		//	else
-		//	{
-		//		animationController_->Play((int)ANIM_TYPE::RUN);
-		//	}
-		//}
+		if (!isJump_ && IsEndLanding())
+		{
+			//アニメーション
+			if (ins.IsNew(KEY_INPUT_RSHIFT))
+			{
+				animationController_->Play((int)ANIM_TYPE::FAST_RUN);
+			}
+			else
+			{
+				animationController_->Play((int)ANIM_TYPE::RUN);
+			}
+		}
 
 	}
-	//else
+	else
 	{
-		//if (!isJump_ && IsEndLanding())
-		//{
-		//	animationController_->Play((int)ANIM_TYPE::IDLE);
-		//}
+		if (!isJump_ && IsEndLanding())
+		{
+			animationController_->Play((int)ANIM_TYPE::IDLE);
+		}
 	}
 
 }
 
 void Bike::ProcessJump(void)
 {
+}
+
+void Bike::ProcessAttack(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsNew(KEY_INPUT_Z))
+	{
+		isAttack_ = true;
+	}
+	else
+	{
+		isAttack_ = false;
+	}
 }
 
 void Bike::SetGoalRotate(double rotRad)
@@ -369,8 +420,8 @@ void Bike::CollisionGravity(void)
 			if (isJump_)
 			{
 				// 着地モーション
-				//animationController_->Play(
-				//	(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
+				animationController_->Play(
+					(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
 			}
 
 			isJump_ = false;
@@ -451,5 +502,24 @@ void Bike::CalcGravityPow(void)
 		jumpPow_ = gravity;
 	}
 
+}
+
+bool Bike::IsEndLanding(void)
+{
+	bool ret = true;
+
+	// アニメーションがジャンプではない
+	if (animationController_->GetPlayType() != (int)ANIM_TYPE::JUMP)
+	{
+		return ret;
+	}
+
+	// アニメーションが終了しているか
+	if (animationController_->IsEnd())
+	{
+		return ret;
+	}
+
+	return false;
 }
 

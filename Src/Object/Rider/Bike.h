@@ -3,6 +3,7 @@
 #include <DxLib.h>
 #include "../ActorBase.h"
 #include <vector>
+class AnimationController;
 class Collider;
 class Capsule;
 class Player;
@@ -12,7 +13,7 @@ class Bike : public ActorBase
 public:
 	// スピード
 	static constexpr float SPEED_MOVE = 5.0f;
-	static constexpr float SPEED_RUN = 10.0f;
+	static constexpr float SPEED_RUN = 20.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
@@ -25,6 +26,20 @@ public:
 		DEAD,
 		END
 	};
+
+	// アニメーション種別
+	enum class ANIM_TYPE
+	{
+		IDLE,
+		RUN,
+		FAST_RUN,
+		JUMP,
+		WARP_PAUSE,
+		FLY,
+		FALLING,
+		VICTORY
+	};
+
 	// コンストラクタ
 	Bike(void);
 
@@ -43,6 +58,9 @@ public:
 	const Capsule* GetCapsule(void) const;
 private:
 	Transform transformPlayer_;
+
+	// アニメーション
+	AnimationController* animationController_;
 
 	Player* player_;
 
@@ -86,6 +104,15 @@ private:
 	// 丸影
 	int imgShadow_;
 
+	// 体力
+	int hp_;
+
+	// 攻撃が当たったか
+	bool isAttack_;
+
+	//アニメーション
+	void InitAnimation(void);
+
 	// 状態遷移
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
@@ -100,8 +127,9 @@ private:
 	void DrawDebug(void);
 
 	// 操作
-	void ProcessMove(void);
-	void ProcessJump(void);
+	void ProcessMove(void);//移動
+	void ProcessJump(void);//ジャンプ
+	void ProcessAttack(void);//攻撃
 
 	// 回転
 	void SetGoalRotate(double rotRad);
@@ -115,5 +143,7 @@ private:
 	// 移動量の計算
 	void CalcGravityPow(void);
 
+	// 着地モーション終了
+	bool IsEndLanding(void);
 };
 
