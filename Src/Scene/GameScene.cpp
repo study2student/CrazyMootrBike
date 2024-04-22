@@ -38,8 +38,8 @@ void GameScene::Init(void)
 {
 
 	// プレイヤー
-	rider_ = new Rider();
-	rider_->Init();
+	//rider_ = new Rider();
+	//rider_->Init();
 
 	//player_ = new Player();
 	//player_->Init();
@@ -59,7 +59,7 @@ void GameScene::Init(void)
 	stage_->ChangeStage(Stage::NAME::MAIN_PLANET);
 
 	// スカイドーム
-	skyDome_ = new SkyDome(rider_->GetTransform());
+	skyDome_ = new SkyDome(bike_->GetTransform());
 	skyDome_->Init();
 
 	SceneManager::GetInstance().GetCamera()->SetFollow(&bike_->GetTransform());

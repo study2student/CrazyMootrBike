@@ -62,8 +62,20 @@ void Bike::Init(void)
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
-	transform_.Update();
+	//transform_.Update();
 
+	// モデルの基本設定
+	transformPlayer_.SetModel(resMng_.LoadModelDuplicate(
+		ResourceManager::SRC::PLAYER));
+	float pScale = 1.0f;
+	transformPlayer_.scl = { pScale, pScale, pScale };
+	transformPlayer_.pos = { transform_.pos.x, transform_.pos.y + 20.0f, transform_.pos.z };
+	//transformPlayer_.quaRot = Quaternion();
+	transformPlayer_.quaRot = transform_.quaRot;
+	transformPlayer_.quaRotLocal =
+		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+	//transform_.Update();
+	//transformPlayer_.Update();
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
@@ -93,6 +105,7 @@ void Bike::Update(void)
 
 	// モデル制御更新
 	transform_.Update();
+	transformPlayer_.Update();
 
 }
 
@@ -100,11 +113,12 @@ void Bike::Draw(void)
 {
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
+	MV1DrawModel(transformPlayer_.modelId);
 
 	// 丸影描画
 	DrawShadow();
 
-	player_->Draw();
+	//player_->Draw();
 
 	// デバッグ描画
 	DrawDebug();
@@ -156,7 +170,7 @@ void Bike::UpdateNone(void)
 
 void Bike::UpdatePlay(void)
 {
-	player_->Update();
+	//player_->Update();
 
 	// 移動処理
 	ProcessMove();
@@ -175,6 +189,7 @@ void Bike::UpdatePlay(void)
 
 	// 回転させる
 	transform_.quaRot = playerRotY_;
+	transformPlayer_.quaRot = playerRotY_;
 }
 
 void Bike::DrawShadow(void)
@@ -302,6 +317,7 @@ void Bike::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
+	movedPos_ = VAdd(transformPlayer_.pos, movePow_);
 
 	// 衝突(カプセル)
 	CollisionCapsule();
@@ -311,6 +327,7 @@ void Bike::Collision(void)
 
 	// 移動
 	transform_.pos = movedPos_;
+	transformPlayer_.pos = movedPos_;
 }
 
 void Bike::CollisionGravity(void)

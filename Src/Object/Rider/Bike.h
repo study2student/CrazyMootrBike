@@ -42,6 +42,8 @@ public:
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
 private:
+	Transform transformPlayer_;
+
 	Player* player_;
 
 	// 状態管理
