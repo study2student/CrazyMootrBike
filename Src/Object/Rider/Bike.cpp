@@ -234,14 +234,14 @@ void Bike::ProcessMove(void)
 	// ƒJƒƒ‰•ûŒü‚©‚ç‰E‘¤‚ÖˆÚ“®‚µ‚½‚¢
 	if (ins.IsNew(KEY_INPUT_D))
 	{
-		rotRad = AsoUtility::Deg2RadD(90.0);
+		//rotRad = AsoUtility::Deg2RadD(90.0);
 		dir = cameraRot.GetRight();
 	}
 
 	// ƒJƒƒ‰•ûŒü‚©‚ç¶‘¤‚ÖˆÚ“®‚µ‚½‚¢
 	if (ins.IsNew(KEY_INPUT_A))
 	{
-		rotRad = AsoUtility::Deg2RadD(270.0);
+		//rotRad = AsoUtility::Deg2RadD(270.0);
 		dir = cameraRot.GetLeft();
 	}
 
