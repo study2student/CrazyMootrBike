@@ -35,7 +35,9 @@ public:
 		TANK_WHEEL,
 
 		DEMO_STAGE,//仮ステージ
-		ENEMY,		//仮敵
+		ENEMY_SHORT,		//仮敵
+		ENEMY_LONG,
+		ENEMY_BOMB,
 		BIKE,		//バイク
 	};
 

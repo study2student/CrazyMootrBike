@@ -119,9 +119,18 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::DEMO_STAGE, res);
 
-	// ‰¼“G
+	// ‹ß‹——£“G
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");
-	resourcesMap_.emplace(SRC::ENEMY, res);
+	resourcesMap_.emplace(SRC::ENEMY_SHORT, res);
+
+	// ‰“‹——£“G
+	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_LONG, res);
+
+	// ”š’e“G
+	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
+	resourcesMap_.emplace(SRC::ENEMY_BOMB, res);
+
 
 	// ƒoƒCƒNƒ‚ƒfƒ‹
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/bike.mv1");

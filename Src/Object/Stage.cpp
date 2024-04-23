@@ -8,13 +8,14 @@
 #include "../Object/Rider/Player.h"
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Enemy.h"
+#include "../Object/Rider/EnemyBase.h"
 #include "Planet.h"
 #include "LoopStage.h"
 #include "Common/Collider.h"
 #include "Common/Transform.h"
 #include "Stage.h"
 
-Stage::Stage(Bike* bike, Enemy* enemy)
+Stage::Stage(Bike* bike, EnemyBase* enemy)
 	: resMng_(ResourceManager::GetInstance())
 {
 	bike_ = bike;

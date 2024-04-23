@@ -7,6 +7,7 @@ class Planet;
 class Player;
 class Bike;
 class Enemy;
+class EnemyBase;
 class LoopStage;
 
 class Stage
@@ -36,7 +37,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(Bike* bike, Enemy* enemy);
+	Stage(Bike* bike, EnemyBase* enemy);
 
 	// デストラクタ
 	~Stage(void);
@@ -57,7 +58,7 @@ private:
 	ResourceManager& resMng_;
 
 	Bike* bike_;
-	Enemy* enemy_;
+	EnemyBase* enemy_;
 
 	// ステージアクティブになっている惑星の情報
 	NAME activeName_;
