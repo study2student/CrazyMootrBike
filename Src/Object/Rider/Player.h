@@ -5,6 +5,7 @@
 class AnimationController;
 class Collider;
 class Capsule;
+class Bike;
 
 class Player : public ActorBase
 {
@@ -67,7 +68,6 @@ public:
 	const Capsule* GetCapsule(void) const;
 
 private:
-
 	// アニメーション
 	AnimationController* animationController_;
 

@@ -91,6 +91,9 @@ void Bike::Init(void)
 	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
 	capsule_->SetRadius(135.0f);
 
+	// ‘Ì—Í
+	hp_ = 100;
+
 	// ŠÛ‰e‰æ‘œ
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
 
@@ -124,6 +127,9 @@ void Bike::Draw(void)
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
+
+	// ‘Ì—Í‚Æ‚©ƒQ[ƒW‚Æ‚©
+	DrawUI();
 
 	// ŠÛ‰e•`‰æ
 	DrawShadow();
@@ -223,6 +229,22 @@ void Bike::UpdatePlay(void)
 	transformPlayer_.quaRot = playerRotY_;
 }
 
+void Bike::DrawUI(void)
+{
+	// HP‚Ì•˜g
+	DrawBoxAA(Application::SCREEN_SIZE_X - 500, Application::SCREEN_SIZE_Y - 100,
+		Application::SCREEN_SIZE_X - 10, Application::SCREEN_SIZE_Y - 10,
+		0x000000, false,15.0f);
+
+	// HPƒQ[ƒW
+	DrawBox(Application::SCREEN_SIZE_X - 500, Application::SCREEN_SIZE_Y - 100,
+		Application::SCREEN_SIZE_X - 10, Application::SCREEN_SIZE_Y - 10,
+		0x00aeef, true);
+
+	// HP
+	DrawFormatString(0, 20, 0x000000, "HP : %d",hp_);
+}
+
 void Bike::DrawShadow(void)
 {
 }
@@ -251,6 +273,8 @@ void Bike::ProcessMove(void)
 
 	// ‰ñ“]‚µ‚½‚¢Šp“x
 	double rotRad = 0;
+
+	
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
@@ -330,6 +354,7 @@ void Bike::ProcessAttack(void)
 
 	if (ins.IsNew(KEY_INPUT_Z))
 	{
+		animationController_->Play((int)ANIM_TYPE::FALLING);
 		isAttack_ = true;
 	}
 	else

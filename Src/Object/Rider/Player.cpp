@@ -9,6 +9,7 @@
 #include "../Common/Capsule.h"
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
+#include "Bike.h"
 #include "Player.h"
 
 Player::Player(void)
@@ -37,11 +38,11 @@ Player::Player(void)
 	imgShadow_ = -1;
 
 	capsule_ = nullptr;
-
 }
 
 Player::~Player(void)
 {
+
 	delete capsule_;
 	delete animationController_;
 }

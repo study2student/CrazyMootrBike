@@ -12,8 +12,8 @@ class Bike : public ActorBase
 {
 public:
 	// スピード
-	static constexpr float SPEED_MOVE = 5.0f;
-	static constexpr float SPEED_RUN = 20.0f;
+	static constexpr float SPEED_MOVE = 100.0f;
+	static constexpr float SPEED_RUN = 130.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
@@ -123,6 +123,7 @@ private:
 	void UpdatePlay(void);
 
 	// 描画系
+	void DrawUI(void);
 	void DrawShadow(void);
 	void DrawDebug(void);
 
