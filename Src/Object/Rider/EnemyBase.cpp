@@ -66,8 +66,6 @@ void EnemyBase::Init(void)
 	// アニメーションの設定
 	InitAnimation();
 
-
-
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });

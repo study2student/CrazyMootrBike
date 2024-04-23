@@ -13,13 +13,18 @@
 #include "../../Object/Rider/Bike.h"
 #include "LongDisEnemy.h"
 
+LongDisEnemy::LongDisEnemy() : EnemyBase(bike_)
+{
+}
+
 void LongDisEnemy::SetParam(void)
 {
+
 	// ƒ‚ƒfƒ‹‚ÌŠî–{Ý’è
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_LONG));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, -800.0f, -2500.0f };
+	transform_.pos = { 700.0f, -800.0f, -1500.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -30,11 +35,11 @@ void LongDisEnemy::SetParam(void)
 	InitAnimation();
 
 
-	// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_
-	capsule_ = new Capsule(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
-	capsule_->SetRadius(20.0f);
+	//// ƒJƒvƒZƒ‹ƒRƒ‰ƒCƒ_
+	//capsule_ = new Capsule(transform_);
+	//capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
+	//capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
+	//capsule_->SetRadius(20.0f);
 
 	// ŠÛ‰e‰æ‘œ
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
@@ -89,17 +94,17 @@ void LongDisEnemy::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	//// ˆÚ“®—Ê‚ðƒ[ƒ
-	//movePow_ = AsoUtility::VECTOR_ZERO;
+	////// ˆÚ“®—Ê‚ðƒ[ƒ
+	////movePow_ = AsoUtility::VECTOR_ZERO;
 
-	// XŽ²‰ñ“]‚ðœ‚¢‚½Ad—Í•ûŒü‚É‚’¼‚ÈƒJƒƒ‰Šp“x(XZ•½–Ê)‚ðŽæ“¾
-	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
+	//// XŽ²‰ñ“]‚ðœ‚¢‚½Ad—Í•ûŒü‚É‚’¼‚ÈƒJƒƒ‰Šp“x(XZ•½–Ê)‚ðŽæ“¾
+	//Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
-	// ‰ñ“]‚µ‚½‚¢Šp“x
-	double rotRad = 0;
+	//// ‰ñ“]‚µ‚½‚¢Šp“x
+	//double rotRad = 0;
 
 	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	//VECTOR dir;// = AsoUtility::DIR_F;
 
 	//// ƒJƒƒ‰•ûŒü‚É‘Oi‚µ‚½‚¢
 	//if (ins.IsNew(KEY_INPUT_W))
@@ -129,53 +134,53 @@ void LongDisEnemy::ProcessMove(void)
 	//	dir = cameraRot.GetLeft();
 	//}
 
-	Transform bikeTrans_ = bike_->GetTransform();
+	//Transform bikeTrans_ = bike_->GetTransform();
 
-	//
-	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
-	dir = VNorm(len);
+	////
+	//VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	//dir = VNorm(len);
 
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
+	///*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
-	// ˆÚ“®ˆ—
-	//speed_ = SPEED_MOVE;
-	//Õ“Ë”»’è
-	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < RADIUS * RADIUS)
-	{
-		//”ÍˆÍ‚É“ü‚Á‚½
-		speed_ = 0;
-	}
-	else
-	{
-		speed_ = SPEED_MOVE;
-	}
+	//// ˆÚ“®ˆ—
+	////speed_ = SPEED_MOVE;
+	////Õ“Ë”»’è
+	//VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
+	//float  dis = AsoUtility::SqrMagnitudeF(diff);
+	//if (dis < RADIUS * RADIUS)
+	//{
+	//	//”ÍˆÍ‚É“ü‚Á‚½
+	//	speed_ = 0;
+	//}
+	//else
+	//{
+	//	speed_ = SPEED_MOVE;
+	//}
 
-	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
-	{
-		speed_ = SPEED_RUN;
-	}*/
-	moveDir_ = dir;
-	movePow_ = VScale(dir, speed_);
+	///*if (ins.IsNew(KEY_INPUT_RSHIFT))
+	//{
+	//	speed_ = SPEED_RUN;
+	//}*/
+	//moveDir_ = dir;
+	//movePow_ = VScale(dir, speed_);
 
-	// ‰ñ“]ˆ—
-	SetGoalRotate(rotRad);
+	//// ‰ñ“]ˆ—
+	//SetGoalRotate(rotRad);
 
-	if (!isJump_ && IsEndLanding())
-	{
+	//if (!isJump_ && IsEndLanding())
+	//{
 
-		animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-
-	}
+	//	animationController_->Play((int)ANIM_TYPE::FAST_RUN);
 
 	//}
-	/*else
-	{
-		if (!isJump_ && IsEndLanding())
-		{
-			animationController_->Play((int)ANIM_TYPE::IDLE);
-		}
-	}*/
+
+	////}
+	///*else
+	//{
+	//	if (!isJump_ && IsEndLanding())
+	//	{
+	//		animationController_->Play((int)ANIM_TYPE::IDLE);
+	//	}
+	//}*/
 }

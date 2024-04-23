@@ -4,6 +4,8 @@ class BombEnemy : public EnemyBase
 {
 public:
 
+	BombEnemy();
+
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;
 	void Update(void) override;
@@ -11,8 +13,6 @@ public:
 	void UpdatePlay(void) override;
 	void ProcessMove(void) override;
 
-
-private:
 
 };
 

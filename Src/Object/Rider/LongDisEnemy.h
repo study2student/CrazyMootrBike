@@ -4,6 +4,8 @@ class LongDisEnemy : public EnemyBase
 {
 public:
 
+	LongDisEnemy();
+
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;
 	void Update(void) override;
@@ -12,7 +14,6 @@ public:
 	void ProcessMove(void) override;
 
 
-private:
 
 };
 

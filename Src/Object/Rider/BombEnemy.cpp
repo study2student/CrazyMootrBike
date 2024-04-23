@@ -14,13 +14,18 @@
 #include "BombEnemy.h"
 
 
+BombEnemy::BombEnemy() : EnemyBase(bike_)
+{
+}
+
 void BombEnemy::SetParam(void)
 {
+
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_BOMB));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, -800.0f, -2500.0f };
+	transform_.pos = { 700.0f, -800.0f, -1500.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -31,11 +36,11 @@ void BombEnemy::SetParam(void)
 	InitAnimation();
 
 
-	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
-	capsule_->SetRadius(20.0f);
+	//// カプセルコライダ
+	//capsule_ = new Capsule(transform_);
+	//capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
+	//capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
+	//capsule_->SetRadius(20.0f);
 
 	// 丸影画像
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
@@ -130,53 +135,53 @@ void BombEnemy::ProcessMove(void)
 	//	dir = cameraRot.GetLeft();
 	//}
 
-	Transform bikeTrans_ = bike_->GetTransform();
+	//Transform bikeTrans_ = bike_->GetTransform();
 
-	//
-	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
-	dir = VNorm(len);
+	////
+	//VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	//dir = VNorm(len);
 
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
+	///*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
-	// 移動処理
-	//speed_ = SPEED_MOVE;
-	//衝突判定
-	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < RADIUS * RADIUS)
-	{
-		//範囲に入った
-		speed_ = 0;
-	}
-	else
-	{
-		speed_ = SPEED_MOVE;
-	}
+	//// 移動処理
+	////speed_ = SPEED_MOVE;
+	////衝突判定
+	//VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
+	//float  dis = AsoUtility::SqrMagnitudeF(diff);
+	//if (dis < RADIUS * RADIUS)
+	//{
+	//	//範囲に入った
+	//	speed_ = 0;
+	//}
+	//else
+	//{
+	//	speed_ = SPEED_MOVE;
+	//}
 
-	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
-	{
-		speed_ = SPEED_RUN;
-	}*/
-	moveDir_ = dir;
-	movePow_ = VScale(dir, speed_);
+	///*if (ins.IsNew(KEY_INPUT_RSHIFT))
+	//{
+	//	speed_ = SPEED_RUN;
+	//}*/
+	//moveDir_ = dir;
+	//movePow_ = VScale(dir, speed_);
 
-	// 回転処理
-	SetGoalRotate(rotRad);
+	//// 回転処理
+	//SetGoalRotate(rotRad);
 
-	if (!isJump_ && IsEndLanding())
-	{
+	//if (!isJump_ && IsEndLanding())
+	//{
 
-		animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-
-	}
+	//	animationController_->Play((int)ANIM_TYPE::FAST_RUN);
 
 	//}
-	/*else
-	{
-		if (!isJump_ && IsEndLanding())
-		{
-			animationController_->Play((int)ANIM_TYPE::IDLE);
-		}
-	}*/
+
+	////}
+	///*else
+	//{
+	//	if (!isJump_ && IsEndLanding())
+	//	{
+	//		animationController_->Play((int)ANIM_TYPE::IDLE);
+	//	}
+	//}*/
 }

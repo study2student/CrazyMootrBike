@@ -26,6 +26,7 @@ GameScene::GameScene(void)
 	enemy_ = nullptr;
 	skyDome_ = nullptr;
 	stage_ = nullptr;
+
 }
 
 GameScene::~GameScene(void)
@@ -95,70 +96,71 @@ void GameScene::Update(void)
 
 
 
-	//size_t size = enemys_.size();
-	//for (int i = 0; i < size; i++)
-	//{
-	//	enemys_[i]->Update();
-	//}
+	size_t size = enemys_.size();
+	for (int i = 0; i < size; i++)
+	{
+		enemys_[i]->Update();
+	}
 
-	//if (enCounter > ENCOUNT)
-	//{
-	//	//エンカウンターリセット
-	//	enCounter = 0;
+	enCounter++;
+	if (enCounter > ENCOUNT)
+	{
+		//エンカウンターリセット
+		enCounter = 0;
 
-	//	//敵の生成
-	//	EnemyBase* e = nullptr;
-	//	int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
-	//	EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+		//敵の生成
+		EnemyBase* e = nullptr;
+		int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
+		EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
 
-	//	switch (type)
-	//	{
-	//	case EnemyBase::TYPE::SHORT_DIS:
-	//		e = new ShortDisEnemy();
-	//		break;
-	//	case EnemyBase::TYPE::LONG_DIS:
-	//		e = new LongDisEnemy();
-	//		break;
-	//	case EnemyBase::TYPE::BOMB:
-	//		e = new BombEnemy();
-	//		break;
-	//	}
-	//	e->Init();
+		switch (type)
+		{
+		case EnemyBase::TYPE::SHORT_DIS:
+			e = new ShortDisEnemy();
+			break;
+		case EnemyBase::TYPE::LONG_DIS:
+			e =  new LongDisEnemy();
+			break;
+		case EnemyBase::TYPE::BOMB:
+			e =  new BombEnemy();
+			break;
+		}
+		e->Init();
 
-	//	//画面端のランダムな場所に生成
-	//	int randDir = GetRand(static_cast<int>(AsoUtility::DIR::MAX) - 1);
-	//	AsoUtility::DIR dir = static_cast<AsoUtility::DIR>(randDir);
+		////画面端のランダムな場所に生成
+		//int randDir = GetRand(static_cast<int>(AsoUtility::DIR::MAX) - 1);
+		//AsoUtility::DIR dir = static_cast<AsoUtility::DIR>(randDir);
 
-	//	Vector2 randPos;
-	//	switch (dir)
-	//	{
-	//	case AsoUtility::DIR::UP:
-	//		randPos.x = cameraPos_.x + GetRand(Application::SCREEN_SIZE_X);
-	//		randPos.y = cameraPos_.y;
-	//		break;
-	//	case AsoUtility::DIR::RIGHT:
-	//		randPos.x = cameraPos_.x + Application::SCREEN_SIZE_X;
-	//		randPos.y = cameraPos_.y + GetRand(Application::SCREEN_SIZE_Y);
-	//		break;
-	//	case AsoUtility::DIR::DOWN:
-	//		randPos.x = cameraPos_.x + GetRand(Application::SCREEN_SIZE_X);
-	//		randPos.y = cameraPos_.y + Application::SCREEN_SIZE_Y;
-	//		break;
-	//	case AsoUtility::DIR::LEFT:
-	//		randPos.x = cameraPos_.x;
-	//		randPos.y = cameraPos_.y + GetRand(Application::SCREEN_SIZE_Y);
-	//		break;
-	//	}
+		//Vector2 randPos;
+		//switch (dir)
+		//{
+		//case AsoUtility::DIR::UP:
+		//	randPos.x = cameraPos_.x + GetRand(Application::SCREEN_SIZE_X);
+		//	randPos.y = cameraPos_.y;
+		//	break;
+		//case AsoUtility::DIR::RIGHT:
+		//	randPos.x = cameraPos_.x + Application::SCREEN_SIZE_X;
+		//	randPos.y = cameraPos_.y + GetRand(Application::SCREEN_SIZE_Y);
+		//	break;
+		//case AsoUtility::DIR::DOWN:
+		//	randPos.x = cameraPos_.x + GetRand(Application::SCREEN_SIZE_X);
+		//	randPos.y = cameraPos_.y + Application::SCREEN_SIZE_Y;
+		//	break;
+		//case AsoUtility::DIR::LEFT:
+		//	randPos.x = cameraPos_.x;
+		//	randPos.y = cameraPos_.y + GetRand(Application::SCREEN_SIZE_Y);
+		//	break;
+		//}
 
-	//	//デバッグ
-	//	TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
+		////デバッグ
+		//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
 
-	//	//座標の設定
-	//	e->setPos(randPos.ToVector2F());
+		////座標の設定
+		//e->setPos(randPos.ToVector2F());
 
-	//	//可変長配列に要素を追加
-	//	enemys_.push_back(e);
-	//}
+		//可変長配列に要素を追加
+		enemys_.push_back(e);
+	}
 
 }
 
@@ -172,6 +174,13 @@ void GameScene::Draw(void)
 	bike_->Draw();
 
 	enemy_->Draw();
+
+	size_t size = enemys_.size();
+	for (int i = 0; i < size; i++)
+	{
+		enemys_[i]->Draw();
+	}
+
 
 	// ヘルプ
 	DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
