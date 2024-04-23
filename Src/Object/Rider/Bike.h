@@ -15,6 +15,9 @@ public:
 	static constexpr float SPEED_MOVE = 100.0f;
 	static constexpr float SPEED_RUN = 130.0f;
 
+	//横移動のスピード
+	static constexpr float SPEED_MOVE_X = 10.0f;
+
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
 
@@ -78,6 +81,7 @@ private:
 
 	// 移動後の座標
 	VECTOR movedPos_;
+	
 
 	// 回転
 	Quaternion playerRotY_;

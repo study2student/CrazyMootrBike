@@ -273,7 +273,6 @@ void Bike::ProcessMove(void)
 
 	// âÒì]ÇµÇΩÇ¢äpìx
 	double rotRad = 0;
-
 	
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
@@ -308,14 +307,25 @@ void Bike::ProcessMove(void)
 
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
+
 		// à⁄ìÆèàóù
 		speed_ = SPEED_MOVE;
+
+		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
+		{
+			speed_ = SPEED_MOVE_X;
+		}
 		if (ins.IsNew(KEY_INPUT_RSHIFT))
 		{
 			speed_ = SPEED_RUN;
+			if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
+			{
+				speed_ = SPEED_MOVE_X;
+			}
 		}
 		moveDir_ = dir;
 		movePow_ = VScale(dir, speed_);
+
 
 		// âÒì]èàóù
 		SetGoalRotate(rotRad);
