@@ -1,54 +1,23 @@
 #pragma once
+#pragma once
 #include <map>
 #include <DxLib.h>
 #include "../ActorBase.h"
 #include <vector>
-class AnimationController;
 class Collider;
 class Capsule;
-class Player;
-class Weapon;
 
-class Bike : public ActorBase
+class Weapon : public ActorBase
 {
 public:
-	// スピード
-	static constexpr float SPEED_MOVE = 100.0f;
-	static constexpr float SPEED_RUN = 130.0f;
-
-	//横移動のスピード
-	static constexpr float SPEED_MOVE_X = 10.0f;
-
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
 
-	// 状態
-	enum class STATE
-	{
-		NONE,
-		PLAY,
-		DEAD,
-		END
-	};
-
-	// アニメーション種別
-	enum class ANIM_TYPE
-	{
-		IDLE,
-		RUN,
-		FAST_RUN,
-		JUMP,
-		WARP_PAUSE,
-		FLY,
-		FALLING,
-		VICTORY
-	};
-
 	// コンストラクタ
-	Bike(void);
+	Weapon(void);
 
 	// デストラクタ
-	~Bike(void);
+	~Weapon(void);
 
 	void Init(void) override;
 	void Update(void) override;
@@ -58,22 +27,13 @@ public:
 	void AddCollider(Collider* collider);
 	void ClearCollider(void);
 
+	void SetTransForm(Transform transform);
+
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
+
 private:
-	int swordModelId;
-
-	Transform transformPlayer_;
-
-	// アニメーション
-	AnimationController* animationController_;
-
-	Player* player_;
-
-	Weapon* weapon_;
-
-	// 状態管理
-	STATE state_;
+	Transform bikeTransform_;
 
 	// 移動スピード
 	float speed_;
@@ -86,7 +46,6 @@ private:
 
 	// 移動後の座標
 	VECTOR movedPos_;
-	
 
 	// 回転
 	Quaternion playerRotY_;
@@ -110,35 +69,27 @@ private:
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
 
-	// 丸影
-	int imgShadow_;
-
 	// 体力
 	int hp_;
 
 	// 攻撃が当たったか
 	bool isAttack_;
 
-	//アニメーション
-	void InitAnimation(void);
-
-	// 状態遷移
-	void ChangeState(STATE state);
-	void ChangeStateNone(void);
-	void ChangeStatePlay(void);
+	//// 状態遷移
+	//void ChangeState(STATE state);
+	//void ChangeStateNone(void);
+	//void ChangeStatePlay(void);
 
 	// 更新ステップ
-	void UpdateNone(void);
-	void UpdatePlay(void);
+	//void UpdateNone(void);
+	//void UpdatePlay(void);
 
 	// 描画系
 	void DrawUI(void);
-	void DrawShadow(void);
 	void DrawDebug(void);
 
 	// 操作
 	void ProcessMove(void);//移動
-	void ProcessJump(void);//ジャンプ
 	void ProcessAttack(void);//攻撃
 
 	// 回転
@@ -152,8 +103,5 @@ private:
 
 	// 移動量の計算
 	void CalcGravityPow(void);
-
-	// 着地モーション終了
-	bool IsEndLanding(void);
 };
 

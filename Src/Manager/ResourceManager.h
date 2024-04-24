@@ -39,6 +39,8 @@ public:
 		ENEMY_LONG,
 		ENEMY_BOMB,
 		BIKE,		//バイク
+
+		W_SWORD,//バスターソード
 	};
 
 	// 明示的にインステンスを生成する

@@ -10,6 +10,7 @@
 #include "../Common/Collider.h"
 #include "../Planet.h"
 #include "Player.h"
+#include "Weapon.h"
 #include "Bike.h"
 
 Bike::Bike(void)
@@ -48,6 +49,7 @@ Bike::Bike(void)
 Bike::~Bike(void)
 {
 	delete player_;
+	delete weapon_;
 	delete capsule_;
 	delete animationController_;
 }
@@ -57,6 +59,10 @@ void Bike::Init(void)
 	// プレイヤー
 	player_ = new Player();
 	player_->Init();
+	
+	// 武器
+	weapon_ = new Weapon();
+	weapon_->Init();
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -81,6 +87,8 @@ void Bike::Init(void)
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 	transformPlayer_.Update();
+
+	weapon_->SetTransForm(transform_);
 
 	// アニメーションの設定
 	InitAnimation();
@@ -114,7 +122,7 @@ void Bike::Update(void)
 		UpdatePlay();
 		break;
 	}
-
+	weapon_->SetTransForm(transform_);
 	// モデル制御更新
 	transform_.Update();
 	transformPlayer_.Update();
@@ -127,6 +135,9 @@ void Bike::Draw(void)
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
+
+	// 武器
+	weapon_->Draw();
 
 	// 体力とかゲージとか
 	DrawUI();
@@ -203,6 +214,8 @@ void Bike::UpdateNone(void)
 void Bike::UpdatePlay(void)
 {
 	player_->Update();
+
+	weapon_->Update();
 
 	// 移動処理
 	ProcessMove();
