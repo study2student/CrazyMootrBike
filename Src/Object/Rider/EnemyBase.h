@@ -151,6 +151,7 @@ protected:
 
 	// •`‰æŒn
 	void DrawShadow(void);
+	void DrawHpBar(void);
 
 	// ‘€ì
 	void ProcessJump(void);

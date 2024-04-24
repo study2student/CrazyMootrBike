@@ -115,6 +115,9 @@ void EnemyBase::Draw(void)
 
 	// 丸影描画
 	DrawShadow();
+
+	//Hp表示
+	DrawHpBar();
 }
 
 void EnemyBase::AddCollider(Collider* collider)
@@ -294,6 +297,28 @@ void EnemyBase::DrawShadow(void)
 
 	// Ｚバッファを無効にする
 	SetUseZBuffer3D(FALSE);
+
+}
+
+void EnemyBase::DrawHpBar(void)
+{
+	Transform hpTrans_;
+
+	// 対象物の姿勢から見た、上方向に3D座標をずらす
+	VECTOR relativePos = transform_.quaRot.PosAxis({ 0,200,0 });
+	VECTOR pos = VAdd(transform_.pos, relativePos);
+	hpTrans_.pos = ConvWorldPosToScreenPos(pos);
+	VECTOR hpPos = hpTrans_.pos;
+
+	// HPの黒枠
+	DrawBoxAA(hpPos.x -50 ,hpPos.y,
+		hpPos.x +30,hpPos.y+10,
+		0x000000, false, 5.0f);
+
+	// HPゲージ
+	DrawBox(hpPos.x -50 , hpPos.y,
+		hpPos.x +30, hpPos.y + 10,
+		0xff000, true);
 
 }
 

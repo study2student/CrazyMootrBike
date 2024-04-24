@@ -57,7 +57,7 @@ void GameScene::Init(void)
 	enemy_->Init();
 
 	// ステージ
-	stage_ = new Stage(bike_, enemy_);
+	stage_ = new Stage(bike_, enemy_,this);
 	stage_->Init();
 
 	// ステージの初期設定
@@ -91,9 +91,7 @@ void GameScene::Update(void)
 
 	bike_->Update();
 	enemy_->SetBikeTrans(bike_->GetTransform());
-
 	enemy_->Update();
-
 
 
 	size_t size = enemys_.size();
@@ -188,4 +186,9 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 
+}
+
+std::vector<EnemyBase*> GameScene::GetEnemys(void)
+{
+	return enemys_;
 }

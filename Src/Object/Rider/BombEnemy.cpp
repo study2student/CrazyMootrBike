@@ -93,19 +93,19 @@ void BombEnemy::UpdatePlay(void)
 
 void BombEnemy::ProcessMove(void)
 {
-	auto& ins = InputManager::GetInstance();
+	//auto& ins = InputManager::GetInstance();
 
-	//// 移動量をゼロ
-	//movePow_ = AsoUtility::VECTOR_ZERO;
+	////// 移動量をゼロ
+	////movePow_ = AsoUtility::VECTOR_ZERO;
 
-	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
-	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
+	//// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
+	//Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
-	// 回転したい角度
-	double rotRad = 0;
+	//// 回転したい角度
+	//double rotRad = 0;
 
-	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	////VECTOR dir = AsoUtility::DIR_F;
+	//VECTOR dir;// = AsoUtility::DIR_F;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))

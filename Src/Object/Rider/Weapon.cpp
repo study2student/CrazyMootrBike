@@ -79,12 +79,17 @@ void Weapon::Update(void)
 
 	// è’ìÀîªíË
 	Collision();
+
+	//ç¿ïW
+	VECTOR localPos = { -40,110,0 };
 	transform_.pos = bikeTransform_.pos;
+	/*transform_.pos = VAdd(transform_.pos, localPos);*/
+	VECTOR local= bikeTransform_.quaRot.PosAxis(localPos);
+	transform_.pos = VAdd(transform_.pos, local);
+	
+	
 	
 	transform_.Update();
-
-	bikeTransform_.pos.x += 20.0f;
-	bikeTransform_.pos.y += 1000.0f;
 
 	// âÒì]Ç≥ÇπÇÈ
 	transform_.quaRot = playerRotY_;

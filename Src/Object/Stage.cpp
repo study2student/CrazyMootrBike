@@ -13,11 +13,14 @@
 #include "LoopStage.h"
 #include "Common/Collider.h"
 #include "Common/Transform.h"
+#include "../Scene/GameScene.h"
 #include "Stage.h"
 
-Stage::Stage(Bike* bike, EnemyBase* enemy)
+Stage::Stage(Bike* bike, EnemyBase* enemy, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance())
 {
+	gameScene_ = gameScene;
+
 	bike_ = bike;
 	enemy_ = enemy;
 	activeName_ = NAME::MAIN_PLANET;
@@ -146,7 +149,13 @@ void Stage::ChangeStage(NAME type)
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
-		enemy_->AddCollider(ls->GetTransform().collider);
+		//enemy_->AddCollider(ls->GetTransform().collider);
+
+		std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+		for (int i = 0; i < enemys_.size(); i++)
+		{
+			enemys_[i]->AddCollider(ls->GetTransform().collider);
+		}
 	}
 
 	step_ = TIME_STAGE_CHANGE;
@@ -224,7 +233,11 @@ void Stage::MakeLoopStage(void)
 		for (const auto& ls : loopStage_)
 		{
 			bike_->AddCollider(ls->GetTransform().collider);
-			enemy_->AddCollider(ls->GetTransform().collider);
+			std::vector<EnemyBase*>enemys_= gameScene_->GetEnemys();
+			for (int i = 0; i < enemys_.size(); i++)
+			{
+				enemys_[i]->AddCollider(ls->GetTransform().collider);
+			}
 		}
 
 		stage = new LoopStage(bike_, loopTrans);

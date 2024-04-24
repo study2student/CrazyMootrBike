@@ -31,6 +31,9 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
+	//敵情報
+	std::vector<EnemyBase*> GetEnemys(void);
+
 private:
 
 	// ステージ

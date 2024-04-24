@@ -9,6 +9,7 @@ class Bike;
 class Enemy;
 class EnemyBase;
 class LoopStage;
+class GameScene;
 
 class Stage
 {
@@ -37,7 +38,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(Bike* bike, EnemyBase* enemy);
+	Stage(Bike* bike, EnemyBase* enemy,GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -53,6 +54,9 @@ public:
 	Planet* GetPlanet(NAME type);
 
 private:
+
+	//ゲームシーンポインタ
+	GameScene* gameScene_;
 
 	// シングルトン参照
 	ResourceManager& resMng_;
