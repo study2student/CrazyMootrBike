@@ -17,9 +17,13 @@ Bike::Bike(void)
 {
 	player_ = nullptr;
 
+	weapon_ = nullptr;
+
 	animationController_ = nullptr;
 
 	state_ = STATE::NONE;
+
+	attackState_ = ATTACK_TYPE::NONE;
 
 	speed_ = 0.0f;
 	moveDir_ = AsoUtility::VECTOR_ZERO;
@@ -41,6 +45,8 @@ Bike::Bike(void)
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
 
 	imgShadow_ = -1;
+
+	hp_ = 0;
 
 	capsule_ = nullptr;
 
@@ -100,7 +106,7 @@ void Bike::Init(void)
 	capsule_->SetRadius(135.0f);
 
 	// 体力
-	hp_ = 100;
+	hp_ = 500;
 
 	// 丸影画像
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
@@ -122,6 +128,11 @@ void Bike::Update(void)
 		UpdatePlay();
 		break;
 	}
+
+	player_->Update();
+
+	weapon_->Update();
+
 	weapon_->SetTransForm(transform_);
 	// モデル制御更新
 	transform_.Update();
@@ -213,9 +224,6 @@ void Bike::UpdateNone(void)
 
 void Bike::UpdatePlay(void)
 {
-	player_->Update();
-
-	weapon_->Update();
 
 	// 移動処理
 	ProcessMove();
@@ -225,6 +233,9 @@ void Bike::UpdatePlay(void)
 
 	// 攻撃処理
 	ProcessAttack();
+
+	// デバッグ用
+	ProcessDebug();
 
 	// 移動方向に応じた回転
 	Rotate();
@@ -244,14 +255,22 @@ void Bike::UpdatePlay(void)
 
 void Bike::DrawUI(void)
 {
+	int sc_x = Application::SCREEN_SIZE_X;
+	int sc_y = Application::SCREEN_SIZE_Y;
+
 	// HPの黒枠
-	DrawBoxAA(Application::SCREEN_SIZE_X - 500, Application::SCREEN_SIZE_Y - 100,
-		Application::SCREEN_SIZE_X - 10, Application::SCREEN_SIZE_Y - 10,
-		0x000000, false,15.0f);
+	DrawBoxAA(sc_x - 500, sc_y - 100,
+		sc_x - 10, sc_y - 10,
+		0x000000, false,13.0f);
 
 	// HPゲージ
-	DrawBox(Application::SCREEN_SIZE_X - 500, Application::SCREEN_SIZE_Y - 100,
-		Application::SCREEN_SIZE_X - 10, Application::SCREEN_SIZE_Y - 10,
+	//DrawBox(sc_x - 500, sc_y - 100,
+	//	sc_x - 10, sc_y - 10,
+	//	0x00aeef, true);
+
+	// HPゲージ
+	DrawBox(sc_x - 500, sc_y - 100,
+		sc_x - 500 + hp_, sc_y - 10,
 		0x00aeef, true);
 
 	// HP
@@ -289,6 +308,12 @@ void Bike::ProcessMove(void)
 	
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
+
+	//if (ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(0.0);
+	//	dir = cameraRot.GetForward();
+	//}
 
 	// カメラ方向に前進したい
 	if (ins.IsNew(KEY_INPUT_W))
@@ -377,12 +402,24 @@ void Bike::ProcessAttack(void)
 
 	if (ins.IsNew(KEY_INPUT_Z))
 	{
+		attackState_ = ATTACK_TYPE::NORMAL;
 		animationController_->Play((int)ANIM_TYPE::FALLING);
 		isAttack_ = true;
 	}
 	else
 	{
+		attackState_ = ATTACK_TYPE::NONE;
 		isAttack_ = false;
+	}
+}
+
+void Bike::ProcessDebug(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsNew(KEY_INPUT_C))
+	{
+		hp_ -= 1;
 	}
 }
 

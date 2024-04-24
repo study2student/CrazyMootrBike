@@ -44,6 +44,15 @@ public:
 		VICTORY
 	};
 
+	// 攻撃種別
+	enum class ATTACK_TYPE
+	{
+		NONE,
+		NORMAL,
+		SPECIAL,
+		DISTANCE,
+	};
+
 	// コンストラクタ
 	Bike(void);
 
@@ -61,7 +70,6 @@ public:
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
 private:
-	int swordModelId;
 
 	Transform transformPlayer_;
 
@@ -74,6 +82,9 @@ private:
 
 	// 状態管理
 	STATE state_;
+
+	// 攻撃状態管理
+	ATTACK_TYPE attackState_;
 
 	// 移動スピード
 	float speed_;
@@ -140,7 +151,7 @@ private:
 	void ProcessMove(void);//移動
 	void ProcessJump(void);//ジャンプ
 	void ProcessAttack(void);//攻撃
-
+	void ProcessDebug(void);//デバッグ用
 	// 回転
 	void SetGoalRotate(double rotRad);
 	void Rotate(void);
