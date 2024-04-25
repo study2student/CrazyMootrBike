@@ -106,7 +106,7 @@ void Bike::Init(void)
 	capsule_->SetRadius(135.0f);
 
 	// ëÃóÕ
-	hp_ = 500;
+	hp_ = 100;
 
 	// ä€âeâÊëú
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
@@ -258,20 +258,24 @@ void Bike::DrawUI(void)
 	int sc_x = Application::SCREEN_SIZE_X;
 	int sc_y = Application::SCREEN_SIZE_Y;
 
-	// HPÇÃçïòg
-	DrawBoxAA(sc_x - 500, sc_y - 100,
-		sc_x - 10, sc_y - 10,
-		0x000000, false,13.0f);
-
 	// HPÉQÅ[ÉW
 	//DrawBox(sc_x - 500, sc_y - 100,
 	//	sc_x - 10, sc_y - 10,
 	//	0x00aeef, true);
 
+	// ï`âÊópHP
+	int drawHp_ = hp_;
+	drawHp_ *5;
+
 	// HPÉQÅ[ÉW
 	DrawBox(sc_x - 500, sc_y - 100,
-		sc_x - 500 + hp_, sc_y - 10,
+		sc_x - 500 + drawHp_, sc_y - 10,
 		0x00aeef, true);
+
+	// HPÇÃçïòg
+	DrawBoxAA(sc_x - 500, sc_y - 100,
+		sc_x - 10, sc_y - 10,
+		0x000000, false, 13.0f);
 
 	// HP
 	DrawFormatString(0, 20, 0x000000, "HP : %d",hp_);
@@ -309,11 +313,23 @@ void Bike::ProcessMove(void)
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
-	//if (ins.IsPadBtnTrgUp(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::TOP))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0);
-	//	dir = cameraRot.GetForward();
-	//}
+	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
+	{
+		rotRad = AsoUtility::Deg2RadD(0.0);
+		dir = cameraRot.GetForward();
+	}
+
+	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_UP))
+	{
+		rotRad = AsoUtility::Deg2RadD(0.0);
+		dir = cameraRot.GetForward();
+	}
+
+	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
+	{
+		rotRad = AsoUtility::Deg2RadD(180.0);
+		dir = cameraRot.GetBack();
+	}
 
 	// ÉJÉÅÉâï˚å¸Ç…ëOêiÇµÇΩÇ¢
 	if (ins.IsNew(KEY_INPUT_W))
@@ -340,6 +356,7 @@ void Bike::ProcessMove(void)
 	if (ins.IsNew(KEY_INPUT_A))
 	{
 		//rotRad = AsoUtility::Deg2RadD(270.0);
+		transform_.rot.z += 90.0f;
 		dir = cameraRot.GetLeft();
 	}
 

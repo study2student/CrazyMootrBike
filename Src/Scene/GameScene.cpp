@@ -114,13 +114,13 @@ void GameScene::Update(void)
 		switch (type)
 		{
 		case EnemyBase::TYPE::SHORT_DIS:
-			e = new ShortDisEnemy();
+			e = new ShortDisEnemy(bike_);
 			break;
 		case EnemyBase::TYPE::LONG_DIS:
-			e =  new LongDisEnemy();
+			e =  new LongDisEnemy(bike_);
 			break;
 		case EnemyBase::TYPE::BOMB:
-			e =  new BombEnemy();
+			e =  new BombEnemy(bike_);
 			break;
 		}
 		e->Init();

@@ -4,7 +4,7 @@ class LongDisEnemy : public EnemyBase
 {
 public:
 
-	LongDisEnemy();
+	LongDisEnemy(Bike* bike);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;

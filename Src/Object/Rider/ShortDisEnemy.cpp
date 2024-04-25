@@ -13,7 +13,8 @@
 #include "../../Object/Rider/Bike.h"
 #include "ShortDisEnemy.h"
 
-ShortDisEnemy::ShortDisEnemy() : EnemyBase(bike_)
+
+ShortDisEnemy::ShortDisEnemy(Bike* bike) : EnemyBase(bike)
 {
 }
 
@@ -23,7 +24,7 @@ void ShortDisEnemy::SetParam(void)
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_SHORT));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, -800.0f, -1500.0f };
+	transform_.pos = { 700.0f, -300.0f, -500.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });

@@ -4,7 +4,7 @@ class BombEnemy : public EnemyBase
 {
 public:
 
-	BombEnemy();
+	BombEnemy(Bike* bike);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;

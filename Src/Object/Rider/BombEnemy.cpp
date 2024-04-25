@@ -14,7 +14,7 @@
 #include "BombEnemy.h"
 
 
-BombEnemy::BombEnemy() : EnemyBase(bike_)
+BombEnemy::BombEnemy(Bike* bike) : EnemyBase(bike)
 {
 }
 
@@ -25,7 +25,7 @@ void BombEnemy::SetParam(void)
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_BOMB));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, -800.0f, -1500.0f };
+	transform_.pos = { 700.0f, -300.0f, -500.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -95,17 +95,17 @@ void BombEnemy::ProcessMove(void)
 {
 	//auto& ins = InputManager::GetInstance();
 
-	////// ˆÚ“®—Ê‚ðƒ[ƒ
-	////movePow_ = AsoUtility::VECTOR_ZERO;
+	//// ˆÚ“®—Ê‚ðƒ[ƒ
+	//movePow_ = AsoUtility::VECTOR_ZERO;
 
-	//// XŽ²‰ñ“]‚ðœ‚¢‚½Ad—Í•ûŒü‚É‚’¼‚ÈƒJƒƒ‰Šp“x(XZ•½–Ê)‚ðŽæ“¾
-	//Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
+	// XŽ²‰ñ“]‚ðœ‚¢‚½Ad—Í•ûŒü‚É‚’¼‚ÈƒJƒƒ‰Šp“x(XZ•½–Ê)‚ðŽæ“¾
+	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
-	//// ‰ñ“]‚µ‚½‚¢Šp“x
-	//double rotRad = 0;
+	// ‰ñ“]‚µ‚½‚¢Šp“x
+	double rotRad = 0;
 
-	////VECTOR dir = AsoUtility::DIR_F;
-	//VECTOR dir;// = AsoUtility::DIR_F;
+	//VECTOR dir = AsoUtility::DIR_F;
+	VECTOR dir;// = AsoUtility::DIR_F;
 
 	//// ƒJƒƒ‰•ûŒü‚É‘Oi‚µ‚½‚¢
 	//if (ins.IsNew(KEY_INPUT_W))
@@ -135,53 +135,53 @@ void BombEnemy::ProcessMove(void)
 	//	dir = cameraRot.GetLeft();
 	//}
 
-	//Transform bikeTrans_ = bike_->GetTransform();
+	Transform bikeTrans_ = bike_->GetTransform();
 
-	////
-	//VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
-	//dir = VNorm(len);
+	//
+	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	dir = VNorm(len);
 
 
-	///*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
+	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
-	//// ˆÚ“®ˆ—
-	////speed_ = SPEED_MOVE;
-	////Õ“Ë”»’è
-	//VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
-	//float  dis = AsoUtility::SqrMagnitudeF(diff);
-	//if (dis < RADIUS * RADIUS)
-	//{
-	//	//”ÍˆÍ‚É“ü‚Á‚½
-	//	speed_ = 0;
+	// ˆÚ“®ˆ—
+	//speed_ = SPEED_MOVE;
+	//Õ“Ë”»’è
+	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
+	float  dis = AsoUtility::SqrMagnitudeF(diff);
+	if (dis < RADIUS * RADIUS)
+	{
+		//”ÍˆÍ‚É“ü‚Á‚½
+		speed_ = 0;
+	}
+	else
+	{
+		speed_ = SPEED_MOVE;
+	}
+
+	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
+	{
+		speed_ = SPEED_RUN;
+	}*/
+	moveDir_ = dir;
+	movePow_ = VScale(dir, speed_);
+
+	// ‰ñ“]ˆ—
+	SetGoalRotate(rotRad);
+
+	if (!isJump_ && IsEndLanding())
+	{
+
+		animationController_->Play((int)ANIM_TYPE::FAST_RUN);
+
+	}
+
 	//}
-	//else
-	//{
-	//	speed_ = SPEED_MOVE;
-	//}
-
-	///*if (ins.IsNew(KEY_INPUT_RSHIFT))
-	//{
-	//	speed_ = SPEED_RUN;
-	//}*/
-	//moveDir_ = dir;
-	//movePow_ = VScale(dir, speed_);
-
-	//// ‰ñ“]ˆ—
-	//SetGoalRotate(rotRad);
-
-	//if (!isJump_ && IsEndLanding())
-	//{
-
-	//	animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-
-	//}
-
-	////}
-	///*else
-	//{
-	//	if (!isJump_ && IsEndLanding())
-	//	{
-	//		animationController_->Play((int)ANIM_TYPE::IDLE);
-	//	}
-	//}*/
+	/*else
+	{
+		if (!isJump_ && IsEndLanding())
+		{
+			animationController_->Play((int)ANIM_TYPE::IDLE);
+		}
+	}*/
 }

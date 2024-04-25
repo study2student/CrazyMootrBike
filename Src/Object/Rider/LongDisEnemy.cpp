@@ -13,7 +13,7 @@
 #include "../../Object/Rider/Bike.h"
 #include "LongDisEnemy.h"
 
-LongDisEnemy::LongDisEnemy() : EnemyBase(bike_)
+LongDisEnemy::LongDisEnemy(Bike* bike) : EnemyBase(bike)
 {
 }
 
@@ -24,7 +24,7 @@ void LongDisEnemy::SetParam(void)
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_LONG));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, -800.0f, -1500.0f };
+	transform_.pos = { 700.0f, -300.0f, -500.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });

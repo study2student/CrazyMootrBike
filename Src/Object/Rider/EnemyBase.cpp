@@ -118,6 +118,8 @@ void EnemyBase::Draw(void)
 
 	//Hp•\Ž¦
 	DrawHpBar();
+
+	capsule_->Draw();
 }
 
 void EnemyBase::AddCollider(Collider* collider)

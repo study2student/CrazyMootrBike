@@ -4,7 +4,7 @@ class ShortDisEnemy : public EnemyBase
 {
 public:
 
-	ShortDisEnemy();
+	ShortDisEnemy(Bike* bike);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;
