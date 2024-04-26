@@ -52,7 +52,11 @@ public:
 		WARP_PAUSE,
 		FLY,
 		FALLING,
-		VICTORY
+		VICTORY,
+		SHORT,
+		LONG,
+		BOMB
+
 	};
 
 	//“G‚ÌŽí—Þ

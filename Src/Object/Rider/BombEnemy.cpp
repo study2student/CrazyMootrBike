@@ -93,7 +93,7 @@ void BombEnemy::UpdatePlay(void)
 
 void BombEnemy::ProcessMove(void)
 {
-	//auto& ins = InputManager::GetInstance();
+	auto& ins = InputManager::GetInstance();
 
 	//// ˆÚ“®—Ê‚ðƒ[ƒ
 	//movePow_ = AsoUtility::VECTOR_ZERO;
@@ -157,6 +157,12 @@ void BombEnemy::ProcessMove(void)
 	else
 	{
 		speed_ = SPEED_MOVE;
+		if (!isJump_ && IsEndLanding())
+		{
+
+			animationController_->Play((int)ANIM_TYPE::BOMB);
+
+		}
 	}
 
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
@@ -169,12 +175,7 @@ void BombEnemy::ProcessMove(void)
 	// ‰ñ“]ˆ—
 	SetGoalRotate(rotRad);
 
-	if (!isJump_ && IsEndLanding())
-	{
-
-		animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-
-	}
+	
 
 	//}
 	/*else

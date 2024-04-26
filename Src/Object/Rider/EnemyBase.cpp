@@ -155,6 +155,9 @@ void EnemyBase::InitAnimation(void)
 	animationController_->Add((int)ANIM_TYPE::FLY, path + "Flying.mv1", 60.0f);
 	animationController_->Add((int)ANIM_TYPE::FALLING, path + "Falling.mv1", 80.0f);
 	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
+	animationController_->Add((int)ANIM_TYPE::SHORT, path + "Boxing.mv1", 30.0f);
+	animationController_->Add((int)ANIM_TYPE::LONG, path + "Sword Slash.mv1", 30.0f);
+	animationController_->Add((int)ANIM_TYPE::BOMB, path + "Throw In.mv1", 30.0f);
 
 	animationController_->Play((int)ANIM_TYPE::IDLE);
 }
@@ -252,7 +255,7 @@ void EnemyBase::DrawShadow(void)
 
 		// 球の直下に存在するポリゴンの数だけ繰り返し
 		HitRes = HitResDim.Dim;
-		for (i = 0; i < HitResDim.HitNum; i++, HitRes++)
+		for (i = 0; i < HitResDim.HitNum; i++, HitRes++) 
 		{
 			// ポリゴンの座標は地面ポリゴンの座標
 			Vertex[0].pos = HitRes->Position[0];
@@ -501,53 +504,53 @@ void EnemyBase::Collision(void)
 
 void EnemyBase::CollisionGravity(void)
 {
-	// ジャンプ量を加算
-	movedPos_ = VAdd(movedPos_, jumpPow_);
+	//// ジャンプ量を加算
+	//movedPos_ = VAdd(movedPos_, jumpPow_);
 
-	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	//// 重力方向
+	//VECTOR dirGravity = AsoUtility::DIR_D;
 
-	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	//// 重力方向の反対
+	//VECTOR dirUpGravity = AsoUtility::DIR_U;
 
-	// 重力の強さ
-	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
+	//// 重力の強さ
+	//float gravityPow = Planet::DEFAULT_GRAVITY_POW;
 
-	float checkPow = 10.0f;
-	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
-	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	for (const auto c : colliders_)
-	{
+	//float checkPow = 10.0f;
+	//gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
+	//gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
+	//gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
+	//for (const auto c : colliders_)
+	//{
 
-		// 地面との衝突
-		auto hit = MV1CollCheck_Line(
-			c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
+	//	// 地面との衝突
+	//	auto hit = MV1CollCheck_Line(
+	//		c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
 
-		// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
-		//if (hit.HitFlag > 0)
-		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
-		{
+	//	// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
+	//	//if (hit.HitFlag > 0)
+	//	if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
+	//	{
 
-			// 衝突地点から、少し上に移動
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
+	//		// 衝突地点から、少し上に移動
+	//		movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
 
-			// ジャンプリセット
-			jumpPow_ = AsoUtility::VECTOR_ZERO;
-			stepJump_ = 0.0f;
+	//		// ジャンプリセット
+	//		jumpPow_ = AsoUtility::VECTOR_ZERO;
+	//		stepJump_ = 0.0f;
 
-			if (isJump_)
-			{
-				// 着地モーション
-				animationController_->Play(
-					(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
-			}
+	//		if (isJump_)
+	//		{
+	//			// 着地モーション
+	//			animationController_->Play(
+	//				(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
+	//		}
 
-			isJump_ = false;
+	//		isJump_ = false;
 
-		}
+	//	}
 
-	}
+	//}
 }
 
 void EnemyBase::CollisionCapsule(void)
