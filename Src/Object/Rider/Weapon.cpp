@@ -45,23 +45,23 @@ void Weapon::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::W_SWORD));
-	float scale = 1.0f;
+	float scale = 0.5f;
 	transform_.scl = { scale, scale, scale };
 	//transform_.pos = { 0.0f, 0.0f, 0.0f };
 	transform_.pos = {bikeTransform_.pos };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 
+		AsoUtility::Deg2RadF(100.0f), 
 		AsoUtility::Deg2RadF(180.0f), 
-		AsoUtility::Deg2RadF(0.0f), 
-		AsoUtility::Deg2RadF(270.0f) });
+		AsoUtility::Deg2RadF(0.0f) });
 
 	transform_.Update();
 
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
+	capsule_->SetLocalPosTop({ 0.0f, 20.0f, -10.0f });
+	capsule_->SetLocalPosDown({ 0.0f, -25.0f, -160.0f });
 	capsule_->SetRadius(20.0f);
 
 	
@@ -81,7 +81,7 @@ void Weapon::Update(void)
 	Collision();
 
 	//座標
-	VECTOR localPos = { -40,110,0 };
+	VECTOR localPos = { -50,50,-30 };
 	transform_.pos = bikeTransform_.pos;
 	/*transform_.pos = VAdd(transform_.pos, localPos);*/
 	VECTOR local= bikeTransform_.quaRot.PosAxis(localPos);
