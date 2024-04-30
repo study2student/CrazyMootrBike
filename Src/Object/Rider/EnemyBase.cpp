@@ -24,7 +24,7 @@ EnemyBase::EnemyBase(Bike* bike)
 	movePow_ = AsoUtility::VECTOR_ZERO;
 	movedPos_ = AsoUtility::VECTOR_ZERO;
 
-	playerRotY_ = Quaternion();
+	enemyRotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
@@ -37,6 +37,8 @@ EnemyBase::EnemyBase(Bike* bike)
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
 
 	isBikeCol_ = false;
+
+	isAtk_ = false;
 
 	imgShadow_ = -1;
 
@@ -199,8 +201,8 @@ void EnemyBase::UpdatePlay(void)
 	// ƒWƒƒƒ“ƒvˆ—
 	ProcessJump();
 
-	//// ˆÚ“®•ûŒü‚É‰‚¶‚½‰ñ“]
-	//Rotate();
+	// ˆÚ“®•ûŒü‚É‰‚¶‚½‰ñ“]
+	Rotate();
 
 	// d—Í‚É‚æ‚éˆÚ“®—Ê
 	CalcGravityPow();
@@ -208,8 +210,10 @@ void EnemyBase::UpdatePlay(void)
 	// Õ“Ë”»’è
 	Collision();
 
+	isAtk_ = false;
+
 	// ‰ñ“]‚³‚¹‚é
-	transform_.quaRot = playerRotY_;
+	transform_.quaRot = enemyRotY_;
 }
 
 void EnemyBase::DrawShadow(void)
@@ -389,10 +393,12 @@ void EnemyBase::ProcessMove(void)
 	{
 		//”ÍˆÍ‚É“ü‚Á‚½
 		speed_ = 0;
+		isBikeCol_ = true;
 	}
 	else
 	{
 		speed_ = SPEED_MOVE;
+		isBikeCol_ = false;
 	}
 
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
@@ -402,8 +408,10 @@ void EnemyBase::ProcessMove(void)
 	moveDir_ = dir;
 	movePow_ = VScale(dir, speed_);
 
-	// ‰ñ“]ˆ—
-	SetGoalRotate(rotRad);
+	// ‰ñ“]ˆ—(ƒvƒŒƒCƒ„[‚Ì•ûŒü‚ğŒü‚©‚¹‚é)
+	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
+	double subDeg = atan2(subVec.x, subVec.z);
+	SetGoalRotate(subDeg);
 
 	if (!isJump_ && IsEndLanding())
 	{
@@ -463,8 +471,8 @@ void EnemyBase::ProcessJump(void)
 
 void EnemyBase::SetGoalRotate(double rotRad)
 {
-	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	//VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
+	Quaternion axis = Quaternion::AngleAxis(rotRad, AsoUtility::AXIS_Y);
 
 	// Œ»İİ’è‚³‚ê‚Ä‚¢‚é‰ñ“]‚Æ‚ÌŠp“x·‚ğæ‚é
 	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -483,8 +491,8 @@ void EnemyBase::Rotate(void)
 	stepRotTime_ -= scnMng_.GetDeltaTime();
 
 	// ‰ñ“]‚Ì‹…–Ê•âŠÔ
-	playerRotY_ = Quaternion::Slerp(
-		playerRotY_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
+	enemyRotY_ = Quaternion::Slerp(
+		enemyRotY_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
 }
 
 void EnemyBase::Collision(void)
@@ -643,5 +651,10 @@ bool EnemyBase::IsEndLanding(void)
 		return ret;
 	}
 
+	return false;
+}
+
+bool EnemyBase::IsAtkStart(void)
+{
 	return false;
 }

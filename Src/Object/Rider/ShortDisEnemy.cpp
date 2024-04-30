@@ -77,8 +77,8 @@ void ShortDisEnemy::UpdatePlay(void)
 	// ジャンプ処理
 	ProcessJump();
 
-	//// 移動方向に応じた回転
-	//Rotate();
+	// 移動方向に応じた回転
+	Rotate();
 
 	// 重力による移動量
 	CalcGravityPow();
@@ -87,7 +87,7 @@ void ShortDisEnemy::UpdatePlay(void)
 	Collision();
 
 	// 回転させる
-	transform_.quaRot = playerRotY_;
+	transform_.quaRot = enemyRotY_;
 }
 
 void ShortDisEnemy::ProcessMove(void)
@@ -153,7 +153,8 @@ void ShortDisEnemy::ProcessMove(void)
 		//範囲に入った
 		speed_ = 0;
 		//アニメーション
-		animationController_->Play((int)ANIM_TYPE::SHORT);
+		animationController_->Play((int)ANIM_TYPE::SHORT
+		);
 	}
 	else
 	{
@@ -174,8 +175,10 @@ void ShortDisEnemy::ProcessMove(void)
 	moveDir_ = dir;
 	movePow_ = VScale(dir, speed_);
 
-	// 回転処理
-	SetGoalRotate(rotRad);
+	// 回転処理(プレイヤーの方向を向かせる)
+	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
+	double subDeg = atan2(subVec.x, subVec.z);
+	SetGoalRotate(subDeg);
 
 
 	//}

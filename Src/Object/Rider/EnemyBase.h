@@ -116,7 +116,7 @@ protected:
 	VECTOR movedPos_;
 
 	// 回転
-	Quaternion playerRotY_;
+	Quaternion enemyRotY_;
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
 
@@ -142,6 +142,9 @@ protected:
 
 	//プレイヤー(バイク)とあたっているかどうか
 	bool isBikeCol_;
+
+	//攻撃しているか
+	bool isAtk_;
 
 	void InitAnimation(void);
 
@@ -174,6 +177,10 @@ protected:
 
 	// 着地モーション終了
 	bool IsEndLanding(void);
+
+	//攻撃モーション入ってからどのくらいで攻撃判定になるか管理
+	bool IsAtkStart(void);
+
 
 };
 
