@@ -1,44 +1,34 @@
 #pragma once
 #include <map>
-//#include <vector>
 #include <DxLib.h>
 #include "../ActorBase.h"
 #include <vector>
 class AnimationController;
 class Collider;
 class Capsule;
-class Bike;
+class Weapon;
+class EnemyBase;
 
-class EnemyBase : public ActorBase
+class EnemyBike : public ActorBase
 {
-
 public:
 
 	// スピード
-	static constexpr float SPEED_MOVE = 5.0f;
-	static constexpr float SPEED_RUN = 10.0f;
+	static constexpr float SPEED_MOVE = 100.0f;
+	static constexpr float SPEED_RUN = 130.0f;
 
-	//半径
-	static constexpr float RADIUS = 200.0f;
+	//横移動のスピード
+	static constexpr float SPEED_MOVE_X = 10.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
-
-	// ジャンプ力
-	static constexpr float POW_JUMP = 35.0f;
-
-	// ジャンプ受付時間
-	static constexpr float TIME_JUMP_IN = 0.5f;
 
 	// 状態
 	enum class STATE
 	{
 		NONE,
 		PLAY,
-		WARP_RESERVE,
-		WARP_MOVE,
 		DEAD,
-		VICTORY,
 		END
 	};
 
@@ -52,35 +42,27 @@ public:
 		WARP_PAUSE,
 		FLY,
 		FALLING,
-		VICTORY,
-		SHORT,
-		LONG,
-		BOMB
-
+		VICTORY
 	};
 
-	//敵の種類
-	enum class TYPE
+	// 攻撃種別
+	enum class ATTACK_TYPE
 	{
-		SHORT_DIS,
-		LONG_DIS,
-		BOMB,
-		MAX
+		NONE,
+		NORMAL,
+		SPECIAL,
+		DISTANCE,
 	};
 
 	// コンストラクタ
-	EnemyBase(Bike* bike);
+	EnemyBike(EnemyBase* enemy);
 
 	// デストラクタ
-	virtual ~EnemyBase(void);
+	~EnemyBike(void);
 
-	virtual void Init(void) override;
-	virtual void SetParam(void);
-	virtual void Update(void) override;
-	virtual void Draw(void) override;
-
-	virtual void UpdatePlay(void);
-	virtual void ProcessMove(void);
+	void Init(void) override;
+	void Update(void) override;
+	void Draw(void) override;
 
 	// 衝突判定に用いられるコライダ制御
 	void AddCollider(Collider* collider);
@@ -88,20 +70,22 @@ public:
 
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
+private:
 
-	//プレイヤー(バイク)の情報設定
-	void SetBikeTrans(Transform bikeTrans);
-
-protected:
+	Transform transformPlayer_;
 
 	// アニメーション
 	AnimationController* animationController_;
 
-	//バイク情報
-	Bike* bike_;
+	Weapon* weapon_;
+
+	EnemyBase* enemy_;
 
 	// 状態管理
 	STATE state_;
+
+	// 攻撃状態管理
+	ATTACK_TYPE attackState_;
 
 	// 移動スピード
 	float speed_;
@@ -115,8 +99,9 @@ protected:
 	// 移動後の座標
 	VECTOR movedPos_;
 
+
 	// 回転
-	Quaternion enemyRotY_;
+	Quaternion playerRotY_;
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
 
@@ -140,14 +125,13 @@ protected:
 	// 丸影
 	int imgShadow_;
 
-	//プレイヤー(バイク)とあたっているかどうか
-	bool isBikeCol_;
+	// 体力
+	int hp_;
 
-	//攻撃しているか
-	bool isAtk_;
-	//攻撃状態までの時間
-	float toAtkStep_;
+	// 攻撃が当たったか
+	bool isAttack_;
 
+	//アニメーション
 	void InitAnimation(void);
 
 	// 状態遷移
@@ -157,14 +141,18 @@ protected:
 
 	// 更新ステップ
 	void UpdateNone(void);
+	void UpdatePlay(void);
 
 	// 描画系
+	void DrawUI(void);
 	void DrawShadow(void);
-	void DrawHpBar(void);
+	void DrawDebug(void);
 
 	// 操作
-	void ProcessJump(void);
-
+	void ProcessMove(void);//移動
+	void ProcessJump(void);//ジャンプ
+	void ProcessAttack(void);//攻撃
+	void ProcessDebug(void);//デバッグ用
 	// 回転
 	void SetGoalRotate(double rotRad);
 	void Rotate(void);
@@ -179,14 +167,7 @@ protected:
 
 	// 着地モーション終了
 	bool IsEndLanding(void);
-
-	//攻撃モーション入ってからどのくらいで攻撃判定になるか管理
-	bool IsAtkStart(void);
-
-
 };
-
-
 
 
 

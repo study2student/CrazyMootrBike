@@ -12,6 +12,7 @@ class ShortDisEnemy;
 class LongDisEnemy;
 class BombEnemy;
 class Enemy;
+class EnemyBike;
 
 class GameScene : public SceneBase
 {
@@ -19,7 +20,7 @@ class GameScene : public SceneBase
 public:
 
 	//エンカウント値
-	static constexpr int ENCOUNT = 150;
+	static constexpr int ENCOUNT = 350;
 
 	// コンストラクタ
 	GameScene(void);
@@ -33,7 +34,8 @@ public:
 
 	//敵情報
 	std::vector<EnemyBase*> GetEnemys(void);
-
+	std::vector<EnemyBike*> GetEnemyBikes(void);
+ 
 private:
 
 	// ステージ
@@ -51,14 +53,17 @@ private:
 	// プレイヤー
 	Bike* bike_;
 
+
 	////	敵
 	//Enemy* enemy_;
 
 	//敵
 	EnemyBase* enemy_;
+	EnemyBike* enemyBike_;
 
 	//複数の敵
 	std::vector<EnemyBase*>enemys_;	
+	std::vector<EnemyBike*>enemyBikes_;
 
 	//敵の発生頻度
 	int enCounter;

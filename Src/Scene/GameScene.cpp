@@ -9,6 +9,7 @@
 #include "../Object/Stage.h"
 #include "../Object/Rider/Player.h"
 #include "../Object/Rider/Bike.h"
+#include "../Object/Rider/EnemyBike.h"
 #include "../Object/Rider/Rider.h"
 #include "../Object/Rider/Enemy.h"
 #include "../Object/Rider/EnemyBase.h"
@@ -26,6 +27,7 @@ GameScene::GameScene(void)
 	enemy_ = nullptr;
 	skyDome_ = nullptr;
 	stage_ = nullptr;
+	enemyBike_ = nullptr;
 
 }
 
@@ -55,6 +57,9 @@ void GameScene::Init(void)
 	// 敵
 	enemy_ = new EnemyBase(bike_);
 	enemy_->Init();
+
+	/*enemyBike_ = new EnemyBike(enemy_);
+	enemyBike_->Init();*/
 
 	// ステージ
 	stage_ = new Stage(bike_, enemy_,this);
@@ -92,12 +97,19 @@ void GameScene::Update(void)
 	bike_->Update();
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	enemy_->Update();
+	//enemyBike_->Update();
 
-
-	size_t size = enemys_.size();
-	for (int i = 0; i < size; i++)
+	size_t sizeE = enemys_.size();
+	for (int i = 0; i < sizeE; i++)
 	{
 		enemys_[i]->Update();
+
+	}
+
+	size_t sizeEb = enemyBikes_.size();
+	for (int i = 0; i < sizeEb; i++)
+	{
+		enemyBikes_[i]->Update();
 	}
 
 	enCounter++;
@@ -124,6 +136,11 @@ void GameScene::Update(void)
 			break;
 		}
 		e->Init();
+
+		EnemyBike* eB = nullptr;
+		eB = new EnemyBike(e);
+		eB->Init();
+
 
 		////画面端のランダムな場所に生成
 		//int randDir = GetRand(static_cast<int>(AsoUtility::DIR::MAX) - 1);
@@ -158,6 +175,7 @@ void GameScene::Update(void)
 
 		//可変長配列に要素を追加
 		enemys_.push_back(e);
+		enemyBikes_.push_back(eB);
 	}
 
 }
@@ -173,10 +191,18 @@ void GameScene::Draw(void)
 
 	enemy_->Draw();
 
-	size_t size = enemys_.size();
-	for (int i = 0; i < size; i++)
+	//enemyBike_->Draw();
+
+	size_t sizeE = enemys_.size();
+	for (int i = 0; i < sizeE; i++)
 	{
 		enemys_[i]->Draw();
+	}
+
+	size_t sizeEb = enemyBikes_.size();
+	for (int i = 0; i < sizeEb; i++)
+	{
+		enemyBikes_[i]->Draw();
 	}
 
 
@@ -191,4 +217,9 @@ void GameScene::Draw(void)
 std::vector<EnemyBase*> GameScene::GetEnemys(void)
 {
 	return enemys_;
+}
+
+std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
+{
+	return enemyBikes_;
 }

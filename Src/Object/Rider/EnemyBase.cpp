@@ -39,6 +39,7 @@ EnemyBase::EnemyBase(Bike* bike)
 	isBikeCol_ = false;
 
 	isAtk_ = false;
+	toAtkStep_ = 0.0f;
 
 	imgShadow_ = -1;
 
@@ -656,5 +657,7 @@ bool EnemyBase::IsEndLanding(void)
 
 bool EnemyBase::IsAtkStart(void)
 {
+
+
 	return false;
 }
