@@ -183,7 +183,7 @@ void Stage::MakeMainStage(void)
 	float scale = 1.0f;
 	planetTrans.scl = { scale,scale,scale };
 	planetTrans.quaRot = Quaternion();
-	planetTrans.pos = { -5000.0f, -5600.0f, 0.0f };
+	planetTrans.pos = { STAGE_START_POS };
 
 	// 当たり判定(コライダ)作成
 	planetTrans.MakeCollider(Collider::TYPE::STAGE);
@@ -223,7 +223,7 @@ void Stage::MakeLoopStage(void)
 		float scale = 1.0f;
 		loopTrans.scl = { scale,scale,scale };
 		loopTrans.quaRot = Quaternion();
-		loopTrans.pos = { -5000.0f, -5600.0f, 6500.0f * (size + 1) };
+		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 6500.0f * (size + 1) };
 
 		// 当たり判定(コライダ)作成
 		loopTrans.MakeCollider(Collider::TYPE::STAGE);

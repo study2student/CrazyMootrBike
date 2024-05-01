@@ -156,7 +156,8 @@ private:
 	void ProcessAttack(void);//攻撃
 	void ProcessDebug(void);//デバッグ用
 	// 回転
-	void SetGoalRotate(double rotRad);
+	void SetGoalRotate(float rotRad);
+	void SetGoalRotateZ(float rotRad);
 	void Rotate(void);
 
 	// 衝突判定

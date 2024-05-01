@@ -308,40 +308,41 @@ void Bike::ProcessMove(void)
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
 	// ‰ñ“]‚µ‚½‚¢Šp“x
-	double rotRad = 0;
+	float rotRad = 0.0f;
+	float rotRadZ = 0.0f;
 	
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
 	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
-		rotRad = AsoUtility::Deg2RadD(0.0);
+		rotRad = AsoUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_UP))
 	{
-		rotRad = AsoUtility::Deg2RadD(0.0);
+		rotRad = AsoUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0);
+		rotRad = AsoUtility::Deg2RadD(180.0f);
 		dir = cameraRot.GetBack();
 	}
 
 	// ƒJƒƒ‰•ûŒü‚É‘Oi‚µ‚½‚¢
 	if (ins.IsNew(KEY_INPUT_W))
 	{
-		rotRad = AsoUtility::Deg2RadD(0.0);
+		rotRad = AsoUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
 	}
 
 	// ƒJƒƒ‰•ûŒü‚©‚çŒã‘Þ‚µ‚½‚¢
 	if (ins.IsNew(KEY_INPUT_S))
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0);
+		rotRad = AsoUtility::Deg2RadD(180.0f);
 		dir = cameraRot.GetBack();
 	}
 
@@ -349,6 +350,7 @@ void Bike::ProcessMove(void)
 	if (ins.IsNew(KEY_INPUT_D))
 	{
 		//rotRad = AsoUtility::Deg2RadD(90.0);
+		rotRadZ = AsoUtility::Deg2RadD(90.0f);
 		dir = cameraRot.GetRight();
 	}
 
@@ -356,6 +358,7 @@ void Bike::ProcessMove(void)
 	if (ins.IsNew(KEY_INPUT_A))
 	{
 		//rotRad = AsoUtility::Deg2RadD(270.0);
+		rotRadZ = AsoUtility::Deg2RadD(270.0f);
 		transform_.rot.z += 90.0f;
 		dir = cameraRot.GetLeft();
 	}
@@ -384,6 +387,7 @@ void Bike::ProcessMove(void)
 
 		// ‰ñ“]ˆ—
 		SetGoalRotate(rotRad);
+		SetGoalRotateZ(rotRadZ);
 
 		if (!isJump_ && IsEndLanding())
 		{
@@ -440,13 +444,30 @@ void Bike::ProcessDebug(void)
 	}
 }
 
-void Bike::SetGoalRotate(double rotRad)
+void Bike::SetGoalRotate(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
 
 	// Œ»ÝÝ’è‚³‚ê‚Ä‚¢‚é‰ñ“]‚Æ‚ÌŠp“x·‚ðŽæ‚é
-	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
+	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
+
+	// ‚µ‚«‚¢’l
+	if (angleDiff > 0.1)
+	{
+		stepRotTime_ = TIME_ROT;
+	}
+
+	goalQuaRot_ = axis;
+}
+
+void Bike::SetGoalRotateZ(float rotRad)
+{
+	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
+	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
+
+	// Œ»ÝÝ’è‚³‚ê‚Ä‚¢‚é‰ñ“]‚Æ‚ÌŠp“x·‚ðŽæ‚é
+	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// ‚µ‚«‚¢’l
 	if (angleDiff > 0.1)
