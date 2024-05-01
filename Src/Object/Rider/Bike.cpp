@@ -265,7 +265,7 @@ void Bike::DrawUI(void)
 
 	// ï`âÊópHP
 	int drawHp_ = hp_;
-	drawHp_ *5;
+	drawHp_ *= MAGNIFICATION;
 
 	// HPÉQÅ[ÉW
 	DrawBox(sc_x - 500, sc_y - 100,

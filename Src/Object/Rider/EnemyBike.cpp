@@ -109,6 +109,8 @@ void EnemyBike::Update(void)
 		break;
 	case EnemyBike::STATE::PLAY:
 		UpdatePlay();
+		//動作
+		ProcessMove();
 		break;
 	}
 
@@ -118,6 +120,8 @@ void EnemyBike::Update(void)
 	transform_.Update();
 	// アニメーション再生
 	animationController_->Update();
+
+	
 }
 
 void EnemyBike::Draw(void)
@@ -198,8 +202,8 @@ void EnemyBike::UpdateNone(void)
 
 void EnemyBike::UpdatePlay(void)
 {
-	// 移動処理
-	ProcessMove();
+	//// 移動処理
+	//ProcessMove();
 
 	// ジャンプ処理
 	ProcessJump();
@@ -243,6 +247,8 @@ void EnemyBike::DrawDebug(void)
 	{
 		DrawString(0, 0, "Attack", 0x000000);
 	}
+
+	DrawFormatString(10, 10, 0xffffff, "bikePos = %f,%f,%f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }
 
 void EnemyBike::ProcessMove(void)
@@ -250,6 +256,9 @@ void EnemyBike::ProcessMove(void)
 	transform_.pos = enemy_->GetTransform().pos;
 	transform_.quaRot = enemy_->GetTransform().quaRot;
 	transform_.Update();
+
+
+	
 }
 
 void EnemyBike::ProcessJump(void)
@@ -281,6 +290,7 @@ void EnemyBike::ProcessDebug(void)
 	{
 		hp_ -= 1;
 	}
+
 }
 
 void EnemyBike::SetGoalRotate(double rotRad)

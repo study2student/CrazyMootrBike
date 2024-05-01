@@ -145,7 +145,7 @@ void ShortDisEnemy::ProcessMove(void)
 
 	// 移動処理
 	//speed_ = SPEED_MOVE;
-	//衝突判定
+	//衝突判定(敵とプレイヤー)
 	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
 	if (dis < RADIUS * RADIUS)
@@ -153,8 +153,7 @@ void ShortDisEnemy::ProcessMove(void)
 		//範囲に入った
 		speed_ = 0;
 		//アニメーション
-		animationController_->Play((int)ANIM_TYPE::SHORT
-		);
+		animationController_->Play((int)ANIM_TYPE::SHORT);
 	}
 	else
 	{

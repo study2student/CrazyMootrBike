@@ -92,6 +92,9 @@ public:
 	//プレイヤー(バイク)の情報設定
 	void SetBikeTrans(Transform bikeTrans);
 
+	//スピード設定
+	void SetSpeed(float speed);
+
 protected:
 
 	// アニメーション

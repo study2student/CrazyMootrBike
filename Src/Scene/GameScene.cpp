@@ -56,8 +56,7 @@ void GameScene::Init(void)
 
 	// “G
 	enemy_ = new EnemyBase(bike_);
-	enemy_->Init();
-
+	//enemy_->Init();
 	/*enemyBike_ = new EnemyBike(enemy_);
 	enemyBike_->Init();*/
 
@@ -96,7 +95,7 @@ void GameScene::Update(void)
 
 	bike_->Update();
 	enemy_->SetBikeTrans(bike_->GetTransform());
-	enemy_->Update();
+	//enemy_->Update();
 	//enemyBike_->Update();
 
 	size_t sizeE = enemys_.size();
@@ -106,11 +105,31 @@ void GameScene::Update(void)
 
 	}
 
+
+	//“G“¯Žm‚Ì“–‚½‚è”»’è
 	size_t sizeEb = enemyBikes_.size();
-	for (int i = 0; i < sizeEb; i++)
+	for (int t = 0; t < sizeEb; t++)
 	{
-		enemyBikes_[i]->Update();
+		enemyBikes_[t]->Update();
+
+		////2‘ÌˆÈã“G‚ª¶¬‚³‚ê‚½‚ç
+		//if (sizeE >= 1)
+		//{
+		//	//Õ“Ë”»’è(“G‚Æ“G)
+		//	VECTOR diff = VSub(enemyBikes_[t]->GetCapsule()->GetCenter(), enemyBikes_[t-1]->GetCapsule()->GetCenter());
+		//	float  dis = AsoUtility::SqrMagnitudeF(diff);
+		//	if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
+		//	{
+		//		//”ÍˆÍ‚É“ü‚Á‚½
+		//		enemys_[t]->SetSpeed(0.0f);
+		//	}
+		//	else
+		//	{
+		//		enemys_[t]->SetSpeed(EnemyBase::SPEED_MOVE);
+		//	}
+		//}
 	}
+
 
 	enCounter++;
 	if (enCounter > ENCOUNT)
@@ -189,8 +208,7 @@ void GameScene::Draw(void)
 
 	bike_->Draw();
 
-	enemy_->Draw();
-
+	//enemy_->Draw();
 	//enemyBike_->Draw();
 
 	size_t sizeE = enemys_.size();
