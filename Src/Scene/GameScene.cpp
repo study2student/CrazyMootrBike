@@ -103,32 +103,37 @@ void GameScene::Update(void)
 	{
 		enemys_[i]->Update();
 
+		//“G“¯Žm‚Ì“–‚½‚è”»’è
+		size_t sizeEb = enemyBikes_.size();
+		for (int t = 0; t < sizeEb; t++)
+		{
+			enemyBikes_[t]->Update();
+
+			//2‘ÌˆÈã“G‚ª¶¬‚³‚ê‚½‚ç
+			if (sizeE >= 2 && sizeEb >= 2 && t>=1)
+			{
+				//Õ“Ë”»’è(“G‚Æ“G)
+				VECTOR diff = VSub(enemyBikes_[t]->GetCapsule()->GetCenter(), enemyBikes_[t-1]->GetCapsule()->GetCenter());
+				float  dis = AsoUtility::SqrMagnitudeF(diff);
+				if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
+				{
+					//”ÍˆÍ‚É“ü‚Á‚½
+					enemys_[i]->SetSpeed(0.0f);
+					enemys_[i]->SetIsEnemyCol(true);
+				}
+				else
+				{
+					enemys_[i]->SetSpeed(EnemyBase::SPEED_MOVE);
+					enemys_[i]->SetIsEnemyCol(false);
+				}
+
+			}
+		}
+
 	}
 
 
-	//“G“¯Žm‚Ì“–‚½‚è”»’è
-	size_t sizeEb = enemyBikes_.size();
-	for (int t = 0; t < sizeEb; t++)
-	{
-		enemyBikes_[t]->Update();
-
-		////2‘ÌˆÈã“G‚ª¶¬‚³‚ê‚½‚ç
-		//if (sizeE >= 1)
-		//{
-		//	//Õ“Ë”»’è(“G‚Æ“G)
-		//	VECTOR diff = VSub(enemyBikes_[t]->GetCapsule()->GetCenter(), enemyBikes_[t-1]->GetCapsule()->GetCenter());
-		//	float  dis = AsoUtility::SqrMagnitudeF(diff);
-		//	if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
-		//	{
-		//		//”ÍˆÍ‚É“ü‚Á‚½
-		//		enemys_[t]->SetSpeed(0.0f);
-		//	}
-		//	else
-		//	{
-		//		enemys_[t]->SetSpeed(EnemyBase::SPEED_MOVE);
-		//	}
-		//}
-	}
+	
 
 
 	enCounter++;

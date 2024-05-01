@@ -95,6 +95,9 @@ public:
 	//スピード設定
 	void SetSpeed(float speed);
 
+	//敵同士が当たったか設定
+	void SetIsEnemyCol(bool isEnemyCol);
+
 protected:
 
 	// アニメーション
@@ -145,6 +148,8 @@ protected:
 
 	//プレイヤー(バイク)とあたっているかどうか
 	bool isBikeCol_;
+
+	bool isEnemyCol_;
 
 	//攻撃しているか
 	bool isAtk_;

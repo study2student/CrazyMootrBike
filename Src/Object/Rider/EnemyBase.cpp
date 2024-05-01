@@ -38,6 +38,8 @@ EnemyBase::EnemyBase(Bike* bike)
 
 	isBikeCol_ = false;
 
+	isEnemyCol_ = false;
+
 	isAtk_ = false;
 	toAtkStep_ = 0.0f;
 
@@ -149,6 +151,11 @@ void EnemyBase::SetBikeTrans(Transform bikeTrans)
 void EnemyBase::SetSpeed(float speed)
 {
 	speed_ = speed;
+}
+
+void EnemyBase::SetIsEnemyCol(bool isEnemyCol)
+{
+	isEnemyCol_ = isEnemyCol;
 }
 
 void EnemyBase::InitAnimation(void)
@@ -403,8 +410,11 @@ void EnemyBase::ProcessMove(void)
 	}
 	else
 	{
-		speed_ = SPEED_MOVE;
-		isBikeCol_ = false;
+		if (!isEnemyCol_)
+		{
+			speed_ = SPEED_MOVE;
+			isBikeCol_ = false;
+		}
 	}
 
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
