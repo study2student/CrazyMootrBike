@@ -106,7 +106,7 @@ void Bike::Init(void)
 	capsule_->SetRadius(135.0f);
 
 	// 体力
-	hp_ = 100;
+	hp_ = MAX_HP;
 
 	// 丸影画像
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
@@ -255,30 +255,25 @@ void Bike::UpdatePlay(void)
 
 void Bike::DrawUI(void)
 {
-	int sc_x = Application::SCREEN_SIZE_X;
-	int sc_y = Application::SCREEN_SIZE_Y;
+	using ap = Application;
+	int sc_x = ap::SCREEN_SIZE_X - 500;
+	int sc_y = ap::SCREEN_SIZE_Y - 100;
 
-	// HPゲージ
-	//DrawBox(sc_x - 500, sc_y - 100,
-	//	sc_x - 10, sc_y - 10,
-	//	0x00aeef, true);
-
-	// 描画用HP
-	int drawHp_ = hp_;
-	drawHp_ *= MAGNIFICATION;
-
-	// HPゲージ
-	DrawBox(sc_x - 500, sc_y - 100,
-		sc_x - 500 + drawHp_, sc_y - 10,
-		0x00aeef, true);
+	// HPバーの幅
+	int HP_BAR_WIDTH = ap::SCREEN_SIZE_X - 10 - sc_x;
+	// HPバーの高さ
+	int HP_BAR_HEIGHT = ap::SCREEN_SIZE_Y - 10;
+	// HPバーを描画
+	DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
+	DrawBox(sc_x, sc_y, sc_x + (hp_ * HP_BAR_WIDTH) / MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
 
 	// HPの黒枠
-	DrawBoxAA(sc_x - 500, sc_y - 100,
-		sc_x - 10, sc_y - 10,
+	DrawBoxAA(sc_x, sc_y,
+		ap::SCREEN_SIZE_X - 10, HP_BAR_HEIGHT,
 		0x000000, false, 13.0f);
 
 	// HP
-	DrawFormatString(0, 20, 0x000000, "HP : %d",hp_);
+	DrawFormatString(0, 20, 0x00ff00, "HP : %d", hp_);
 }
 
 void Bike::DrawShadow(void)
@@ -351,7 +346,7 @@ void Bike::ProcessMove(void)
 	{
 		//rotRad = AsoUtility::Deg2RadD(90.0);
 		rotRadZ = AsoUtility::Deg2RadD(90.0f);
-		dir = cameraRot.GetRight();
+		dir = cameraRot.GetForward();
 	}
 
 	// カメラ方向から左側へ移動したい
@@ -360,7 +355,7 @@ void Bike::ProcessMove(void)
 		//rotRad = AsoUtility::Deg2RadD(270.0);
 		rotRadZ = AsoUtility::Deg2RadD(270.0f);
 		transform_.rot.z += 90.0f;
-		dir = cameraRot.GetLeft();
+		dir = cameraRot.GetForward();
 	}
 
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {

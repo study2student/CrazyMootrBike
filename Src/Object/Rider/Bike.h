@@ -22,8 +22,8 @@ public:
 	// ‰ñ“]Š®—¹‚Ü‚Å‚ÌŠÔ
 	static constexpr float TIME_ROT = 1.0f;
 
-	//HP•`‰æ—p‚Ì”{—¦
-	static constexpr float MAGNIFICATION = 4.85;
+	// HP‚ÌÅ‘å’l
+	static constexpr int MAX_HP = 100;
 
 	// ó‘Ô
 	enum class STATE
