@@ -35,6 +35,7 @@ public:
 	{
 		NONE,
 		PLAY,
+		FLIPED,
 		WARP_RESERVE,
 		WARP_MOVE,
 		DEAD,
@@ -98,6 +99,9 @@ public:
 	//敵同士が当たったか設定
 	void SetIsEnemyCol(bool isEnemyCol);
 
+	// 敵に吹っ飛ばされた
+	void Flip(VECTOR dir);
+
 protected:
 
 	// アニメーション
@@ -153,8 +157,16 @@ protected:
 
 	//攻撃しているか
 	bool isAtk_;
+
+	//攻撃用
+	VECTOR fowardPos_;
+	VECTOR backPos_;
+
 	//攻撃状態までの時間
 	float toAtkStep_;
+
+	float flipSpeed_;
+	VECTOR flipDir_;
 
 	void InitAnimation(void);
 
@@ -162,9 +174,11 @@ protected:
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
+	void ChangeStateFliped(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
+	void UpdateFliped(void);
 
 	// 描画系
 	void DrawShadow(void);

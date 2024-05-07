@@ -133,6 +133,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_BOMB, res);
 
+	// 爆弾敵
+	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
+	resourcesMap_.emplace(SRC::BOMB, res);
+
 
 	// バイクモデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/bike.mv1");

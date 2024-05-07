@@ -30,6 +30,7 @@ void LongDisEnemy::SetParam(void)
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
+	
 
 	// アニメーションの設定
 	InitAnimation();
@@ -58,6 +59,9 @@ void LongDisEnemy::Update(void)
 		break;
 	case EnemyBase::STATE::PLAY:
 		UpdatePlay();
+		break;
+	case EnemyBase::STATE::FLIPED:
+		UpdateFliped();
 		break;
 	}
 
@@ -185,4 +189,20 @@ void LongDisEnemy::ProcessMove(void)
 			animationController_->Play((int)ANIM_TYPE::IDLE);
 		}
 	}*/
+
+
+	VECTOR fowardPos;
+	VECTOR backPos;
+
+	//攻撃
+	if(ins.IsNew(KEY_INPUT_C))
+	{
+		float Length = 100.0f;
+		fowardPos_ = VAdd(transform_.pos, VGet(0, 0, Length));
+		backPos_ = transform_.pos;
+	}
+
+	
+	
+
 }

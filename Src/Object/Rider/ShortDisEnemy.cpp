@@ -59,6 +59,9 @@ void ShortDisEnemy::Update(void)
 	case EnemyBase::STATE::PLAY:
 		UpdatePlay();
 		break;
+	case EnemyBase::STATE::FLIPED:
+		UpdateFliped();
+		break;
 	}
 
 

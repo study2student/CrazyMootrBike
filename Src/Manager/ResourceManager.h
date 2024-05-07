@@ -38,6 +38,7 @@ public:
 		ENEMY_SHORT,		//仮敵
 		ENEMY_LONG,
 		ENEMY_BOMB,
+		BOMB,		//爆弾
 		BIKE,		//バイク
 
 		W_SWORD,//バスターソード

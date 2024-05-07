@@ -103,6 +103,9 @@ void EnemyBase::Update(void)
 	case EnemyBase::STATE::PLAY:
 		UpdatePlay();
 		break;
+	case EnemyBase::STATE::FLIPED:
+		UpdateFliped();
+		break;
 	}
 
 
@@ -123,6 +126,8 @@ void EnemyBase::Draw(void)
 
 	//Hp表示
 	DrawHpBar();
+
+	DrawLine3D(fowardPos_, backPos_, 0x0000ff);
 
 	capsule_->Draw();
 }
@@ -156,6 +161,13 @@ void EnemyBase::SetSpeed(float speed)
 void EnemyBase::SetIsEnemyCol(bool isEnemyCol)
 {
 	isEnemyCol_ = isEnemyCol;
+}
+
+void EnemyBase::Flip(VECTOR dir)
+{
+	flipDir_ = dir;
+	flipSpeed_ = 10.0f;
+	ChangeState(STATE::FLIPED);
 }
 
 void EnemyBase::InitAnimation(void)
@@ -202,8 +214,46 @@ void EnemyBase::ChangeStatePlay(void)
 {
 }
 
+void EnemyBase::ChangeStateFliped(void)
+{
+}
+
 void EnemyBase::UpdateNone(void)
 {
+}
+
+void EnemyBase::UpdateFliped(void)
+{
+
+	// 移動処理
+	ProcessMove();
+
+	// 吹っ飛ばされる
+	flipSpeed_ -= 0.16f;
+	if (flipSpeed_ < 0.0f)
+	{
+		flipSpeed_ = 0.0f;
+		ChangeState(STATE::PLAY);
+	}
+	movePow_ = VAdd(movePow_, VScale(flipDir_, flipSpeed_));
+
+	// ジャンプ処理
+	ProcessJump();
+
+	// 移動方向に応じた回転
+	Rotate();
+
+	// 重力による移動量
+	CalcGravityPow();
+
+	// 衝突判定
+	Collision();
+
+	isAtk_ = false;
+
+	// 回転させる
+	transform_.quaRot = enemyRotY_;
+
 }
 
 void EnemyBase::UpdatePlay(void)

@@ -299,6 +299,8 @@ void Bike::ProcessMove(void)
 	// 移動量をゼロ
 	movePow_ = AsoUtility::VECTOR_ZERO;
 
+	
+
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
@@ -345,24 +347,24 @@ void Bike::ProcessMove(void)
 	if (ins.IsNew(KEY_INPUT_D))
 	{
 		//rotRad = AsoUtility::Deg2RadD(90.0);
-		rotRadZ = AsoUtility::Deg2RadD(90.0f);
-		dir = cameraRot.GetForward();
+		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+		dir = cameraRot.GetRight();
 	}
 
 	// カメラ方向から左側へ移動したい
 	if (ins.IsNew(KEY_INPUT_A))
 	{
 		//rotRad = AsoUtility::Deg2RadD(270.0);
-		rotRadZ = AsoUtility::Deg2RadD(270.0f);
-		transform_.rot.z += 90.0f;
-		dir = cameraRot.GetForward();
+		rotRadZ = AsoUtility::Deg2RadD(45.0f);
+		dir = cameraRot.GetLeft();
+
 	}
 
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
-
 		// 移動処理
 		speed_ = SPEED_MOVE;
+		
 
 		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
 		{
@@ -376,6 +378,7 @@ void Bike::ProcessMove(void)
 				speed_ = SPEED_MOVE_X;
 			}
 		}
+
 		moveDir_ = dir;
 		movePow_ = VScale(dir, speed_);
 

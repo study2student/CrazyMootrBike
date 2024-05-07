@@ -98,42 +98,57 @@ void GameScene::Update(void)
 	//enemy_->Update();
 	//enemyBike_->Update();
 
+	//“G
 	size_t sizeE = enemys_.size();
 	for (int i = 0; i < sizeE; i++)
 	{
 		enemys_[i]->Update();
+	}
 
-		//“G“¯Žm‚Ì“–‚½‚è”»’è
-		size_t sizeEb = enemyBikes_.size();
-		for (int t = 0; t < sizeEb; t++)
-		{
-			enemyBikes_[t]->Update();
-
-			//2‘ÌˆÈã“G‚ª¶¬‚³‚ê‚½‚ç
-			if (sizeE >= 2 && sizeEb >= 2 && t>=1)
-			{
-				//Õ“Ë”»’è(“G‚Æ“G)
-				VECTOR diff = VSub(enemyBikes_[t]->GetCapsule()->GetCenter(), enemyBikes_[t-1]->GetCapsule()->GetCenter());
-				float  dis = AsoUtility::SqrMagnitudeF(diff);
-				if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
-				{
-					//”ÍˆÍ‚É“ü‚Á‚½
-					enemys_[i]->SetSpeed(0.0f);
-					enemys_[i]->SetIsEnemyCol(true);
-				}
-				else
-				{
-					enemys_[i]->SetSpeed(EnemyBase::SPEED_MOVE);
-					enemys_[i]->SetIsEnemyCol(false);
-				}
-
-			}
-		}
-
+	//“GƒoƒCƒN
+	size_t sizeEb = enemyBikes_.size();
+	for (int t = 0; t < sizeEb; t++)
+	{
+		enemyBikes_[t]->Update();
 	}
 
 
-	
+	//“G“¯Žm‚Ì“–‚½‚è”»’è(’e‚­)
+	for (int b1 = 0; b1 < sizeEb; b1++)
+	{
+
+		for (int b2 = 0; b2 < sizeEb; b2++)
+		{
+
+			if (enemyBikes_[b1] == enemyBikes_[b2])
+			{
+				continue;
+			}
+
+			auto b1Pos = enemyBikes_[b1]->GetCapsule()->GetCenter();
+			auto b2Pos = enemyBikes_[b2]->GetCapsule()->GetCenter();
+
+			VECTOR diff = VSub(b1Pos, b2Pos);
+			float  dis = AsoUtility::SqrMagnitudeF(diff);
+			if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
+			{
+
+				// ”ÍˆÍ‚É“ü‚Á‚½‚çA‚¨ŒÝ‚¢‚ð’e‚­
+				auto flipDirB1 = VNorm(VSub(b1Pos, b2Pos));
+				flipDirB1.y = 0.0f;
+				flipDirB1 = VNorm(flipDirB1);
+				auto flipDirB2 = VNorm(VSub(b2Pos, b1Pos));
+				flipDirB2.y = 0.0f;
+				flipDirB2 = VNorm(flipDirB2);
+
+				enemys_[b1]->Flip(flipDirB1);
+				enemys_[b2]->Flip(flipDirB2);
+			}
+
+			
+		}
+		
+	}
 
 
 	enCounter++;
