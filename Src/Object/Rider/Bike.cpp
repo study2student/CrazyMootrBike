@@ -299,8 +299,6 @@ void Bike::ProcessMove(void)
 	// 移動量をゼロ
 	movePow_ = AsoUtility::VECTOR_ZERO;
 
-	
-
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
@@ -310,6 +308,10 @@ void Bike::ProcessMove(void)
 	
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
+
+	//前に進む
+	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE );
+
 
 	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
@@ -329,12 +331,12 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetBack();
 	}
 
-	// カメラ方向に前進したい
-	if (ins.IsNew(KEY_INPUT_W))
-	{
-		rotRad = AsoUtility::Deg2RadD(0.0f);
-		dir = cameraRot.GetForward();
-	}
+	//// カメラ方向に前進したい
+	//if (ins.IsNew(KEY_INPUT_W))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(0.0f);
+	//	dir = cameraRot.GetForward();
+	//}
 
 	// カメラ方向から後退したい
 	if (ins.IsNew(KEY_INPUT_S))
@@ -360,6 +362,8 @@ void Bike::ProcessMove(void)
 
 	}
 
+
+
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
 		// 移動処理
@@ -379,8 +383,8 @@ void Bike::ProcessMove(void)
 			}
 		}
 
-		moveDir_ = dir;
-		movePow_ = VScale(dir, speed_);
+		/*moveDir_ = dir;
+		movePow_ = VAdd(VScale(dir, speed_), movePowF_);*/
 
 
 		// 回転処理
@@ -407,7 +411,21 @@ void Bike::ProcessMove(void)
 		{
 			animationController_->Play((int)ANIM_TYPE::IDLE);
 		}
+
+		//傾きっぱになるので角度リセットしておく
+		rotRad = AsoUtility::Deg2RadD(0.0f);
+		dir = cameraRot.GetForward();
+
+		// 回転処理
+		SetGoalRotateZ(rotRadZ);
 	}
+
+	//前へ進むベクトルと横に曲がるベクトルを合成する
+	moveDir_ = dir;
+	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
+
+
+	
 
 }
 
