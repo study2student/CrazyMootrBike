@@ -35,6 +35,9 @@ public:
 	//敵情報
 	std::vector<EnemyBase*> GetEnemys(void);
 	std::vector<EnemyBike*> GetEnemyBikes(void);
+
+	//敵が追加されたタイミングかどうか
+	bool GetIsCreateEnemy(void);
  
 private:
 
@@ -68,4 +71,6 @@ private:
 	//敵の発生頻度
 	int enCounter;
 
+	//敵が追加されたタイミングかどうか
+	bool isCreateEnemy_;
 };

@@ -77,6 +77,9 @@ void GameScene::Init(void)
 	//エンカウントリセット
 	enCounter = 0;
 
+	//敵が生成されたか
+	isCreateEnemy_ = false;
+
 }
 
 void GameScene::Update(void)
@@ -90,8 +93,6 @@ void GameScene::Update(void)
 	}
 
 	skyDome_->Update();
-
-	stage_->Update();
 
 	bike_->Update();
 	enemy_->SetBikeTrans(bike_->GetTransform());
@@ -179,6 +180,7 @@ void GameScene::Update(void)
 		EnemyBike* eB = nullptr;
 		eB = new EnemyBike(e);
 		eB->Init();
+		isCreateEnemy_ = true;
 
 
 		////画面端のランダムな場所に生成
@@ -215,6 +217,11 @@ void GameScene::Update(void)
 		//可変長配列に要素を追加
 		enemys_.push_back(e);
 		enemyBikes_.push_back(eB);
+	}
+	else
+	{
+		stage_->Update();
+		isCreateEnemy_ = false;
 	}
 
 }
@@ -260,4 +267,9 @@ std::vector<EnemyBase*> GameScene::GetEnemys(void)
 std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
 {
 	return enemyBikes_;
+}
+
+bool GameScene::GetIsCreateEnemy(void)
+{
+	return isCreateEnemy_;
 }
