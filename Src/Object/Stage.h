@@ -21,7 +21,7 @@ public:
 
 	//static constexpr VECTOR STAGE_START_POS = { -5000.0f, -5600.0f, 0.0f };
 	//ステージの初期位置
-	static constexpr VECTOR STAGE_START_POS = { -5600.0f, -5000.0f, 0.0f };
+	static constexpr VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
 
 	// ステージ名
 	enum class NAME

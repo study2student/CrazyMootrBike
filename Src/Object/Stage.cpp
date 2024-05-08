@@ -181,7 +181,7 @@ void Stage::MakeMainStage(void)
 	planetTrans.SetModel(
 		resMng_.LoadModelDuplicate(ResourceManager::SRC::MAIN_PLANET));
 	float scale = 1.0f;
-	planetTrans.scl = { scale,scale,scale };
+	planetTrans.scl = { scale * 2.5f,scale,scale };
 	planetTrans.quaRot = Quaternion();
 	planetTrans.pos = { STAGE_START_POS };
 
@@ -237,7 +237,7 @@ void Stage::MakeLoopStage(void)
 
 
 		float scale = 1.0f;
-		loopTrans.scl = { scale,scale,scale };
+		loopTrans.scl = { scale * 2.5f,scale,scale };
 		loopTrans.quaRot = Quaternion();
 		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 6500.0f * (size + 1) };
 
