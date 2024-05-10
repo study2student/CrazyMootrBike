@@ -4,6 +4,7 @@
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Transform.h"
+#include "../Manager/SceneManager.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -14,6 +15,7 @@ Camera::Camera(void)
 	pos_ = AsoUtility::VECTOR_ZERO;
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 	followTransform_ = nullptr;
+	stepRotTime_ = 0.0f;
 }
 
 Camera::~Camera(void)
@@ -173,16 +175,20 @@ void Camera::ProcessRot(void)
 
 	float movePow = 5.0f;
 
+	//ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚©
+	bool isHitKey = false;
 	// ƒJƒƒ‰‰ñ“]
 	if (ins.IsNew(KEY_INPUT_RIGHT))
 	{
 		// ‰E‰ñ“]
 		angles_.y += AsoUtility::Deg2RadF(1.0f);
+		isHitKey = true;
 	}
 	if (ins.IsNew(KEY_INPUT_LEFT))
 	{
 		// ¶‰ñ“]
 		angles_.y += AsoUtility::Deg2RadF(-1.0f);
+		isHitKey = true;
 	}
 
 	// ã‰ñ“]
@@ -204,6 +210,29 @@ void Camera::ProcessRot(void)
 			angles_.x = -LIMIT_X_DW_RAD;
 		}
 	}
+
+	//‰ñ“]ˆ—‚ð‚µ‚Ä‚È‚¢ŽžƒJƒƒ‰‚ð™X‚É‘O‚ÉŒü‚©‚¹‚é
+	if (!isHitKey)
+	{
+		Quaternion goalQuaRot_ = Quaternion::Euler({ 0.0f,0.0f,0.0f });
+
+		// Œ»ÝÝ’è‚³‚ê‚Ä‚¢‚é‰ñ“]‚Æ‚ÌŠp“x·‚ðŽæ‚é
+		float angleDiff = Quaternion::Angle(rot_, goalQuaRot_);
+
+		// ‚µ‚«‚¢’l
+		if (angleDiff > 0.1)
+		{
+			stepRotTime_ = TIME_ROT;
+		}
+
+		stepRotTime_ -= SceneManager::GetInstance().GetDeltaTime();
+		rot_ = Quaternion::Slerp(rot_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
+
+		VECTOR r = rot_.ToEuler();
+		angles_ = r;
+
+	}
+	
 
 }
 

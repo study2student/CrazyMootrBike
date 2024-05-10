@@ -21,10 +21,13 @@ public:
 	static constexpr VECTOR DEFAULT_CAMERA_POS = { 0.0f, 100.0f, -500.0f };
 
 	// 追従位置からカメラ位置までの相対座標
-	static constexpr VECTOR LOCAL_F2C_POS = { 0.0f, 50.0f, -400.0f };
+	static constexpr VECTOR LOCAL_F2C_POS = { 0.0f, 300.0f, -400.0f };
 
 	// 追従位置から注視点までの相対座標
-	static constexpr VECTOR LOCAL_F2T_POS = { 0.0f, 0.0f, 500.0f };
+	static constexpr VECTOR LOCAL_F2T_POS = { 0.0f, 0.0f, 500.0f }; 
+
+	// 回転完了までの時間
+	static constexpr float TIME_ROT = 0.6f; 
 
 	// カメラのX回転上限度角
 	static constexpr float LIMIT_X_UP_RAD = 40.0f * (DX_PI_F / 180.0f);
@@ -92,6 +95,8 @@ private:
 
 	// カメラの上方向
 	VECTOR cameraUp_;
+
+	float stepRotTime_;
 
 	// カメラを初期位置に戻す
 	void SetDefault(void);

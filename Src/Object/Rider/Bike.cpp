@@ -348,7 +348,6 @@ void Bike::ProcessMove(void)
 	// カメラ方向から右側へ移動したい
 	if (ins.IsNew(KEY_INPUT_D))
 	{
-		//rotRad = AsoUtility::Deg2RadD(90.0);
 		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
 		dir = cameraRot.GetRight();
 	}
@@ -356,7 +355,6 @@ void Bike::ProcessMove(void)
 	// カメラ方向から左側へ移動したい
 	if (ins.IsNew(KEY_INPUT_A))
 	{
-		//rotRad = AsoUtility::Deg2RadD(270.0);
 		rotRadZ = AsoUtility::Deg2RadD(45.0f);
 		dir = cameraRot.GetLeft();
 
@@ -424,9 +422,6 @@ void Bike::ProcessMove(void)
 	moveDir_ = dir;
 	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
 
-
-	
-
 }
 
 void Bike::ProcessJump(void)
@@ -480,7 +475,7 @@ void Bike::SetGoalRotate(float rotRad)
 void Bike::SetGoalRotateZ(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
+	Quaternion axis = Quaternion::AngleAxis( -1.0f* (float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
