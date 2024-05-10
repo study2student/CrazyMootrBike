@@ -53,7 +53,7 @@ public:
 		NONE,
 		NORMAL,
 		SPECIAL,
-		DISTANCE,
+		LONG,
 	};
 
 	// コンストラクタ
@@ -155,6 +155,12 @@ private:
 	void ProcessJump(void);//ジャンプ
 	void ProcessAttack(void);//攻撃
 	void ProcessDebug(void);//デバッグ用
+
+	// 攻撃種別
+	void NormalAttack(void);//通常攻撃
+	void LongAttack(void);//遠距離攻撃
+	void SpecialAttack(void);//必殺技
+
 	// 回転
 	void SetGoalRotate(float rotRad);
 	void SetGoalRotateZ(float rotRad);
