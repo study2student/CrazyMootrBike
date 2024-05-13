@@ -382,15 +382,20 @@ void EnemyBase::DrawHpBar(void)
 	hpTrans_.pos = ConvWorldPosToScreenPos(pos);
 	VECTOR hpPos = hpTrans_.pos;
 
-	// HP‚Ì•˜g
-	DrawBoxAA(hpPos.x -50 ,hpPos.y,
-		hpPos.x +30,hpPos.y+10,
-		0x000000, false, 5.0f);
+	//ƒJƒƒ‰‚©‚çŠO‚ê‚Ä‚¢‚½‚ç•\Ž¦‚µ‚È‚¢
+	if (hpPos.z > 0.0f && hpPos.z < 1.0f)
+	{
+		//HP‚Ì•\Ž¦
+		// HP‚Ì•˜g
+		DrawBoxAA(hpPos.x - 50, hpPos.y,
+			hpPos.x + 30, hpPos.y + 10,
+			0x000000, false, 5.0f);
 
-	// HPƒQ[ƒW
-	DrawBox(hpPos.x -50 , hpPos.y,
-		hpPos.x +30, hpPos.y + 10,
-		0xff000, true);
+		// HPƒQ[ƒW
+		DrawBox(hpPos.x - 50, hpPos.y,
+			hpPos.x + 30, hpPos.y + 10,
+			0xff000, true);
+	}
 
 }
 
