@@ -12,7 +12,7 @@
 #include "../../Object/Rider/Bike.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(Bike* bike)
+EnemyBase::EnemyBase(Bike* bike, VECTOR loopStagePos, VECTOR localPos)
 {
 	bike_ = bike;
 
@@ -23,6 +23,9 @@ EnemyBase::EnemyBase(Bike* bike)
 	moveDir_ = AsoUtility::VECTOR_ZERO;
 	movePow_ = AsoUtility::VECTOR_ZERO;
 	movedPos_ = AsoUtility::VECTOR_ZERO;
+
+	makePos_ = loopStagePos;
+	localPos_ = localPos;
 
 	enemyRotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
@@ -56,12 +59,13 @@ EnemyBase::~EnemyBase(void)
 
 void EnemyBase::Init(void)
 {
-
+	
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_SHORT));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, -800.0f, -2500.0f };
+	//transform_.pos = { 700.0f, -800.0f, -2500.0f };
+	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, -800.0f, makePos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -445,9 +449,9 @@ void EnemyBase::ProcessMove(void)
 
 	Transform bikeTrans_ = bike_->GetTransform();
 
-	//
-	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
-	dir = VNorm(len);
+	//プレイヤーへに向けた方向取得
+	/*VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	dir = VNorm(len);*/
 
 
 	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
@@ -476,8 +480,10 @@ void EnemyBase::ProcessMove(void)
 	{
 		speed_ = SPEED_RUN;
 	}*/
-	moveDir_ = dir;
-	movePow_ = VScale(dir, speed_);
+
+	//向いてる方向
+	/*moveDir_ = dir;
+	movePow_ = VScale(dir, speed_);*/
 
 	// 回転処理(プレイヤーの方向を向かせる)
 	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);

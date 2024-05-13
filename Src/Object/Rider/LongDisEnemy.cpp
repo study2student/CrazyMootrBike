@@ -13,8 +13,10 @@
 #include "../../Object/Rider/Bike.h"
 #include "LongDisEnemy.h"
 
-LongDisEnemy::LongDisEnemy(Bike* bike) : EnemyBase(bike)
+LongDisEnemy::LongDisEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
 {
+	makePos_ = loopStagePos;
+	localPos_ = localPos;
 }
 
 void LongDisEnemy::SetParam(void)
@@ -24,7 +26,7 @@ void LongDisEnemy::SetParam(void)
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_LONG));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, 700.0f, -500.0f };
+	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -140,9 +142,9 @@ void LongDisEnemy::ProcessMove(void)
 
 	Transform bikeTrans_ = bike_->GetTransform();
 
-	//
-	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
-	dir = VNorm(len);
+	////プレイヤーへ向けた方向取得
+	//VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	//dir = VNorm(len);
 
 
 	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
@@ -166,8 +168,10 @@ void LongDisEnemy::ProcessMove(void)
 	{
 		speed_ = SPEED_RUN;
 	}*/
-	moveDir_ = dir;
-	movePow_ = VScale(dir, speed_);
+
+	//向いてる方向に移動
+	/*moveDir_ = dir;
+	movePow_ = VScale(dir, speed_);*/
 
 	// 回転処理(プレイヤーの方向を向かせる)
 	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);

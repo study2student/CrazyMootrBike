@@ -4,7 +4,7 @@ class ShortDisEnemy : public EnemyBase
 {
 public:
 
-	ShortDisEnemy(Bike* bike);
+	ShortDisEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;

@@ -26,6 +26,8 @@ Stage::Stage(Bike* bike, EnemyBase* enemy, GameScene* gameScene)
 	activeName_ = NAME::MAIN_PLANET;
 	step_ = 0.0f;
 
+	isMakeLoopStage_ = false;
+
 	//ループ用のステージ
 	/*loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
 	loopStage_.pos = { -5000.0f, -5600.0f, 6500.0f };
@@ -172,6 +174,23 @@ Planet* Stage::GetPlanet(NAME type)
 	return planets_[type];
 }
 
+bool Stage::GetIsMakeLoopStage(void)
+{
+	return isMakeLoopStage_;
+}
+
+void Stage::SetMakeLoopStage(bool value)
+{
+	isMakeLoopStage_ = value;
+}
+
+VECTOR Stage::GetForwardLoopPos(void)
+{
+	//先頭ループステージの座標を取得
+	int size = (int)loopStage_.size();
+	return loopStage_[size - 1]->GetPos();
+}
+
 void Stage::MakeMainStage(void)
 {
 
@@ -254,7 +273,12 @@ void Stage::MakeLoopStage(void)
 		stage = new LoopStage(bike_, loopTrans);
 		stage->Init();
 		loopStage_.push_back(stage);
+		isMakeLoopStage_ = true;
 
+	}
+	else
+	{
+		isMakeLoopStage_ = false;
 	}
 
 	

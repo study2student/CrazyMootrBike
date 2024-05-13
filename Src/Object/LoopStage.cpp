@@ -51,6 +51,11 @@ void LoopStage::Draw(void)
 	MV1DrawModel(transform_.modelId);
 }
 
+VECTOR LoopStage::GetPos(void)
+{
+	return transform_.pos;
+}
+
 void LoopStage::ChangeState(STATE state)
 {
 	//ó‘Ô•ÏX

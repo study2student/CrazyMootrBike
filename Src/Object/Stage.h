@@ -57,6 +57,13 @@ public:
 	// 対象ステージを取得
 	Planet* GetPlanet(NAME type);
 
+	//ループ用のステージが生成されたかどうか取得
+	bool GetIsMakeLoopStage(void);
+	void SetMakeLoopStage(bool value);
+
+	//先頭のループ用ステージの座標を取得
+	VECTOR GetForwardLoopPos(void);
+
 private:
 
 	//ゲームシーンポインタ
@@ -87,6 +94,9 @@ private:
 	Planet* nullPlanet = nullptr;
 
 	float step_;
+
+	//ループ用のステージが生成されたかどうか
+	bool isMakeLoopStage_;
 
 	// 最初の惑星
 	void MakeMainStage(void);

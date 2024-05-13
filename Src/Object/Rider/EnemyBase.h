@@ -30,6 +30,18 @@ public:
 	// ジャンプ受付時間
 	static constexpr float TIME_JUMP_IN = 0.5f;
 
+	//1ループステージあたりの敵の生成数
+	static constexpr int MAX_MAKE_NUM = 3;
+
+	//敵の生成時のセンター方向からの横幅
+	static constexpr float DIR_LEN = 500.0f;
+
+	//縦の敵間距離
+	static constexpr float X_LEN = 400.0f;
+
+	//敵生成時の横の調整用
+	static constexpr float ADJUST_POS_X = 14300.0f;
+
 	// 状態
 	enum class STATE
 	{
@@ -69,8 +81,18 @@ public:
 		MAX
 	};
 
+	//敵発生場所
+	enum class DIR
+	{
+		LEFT,
+		CENTER,
+		RIGHT,
+		MAX
+
+	};
+
 	// コンストラクタ
-	EnemyBase(Bike* bike);
+	EnemyBase(Bike* bike, VECTOR loopStagePos, VECTOR localPos);
 
 	// デストラクタ
 	virtual ~EnemyBase(void);
@@ -124,6 +146,12 @@ protected:
 
 	// 移動後の座標
 	VECTOR movedPos_;
+
+	//敵の発生座標座標
+	VECTOR makePos_;
+
+	//先頭の敵から次の敵までの相対座標
+	VECTOR localPos_;
 
 	// 回転
 	Quaternion enemyRotY_;

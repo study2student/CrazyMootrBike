@@ -14,8 +14,10 @@
 #include "BombEnemy.h"
 
 
-BombEnemy::BombEnemy(Bike* bike) : EnemyBase(bike)
+BombEnemy::BombEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
 {
+	makePos_ = loopStagePos;
+	localPos_ = localPos;
 }
 
 void BombEnemy::SetParam(void)
@@ -25,7 +27,7 @@ void BombEnemy::SetParam(void)
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::ENEMY_BOMB));
 	transform_.scl = AsoUtility::VECTOR_ONE;
-	transform_.pos = { 700.0f, 700.0f, -500.0f };
+	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z};
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -140,9 +142,9 @@ void BombEnemy::ProcessMove(void)
 
 	Transform bikeTrans_ = bike_->GetTransform();
 
-	//
-	VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
-	dir = VNorm(len);
+	//プレイヤーへに向けた方向取得
+	/*VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
+	dir = VNorm(len);*/
 
 
 	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
@@ -172,8 +174,10 @@ void BombEnemy::ProcessMove(void)
 	{
 		speed_ = SPEED_RUN;
 	}*/
-	moveDir_ = dir;
-	movePow_ = VScale(dir, speed_);
+
+	////向いてる方向に移動
+	//moveDir_ = dir;
+	//movePow_ = VScale(dir, speed_);
 
 	// 回転処理(プレイヤーの方向を向かせる)
 	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);

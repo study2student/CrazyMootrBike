@@ -54,11 +54,12 @@ void GameScene::Init(void)
 	bike_ = new Bike();
 	bike_->Init();
 
-	// 敵
-	enemy_ = new EnemyBase(bike_);
 	//enemy_->Init();
 	/*enemyBike_ = new EnemyBike(enemy_);
 	enemyBike_->Init();*/
+
+	// 敵
+	enemy_ = new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 
 	// ステージ
 	stage_ = new Stage(bike_, enemy_,this);
@@ -146,83 +147,89 @@ void GameScene::Update(void)
 				enemys_[b2]->Flip(flipDirB2);
 			}
 
-			
+
 		}
-		
+
 	}
 
 
-	enCounter++;
-	if (enCounter > ENCOUNT)
+	//ステージが生成されたら敵を配置する
+	if (stage_->GetIsMakeLoopStage())
 	{
-		//エンカウンターリセット
-		enCounter = 0;
 
-		//敵の生成
-		EnemyBase* e = nullptr;
-		int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
-		EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+		stage_->SetMakeLoopStage(false);
 
-		switch (type)
+		
+		//センター方向からの横の移動幅
+		float shiftX_ = {};
+
+
+		//道のランダムな場所に生成(3パターン)
+		int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
+		EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
+
+		Vector2 randPos;
+		switch (dir)
 		{
-		case EnemyBase::TYPE::SHORT_DIS:
-			e = new ShortDisEnemy(bike_);
+		case EnemyBase::DIR::LEFT:
+			shiftX_ = -EnemyBase::DIR_LEN;
 			break;
-		case EnemyBase::TYPE::LONG_DIS:
-			e =  new LongDisEnemy(bike_);
+		case EnemyBase::DIR::CENTER:
+			shiftX_ = 0.0f;
 			break;
-		case EnemyBase::TYPE::BOMB:
-			e =  new BombEnemy(bike_);
+		case EnemyBase::DIR::RIGHT:
+			shiftX_ = EnemyBase::DIR_LEN;
 			break;
 		}
-		e->Init();
 
-		EnemyBike* eB = nullptr;
-		eB = new EnemyBike(e);
-		eB->Init();
-		isCreateEnemy_ = true;
+		//縦に敵を生成する
+		for (int i = 0; i < EnemyBase::MAX_MAKE_NUM; i++)
+		{
+			//縦に並ぶ敵と敵の距離
+			float len = EnemyBase::X_LEN;
+
+			//敵の生成
+			EnemyBase* e = nullptr;
+			int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
+			EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+
+			switch (type)
+			{
+			case EnemyBase::TYPE::SHORT_DIS:
+				e = new ShortDisEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				break;
+			case EnemyBase::TYPE::LONG_DIS:
+				e = new LongDisEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				break;
+			case EnemyBase::TYPE::BOMB:
+				e = new BombEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				break;
+			}
+			e->Init();
+
+			EnemyBike* eB = nullptr;
+			eB = new EnemyBike(e);
+			eB->Init();
+			isCreateEnemy_ = true;
 
 
-		////画面端のランダムな場所に生成
-		//int randDir = GetRand(static_cast<int>(AsoUtility::DIR::MAX) - 1);
-		//AsoUtility::DIR dir = static_cast<AsoUtility::DIR>(randDir);
+			////デバッグ
+			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
 
-		//Vector2 randPos;
-		//switch (dir)
-		//{
-		//case AsoUtility::DIR::UP:
-		//	randPos.x = cameraPos_.x + GetRand(Application::SCREEN_SIZE_X);
-		//	randPos.y = cameraPos_.y;
-		//	break;
-		//case AsoUtility::DIR::RIGHT:
-		//	randPos.x = cameraPos_.x + Application::SCREEN_SIZE_X;
-		//	randPos.y = cameraPos_.y + GetRand(Application::SCREEN_SIZE_Y);
-		//	break;
-		//case AsoUtility::DIR::DOWN:
-		//	randPos.x = cameraPos_.x + GetRand(Application::SCREEN_SIZE_X);
-		//	randPos.y = cameraPos_.y + Application::SCREEN_SIZE_Y;
-		//	break;
-		//case AsoUtility::DIR::LEFT:
-		//	randPos.x = cameraPos_.x;
-		//	randPos.y = cameraPos_.y + GetRand(Application::SCREEN_SIZE_Y);
-		//	break;
-		//}
+			////座標の設定
+			//e->setPos(randPos.ToVector2F());
 
-		////デバッグ
-		//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
-
-		////座標の設定
-		//e->setPos(randPos.ToVector2F());
-
-		//可変長配列に要素を追加
-		enemys_.push_back(e);
-		enemyBikes_.push_back(eB);
+			//可変長配列に要素を追加
+			enemys_.push_back(e);
+			enemyBikes_.push_back(eB);
+		}
 	}
 	else
 	{
 		stage_->Update();
 		isCreateEnemy_ = false;
 	}
+		
 
 }
 
@@ -256,6 +263,7 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
+
 
 }
 

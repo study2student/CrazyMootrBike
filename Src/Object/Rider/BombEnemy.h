@@ -4,7 +4,7 @@ class BombEnemy : public EnemyBase
 {
 public:
 
-	BombEnemy(Bike* bike);
+	BombEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;
