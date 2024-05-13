@@ -87,8 +87,6 @@ void Weapon::Update(void)
 	VECTOR local= bikeTransform_.quaRot.PosAxis(localPos);
 	transform_.pos = VAdd(transform_.pos, local);
 	
-	
-	
 	transform_.Update();
 
 	// ‰ñ“]‚³‚¹‚é
@@ -136,6 +134,15 @@ void Weapon::ProcessMove(void)
 
 void Weapon::ProcessAttack(void)
 {
+
+
+	VECTOR weaponRot = { transform_.quaRot.ToEuler()};
+
+	VECTOR weaponLocalPos = { transform_.quaRotLocal.ToEuler() };
+
+	auto weaponRotLocalPos_ = VTransform(weaponLocalPos, MGetRotY(weaponRot.y));
+
+	weaponRot = VAdd(transform_.pos, weaponRotLocalPos_);
 }
 
 void Weapon::SetGoalRotate(double rotRad)

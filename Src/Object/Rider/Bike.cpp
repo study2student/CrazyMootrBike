@@ -290,6 +290,12 @@ void Bike::DrawDebug(void)
 	{
 		DrawString(0, 0, "Attack", 0x000000);
 	}
+
+	DrawFormatString(0, 40, 0x000000,
+		"バイクの回転：%f,%f,%f",
+		AsoUtility::Rad2DegD( transform_.rot.x),
+		AsoUtility::Rad2DegD(transform_.quaRot.ToEuler().y),
+		AsoUtility::Deg2RadF( transform_.quaRotLocal.ToEuler().z));
 }
 
 void Bike::ProcessMove(void)
@@ -421,7 +427,6 @@ void Bike::ProcessMove(void)
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
 	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
-
 }
 
 void Bike::ProcessJump(void)
@@ -430,19 +435,28 @@ void Bike::ProcessJump(void)
 
 void Bike::ProcessAttack(void)
 {
-	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsNew(KEY_INPUT_Z))
-	{
-		attackState_ = ATTACK_TYPE::NORMAL;
-		animationController_->Play((int)ANIM_TYPE::FALLING);
-		isAttack_ = true;
-	}
-	else
-	{
-		attackState_ = ATTACK_TYPE::NONE;
-		isAttack_ = false;
-	}
+	//// 攻撃更新
+	//switch (attackState_)
+	//{
+	//case Bike::ATTACK_TYPE::NONE:
+	//	break;
+	//case Bike::ATTACK_TYPE::NORMAL:
+	//	NormalAttack();
+	//	break;
+	//case Bike::ATTACK_TYPE::SPECIAL:
+	//	SpecialAttack();
+	//	break;
+	//case Bike::ATTACK_TYPE::LONG:
+	//	LongAttack();
+	//	break;
+	//default:
+	//	break;
+	//}
+
+	NormalAttack();
+	SpecialAttack();
+	LongAttack();
 }
 
 void Bike::ProcessDebug(void)
@@ -452,6 +466,59 @@ void Bike::ProcessDebug(void)
 	if (ins.IsNew(KEY_INPUT_C))
 	{
 		hp_ -= 1;
+	}
+}
+
+void Bike::NormalAttack(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsNew(KEY_INPUT_Z))
+	{
+		attackState_ = ATTACK_TYPE::NORMAL;
+		animationController_->Play((int)ANIM_TYPE::FALLING);
+
+		isAttack_ = true;
+	}
+	else
+	{
+		attackState_ = ATTACK_TYPE::NONE;
+		isAttack_ = false;
+	}
+}
+
+void Bike::LongAttack(void)
+{
+
+}
+
+void Bike::SpecialAttack(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
+	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
+
+	float rotRad = 0.0f;
+	VECTOR dir = AsoUtility::VECTOR_ZERO;
+
+	if (ins.IsNew(KEY_INPUT_Z))
+	{
+		attackState_ = ATTACK_TYPE::SPECIAL;
+		animationController_->Play((int)ANIM_TYPE::FALLING);
+		rotRad = AsoUtility::Deg2RadD(180.0f);
+		
+		VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
+		Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+
+		goalQuaRot_ = axis;
+
+		isAttack_ = true;
+	}
+	else
+	{
+		attackState_ = ATTACK_TYPE::NONE;
+		isAttack_ = false;
 	}
 }
 
