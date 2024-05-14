@@ -68,6 +68,9 @@ private:
 	std::vector<EnemyBase*>enemys_;	
 	std::vector<EnemyBike*>enemyBikes_;
 
+	//デバッグ情報
+	void DrawDubg(void);
+
 	//敵の発生頻度
 	int enCounter;
 
