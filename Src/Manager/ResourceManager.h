@@ -37,7 +37,9 @@ public:
 		DEMO_STAGE,//仮ステージ
 		ENEMY_SHORT,		//仮敵
 		ENEMY_LONG,
-		ENEMY_Magic,
+		ENEMY_MAGIC,
+		HELICOPTER,
+		HELICOPTER_ROTOR,
 		BOMB,		//爆弾
 		BIKE,		//バイク
 

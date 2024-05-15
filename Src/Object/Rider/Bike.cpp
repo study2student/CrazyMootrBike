@@ -75,7 +75,7 @@ void Bike::Init(void)
 		ResourceManager::SRC::BIKE));
 	float scale = 1.3f;
 	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 0.0f, 0.0f, 0.0f };
+	transform_.pos = { 1670.0f, 0.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });

@@ -13,6 +13,7 @@ class LongDisEnemy;
 class MagicEnemy;
 class Enemy;
 class EnemyBike;
+class Helicopter;
 class Score;
 
 class GameScene : public SceneBase
@@ -59,6 +60,9 @@ private:
 
 	// スコア
 	Score* score_;
+
+	//ヘリコプター
+	Helicopter* helicopter_;
 
 	////	敵
 	//Enemy* enemy_;

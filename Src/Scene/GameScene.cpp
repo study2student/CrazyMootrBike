@@ -17,6 +17,7 @@
 #include "../Object/Rider/LongDisEnemy.h"
 #include "../Object/Rider/MagicEnemy.h"
 #include "../Object/Planet.h"
+#include "../Object/Helicopter.h"
 #include "../Object/Score.h"
 #include "GameScene.h"
 
@@ -29,6 +30,7 @@ GameScene::GameScene(void)
 	skyDome_ = nullptr;
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
+	helicopter_ = nullptr;
 
 }
 
@@ -40,6 +42,7 @@ GameScene::~GameScene(void)
 	delete rider_;
 	delete stage_;
 	delete skyDome_;
+	delete helicopter_;
 }
 
 void GameScene::Init(void)
@@ -61,6 +64,10 @@ void GameScene::Init(void)
 
 	// 敵
 	enemy_ = new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+
+	//ヘリコプター　
+	helicopter_ = new Helicopter();
+	helicopter_->Init();
 
 	// ステージ
 	stage_ = new Stage(bike_, enemy_,this);
@@ -233,6 +240,8 @@ void GameScene::Update(void)
 	}
 		
 	score_->Update();
+
+	helicopter_->Update();
 }
 
 void GameScene::Draw(void)
@@ -243,6 +252,7 @@ void GameScene::Draw(void)
 	stage_->Draw();
 
 	bike_->Draw();
+	helicopter_->Draw();
 
 	//enemy_->Draw();
 	//enemyBike_->Draw();

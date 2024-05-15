@@ -25,7 +25,7 @@ void MagicEnemy::SetParam(void)
 
 	// ÉÇÉfÉãÇÃäÓñ{ê›íË
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::ENEMY_Magic));
+		ResourceManager::SRC::ENEMY_MAGIC));
 	transform_.scl = AsoUtility::VECTOR_ONE;
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z};
 	transform_.quaRot = Quaternion();

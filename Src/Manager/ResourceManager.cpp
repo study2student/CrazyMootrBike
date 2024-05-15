@@ -127,11 +127,17 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
 	resourcesMap_.emplace(SRC::ENEMY_LONG, res);
 
-	
-
 	// ”š’e“G
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_Magic, res);
+	resourcesMap_.emplace(SRC::ENEMY_MAGIC, res);
+
+	//ƒwƒŠ
+	res = new RES(RES_T::MODEL, PATH_MDL + "Helicopter/Aircraft04.mv1");
+	resourcesMap_.emplace(SRC::HELICOPTER, res);
+
+	//ƒwƒŠ‰H
+	res = new RES(RES_T::MODEL, PATH_MDL + "Helicopter/AirCraft04_Rotor.mv1");
+	resourcesMap_.emplace(SRC::HELICOPTER_ROTOR, res);
 
 	// ”š’e“G
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
