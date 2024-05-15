@@ -262,8 +262,6 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-	DrawFormatString(840, 120, 0x000000, "DrawCall : %d", GetDrawCallCount());
-
 
 }
 
@@ -280,4 +278,10 @@ std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
 bool GameScene::GetIsCreateEnemy(void)
 {
 	return isCreateEnemy_;
+}
+
+void GameScene::DrawDubg(void)
+{
+	DrawFormatString(840, 100, 0x000000,"DrawCall", GetDrawCallCount());
+	DrawFormatString(840, 120, 0x000000,"FPS", GetFPS());
 }
