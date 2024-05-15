@@ -174,6 +174,11 @@ void EnemyBase::Flip(VECTOR dir)
 	ChangeState(STATE::FLIPED);
 }
 
+bool EnemyBase::GetIsBikeCol(void)
+{
+	return isBikeCol_;
+}
+
 void EnemyBase::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Enemy/";

@@ -157,6 +157,9 @@ void ShortDisEnemy::ProcessMove(void)
 	{
 		//範囲に入った
 		speed_ = 0;
+
+		isBikeCol_ = true;
+
 		//アニメーション
 		animationController_->Play((int)ANIM_TYPE::SHORT);
 	}

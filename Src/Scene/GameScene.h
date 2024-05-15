@@ -13,6 +13,7 @@ class LongDisEnemy;
 class BombEnemy;
 class Enemy;
 class EnemyBike;
+class Score;
 
 class GameScene : public SceneBase
 {
@@ -56,6 +57,8 @@ private:
 	// プレイヤー
 	Bike* bike_;
 
+	// スコア
+	Score* score_;
 
 	////	敵
 	//Enemy* enemy_;
@@ -73,4 +76,6 @@ private:
 
 	//敵が追加されたタイミングかどうか
 	bool isCreateEnemy_;
+
+	void DrawDubg(void);
 };

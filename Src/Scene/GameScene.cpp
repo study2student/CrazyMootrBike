@@ -17,6 +17,7 @@
 #include "../Object/Rider/LongDisEnemy.h"
 #include "../Object/Rider/BombEnemy.h"
 #include "../Object/Planet.h"
+#include "../Object/Score.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -211,6 +212,8 @@ void GameScene::Update(void)
 			eB->Init();
 			isCreateEnemy_ = true;
 
+			score_ = new Score(e);
+			score_->Init();
 
 			////デバッグ
 			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
@@ -229,7 +232,7 @@ void GameScene::Update(void)
 		isCreateEnemy_ = false;
 	}
 		
-
+	score_->Update();
 }
 
 void GameScene::Draw(void)
@@ -247,13 +250,20 @@ void GameScene::Draw(void)
 	size_t sizeE = enemys_.size();
 	for (int i = 0; i < sizeE; i++)
 	{
-		enemys_[i]->Draw();
+		if (enemys_[i]->GetIsBikeCol() == false)
+		{
+			enemys_[i]->Draw();
+			score_->Draw();
+		}
 	}
 
 	size_t sizeEb = enemyBikes_.size();
 	for (int i = 0; i < sizeEb; i++)
 	{
-		enemyBikes_[i]->Draw();
+		if (enemys_[i]->GetIsBikeCol() == false)
+		{
+			enemyBikes_[i]->Draw();
+		}
 	}
 
 
@@ -262,7 +272,7 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-
+	DrawDubg();
 }
 
 std::vector<EnemyBase*> GameScene::GetEnemys(void)
@@ -282,6 +292,6 @@ bool GameScene::GetIsCreateEnemy(void)
 
 void GameScene::DrawDubg(void)
 {
-	DrawFormatString(840, 100, 0x000000,"DrawCall", GetDrawCallCount());
-	DrawFormatString(840, 120, 0x000000,"FPS", GetFPS());
+	DrawFormatString(840, 100, 0x000000,"DrawCall:%d", GetDrawCallCount());
+	DrawFormatString(840, 120, 0x000000,"FPS:%f", GetFPS());
 }

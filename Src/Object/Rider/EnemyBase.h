@@ -124,6 +124,9 @@ public:
 	// 敵に吹っ飛ばされた
 	void Flip(VECTOR dir);
 
+	// プレイヤーと当たったか
+	bool GetIsBikeCol(void);
+
 protected:
 
 	// アニメーション

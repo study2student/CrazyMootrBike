@@ -158,6 +158,8 @@ void BombEnemy::ProcessMove(void)
 	{
 		//”ÍˆÍ‚É“ü‚Á‚½
 		speed_ = 0;
+
+		isBikeCol_ = true;
 	}
 	else
 	{
