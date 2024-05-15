@@ -15,7 +15,7 @@
 #include "../Object/Rider/EnemyBase.h"
 #include "../Object/Rider/ShortDisEnemy.h"
 #include "../Object/Rider/LongDisEnemy.h"
-#include "../Object/Rider/BombEnemy.h"
+#include "../Object/Rider/MagicEnemy.h"
 #include "../Object/Planet.h"
 #include "../Object/Score.h"
 #include "GameScene.h"
@@ -202,7 +202,7 @@ void GameScene::Update(void)
 				e = new LongDisEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			case EnemyBase::TYPE::BOMB:
-				e = new BombEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				e = new MagicEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			}
 			e->Init();

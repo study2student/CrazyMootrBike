@@ -37,7 +37,7 @@ public:
 		DEMO_STAGE,//仮ステージ
 		ENEMY_SHORT,		//仮敵
 		ENEMY_LONG,
-		ENEMY_BOMB,
+		ENEMY_Magic,
 		BOMB,		//爆弾
 		BIKE,		//バイク
 

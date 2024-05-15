@@ -11,21 +11,21 @@
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
-#include "BombEnemy.h"
+#include "MagicEnemy.h"
 
 
-BombEnemy::BombEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
+MagicEnemy::MagicEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
 }
 
-void BombEnemy::SetParam(void)
+void MagicEnemy::SetParam(void)
 {
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::ENEMY_BOMB));
+		ResourceManager::SRC::ENEMY_Magic));
 	transform_.scl = AsoUtility::VECTOR_ONE;
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z};
 	transform_.quaRot = Quaternion();
@@ -51,7 +51,7 @@ void BombEnemy::SetParam(void)
 	ChangeState(STATE::PLAY);
 }
 
-void BombEnemy::Update(void)
+void MagicEnemy::Update(void)
 {
 	// 更新ステップ
 	switch (state_)
@@ -75,7 +75,7 @@ void BombEnemy::Update(void)
 	animationController_->Update();
 }
 
-void BombEnemy::UpdatePlay(void)
+void MagicEnemy::UpdatePlay(void)
 {
 	// 移動処理
 	ProcessMove();
@@ -96,7 +96,7 @@ void BombEnemy::UpdatePlay(void)
 	transform_.quaRot = enemyRotY_;
 }
 
-void BombEnemy::ProcessMove(void)
+void MagicEnemy::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 

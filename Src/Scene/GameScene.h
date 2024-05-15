@@ -10,7 +10,7 @@ class Bike;
 class EnemyBase;
 class ShortDisEnemy;
 class LongDisEnemy;
-class BombEnemy;
+class MagicEnemy;
 class Enemy;
 class EnemyBike;
 class Score;

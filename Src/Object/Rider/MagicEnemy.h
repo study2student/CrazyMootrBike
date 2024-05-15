@@ -1,10 +1,10 @@
 #include "EnemyBase.h"
 
-class BombEnemy : public EnemyBase
+class MagicEnemy : public EnemyBase
 {
 public:
 
-	BombEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos);
+	MagicEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;

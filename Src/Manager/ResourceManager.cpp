@@ -131,7 +131,7 @@ void ResourceManager::Init(void)
 
 	// ”š’e“G
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_BOMB, res);
+	resourcesMap_.emplace(SRC::ENEMY_Magic, res);
 
 	// ”š’e“G
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
