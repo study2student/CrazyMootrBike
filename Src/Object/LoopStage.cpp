@@ -51,6 +51,11 @@ void LoopStage::Draw(void)
 	MV1DrawModel(transform_.modelId);
 }
 
+void LoopStage::Destroy(void)
+{
+	MV1DeleteModel(transform_.modelId);
+}
+
 VECTOR LoopStage::GetPos(void)
 {
 	return transform_.pos;

@@ -29,6 +29,7 @@ public:
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
+	void Destroy(void);
 
 	VECTOR GetPos(void);
 

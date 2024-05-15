@@ -158,7 +158,6 @@ void GameScene::Update(void)
 	{
 
 		stage_->SetMakeLoopStage(false);
-
 		
 		//センター方向からの横の移動幅
 		float shiftX_ = {};
@@ -263,6 +262,7 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
+	DrawFormatString(840, 120, 0x000000, "DrawCall : %d", GetDrawCallCount());
 
 
 }

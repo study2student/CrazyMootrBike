@@ -124,7 +124,6 @@ void Stage::Draw(void)
 	}
 
 
-
 }
 
 void Stage::ChangeStage(NAME type)
@@ -258,7 +257,7 @@ void Stage::MakeLoopStage(void)
 		float scale = 1.0f;
 		loopTrans.scl = { scale * 2.5f,scale,scale };
 		loopTrans.quaRot = Quaternion();
-		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 6500.0f * (size + 1) };
+		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 5000.0f * (size + 1) };
 
 		// 当たり判定(コライダ)作成
 		loopTrans.MakeCollider(Collider::TYPE::STAGE);
@@ -281,8 +280,13 @@ void Stage::MakeLoopStage(void)
 		isMakeLoopStage_ = false;
 	}
 
-	
 
+	//後ろのステージを削除
+	if (loopStage_.size() >= 6)
+	{
+		LoopStage* tailLoop = loopStage_[size - 5];
+		tailLoop->Destroy();
+	}
 
 
 }
