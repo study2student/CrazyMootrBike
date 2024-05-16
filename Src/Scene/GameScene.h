@@ -59,7 +59,8 @@ private:
 	Bike* bike_;
 
 	// スコア
-	Score* score_;
+	int score_;
+
 
 	//ヘリコプター
 	Helicopter* helicopter_;

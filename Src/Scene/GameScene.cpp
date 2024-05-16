@@ -18,7 +18,6 @@
 #include "../Object/Rider/MagicEnemy.h"
 #include "../Object/Planet.h"
 #include "../Object/Helicopter.h"
-#include "../Object/Score.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -86,6 +85,9 @@ void GameScene::Init(void)
 	//エンカウントリセット
 	enCounter = 0;
 
+	// スコア
+	score_ = 0;
+
 	//敵が生成されたか
 	isCreateEnemy_ = false;
 
@@ -113,6 +115,10 @@ void GameScene::Update(void)
 	for (int i = 0; i < sizeE; i++)
 	{
 		enemys_[i]->Update();
+		if (enemys_[i]->GetIsBikeCol())
+		{
+			score_++;
+		}
 	}
 
 	//敵バイク
@@ -219,8 +225,6 @@ void GameScene::Update(void)
 			eB->Init();
 			isCreateEnemy_ = true;
 
-			score_ = new Score(e);
-			score_->Init();
 
 			////デバッグ
 			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
@@ -239,7 +243,6 @@ void GameScene::Update(void)
 		isCreateEnemy_ = false;
 	}
 		
-	score_->Update();
 
 	helicopter_->Update();
 }
@@ -263,7 +266,6 @@ void GameScene::Draw(void)
 		if (enemys_[i]->GetIsBikeCol() == false)
 		{
 			enemys_[i]->Draw();
-			score_->Draw();
 		}
 	}
 
@@ -282,6 +284,7 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
+	DrawFormatString(840, 140, 0x000000, "SCORE：%d", score_);
 	DrawDubg();
 }
 
