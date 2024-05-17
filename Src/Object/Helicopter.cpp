@@ -83,7 +83,7 @@ void Helicopter::Init(void)
 	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
 
 	// 初期状態
-	ChangeState(STATE::PLAY);
+	ChangeState(STATE::MOVE);
 
 }
 
@@ -95,8 +95,14 @@ void Helicopter::Update(void)
 	case Helicopter::STATE::NONE:
 		UpdateNone();
 		break;
-	case Helicopter::STATE::PLAY:
-		UpdatePlay();
+	case Helicopter::STATE::MOVE:
+		UpdateMove();
+		break;
+	case Helicopter::STATE::ATTACK:
+		UpdateAttack();
+		break;
+	case Helicopter::STATE::DEAD:
+		UpdateDead();
 		break;
 	}
 
@@ -111,6 +117,8 @@ void Helicopter::Draw(void)
 {
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
+
+	DrawBombPlace();
 
 	//羽
 	rotor_->Draw();
@@ -142,6 +150,11 @@ const Capsule* Helicopter::GetCapsule(void) const
 	return capsule_;
 }
 
+void Helicopter::SetBikeTrans(const Transform& bikeTrans)
+{
+	bikeTrans_ = bikeTrans;
+}
+
 void Helicopter::InitAnimation(void)
 {
 	/*std::string path = Application::PATH_MODEL + "Player/";
@@ -169,8 +182,14 @@ void Helicopter::ChangeState(STATE state)
 	case Helicopter::STATE::NONE:
 		ChangeStateNone();
 		break;
-	case Helicopter::STATE::PLAY:
-		ChangeStatePlay();
+	case Helicopter::STATE::MOVE:
+		ChangeStateMove();
+		break;
+	case Helicopter::STATE::ATTACK:
+		ChangeStateAttack();
+		break;
+	case Helicopter::STATE::DEAD:
+		ChangeStateDead();
 		break;
 	}
 }
@@ -179,7 +198,15 @@ void Helicopter::ChangeStateNone(void)
 {
 }
 
-void Helicopter::ChangeStatePlay(void)
+void Helicopter::ChangeStateMove(void)
+{
+}
+
+void Helicopter::ChangeStateAttack(void)
+{
+}
+
+void Helicopter::ChangeStateDead(void)
 {
 }
 
@@ -187,7 +214,7 @@ void Helicopter::UpdateNone(void)
 {
 }
 
-void Helicopter::UpdatePlay(void)
+void Helicopter::UpdateMove(void)
 {
 	//羽情報
 	rotor_->Update();
@@ -198,6 +225,31 @@ void Helicopter::UpdatePlay(void)
 
 	// ジャンプ処理
 	ProcessJump();
+
+	// デバッグ用
+	ProcessDebug();
+
+	// 移動方向に応じた回転
+	Rotate();
+
+	// 重力による移動量
+	CalcGravityPow();
+
+	// 衝突判定
+	Collision();
+
+	// 回転させる
+	transform_.quaRot = rotY_;
+}
+
+void Helicopter::UpdateAttack(void)
+{
+	//羽情報
+	rotor_->Update();
+	rotor_->SetTransform(transform_);
+
+	// 移動処理
+	ProcessMove();
 
 	// 攻撃処理
 	ProcessAttack();
@@ -218,16 +270,31 @@ void Helicopter::UpdatePlay(void)
 	transform_.quaRot = rotY_;
 }
 
+void Helicopter::UpdateDead(void)
+{
+}
+
 void Helicopter::DrawUI(void)
 {
 }
 
 void Helicopter::DrawShadow(void)
 {
+	
+}
+
+void Helicopter::DrawBombPlace(void)
+{
+	VECTOR localPos1 = { 100.0f,-600.0f,-390.0f };
+	VECTOR localPos2 = { 100.0f,-590.0f,-390.0f };
+	VECTOR pos1 = VAdd(transform_.pos, localPos1);
+	VECTOR pos2 = VAdd(transform_.pos, localPos2);
+	DrawCapsule3D(pos1, pos2, 50.0f, 1, 0xff0000, 0xffffff, 0);
 }
 
 void Helicopter::DrawDebug(void)
 {
+	DrawFormatString(0, 100, 0x000000, "copterPos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }
 
 void Helicopter::ProcessMove(void)
@@ -244,8 +311,10 @@ void Helicopter::ProcessMove(void)
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
 
-
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
+
+	//バイクプレイヤーに合わせる
+	transform_.pos.x = bikeTrans_.pos.x;
 
 	//前に進む
 	VECTOR movePowF_ = VScale(transform_.GetForward(), SPEED_MOVE);
@@ -289,16 +358,16 @@ void Helicopter::ProcessMove(void)
 
 
 	}
-	else
-	{
+	//else
+	//{
 
-		//傾きっぱになるので角度リセットしておく
-		rotRad = AsoUtility::Deg2RadD(0.0f);
-		dir = cameraRot.GetForward();
+	//	//傾きっぱになるので角度リセットしておく
+	//	rotRad = AsoUtility::Deg2RadD(0.0f);
+	//	dir = cameraRot.GetForward();
 
-		//// 回転処理
-		//SetGoalRotateZ(rotRadZ);
-	}
+	//	//// 回転処理
+	//	//SetGoalRotateZ(rotRadZ);
+	//}
 
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
@@ -331,7 +400,6 @@ void Helicopter::ProcessAttack(void)
 	//}
 
 	NormalAttack();
-	SpecialAttack();
 	LongAttack();
 }
 
@@ -347,10 +415,6 @@ void Helicopter::NormalAttack(void)
 void Helicopter::LongAttack(void)
 {
 
-}
-
-void Helicopter::SpecialAttack(void)
-{
 }
 
 void Helicopter::SetGoalRotate(float rotRad)

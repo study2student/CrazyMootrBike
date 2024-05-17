@@ -12,8 +12,11 @@ class Helicopter : public ActorBase
 {
 public:
 
-	// スピード
-	static constexpr float SPEED_MOVE = 50.0f;
+	// 通常スピード
+	static constexpr float SPEED_MOVE = 110.0f;
+
+	// 追いつくためのスピード
+	static constexpr float SPEED_FAST = 130.0f;
 
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 80.0f;
@@ -28,7 +31,8 @@ public:
 	enum class STATE
 	{
 		NONE,
-		PLAY,
+		MOVE,
+		ATTACK,
 		DEAD,
 		END
 	};
@@ -72,10 +76,16 @@ public:
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
 
+	//バイク情報の保存
+	void SetBikeTrans(const Transform& bikeTrans);
+
 private:
 
 	//羽
 	Rotor* rotor_;
+
+	//バイク情報
+	Transform bikeTrans_;
 
 	//// アニメーション
 	//AnimationController* animationController_;
@@ -127,15 +137,20 @@ private:
 	// 状態遷移
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
-	void ChangeStatePlay(void);
+	void ChangeStateMove(void);
+	void ChangeStateAttack(void);
+	void ChangeStateDead(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
-	void UpdatePlay(void);
+	void UpdateMove(void);
+	void UpdateAttack(void);
+	void UpdateDead(void);
 
 	// 描画系
 	void DrawUI(void);
 	void DrawShadow(void);
+	void DrawBombPlace(void);
 	void DrawDebug(void);
 
 	// 操作
@@ -147,7 +162,6 @@ private:
 	// 攻撃種別
 	void NormalAttack(void);//通常攻撃
 	void LongAttack(void);//遠距離攻撃
-	void SpecialAttack(void);//必殺技
 
 	// 回転
 	void SetGoalRotate(float rotRad);

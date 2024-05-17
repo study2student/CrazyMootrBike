@@ -107,6 +107,7 @@ void GameScene::Update(void)
 
 	bike_->Update();
 	enemy_->SetBikeTrans(bike_->GetTransform());
+	helicopter_->SetBikeTrans(bike_->GetTransform());
 	//enemy_->Update();
 	//enemyBike_->Update();
 
