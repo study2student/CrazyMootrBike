@@ -21,8 +21,7 @@ public:
 	};
 
 	// コンストラクタ
-	Bomb(
-		Bike* bike, const Transform& transform);
+	Bomb();
 
 	// デストラクタ
 	~Bomb(void);
@@ -31,10 +30,16 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
+	//ヘリの情報設定用
+	void SetHeliTrans(const Transform& heliTrans);
+
 private:
 
 	// プレイヤー
 	Bike* bike_;
+
+	//ヘリ
+	Transform heliTrans_;
 
 	// 状態管理
 	STATE state_;
@@ -51,6 +56,9 @@ private:
 	void UpdateIdle(void);
 	void UpdateReserve(void);
 	void UpdateBlast(void);
+
+	//爆弾の位置
+	void DrawBombPlace(void);
 
 };
 

@@ -7,6 +7,7 @@ class AnimationController;
 class Collider;
 class Capsule;
 class Rotor;
+class Bomb;
 
 class Helicopter : public ActorBase
 {
@@ -83,6 +84,9 @@ private:
 
 	//‰H
 	Rotor* rotor_;
+	
+	//”š’e
+	Bomb* bomb_;
 
 	//ƒoƒCƒNî•ñ
 	Transform bikeTrans_;
@@ -150,7 +154,6 @@ private:
 	// •`‰æŒn
 	void DrawUI(void);
 	void DrawShadow(void);
-	void DrawBombPlace(void);
 	void DrawDebug(void);
 
 	// ‘€ì

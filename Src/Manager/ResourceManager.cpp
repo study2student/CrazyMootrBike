@@ -139,7 +139,7 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Helicopter/AirCraft04_Rotor.mv1");
 	resourcesMap_.emplace(SRC::HELICOPTER_ROTOR, res);
 
-	// ”š’e“G
+	// “G‚ª—Ž‚Æ‚·”š’e
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
 	resourcesMap_.emplace(SRC::BOMB, res);
 

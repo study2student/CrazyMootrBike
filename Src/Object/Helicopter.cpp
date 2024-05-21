@@ -10,6 +10,7 @@
 #include "Common/Collider.h"
 #include "Planet.h"
 #include "Rotor.h"
+#include "Bomb.h"
 #include "Helicopter.h"
 
 Helicopter::Helicopter(void)
@@ -41,12 +42,16 @@ Helicopter::Helicopter(void)
 	hp_ = 0;
 
 	capsule_ = nullptr;
+	bomb_ = nullptr;
+	rotor_ = nullptr;
 
 }
 
 Helicopter::~Helicopter(void)
 {
 	delete capsule_;
+	delete rotor_;
+	delete bomb_;
 	//delete animationController_;
 }
 
@@ -55,6 +60,10 @@ void Helicopter::Init(void)
 	//âH
 	rotor_ = new Rotor();
 	rotor_->Init();
+
+	//îöíe
+	bomb_ = new Bomb();
+	bomb_->Init();
 
 	// ÉÇÉfÉãÇÃäÓñ{ê›íË
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -118,10 +127,11 @@ void Helicopter::Draw(void)
 	// ÉÇÉfÉãÇÃï`âÊ
 	MV1DrawModel(transform_.modelId);
 
-	DrawBombPlace();
-
 	//âH
 	rotor_->Draw();
+
+	//îöíe
+	bomb_->Draw();
 
 	// ëÃóÕÇ∆Ç©ÉQÅ[ÉWÇ∆Ç©
 	DrawUI();
@@ -220,6 +230,9 @@ void Helicopter::UpdateMove(void)
 	rotor_->Update();
 	rotor_->SetTransform(transform_);
 
+	//îöíeèÓïÒ
+	bomb_->SetHeliTrans(transform_);
+
 	// à⁄ìÆèàóù
 	ProcessMove();
 
@@ -247,6 +260,10 @@ void Helicopter::UpdateAttack(void)
 	//âHèÓïÒ
 	rotor_->Update();
 	rotor_->SetTransform(transform_);
+
+	//îöíeèÓïÒ
+	bomb_->Update();
+	bomb_->SetHeliTrans(transform_);
 
 	// à⁄ìÆèàóù
 	ProcessMove();
@@ -281,15 +298,6 @@ void Helicopter::DrawUI(void)
 void Helicopter::DrawShadow(void)
 {
 	
-}
-
-void Helicopter::DrawBombPlace(void)
-{
-	VECTOR localPos1 = { 100.0f,-600.0f,-390.0f };
-	VECTOR localPos2 = { 100.0f,-590.0f,-390.0f };
-	VECTOR pos1 = VAdd(transform_.pos, localPos1);
-	VECTOR pos2 = VAdd(transform_.pos, localPos2);
-	DrawCapsule3D(pos1, pos2, 50.0f, 1, 0xff0000, 0xffffff, 0);
 }
 
 void Helicopter::DrawDebug(void)
