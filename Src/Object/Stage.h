@@ -7,6 +7,7 @@ class Planet;
 class Player;
 class Bike;
 class Enemy;
+class JampRamp;
 class EnemyBase;
 class LoopStage;
 class GameScene;
@@ -83,6 +84,8 @@ private:
 	//Transform loopStage_;
 	//ループ用のステージ
 	std::vector<LoopStage*> loopStage_;
+
+	JampRamp* jampRamp_;
 
 	// 惑星
 	std::map<NAME, Planet*> planets_;

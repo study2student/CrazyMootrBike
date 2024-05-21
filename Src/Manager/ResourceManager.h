@@ -35,6 +35,8 @@ public:
 		TANK_WHEEL,
 
 		DEMO_STAGE,//仮ステージ
+		JUMP_RAMP,//ジャンプ台
+
 		ENEMY_SHORT,		//仮敵
 		ENEMY_LONG,
 		ENEMY_MAGIC,
