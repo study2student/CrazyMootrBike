@@ -5,11 +5,18 @@
 class Player;
 class Bike;
 
+
 class Bomb : public ActorBase
 {
 
 public:
 
+
+	//爆弾場所表示時間
+	static constexpr float PLACE_DRAW_MAX_TIME = 5.0f;
+
+	//爆弾爆発準備時間
+	static constexpr float RESERVE_MAX_TIME = 2.5f;
 
 	// 状態
 	enum class STATE
@@ -41,8 +48,21 @@ private:
 	//ヘリ
 	Transform heliTrans_;
 
+	//爆弾場所表示時間
+	float stepPlaceDrawTime_;
+
+	//爆弾爆発準備時間
+	float stepReserveTime_;
+
 	// 状態管理
 	STATE state_;
+
+	//爆発エフェクト
+	int bombEffectResId_;
+
+	//爆発エフェクト
+	int bombEffectPlayId_;
+	
 
 	// 状態遷移
 	void ChangeState(STATE state);

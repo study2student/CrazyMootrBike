@@ -226,12 +226,6 @@ void Helicopter::UpdateNone(void)
 
 void Helicopter::UpdateMove(void)
 {
-	//‰Hî•ñ
-	rotor_->Update();
-	rotor_->SetTransform(transform_);
-
-	//”š’eî•ñ
-	bomb_->SetHeliTrans(transform_);
 
 	// ˆÚ“®ˆ—
 	ProcessMove();
@@ -253,17 +247,19 @@ void Helicopter::UpdateMove(void)
 
 	// ‰ñ“]‚³‚¹‚é
 	transform_.quaRot = rotY_;
+
+	//‚ ‚é’ö“x‹——£‚ª‹ó‚¢‚Ä‚¢‚½‚çUŒ‚ó‘Ô‚ÉˆÚs
+	//ƒoƒCƒN‚ÆƒwƒŠ‚Ì‹——£‚ð‚Í‚©‚é
+	VECTOR localPos = { 0.0f,0.0f,2000.0f };
+	VECTOR atkLinePos = VAdd(bikeTrans_.pos, localPos);
+	if (transform_.pos.z >= atkLinePos.z)
+	{
+		ChangeState(STATE::ATTACK);
+	}
 }
 
 void Helicopter::UpdateAttack(void)
 {
-	//‰Hî•ñ
-	rotor_->Update();
-	rotor_->SetTransform(transform_);
-
-	//”š’eî•ñ
-	bomb_->Update();
-	bomb_->SetHeliTrans(transform_);
 
 	// ˆÚ“®ˆ—
 	ProcessMove();
@@ -307,6 +303,10 @@ void Helicopter::DrawDebug(void)
 
 void Helicopter::ProcessMove(void)
 {
+	//‰Hî•ñ
+	rotor_->Update();
+	rotor_->SetTransform(transform_);
+
 	auto& ins = InputManager::GetInstance();
 
 	// ˆÚ“®—Ê‚ðƒ[ƒ
@@ -418,6 +418,9 @@ void Helicopter::ProcessDebug(void)
 
 void Helicopter::NormalAttack(void)
 {
+	//”š’eî•ñ
+	bomb_->Update();
+	bomb_->SetHeliTrans(transform_);
 }
 
 void Helicopter::LongAttack(void)
