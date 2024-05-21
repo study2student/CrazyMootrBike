@@ -5,6 +5,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "WarpStar.h"
+#include "../Object/JampRamp.h"
 #include "../Object/Rider/Player.h"
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Enemy.h"
@@ -62,6 +63,7 @@ Stage::~Stage(void)
 	}
 	loopStage_.clear();
 
+	delete jampRamp_;
 }
 
 void Stage::Init(void)
@@ -70,7 +72,8 @@ void Stage::Init(void)
 	MakeLoopStage();
 	MakeWarpStar();
 
-
+	jampRamp_ = new JampRamp();
+	jampRamp_->Init();
 
 	step_ = -1.0f;
 }
@@ -123,7 +126,7 @@ void Stage::Draw(void)
 		ls->Draw();
 	}
 
-
+	jampRamp_->Draw();
 }
 
 void Stage::ChangeStage(NAME type)
