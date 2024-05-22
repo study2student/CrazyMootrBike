@@ -3,6 +3,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "JampRamp.h"
+#include "Common/Capsule.h"
 
 JampRamp::JampRamp() : resMng_(ResourceManager::GetInstance())
 {
@@ -18,20 +19,102 @@ void JampRamp::Init(void)
 	transform_.SetModel(
 		resMng_.LoadModelDuplicate(ResourceManager::SRC::JUMP_RAMP));
 	float scale = 1.0f;
-	transform_.scl = { scale,scale,scale };
+	transform_.scl = { scale*3,scale,scale*2 };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal = 
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });;
 	transform_.pos = { 1500.0f, -260.0f, 1000.0f };
 	
 	transform_.Update();
+
+	// カプセルコライダ
+	capsule_ = new Capsule(transform_);
+	capsule_->SetLocalPosTop({ -100.0f, 100.0f, 0.0f });
+	capsule_->SetLocalPosDown({ 280.0f, 100.0f, 0.0f });
+	capsule_->SetRadius(150.0f);
 }
 
 void JampRamp::Update(void)
 {
+	transform_.MakeCollider(Collider::TYPE::STAGE);
+	
+	CollisionCapsule();
+
+	transform_.Update();
 }
 
 void JampRamp::Draw(void)
 {
+
 	MV1DrawModel(transform_.modelId);
+	DrawDebug();
+}
+
+void JampRamp::AddCollider(Collider* collider)
+{
+	colliders_.push_back(collider);
+}
+
+void JampRamp::ClearCollider(void)
+{
+	colliders_.clear();
+}
+
+const Capsule* JampRamp::GetCapsule(void) const
+{
+	return capsule_;
+}
+
+void JampRamp::CollisionCapsule(void)
+{
+	Transform trans = Transform(transform_);
+	trans.pos = movedPos_;
+	trans.Update();
+	Capsule cap = Capsule(*capsule_, trans);
+
+	// カプセルとの衝突判定
+	for (const auto c : colliders_)
+	{
+
+		auto hits = MV1CollCheck_Capsule(
+			c->modelId_, -1,
+			cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius());
+
+		for (int i = 0; i < hits.HitNum; i++)
+		{
+
+			auto hit = hits.Dim[i];
+
+			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+			{
+
+				int pHit = HitCheck_Capsule_Triangle(
+					cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius(),
+					hit.Position[0], hit.Position[1], hit.Position[2]);
+
+				if (pHit)
+				{
+					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
+					// カプセルを移動させる
+					trans.pos = movedPos_;
+					trans.Update();
+					continue;
+				}
+
+				break;
+
+			}
+
+		}
+
+		// 検出した地面ポリゴン情報の後始末
+		MV1CollResultPolyDimTerminate(hits);
+
+	}
+
+}
+
+void JampRamp::DrawDebug(void)
+{
+	capsule_->Draw();
 }

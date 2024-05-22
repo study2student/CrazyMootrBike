@@ -177,6 +177,13 @@ const Capsule* Bike::GetCapsule(void) const
 	return capsule_;
 }
 
+void Bike::SetSpeed(float speed, float rotRad)
+{
+	speed_ = speed;
+
+	transform_.quaRotLocal.AngleAxis(rotRad, AsoUtility::AXIS_X);
+}
+
 void Bike::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Player/";

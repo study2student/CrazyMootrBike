@@ -66,7 +66,8 @@ public:
 	//先頭のループ用ステージの座標を取得
 	VECTOR GetForwardLoopPos(void);
 
-
+	// ジャンプ台に当たった時の処理
+	void Jump(void);
 private:
 
 	//ゲームシーンポインタ
@@ -100,6 +101,9 @@ private:
 	Planet* nullPlanet = nullptr;
 
 	float step_;
+
+	//ジャンプ台に当たったか
+	bool isJamp_;
 
 	//ループ用のステージが生成されたかどうか
 	bool isMakeLoopStage_;
