@@ -17,6 +17,9 @@ Bomb::Bomb()
 
 	stepPlaceDrawTime_ = 0.0f;
 	stepReserveTime_ = 0.0f;
+
+	stepBombBlast_ = 0.0f;
+	isCol_ = false;
 }
 
 Bomb::~Bomb(void)
@@ -110,6 +113,11 @@ void Bomb::SetHeliTrans(const Transform& heliTrans)
 	heliTrans_ = heliTrans;
 }
 
+void Bomb::SetIsCol(bool isCol)
+{
+	isCol_ = isCol;
+}
+
 void Bomb::ChangeState(STATE state)
 {
 	//状態変更
@@ -139,6 +147,7 @@ void Bomb::ChangeStateNone(void)
 
 void Bomb::ChangeStateIdle(void)
 {
+	isCol_ = false;
 }
 
 void Bomb::ChangeStateReserve(void)
@@ -149,7 +158,18 @@ void Bomb::ChangeStateBlast(void)
 {
 	//爆発エフェクト
 	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
-	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
+
+	//何かに当たった時は前で爆発
+	VECTOR localPos = {};
+	if (isCol_)
+	{
+		localPos = { 0.0f,0.0f,2200.0f };
+	}
+	else
+	{
+		localPos = { 0.0f,0.0f,0.0f };
+	}
+	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
 	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, 10.0f, 10.0f, 10.0f);
 }
 
@@ -175,6 +195,7 @@ void Bomb::UpdateIdle(void)
 
 void Bomb::UpdateReserve(void)
 {
+
 	// 弾を移動させる
 	VECTOR movePow;
 	VECTOR targetDir = VNorm(VSub(bombTargetPos_, transform_.pos));
@@ -192,9 +213,10 @@ void Bomb::UpdateReserve(void)
 	//3秒後に爆発
 	stepReserveTime_ += SceneManager::GetInstance().GetDeltaTime();
 
-	if (stepReserveTime_ >= RESERVE_MAX_TIME)
+	//何かに当たっても爆発する
+	if (stepReserveTime_ >= RESERVE_MAX_TIME || isCol_)
 	{
-		//爆弾爆発準備状態に移行
+		//爆弾爆発状態に移行
 		ChangeState(STATE::BLAST);
 		stepReserveTime_ = 0.0f;
 	}
@@ -208,6 +230,19 @@ void Bomb::UpdateBlast(void)
 	// 衝突判定
 	Collision();
 	transform_.Update();
+
+
+	//5秒後に復活
+	stepBombBlast_ += SceneManager::GetInstance().GetDeltaTime();
+
+	if (stepBombBlast_ >= BOMB_REMAKE_MAX_TIME)
+	{
+		//爆弾爆発発射前状態に移行
+		ChangeState(STATE::IDLE);
+		stepBombBlast_ = 0.0f;
+	}
+	
+
 }
 
 void Bomb::DrawBombPlace(void)

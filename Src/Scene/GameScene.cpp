@@ -17,6 +17,7 @@
 #include "../Object/Rider/LongDisEnemy.h"
 #include "../Object/Rider/MagicEnemy.h"
 #include "../Object/Planet.h"
+#include "../Object/Bomb.h"
 #include "../Object/Helicopter.h"
 #include "GameScene.h"
 
@@ -108,8 +109,6 @@ void GameScene::Update(void)
 	bike_->Update();
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	helicopter_->SetBikeTrans(bike_->GetTransform());
-	//enemy_->Update();
-	//enemyBike_->Update();
 
 	//“G
 	size_t sizeE = enemys_.size();
@@ -129,44 +128,8 @@ void GameScene::Update(void)
 		enemyBikes_[t]->Update();
 	}
 
-
-	//“G“¯Žm‚Ì“–‚½‚è”»’è(’e‚­)
-	for (int b1 = 0; b1 < sizeEb; b1++)
-	{
-
-		for (int b2 = 0; b2 < sizeEb; b2++)
-		{
-
-			if (enemyBikes_[b1] == enemyBikes_[b2])
-			{
-				continue;
-			}
-
-			auto b1Pos = enemyBikes_[b1]->GetCapsule()->GetCenter();
-			auto b2Pos = enemyBikes_[b2]->GetCapsule()->GetCenter();
-
-			VECTOR diff = VSub(b1Pos, b2Pos);
-			float  dis = AsoUtility::SqrMagnitudeF(diff);
-			if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
-			{
-
-				// ”ÍˆÍ‚É“ü‚Á‚½‚çA‚¨ŒÝ‚¢‚ð’e‚­
-				auto flipDirB1 = VNorm(VSub(b1Pos, b2Pos));
-				flipDirB1.y = 0.0f;
-				flipDirB1 = VNorm(flipDirB1);
-				auto flipDirB2 = VNorm(VSub(b2Pos, b1Pos));
-				flipDirB2.y = 0.0f;
-				flipDirB2 = VNorm(flipDirB2);
-
-				enemys_[b1]->Flip(flipDirB1);
-				enemys_[b2]->Flip(flipDirB2);
-			}
-
-
-		}
-
-	}
-
+	//Õ“Ë”»’è
+	Collision();
 
 	//ƒXƒe[ƒW‚ª¶¬‚³‚ê‚½‚ç“G‚ð”z’u‚·‚é
 	if (stage_->GetIsMakeLoopStage())
@@ -308,4 +271,60 @@ void GameScene::DrawDubg(void)
 {
 	DrawFormatString(840, 100, 0x000000,"DrawCall:%d", GetDrawCallCount());
 	DrawFormatString(840, 120, 0x000000,"FPS:%f", GetFPS());
+}
+
+void GameScene::Collision(void)
+{
+
+	//”š’e‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+	auto heliCap = helicopter_->GetBomb()->GetCapsule();
+	auto bikeCap = bike_->GetCapsule();
+
+	VECTOR diff = VSub(heliCap->GetCenter(), bikeCap->GetCenter());
+	float  dis = AsoUtility::SqrMagnitudeF(diff);
+	if (dis < heliCap->GetRadius() * bikeCap->GetRadius())
+	{
+		//“–‚½‚Á‚½
+		helicopter_->GetBomb()->SetIsCol(true);
+	}
+
+
+
+	//“G“¯Žm‚Ì“–‚½‚è”»’è(’e‚­)
+	size_t sizeEb = enemyBikes_.size();
+	for (int b1 = 0; b1 < sizeEb; b1++)
+	{
+
+		for (int b2 = 0; b2 < sizeEb; b2++)
+		{
+
+			if (enemyBikes_[b1] == enemyBikes_[b2])
+			{
+				continue;
+			}
+
+			auto b1Pos = enemyBikes_[b1]->GetCapsule()->GetCenter();
+			auto b2Pos = enemyBikes_[b2]->GetCapsule()->GetCenter();
+
+			VECTOR diff = VSub(b1Pos, b2Pos);
+			float  dis = AsoUtility::SqrMagnitudeF(diff);
+			if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
+			{
+
+				// ”ÍˆÍ‚É“ü‚Á‚½‚çA‚¨ŒÝ‚¢‚ð’e‚­
+				auto flipDirB1 = VNorm(VSub(b1Pos, b2Pos));
+				flipDirB1.y = 0.0f;
+				flipDirB1 = VNorm(flipDirB1);
+				auto flipDirB2 = VNorm(VSub(b2Pos, b1Pos));
+				flipDirB2.y = 0.0f;
+				flipDirB2 = VNorm(flipDirB2);
+
+				enemys_[b1]->Flip(flipDirB1);
+				enemys_[b2]->Flip(flipDirB2);
+			}
+
+
+		}
+
+	}
 }

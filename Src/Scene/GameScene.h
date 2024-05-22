@@ -83,4 +83,7 @@ private:
 	bool isCreateEnemy_;
 
 	void DrawDubg(void);
+	
+	//Õ“Ë”»’è
+	void Collision(void);
 };

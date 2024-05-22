@@ -19,6 +19,9 @@ public:
 	//爆弾爆発準備時間
 	static constexpr float RESERVE_MAX_TIME = 2.5f;
 
+	//爆弾復活時間
+	static constexpr float BOMB_REMAKE_MAX_TIME = 5.0f;
+
 	// スピード
 	static constexpr float SPEED = 30.0f;
 
@@ -51,6 +54,9 @@ public:
 	//ヘリの情報設定用
 	void SetHeliTrans(const Transform& heliTrans);
 
+	//爆弾が何かに当たったか設定
+	void SetIsCol(bool isCol);
+
 private:
 
 	// プレイヤー
@@ -58,6 +64,9 @@ private:
 
 	//ヘリ
 	Transform heliTrans_;
+
+	//爆弾が爆発してからどのくらい時間経過したか
+	float stepBombBlast_;
 
 	//爆弾場所表示時間
 	float stepPlaceDrawTime_;
@@ -82,6 +91,9 @@ private:
 
 	// 移動量
 	VECTOR movePow_;
+
+	//爆弾が何かに当たったか
+	bool isCol_;
 
 	// 衝突判定に用いられるコライダ
 	std::vector<Collider*> colliders_;
@@ -116,6 +128,9 @@ private:
 
 	// 移動量の計算
 	void CalcGravityPow(void);
+
+	//爆弾の生成
+	void CreateBomb(void);
 
 };
 
