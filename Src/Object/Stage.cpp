@@ -14,6 +14,7 @@
 #include "Planet.h"
 #include "LoopStage.h"
 #include "Common/Collider.h"
+#include "Common/Capsule.h"
 #include "Common/Transform.h"
 #include "../Scene/GameScene.h"
 #include "Stage.h"
@@ -30,6 +31,8 @@ Stage::Stage(Bike* bike, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
 	step_ = 0.0f;
 
 	isMakeLoopStage_ = false;
+
+	isJamp_ = false;
 
 	//ループ用のステージ
 	/*loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
@@ -104,7 +107,15 @@ void Stage::Update(void)
 	//ステージを生成する
 	MakeLoopStage();
 
+	auto b1Pos = bike_->GetCapsule()->GetCenter();
+	auto b2Pos = jampRamp_->GetCapsule()->GetCenter();
 
+	VECTOR diff = VSub(b1Pos, b2Pos);
+	float  dis = AsoUtility::SqrMagnitudeF(diff);
+	if (dis < bike_->GetCapsule()->GetRadius() * jampRamp_->GetCapsule()->GetRadius())
+	{
+		isJamp_ = true;
+	}
 }
 
 void Stage::Draw(void)
@@ -129,6 +140,8 @@ void Stage::Draw(void)
 	}
 
 	jampRamp_->Draw();
+
+	DrawFormatString(0, 200, 0xff0000, "IsJump:%d", isJamp_);
 }
 
 void Stage::ChangeStage(NAME type)
@@ -142,13 +155,23 @@ void Stage::ChangeStage(NAME type)
 	// ステージの当たり判定設定
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_->GetTransform().collider);
+	jampRamp_->Update();
+	jampRamp_->ClearCollider();
+	jampRamp_->AddCollider(activePlanet_->GetTransform().collider);
 	bomb_->ClearCollider();
 	bomb_->AddCollider(activePlanet_->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
 		bike_->AddCollider(ls->GetTransform().collider);
+		jampRamp_->AddCollider(ls->GetTransform().collider);
 		bomb_->AddCollider(ls->GetTransform().collider);
+	}
+
+
+	if (isJamp_)
+	{
+		Jump();
 	}
 
 	enemy_->ClearCollider();
@@ -194,6 +217,11 @@ VECTOR Stage::GetForwardLoopPos(void)
 	//先頭ループステージの座標を取得
 	int size = (int)loopStage_.size();
 	return loopStage_[size - 1]->GetPos();
+}
+
+void Stage::Jump(void)
+{
+	bike_->SetSpeed(120.0f,50.0f);
 }
 
 void Stage::MakeMainStage(void)
