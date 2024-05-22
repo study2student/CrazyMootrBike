@@ -10,6 +10,7 @@
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Enemy.h"
 #include "../Object/Rider/EnemyBase.h"
+#include "../Object/Bomb.h"
 #include "Planet.h"
 #include "LoopStage.h"
 #include "Common/Collider.h"
@@ -17,13 +18,14 @@
 #include "../Scene/GameScene.h"
 #include "Stage.h"
 
-Stage::Stage(Bike* bike, EnemyBase* enemy, GameScene* gameScene)
+Stage::Stage(Bike* bike, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance())
 {
 	gameScene_ = gameScene;
 
 	bike_ = bike;
 	enemy_ = enemy;
+	bomb_ = bomb;
 	activeName_ = NAME::MAIN_PLANET;
 	step_ = 0.0f;
 
@@ -137,17 +139,18 @@ void Stage::ChangeStage(NAME type)
 	// 対象のステージを取得する
 	activePlanet_ = GetPlanet(activeName_);
 
-	// ステージの当たり判定をプレイヤーに設定
+	// ステージの当たり判定設定
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_->GetTransform().collider);
+	bomb_->ClearCollider();
+	bomb_->AddCollider(activePlanet_->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
 		bike_->AddCollider(ls->GetTransform().collider);
+		bomb_->AddCollider(ls->GetTransform().collider);
 	}
 
-
-	// ステージのあたり判定を敵に設定
 	enemy_->ClearCollider();
 	enemy_->AddCollider(activePlanet_->GetTransform().collider);
 	//ループ用のステージ
@@ -270,6 +273,7 @@ void Stage::MakeLoopStage(void)
 		for (const auto& ls : loopStage_)
 		{
 			bike_->AddCollider(ls->GetTransform().collider);
+			bomb_->AddCollider(ls->GetTransform().collider);
 		}
 
 		stage = new LoopStage(bike_, loopTrans);

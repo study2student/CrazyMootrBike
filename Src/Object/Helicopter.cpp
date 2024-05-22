@@ -165,6 +165,11 @@ void Helicopter::SetBikeTrans(const Transform& bikeTrans)
 	bikeTrans_ = bikeTrans;
 }
 
+Bomb* Helicopter::GetBomb(void)
+{
+	return bomb_;
+}
+
 void Helicopter::InitAnimation(void)
 {
 	/*std::string path = Application::PATH_MODEL + "Player/";
@@ -250,8 +255,7 @@ void Helicopter::UpdateMove(void)
 
 	//ある程度距離が空いていたら攻撃状態に移行
 	//バイクとヘリの距離をはかる
-	VECTOR localPos = { 0.0f,0.0f,2000.0f };
-	VECTOR atkLinePos = VAdd(bikeTrans_.pos, localPos);
+	VECTOR atkLinePos = VAdd(bikeTrans_.pos, ATTACK_LINE_LOCAL_POS);
 	if (transform_.pos.z >= atkLinePos.z)
 	{
 		ChangeState(STATE::ATTACK);

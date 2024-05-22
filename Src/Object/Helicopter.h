@@ -25,6 +25,9 @@ public:
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
 
+	//攻撃状態にするためのプレイヤーからヘリまでの相対座標
+	static constexpr VECTOR ATTACK_LINE_LOCAL_POS = { 0.0f,0.0f,5000.0f };
+
 	// HPの最大値
 	static constexpr int MAX_HP = 100;
 
@@ -79,6 +82,9 @@ public:
 
 	//バイク情報の保存
 	void SetBikeTrans(const Transform& bikeTrans);
+
+	//爆弾取得
+	Bomb* GetBomb(void);
 
 private:
 

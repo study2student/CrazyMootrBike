@@ -69,7 +69,7 @@ void GameScene::Init(void)
 	helicopter_->Init();
 
 	// ステージ
-	stage_ = new Stage(bike_, enemy_,this);
+	stage_ = new Stage(bike_, enemy_,helicopter_->GetBomb(), this);
 	stage_->Init();
 
 	// ステージの初期設定

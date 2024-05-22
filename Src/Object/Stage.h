@@ -11,6 +11,7 @@ class JampRamp;
 class EnemyBase;
 class LoopStage;
 class GameScene;
+class Bomb;
 
 class Stage
 {
@@ -43,7 +44,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(Bike* bike, EnemyBase* enemy,GameScene* gameScene);
+	Stage(Bike* bike, EnemyBase* enemy,Bomb* bomb, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -65,6 +66,7 @@ public:
 	//先頭のループ用ステージの座標を取得
 	VECTOR GetForwardLoopPos(void);
 
+
 private:
 
 	//ゲームシーンポインタ
@@ -75,6 +77,7 @@ private:
 
 	Bike* bike_;
 	EnemyBase* enemy_;
+	Bomb* bomb_;
 
 	// ステージアクティブになっている惑星の情報
 	NAME activeName_;

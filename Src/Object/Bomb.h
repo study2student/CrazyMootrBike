@@ -4,7 +4,8 @@
 #include "ActorBase.h"
 class Player;
 class Bike;
-
+class Collider;
+class Capsule;
 
 class Bomb : public ActorBase
 {
@@ -17,6 +18,9 @@ public:
 
 	//爆弾爆発準備時間
 	static constexpr float RESERVE_MAX_TIME = 2.5f;
+
+	// スピード
+	static constexpr float SPEED = 30.0f;
 
 	// 状態
 	enum class STATE
@@ -36,6 +40,13 @@ public:
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
+
+	// 衝突判定に用いられるコライダ制御
+	void AddCollider(Collider* collider);
+	void ClearCollider(void);
+
+	// 衝突用カプセルの取得
+	const Capsule* GetCapsule(void) const;
 
 	//ヘリの情報設定用
 	void SetHeliTrans(const Transform& heliTrans);
@@ -62,6 +73,24 @@ private:
 
 	//爆発エフェクト
 	int bombEffectPlayId_;
+
+	//爆発目標
+	VECTOR bombTargetPos_;
+
+	// 移動後の座標
+	VECTOR movedPos_;
+
+	// 移動量
+	VECTOR movePow_;
+
+	// 衝突判定に用いられるコライダ
+	std::vector<Collider*> colliders_;
+	Capsule* capsule_;
+
+	// 衝突チェック
+	VECTOR gravHitPosDown_;
+	VECTOR gravHitPosUp_;
+
 	
 
 	// 状態遷移
@@ -79,6 +108,14 @@ private:
 
 	//爆弾の位置
 	void DrawBombPlace(void);
+
+	// 衝突判定
+	void Collision(void);
+	void CollisionGravity(void);
+	void CollisionCapsule(void);
+
+	// 移動量の計算
+	void CalcGravityPow(void);
 
 };
 
