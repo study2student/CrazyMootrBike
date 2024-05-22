@@ -38,6 +38,9 @@ public:
 	// 解放成功／失敗の判定
 	bool IsReleaseFail(void) const;
 
+	//ゲームを終えるキーが押されたか設定
+	void SetIsGameFinishKey(bool isGameFinishKey);
+
 private:
 
 	// 静的インスタンス
@@ -48,6 +51,9 @@ private:
 
 	// 解放失敗
 	bool isReleaseFail_;
+
+	//ゲームを終えるキーが押されたか
+	bool isGameFinishKey_;
 
 	// デフォルトコンストラクタをprivateにして、
 	// 外部から生成できない様にする

@@ -57,6 +57,8 @@ void Application::Init(void)
 	// シーン管理初期化
 	SceneManager::CreateInstance();
 
+	isGameFinishKey_ = false;
+
 }
 
 void Application::Run(void)
@@ -66,7 +68,7 @@ void Application::Run(void)
 	auto& sceneManager = SceneManager::GetInstance();
 
 	// ゲームループ
-	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
+	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0 && !isGameFinishKey_)
 	{
 
 		inputManager.Update();
@@ -108,6 +110,11 @@ bool Application::IsInitFail(void) const
 bool Application::IsReleaseFail(void) const
 {
 	return isReleaseFail_;
+}
+
+void Application::SetIsGameFinishKey(bool isGameFinishKey)
+{
+	isGameFinishKey_ = isGameFinishKey;
 }
 
 Application::Application(void)
