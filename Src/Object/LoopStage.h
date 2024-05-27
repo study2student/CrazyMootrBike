@@ -32,6 +32,8 @@ public:
 	void Destroy(void);
 
 	VECTOR GetPos(void);
+	STATE GetState(void);
+	bool IsDestroy(void);
 
 private:
 

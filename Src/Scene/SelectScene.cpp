@@ -7,6 +7,7 @@
 
 SelectScene::SelectScene(void)
 {
+	nowCursor_ = 0;
 }
 
 SelectScene::~SelectScene(void)
@@ -22,20 +23,16 @@ void SelectScene::Init(void)
 	onePersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 - 20 };
 
 	//左上のおわるポジション
-	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 230 , Application::SCREEN_SIZE_Y / 2 + 120 };
+	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
 }
 
 void SelectScene::Update(void)
 {
-	//ゲームシーンへ
-	auto& ins_ = InputManager::GetInstance();
-	if (ins_.IsTrgDown(KEY_INPUT_SPACE))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
-
 	//マウス操作
 	MouseProcess();
+
+	//キー操作
+	KeyProcess();
 }
 
 void SelectScene::Draw(void)
@@ -47,20 +44,21 @@ void SelectScene::Draw(void)
 
 void SelectScene::MouseProcess(void)
 {
+	auto& ins_ = InputManager::GetInstance();
+
 	//マウス座標
 	Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
-
 
 	//1人でボタン
 	Vector2 startFontLenPos_ = { onePersonFontBasePos_.x + ONE_PERSON_FONT_LENGTH ,onePersonFontBasePos_.y + ONE_PERSON_FONT_HEIGHT };
 	if (mousePos_.x >= onePersonFontBasePos_.x && mousePos_.x <= startFontLenPos_.x
-		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y)
+		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y || state_==STATE::ONE_PERSON)
 	{
 		//ボタンにふれている場合
 		onePersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT)
+		if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
-			//左クリックでゲームを開始する
+			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 
 		}
@@ -76,13 +74,13 @@ void SelectScene::MouseProcess(void)
 	//4人でボタン
 	Vector2 exitFontLenPos_ = { fourPersonFontBasePos_.x + FOUR_PERSON_FONT_LENGTH ,fourPersonFontBasePos_.y + FOUR_PERSON_FONT_HEIGHT };
 	if (mousePos_.x >= fourPersonFontBasePos_.x && mousePos_.x <= exitFontLenPos_.x
-		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y)
+		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y || state_ == STATE::FOUR_PERSON)
 	{
 		//ボタンにふれている場合
 		fourPersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT)
+		if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
-			//左クリックでゲームを終了する
+			//左クリックまたはスペースキーでゲームを終了する
 			Application::GetInstance().SetIsGameFinishKey(true);
 		}
 	}
@@ -90,5 +88,50 @@ void SelectScene::MouseProcess(void)
 	{
 		//ボタンにふれいない場合
 		fourPersonFontColor_ = GetColor(255, 255, 255);
+	}
+}
+
+void SelectScene::KeyProcess(void)
+{
+	auto& ins_ = InputManager::GetInstance();
+
+	//カーソル番号による上下操作
+	if (ins_.IsTrgDown(KEY_INPUT_UP))
+	{
+		nowCursor_--;
+		if (nowCursor_ <= 0)
+		{
+			nowCursor_ = 0;
+		}
+	}
+	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
+	{
+		nowCursor_++;
+		if (nowCursor_ >= SELECT_MAX_NUM - 1)
+		{
+			nowCursor_ = SELECT_MAX_NUM - 1;
+		}
+	}
+	
+	//現カーソルから状態を変化
+	CursorToState(nowCursor_);
+
+}
+
+void SelectScene::ChangeState(STATE state)
+{
+	state_ = state;
+}
+
+void SelectScene::CursorToState(int cursor)
+{
+	switch (cursor)
+	{
+	case (int)STATE::ONE_PERSON:
+		ChangeState(STATE::ONE_PERSON);
+		break;
+	case (int)STATE::FOUR_PERSON:
+		ChangeState(STATE::FOUR_PERSON);
+		break;
 	}
 }

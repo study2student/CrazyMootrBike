@@ -321,6 +321,15 @@ void Stage::MakeLoopStage(void)
 	{
 		LoopStage* tailLoop = loopStage_[size - 5];
 		tailLoop->Destroy();
+		/*std::_Vector_iterator<std::_Vector_val<std::_Simple_types<LoopStage*>>> it;
+		for(const auto& ls : loopStage_)
+		{
+			it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
+				return ls->GetState() == LoopStage::STATE::BACK;
+				});
+		}
+		
+		loopStage_.erase(it, loopStage_.end());*/
 	}
 
 

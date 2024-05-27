@@ -12,17 +12,26 @@ class SelectScene : public SceneBase
 public:
 
 
+	enum class STATE
+	{
+		ONE_PERSON,		//1人で
+		FOUR_PERSON		//4人で
+	};
+
 	//1人でボタンの横の長さ
-	static constexpr int ONE_PERSON_FONT_LENGTH = 160;
+	static constexpr int ONE_PERSON_FONT_LENGTH = 60;
 
 	//1人でボタンの高さ
-	static constexpr int ONE_PERSON_FONT_HEIGHT = 50;
+	static constexpr int ONE_PERSON_FONT_HEIGHT = 20;
 
 	//4人でボタンの横の長さ
-	static constexpr int FOUR_PERSON_FONT_LENGTH = 160;
+	static constexpr int FOUR_PERSON_FONT_LENGTH = 60;
 
 	//4人でボタンの高さ
-	static constexpr int FOUR_PERSON_FONT_HEIGHT = 50;
+	static constexpr int FOUR_PERSON_FONT_HEIGHT = 20;
+
+	//選択肢数
+	static constexpr int SELECT_MAX_NUM = 2;
 
 	// コンストラクタ
 	SelectScene(void);
@@ -54,8 +63,23 @@ private:
 	//4人で文字色
 	int fourPersonFontColor_;
 
+	//現カーソル位置
+	int nowCursor_;
+
+	//状態
+	STATE state_;
+
 	//マウス操作
 	void MouseProcess(void);
+
+	//キー操作
+	void KeyProcess(void);
+
+	//状態遷移
+	void ChangeState(STATE state);
+
+	//現カーソル番号から状態を変化させる
+	void CursorToState(int cursor);
 
 
 };

@@ -53,12 +53,23 @@ void LoopStage::Draw(void)
 
 void LoopStage::Destroy(void)
 {
+	state_ = STATE::BACK;
 	MV1DeleteModel(transform_.modelId);
 }
 
 VECTOR LoopStage::GetPos(void)
 {
 	return transform_.pos;
+}
+
+LoopStage::STATE LoopStage::GetState(void)
+{
+	return state_;
+}
+
+bool LoopStage::IsDestroy(void)
+{
+	return state_==STATE::BACK;
 }
 
 void LoopStage::ChangeState(STATE state)
