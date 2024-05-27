@@ -10,6 +10,7 @@
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
+#include "../../Object/Score.h"
 #include "EnemyBase.h"
 
 EnemyBase::EnemyBase(Bike* bike, VECTOR loopStagePos, VECTOR localPos)
@@ -44,6 +45,7 @@ EnemyBase::EnemyBase(Bike* bike, VECTOR loopStagePos, VECTOR localPos)
 	isEnemyCol_ = false;
 
 	isAtk_ = false;
+	isAddScore_=false;
 	toAtkStep_ = 0.0f;
 
 	imgShadow_ = -1;
@@ -177,6 +179,11 @@ void EnemyBase::Flip(VECTOR dir)
 bool EnemyBase::GetIsBikeCol(void)
 {
 	return isBikeCol_;
+}
+
+bool EnemyBase::GetIsAddScore(void)
+{
+	return isAddScore_;
 }
 
 void EnemyBase::InitAnimation(void)
@@ -471,6 +478,7 @@ void EnemyBase::ProcessMove(void)
 		//”ÍˆÍ‚É“ü‚Á‚½
 		speed_ = 0;
 		isBikeCol_ = true;
+		isAddScore_ = true;
 	}
 	else
 	{
@@ -478,6 +486,7 @@ void EnemyBase::ProcessMove(void)
 		{
 			speed_ = SPEED_MOVE;
 			isBikeCol_ = false;
+			isAddScore_ = false;
 		}
 	}
 

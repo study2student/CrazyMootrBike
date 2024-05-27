@@ -11,6 +11,7 @@
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
+#include "../../Object/Score.h"
 #include "LongDisEnemy.h"
 
 LongDisEnemy::LongDisEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
@@ -159,10 +160,12 @@ void LongDisEnemy::ProcessMove(void)
 		//”ÍˆÍ‚É“ü‚Á‚½
 		speed_ = 0;
 		isBikeCol_ = true;
+		isAddScore_ = true;
 	}
 	else
 	{
 		speed_ = SPEED_MOVE;
+		isAddScore_ = false;
 	}
 
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))

@@ -18,6 +18,7 @@
 #include "../Object/Rider/MagicEnemy.h"
 #include "../Object/Planet.h"
 #include "../Object/Bomb.h"
+#include "../Object/Score.h"
 #include "../Object/Helicopter.h"
 #include "GameScene.h"
 
@@ -31,6 +32,7 @@ GameScene::GameScene(void)
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
+	score_ = nullptr;
 
 }
 
@@ -43,6 +45,7 @@ GameScene::~GameScene(void)
 	delete stage_;
 	delete skyDome_;
 	delete helicopter_;
+	delete score_;
 }
 
 void GameScene::Init(void)
@@ -61,6 +64,10 @@ void GameScene::Init(void)
 	//enemy_->Init();
 	/*enemyBike_ = new EnemyBike(enemy_);
 	enemyBike_->Init();*/
+
+	//スコア
+	score_ = new Score();
+	score_->Init();
 
 	// 敵
 	enemy_ = new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
@@ -85,9 +92,6 @@ void GameScene::Init(void)
 
 	//エンカウントリセット
 	enCounter = 0;
-
-	// スコア
-	score_ = 0;
 
 	//敵が生成されたか
 	isCreateEnemy_ = false;
@@ -115,9 +119,10 @@ void GameScene::Update(void)
 	for (int i = 0; i < sizeE; i++)
 	{
 		enemys_[i]->Update();
-		if (enemys_[i]->GetIsBikeCol())
+		if (enemys_[i]->GetIsAddScore())
 		{
-			score_++;
+			//スコア加算
+			score_->AddScore();
 		}
 	}
 
@@ -176,7 +181,7 @@ void GameScene::Update(void)
 				e = new ShortDisEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			case EnemyBase::TYPE::LONG_DIS:
-				e = new LongDisEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				e = new LongDisEnemy(bike_,stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			case EnemyBase::TYPE::BOMB:
 				e = new MagicEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
@@ -209,6 +214,7 @@ void GameScene::Update(void)
 		
 
 	helicopter_->Update();
+	score_->Update();
 }
 
 void GameScene::Draw(void)
@@ -220,6 +226,7 @@ void GameScene::Draw(void)
 
 	bike_->Draw();
 	helicopter_->Draw();
+	score_->Draw();
 
 	//enemy_->Draw();
 	//enemyBike_->Draw();
@@ -248,7 +255,6 @@ void GameScene::Draw(void)
 	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-	DrawFormatString(840, 140, 0x000000, "SCORE：%d", score_);
 	DrawDubg();
 }
 

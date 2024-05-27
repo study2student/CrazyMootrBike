@@ -8,6 +8,7 @@ class AnimationController;
 class Collider;
 class Capsule;
 class Bike;
+class Score;
 
 class EnemyBase : public ActorBase
 {
@@ -41,6 +42,9 @@ public:
 
 	//敵生成時の横の調整用
 	static constexpr float ADJUST_POS_X = 14300.0f;
+
+	//倒した時のスコア増分
+	static constexpr int SCORE_INCREMENT = 100;
 
 	// 状態
 	enum class STATE
@@ -127,6 +131,9 @@ public:
 	// プレイヤーと当たったか
 	bool GetIsBikeCol(void);
 
+	//スコアを加算してよいか取得
+	bool GetIsAddScore(void);
+
 protected:
 
 	// アニメーション
@@ -195,6 +202,9 @@ protected:
 
 	//攻撃状態までの時間
 	float toAtkStep_;
+
+	//スコアを加算してもよいか
+	bool isAddScore_;
 
 	float flipSpeed_;
 	VECTOR flipDir_;

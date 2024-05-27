@@ -11,6 +11,7 @@
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
+#include "../../Object/Score.h"
 #include "MagicEnemy.h"
 
 
@@ -158,12 +159,13 @@ void MagicEnemy::ProcessMove(void)
 	{
 		//”ÍˆÍ‚É“ü‚Á‚½
 		speed_ = 0;
-
 		isBikeCol_ = true;
+		isAddScore_ = true;
 	}
 	else
 	{
 		speed_ = SPEED_MOVE;
+		isAddScore_ = false;
 		if (!isJump_ && IsEndLanding())
 		{
 

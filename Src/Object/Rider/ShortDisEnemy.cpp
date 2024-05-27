@@ -11,6 +11,7 @@
 #include "../Common/Collider.h"
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
+#include "../../Object/Score.h"
 #include "ShortDisEnemy.h"
 
 
@@ -157,8 +158,8 @@ void ShortDisEnemy::ProcessMove(void)
 	{
 		//範囲に入った
 		speed_ = 0;
-
 		isBikeCol_ = true;
+		isAddScore_ = true;
 
 		//アニメーション
 		animationController_->Play((int)ANIM_TYPE::SHORT);
@@ -166,7 +167,7 @@ void ShortDisEnemy::ProcessMove(void)
 	else
 	{
 		speed_ = SPEED_MOVE;
-
+		isAddScore_ = false;
 		if (!isJump_ && IsEndLanding())
 		{
 

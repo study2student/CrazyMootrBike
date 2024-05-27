@@ -46,6 +46,9 @@ private:
 	// ステージ
 	Stage* stage_;
 
+	//スコア
+	Score* score_;
+
 	// スカイドーム
 	SkyDome* skyDome_;
 
@@ -57,10 +60,6 @@ private:
 
 	// プレイヤー
 	Bike* bike_;
-
-	// スコア
-	int score_;
-
 
 	//ヘリコプター
 	Helicopter* helicopter_;
