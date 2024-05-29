@@ -65,6 +65,9 @@ void ShortDisEnemy::Update(void)
 	case EnemyBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
+	case EnemyBase::STATE::DEAD:
+		UpdateDead();
+		break;
 	}
 
 
@@ -160,6 +163,10 @@ void ShortDisEnemy::ProcessMove(void)
 		speed_ = 0;
 		isBikeCol_ = true;
 		isAddScore_ = true;
+		if (isBikeCol_)
+		{
+			ChangeState(STATE::DEAD);
+		}
 
 		//アニメーション
 		animationController_->Play((int)ANIM_TYPE::SHORT);

@@ -66,6 +66,9 @@ void LongDisEnemy::Update(void)
 	case EnemyBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
+	case EnemyBase::STATE::DEAD:
+		UpdateDead();
+		break;
 	}
 
 
@@ -161,6 +164,10 @@ void LongDisEnemy::ProcessMove(void)
 		speed_ = 0;
 		isBikeCol_ = true;
 		isAddScore_ = true;
+		if (isBikeCol_)
+		{
+			ChangeState(STATE::DEAD);
+		}
 	}
 	else
 	{

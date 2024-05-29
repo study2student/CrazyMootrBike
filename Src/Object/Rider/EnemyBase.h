@@ -134,6 +134,15 @@ public:
 	//スコアを加算してよいか取得
 	bool GetIsAddScore(void);
 
+	//状態取得
+	STATE GetState(void);
+
+	//死亡状態か
+	bool IsDestroy(void);
+
+	//死亡状態へ
+	void Destroy(void);
+
 protected:
 
 	// アニメーション
@@ -191,6 +200,7 @@ protected:
 	//プレイヤー(バイク)とあたっているかどうか
 	bool isBikeCol_;
 
+	//他の敵と当たっているか
 	bool isEnemyCol_;
 
 	//攻撃しているか
@@ -216,10 +226,12 @@ protected:
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
 	void ChangeStateFliped(void);
+	void ChangeStateDead(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
 	void UpdateFliped(void);
+	void UpdateDead(void);
 
 	// 描画系
 	void DrawShadow(void);

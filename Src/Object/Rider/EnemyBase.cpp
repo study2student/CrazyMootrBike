@@ -112,6 +112,9 @@ void EnemyBase::Update(void)
 	case EnemyBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
+	case EnemyBase::STATE::DEAD:
+		UpdateDead();
+		break;
 	}
 
 
@@ -186,6 +189,21 @@ bool EnemyBase::GetIsAddScore(void)
 	return isAddScore_;
 }
 
+EnemyBase::STATE EnemyBase::GetState(void)
+{
+	return state_;
+}
+
+bool EnemyBase::IsDestroy(void)
+{
+	return state_==STATE::DEAD;
+}
+
+void EnemyBase::Destroy(void)
+{
+	ChangeState(STATE::DEAD);
+}
+
 void EnemyBase::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Enemy/";
@@ -219,6 +237,12 @@ void EnemyBase::ChangeState(STATE state)
 	case EnemyBase::STATE::PLAY:
 		ChangeStatePlay();
 		break;
+	case EnemyBase::STATE::FLIPED:
+		ChangeStateFliped();
+		break;
+	case EnemyBase::STATE::DEAD:
+		ChangeStateDead();
+		break;
 	}
 }
 
@@ -231,6 +255,10 @@ void EnemyBase::ChangeStatePlay(void)
 }
 
 void EnemyBase::ChangeStateFliped(void)
+{
+}
+
+void EnemyBase::ChangeStateDead(void)
 {
 }
 
@@ -270,6 +298,11 @@ void EnemyBase::UpdateFliped(void)
 	// 回転させる
 	transform_.quaRot = enemyRotY_;
 
+}
+
+void EnemyBase::UpdateDead(void)
+{
+	isAddScore_ = false;
 }
 
 void EnemyBase::UpdatePlay(void)
@@ -477,8 +510,12 @@ void EnemyBase::ProcessMove(void)
 	{
 		//範囲に入った
 		speed_ = 0;
-		isBikeCol_ = true;
 		isAddScore_ = true;
+		isBikeCol_ = true;
+		if (isBikeCol_)
+		{
+			ChangeState(STATE::DEAD);
+		}
 	}
 	else
 	{
@@ -590,6 +627,12 @@ void EnemyBase::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
+
+	//y座標での死亡判定
+	if (transform_.pos.y <= -500.0f)
+	{
+		ChangeState(STATE::DEAD);
+	}
 
 	// 衝突(カプセル)
 	CollisionCapsule();

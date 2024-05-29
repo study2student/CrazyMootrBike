@@ -234,7 +234,7 @@ void GameScene::Draw(void)
 	size_t sizeE = enemys_.size();
 	for (int i = 0; i < sizeE; i++)
 	{
-		if (enemys_[i]->GetIsBikeCol() == false)
+		if (!enemys_[i]->IsDestroy())
 		{
 			enemys_[i]->Draw();
 		}
@@ -243,7 +243,7 @@ void GameScene::Draw(void)
 	size_t sizeEb = enemyBikes_.size();
 	for (int i = 0; i < sizeEb; i++)
 	{
-		if (enemys_[i]->GetIsBikeCol() == false)
+		if (!enemys_[i]->IsDestroy())
 		{
 			enemyBikes_[i]->Draw();
 		}
