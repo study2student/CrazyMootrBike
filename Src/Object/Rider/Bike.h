@@ -73,7 +73,7 @@ public:
 	// 衝突用カプセルの取得
 	const Capsule* GetCapsule(void) const;
 
-	void SetSpeed(float speed, float rotRad);
+	void SetSpeed(float speed, float rotRad, float posY);
 private:
 
 	Transform transformPlayer_;

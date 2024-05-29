@@ -1,5 +1,7 @@
 #include <vector>
 #include <map>
+#include <queue>
+#include <algorithm>
 #include <DxLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
@@ -116,6 +118,10 @@ void Stage::Update(void)
 	{
 		isJamp_ = true;
 	}
+	else
+	{
+		isJamp_ = false;
+	}
 }
 
 void Stage::Draw(void)
@@ -221,7 +227,7 @@ VECTOR Stage::GetForwardLoopPos(void)
 
 void Stage::Jump(void)
 {
-	bike_->SetSpeed(120.0f,50.0f);
+	bike_->SetSpeed(120.0f,50.0f, 3000.0f);
 }
 
 void Stage::MakeMainStage(void)
@@ -319,22 +325,78 @@ void Stage::MakeLoopStage(void)
 	//後ろのステージを削除
 	if (loopStage_.size() >= 6)
 	{
-		LoopStage* tailLoop = loopStage_[size - 5];
-		tailLoop->Destroy();
-		/*std::_Vector_iterator<std::_Vector_val<std::_Simple_types<LoopStage*>>> it;
-		for(const auto& ls : loopStage_)
-		{
-			it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
-				return ls->GetState() == LoopStage::STATE::BACK;
-				});
+		std::queue<int> lt;
+
+		for (size_t i = 0; i < loopStage_.size(); ++i) {
+			lt.push(i);
 		}
-		
-		loopStage_.erase(it, loopStage_.end());*/
+
+		while (!lt.empty() && loopStage_.size() >= 6)
+		{
+			int index = lt.front();
+			lt.pop();
+
+			// ステージを削除する
+			LoopStage* tailLoop = loopStage_[index];
+			tailLoop->Destroy();
+
+			// 条件に一致するイテレータを削除
+			loopStage_.erase(
+				std::remove(
+					loopStage_.begin(),
+					loopStage_.end(),
+					tailLoop
+				),
+				loopStage_.end()
+			);
+		}
 	}
 
+	//tailLoop->Destroy();
+	//std::_Vector_iterator<std::_Vector_val<std::_Simple_types<LoopStage*>>> it;
+
+
+	for (const auto& ls : loopStage_)
+	{
+		//	it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
+		//		return ls->GetState() == LoopStage::STATE::BACK;
+		//		});
+	}
+
+	//// 削除する条件をラムダ式で定義
+	//auto it = std::remove_if(loopStage_.begin(), loopStage_.end(),
+	//	[](LoopStage* ls) {
+	//		return ls->GetState() == LoopStage::STATE::BACK;
+	//	});
+
+	//// ベクターから要素を削除
+	//loopStage_.erase(it, loopStage_.end());
 
 }
 
+//// ステージを追加する関数
+//void Stage::AddStage(LoopStage* newStage)
+//{
+//	std::queue<LoopStage*> stageQueue;
+//	int size = 0; // sizeはloopStage_のサイズを指す
+//	loopStage_.push_back(newStage);
+//	stageQueue.push(newStage);
+//	size++;
+//
+//	// 6以上のステージがある場合は古いステージを削除
+//	if (stageQueue.size() > 5) {
+//		LoopStage* oldStage = stageQueue.front();
+//		stageQueue.pop();
+//
+//		oldStage->Destroy();
+//
+//		// 古いステージをloopStage_から削除
+//		loopStage_.erase(
+//			std::remove(loopStage_.begin(), loopStage_.end(), oldStage),
+//			loopStage_.end()
+//		);
+//	}
+//}
 void Stage::MakeWarpStar(void)
 {
 

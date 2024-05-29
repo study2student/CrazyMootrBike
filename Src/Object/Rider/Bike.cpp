@@ -177,11 +177,11 @@ const Capsule* Bike::GetCapsule(void) const
 	return capsule_;
 }
 
-void Bike::SetSpeed(float speed, float rotRad)
+void Bike::SetSpeed(float speed, float rotRad, float posY)
 {
 	speed_ = speed;
 
-	transform_.quaRotLocal.AngleAxis(rotRad, AsoUtility::AXIS_X);
+	transform_.pos.y += posY;
 }
 
 void Bike::InitAnimation(void)
