@@ -74,6 +74,13 @@ public:
 	const Capsule* GetCapsule(void) const;
 
 	void SetSpeed(float speed, float rotRad, float posY);
+
+	//ジャンプ台用のジャンプ
+	void Jump(void);
+
+	//ダメージ
+	void Damage(int damage);
+
 private:
 
 	Transform transformPlayer_;

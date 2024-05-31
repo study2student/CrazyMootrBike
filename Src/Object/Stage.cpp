@@ -109,18 +109,21 @@ void Stage::Update(void)
 	//ステージを生成する
 	MakeLoopStage();
 
-	auto b1Pos = bike_->GetCapsule()->GetCenter();
-	auto b2Pos = jampRamp_->GetCapsule()->GetCenter();
+	//バイクとジャンプ台の当たり判定
+	auto bikeCap = bike_->GetCapsule();
+	auto jumpRampCap = jampRamp_->GetCapsule();
 
-	VECTOR diff = VSub(b1Pos, b2Pos);
+	VECTOR diff = VSub(bikeCap->GetCenter(), jumpRampCap->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < bike_->GetCapsule()->GetRadius() * jampRamp_->GetCapsule()->GetRadius())
+	if (dis < bikeCap->GetRadius() * jumpRampCap->GetRadius())
 	{
 		isJamp_ = true;
+		Jump();
 	}
 	else
 	{
 		isJamp_ = false;
+
 	}
 }
 
@@ -174,12 +177,6 @@ void Stage::ChangeStage(NAME type)
 		bomb_->AddCollider(ls->GetTransform().collider);
 	}
 
-
-	if (isJamp_)
-	{
-		Jump();
-	}
-
 	enemy_->ClearCollider();
 	enemy_->AddCollider(activePlanet_->GetTransform().collider);
 	//ループ用のステージ
@@ -227,7 +224,8 @@ VECTOR Stage::GetForwardLoopPos(void)
 
 void Stage::Jump(void)
 {
-	bike_->SetSpeed(120.0f,50.0f, 3000.0f);
+	//bike_->SetSpeed(120.0f,50.0f, 3000.0f);
+	bike_->Jump();
 }
 
 void Stage::MakeMainStage(void)
@@ -325,7 +323,7 @@ void Stage::MakeLoopStage(void)
 	//後ろのステージを削除
 	if (loopStage_.size() >= 6)
 	{
-		std::queue<int> lt;
+	/*	std::queue<int> lt;
 
 		for (size_t i = 0; i < loopStage_.size(); ++i) {
 			lt.push(i);
@@ -334,34 +332,35 @@ void Stage::MakeLoopStage(void)
 		while (!lt.empty() && loopStage_.size() >= 6)
 		{
 			int index = lt.front();
-			lt.pop();
+			lt.pop();*/
 
 			// ステージを削除する
-			LoopStage* tailLoop = loopStage_[index];
+			LoopStage* tailLoop = loopStage_[size-5];
 			tailLoop->Destroy();
 
-			// 条件に一致するイテレータを削除
-			loopStage_.erase(
-				std::remove(
-					loopStage_.begin(),
-					loopStage_.end(),
-					tailLoop
-				),
-				loopStage_.end()
-			);
-		}
+			//// 条件に一致するイテレータを削除
+			//loopStage_.erase(
+			//	std::remove(
+			//		loopStage_.begin(),
+			//		loopStage_.end(),
+			//		tailLoop
+			//	),
+			//	loopStage_.end()
+			//);
+		
 	}
+
 
 	//tailLoop->Destroy();
 	//std::_Vector_iterator<std::_Vector_val<std::_Simple_types<LoopStage*>>> it;
 
 
-	for (const auto& ls : loopStage_)
-	{
-		//	it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
-		//		return ls->GetState() == LoopStage::STATE::BACK;
-		//		});
-	}
+	//for (const auto& ls : loopStage_)
+	//{
+	//	//	it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
+	//	//		return ls->GetState() == LoopStage::STATE::BACK;
+	//	//		});
+	//}
 
 	//// 削除する条件をラムダ式で定義
 	//auto it = std::remove_if(loopStage_.begin(), loopStage_.end(),

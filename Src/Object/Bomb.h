@@ -25,6 +25,9 @@ public:
 	// スピード
 	static constexpr float SPEED = 30.0f;
 
+	//ダメージ
+	static constexpr int BOMB_DAMAGE = 20.0f;
+
 	// 状態
 	enum class STATE
 	{
@@ -56,6 +59,9 @@ public:
 
 	//爆弾が何かに当たったか設定
 	void SetIsCol(bool isCol);
+
+	//爆弾が当たったが取得
+	bool GetIsCol(void);
 
 private:
 

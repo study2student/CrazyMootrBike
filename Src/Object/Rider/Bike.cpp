@@ -11,6 +11,7 @@
 #include "../Planet.h"
 #include "Player.h"
 #include "Weapon.h"
+#include "../Bomb.h"
 #include "Bike.h"
 
 Bike::Bike(void)
@@ -134,6 +135,7 @@ void Bike::Update(void)
 	weapon_->Update();
 
 	weapon_->SetTransForm(transform_);
+	
 	// モデル制御更新
 	transform_.Update();
 	transformPlayer_.Update();
@@ -182,6 +184,38 @@ void Bike::SetSpeed(float speed, float rotRad, float posY)
 	speed_ = speed;
 
 	transform_.pos.y += posY;
+}
+
+void Bike::Jump(void)
+{
+	/*Quaternion q = Quaternion::AngleAxis(AsoUtility::Deg2RadD(-120.0), AsoUtility::AXIS_X);
+	Quaternion e= Quaternion::Normalize(q);*/
+
+	// 角度（ラジアン）を設定
+	float angle = DX_PI_F / 4.0f; // 45度
+
+	
+
+	// XZ平面内での斜め上のベクトルを作成
+	VECTOR jumpVec;
+	jumpVec.x = std::cos(angle);
+	jumpVec.y = std::sin(angle);
+	jumpVec.z = 0.0f;
+
+	// ベクトルの正規化
+	jumpVec = VNorm(jumpVec);
+	
+
+
+	//jumpVec = Quaternion::PosAxis(q,transform_.pos);
+	transform_.pos = VAdd(transform_.pos, VScale(jumpVec,400.0f));
+	transform_.Update();
+	
+}
+
+void Bike::Damage(int damage)
+{
+	hp_ -= damage;
 }
 
 void Bike::InitAnimation(void)

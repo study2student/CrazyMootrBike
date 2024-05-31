@@ -118,6 +118,11 @@ void Bomb::SetIsCol(bool isCol)
 	isCol_ = isCol;
 }
 
+bool Bomb::GetIsCol(void)
+{
+	return isCol_;
+}
+
 void Bomb::ChangeState(STATE state)
 {
 	//ó‘Ô•ÏX

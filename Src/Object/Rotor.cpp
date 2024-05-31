@@ -138,18 +138,6 @@ void Rotor::SetTransform(Transform& transformParent)
 
 void Rotor::InitAnimation(void)
 {
-	/*std::string path = Application::PATH_MODEL + "Player/";
-	animationController_ = new AnimationController(transformPlayer_.modelId);
-	animationController_->Add((int)ANIM_TYPE::IDLE, path + "Idle.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::RUN, path + "Run.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::FAST_RUN, path + "FastRun.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::JUMP, path + "Jump.mv1", 60.0f);
-	animationController_->Add((int)ANIM_TYPE::WARP_PAUSE, path + "WarpPose.mv1", 60.0f);
-	animationController_->Add((int)ANIM_TYPE::FLY, path + "Flying.mv1", 60.0f);
-	animationController_->Add((int)ANIM_TYPE::FALLING, path + "Falling.mv1", 80.0f);
-	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
-
-	animationController_->Play((int)ANIM_TYPE::IDLE);*/
 }
 
 void Rotor::ChangeState(STATE state)

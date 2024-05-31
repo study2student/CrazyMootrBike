@@ -281,21 +281,6 @@ void GameScene::DrawDubg(void)
 
 void GameScene::Collision(void)
 {
-
-	//”š’e‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
-	auto heliCap = helicopter_->GetBomb()->GetCapsule();
-	auto bikeCap = bike_->GetCapsule();
-
-	VECTOR diff = VSub(heliCap->GetCenter(), bikeCap->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < heliCap->GetRadius() * bikeCap->GetRadius())
-	{
-		//“–‚½‚Á‚½
-		helicopter_->GetBomb()->SetIsCol(true);
-	}
-
-
-
 	//“G“¯Žm‚Ì“–‚½‚è”»’è(’e‚­)
 	size_t sizeEb = enemyBikes_.size();
 	for (int b1 = 0; b1 < sizeEb; b1++)
@@ -332,5 +317,27 @@ void GameScene::Collision(void)
 
 		}
 
+	}
+
+
+	//”š’e‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’è
+	//HP‚ªŒ¸‚è‘±‚¯‚Ä‚µ‚Ü‚¤‚Ì‚Å“–‚½‚Á‚½Žž‚Íˆ—’†’f
+	if (helicopter_->GetBomb()->GetIsCol())
+	{
+		return;
+	}
+
+	auto heliCap = helicopter_->GetBomb()->GetCapsule();
+	auto bikeCap = bike_->GetCapsule();
+
+	VECTOR diff = VSub(heliCap->GetCenter(), bikeCap->GetCenter());
+	float  dis = AsoUtility::SqrMagnitudeF(diff);
+	if (dis < heliCap->GetRadius() * bikeCap->GetRadius())
+	{
+		//ƒvƒŒƒCƒ„[‚Éƒ_ƒ[ƒW
+		bike_->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+		//“–‚½‚Á‚½
+		helicopter_->GetBomb()->SetIsCol(true);
 	}
 }
