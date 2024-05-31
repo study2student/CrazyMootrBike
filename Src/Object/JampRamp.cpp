@@ -19,21 +19,21 @@ void JampRamp::Init(void)
 	transform_.SetModel(
 		resMng_.LoadModelDuplicate(ResourceManager::SRC::JUMP_RAMP));
 	float scale = 1.0f;
-	transform_.scl = { scale*3,scale,scale*2 };
+	transform_.scl = { scale*3,scale,scale*1.5f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal = 
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });
-	transform_.pos = { 1500.0f, -260.0f, 2000.0f };
-	
+	transform_.pos = { 1590.0f, -260.0f, 4000.0f };
+
 	transform_.Update();
 
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
 	/*capsule_->SetLocalPosTop({ -200.0f, 100.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 380.0f, 100.0f, 0.0f });*/
-	capsule_->SetLocalPosTop({ -100.0f, 100.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 100.0f, 100.0f, 0.0f });
-	capsule_->SetRadius(750.0f);
+	capsule_->SetLocalPosTop({ 100.0f, 100.0f, 0.0f });
+	capsule_->SetLocalPosDown({100.0f, 100.0f, 0.0f });
+	capsule_->SetRadius(1450.0f);
 }
 
 void JampRamp::Update(void)

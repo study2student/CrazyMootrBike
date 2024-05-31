@@ -398,8 +398,8 @@ void Player::ProcessJump(void)
 			// 切り取りアニメーション
 			//mAnimationController->Play((int)ANIM_TYPE::JUMP, false, 13.0f, 24.0f);
 			// 無理やりアニメーション
-			animationController_->Play((int)ANIM_TYPE::JUMP, true, 13.0f, 25.0f);
-			animationController_->SetEndLoop(23.0f, 25.0f, 5.0f);
+			/*animationController_->Play((int)ANIM_TYPE::JUMP, true, 13.0f, 25.0f);
+			animationController_->SetEndLoop(23.0f, 25.0f, 5.0f);*/
 		}
 
 		isJump_ = true;
@@ -506,12 +506,12 @@ void Player::CollisionGravity(void)
 			jumpPow_ = AsoUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
-			if (isJump_)
-			{
-				// 着地モーション
-				animationController_->Play(
-					(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
-			}
+			//if (isJump_)
+			//{
+			//	// 着地モーション
+			//	animationController_->Play(
+			//		(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
+			//}
 
 			isJump_ = false;
 
@@ -523,7 +523,6 @@ void Player::CollisionGravity(void)
 
 void Player::CollisionCapsule(void)
 {
-
 	// カプセルを移動させる
 	Transform trans = Transform(transform_);
 	trans.pos = movedPos_;

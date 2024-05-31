@@ -113,7 +113,7 @@ void Stage::Update(void)
 	auto bikeCap = bike_->GetCapsule();
 	auto jumpRampCap = jampRamp_->GetCapsule();
 
-	VECTOR diff = VSub(bikeCap->GetCenter(), jumpRampCap->GetCenter());
+	VECTOR diff = VSub(jumpRampCap->GetCenter(), bikeCap->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
 	if (dis < bikeCap->GetRadius() * jumpRampCap->GetRadius())
 	{
@@ -125,6 +125,9 @@ void Stage::Update(void)
 		isJamp_ = false;
 
 	}
+
+	jampRamp_->Update();
+
 }
 
 void Stage::Draw(void)
@@ -164,7 +167,6 @@ void Stage::ChangeStage(NAME type)
 	// ステージの当たり判定設定
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_->GetTransform().collider);
-	jampRamp_->Update();
 	jampRamp_->ClearCollider();
 	jampRamp_->AddCollider(activePlanet_->GetTransform().collider);
 	bomb_->ClearCollider();

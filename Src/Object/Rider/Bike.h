@@ -25,6 +25,15 @@ public:
 	// HPの最大値
 	static constexpr int MAX_HP = 100;
 
+	//HPの最低値
+	static constexpr int MIN_HP = 0;
+
+	// ジャンプ力
+	static constexpr float POW_JUMP = 80.0f;
+
+	// ジャンプ受付時間
+	static constexpr float TIME_JUMP_IN = 0.5f;
+
 	// 状態
 	enum class STATE
 	{
@@ -119,11 +128,17 @@ private:
 	// ジャンプ量
 	VECTOR jumpPow_;
 
+	// ジャンプスピード
+	float jumpSpeed_;
+
 	// ジャンプ判定
 	bool isJump_;
 
 	// ジャンプの入力受付時間
 	float stepJump_;
+
+	//ジャンプしてから秒たったか
+	float stepJumpSecond_;
 
 	// 衝突判定に用いられるコライダ
 	std::vector<Collider*> colliders_;

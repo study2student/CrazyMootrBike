@@ -9,6 +9,7 @@ public :
 	{
 		STAGE,
 		ENEMY
+
 	};
 
 	// コンストラクタ

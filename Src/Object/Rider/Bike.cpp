@@ -38,6 +38,8 @@ Bike::Bike(void)
 	jumpPow_ = AsoUtility::VECTOR_ZERO;
 	isJump_ = false;
 	stepJump_ = 0.0f;
+	stepJumpSecond_ = 0.0f;
+	jumpSpeed_ = 1.0f;
 
 	isAttack_ = false;
 
@@ -188,34 +190,66 @@ void Bike::SetSpeed(float speed, float rotRad, float posY)
 
 void Bike::Jump(void)
 {
-	/*Quaternion q = Quaternion::AngleAxis(AsoUtility::Deg2RadD(-120.0), AsoUtility::AXIS_X);
-	Quaternion e= Quaternion::Normalize(q);*/
+	///*Quaternion q = Quaternion::AngleAxis(AsoUtility::Deg2RadD(-120.0), AsoUtility::AXIS_X);
+	//Quaternion e= Quaternion::Normalize(q);*/
 
-	// 角度（ラジアン）を設定
-	float angle = DX_PI_F / 4.0f; // 45度
+	//// 角度（ラジアン）を設定
+	//float angle = DX_PI_F / 4.0f; // 45度
 
-	
+	//
 
-	// XZ平面内での斜め上のベクトルを作成
-	VECTOR jumpVec;
-	jumpVec.x = std::cos(angle);
-	jumpVec.y = std::sin(angle);
-	jumpVec.z = 0.0f;
+	//// XZ平面内での斜め上のベクトルを作成
+	//VECTOR jumpVec;
+	//jumpVec.x = std::cos(angle);
+	//jumpVec.y = std::sin(angle);
+	//jumpVec.z = 0.0f;
 
-	// ベクトルの正規化
-	jumpVec = VNorm(jumpVec);
-	
+	//// ベクトルの正規化
+	//jumpVec = VNorm(jumpVec);
+	//
 
 
-	//jumpVec = Quaternion::PosAxis(q,transform_.pos);
-	transform_.pos = VAdd(transform_.pos, VScale(jumpVec,400.0f));
-	transform_.Update();
+	////jumpVec = Quaternion::PosAxis(q,transform_.pos);
+	//transform_.pos = VAdd(transform_.pos, VScale(jumpVec,400.0f));
+	//transform_.Update();
+
+
+
+
+	// ジャンプ
+	if ((isJump_ || IsEndLanding()))
+	{
+
+		if (!isJump_)
+		{
+			jumpSpeed_ = 1.0f;
+		}
+
+		isJump_ = true;
+
+		// ジャンプの入力受付時間をヘラス
+		stepJump_ += scnMng_.GetDeltaTime();
+		jumpSpeed_ *=1.98f;
+		if (stepJump_ < TIME_JUMP_IN)
+		{
+			//jumpPow_ = VScale(AsoUtility::DIR_U, POW_JUMP);
+			//jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, SceneManager::GetInstance().GetCamera()->GetForward()),POW_JUMP);
+			jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, transform_.GetForward()),jumpSpeed_ * POW_JUMP);
+		}
+		
+
+	}
 	
 }
 
 void Bike::Damage(int damage)
 {
 	hp_ -= damage;
+	//下限値
+	if (hp_ <= MIN_HP)
+	{
+		hp_ = MIN_HP;
+	}
 }
 
 void Bike::InitAnimation(void)
@@ -661,12 +695,12 @@ void Bike::CollisionGravity(void)
 			jumpPow_ = AsoUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
-			if (isJump_)
-			{
-				// 着地モーション
-				animationController_->Play(
-					(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
-			}
+			//if (isJump_)
+			//{
+			//	// 着地モーション
+			//	animationController_->Play(
+			//		(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
+			//}
 
 			isJump_ = false;
 
@@ -736,6 +770,7 @@ void Bike::CalcGravityPow(void)
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 	jumpPow_ = VAdd(jumpPow_, gravity);
+
 
 	// 最初は実装しない。地面と突き抜けることを確認する。
 	// 内積
