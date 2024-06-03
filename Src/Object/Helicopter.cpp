@@ -22,7 +22,7 @@ Helicopter::Helicopter(void)
 
 	attackState_ = ATTACK_TYPE::NONE;
 
-	speed_ = 0.0f;
+	speed_ = SPEED_MOVE;
 	moveDir_ = AsoUtility::VECTOR_ZERO;
 	movePow_ = AsoUtility::VECTOR_ZERO;
 	movedPos_ = AsoUtility::VECTOR_ZERO;
@@ -253,13 +253,7 @@ void Helicopter::UpdateMove(void)
 	// 回転させる
 	transform_.quaRot = rotY_;
 
-	//ある程度距離が空いていたら攻撃状態に移行
-	//バイクとヘリの距離をはかる
-	VECTOR atkLinePos = VAdd(bikeTrans_.pos, ATTACK_LINE_LOCAL_POS);
-	if (transform_.pos.z >= atkLinePos.z)
-	{
-		ChangeState(STATE::ATTACK);
-	}
+	
 }
 
 void Helicopter::UpdateAttack(void)
@@ -285,6 +279,7 @@ void Helicopter::UpdateAttack(void)
 
 	// 回転させる
 	transform_.quaRot = rotY_;
+	
 }
 
 void Helicopter::UpdateDead(void)
@@ -329,7 +324,7 @@ void Helicopter::ProcessMove(void)
 	transform_.pos.x = bikeTrans_.pos.x;
 
 	//前に進む
-	VECTOR movePowF_ = VScale(transform_.GetForward(), SPEED_MOVE);
+	VECTOR movePowF_ = VScale(transform_.GetForward(), speed_);
 
 	//// カメラ方向から後退したい
 	//if (ins.IsNew(KEY_INPUT_S))
@@ -383,7 +378,10 @@ void Helicopter::ProcessMove(void)
 
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
-	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
+	movePow_ = VAdd(VScale(dir, SPEED_MOVE), movePowF_);
+
+	//バイクとの距離による処理
+	BikeDisFunc();
 }
 
 void Helicopter::ProcessJump(void)
@@ -607,6 +605,58 @@ void Helicopter::CalcGravityPow(void)
 	//	jumpPow_ = gravity;
 	//}
 
+}
+
+void Helicopter::BikeDisFunc(void)
+{
+	//バイクとヘリの距離をはかる
+	VECTOR atkLinePos = VAdd(bikeTrans_.pos, ATTACK_LINE_LOCAL_POS);
+	VECTOR atkLineMaxPos = VAdd(bikeTrans_.pos, ATTACK_LINE_MAX_LOCAL_POS);
+
+	switch (state_)
+	{
+	case Helicopter::STATE::NONE:
+		break;
+	case Helicopter::STATE::MOVE:
+
+		//ある程度距離が空いていたら攻撃状態に移行
+		if (transform_.pos.z >= atkLinePos.z)
+		{
+			if (!(state_ == STATE::ATTACK))
+			{
+				speed_ = SPEED_MOVE;
+				ChangeState(STATE::ATTACK);
+			}
+
+		}
+		else
+		{
+			//攻撃状態に移行するためにスピードを上げる
+			speed_ += SceneManager::GetInstance().GetDeltaTime();
+
+		}
+		break;
+	case Helicopter::STATE::ATTACK:
+
+		//バイクとの距離が離れすぎたらスピードを下げる
+		if (transform_.pos.z >= atkLineMaxPos.z)
+		{
+			//スピードを下げる
+			speed_ -= SceneManager::GetInstance().GetDeltaTime();
+		}
+		else if (transform_.pos.z <= atkLinePos.z)
+		{
+			//下がりすぎないようにするための処理
+			speed_ += SceneManager::GetInstance().GetDeltaTime() + (SPEED_MOVE - speed_);
+		}
+		break;
+	case Helicopter::STATE::DEAD:
+		break;
+	case Helicopter::STATE::END:
+		break;
+	default:
+		break;
+	}
 }
 
 bool Helicopter::IsEndLanding(void)

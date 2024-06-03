@@ -29,7 +29,7 @@ public:
 	static constexpr int MIN_HP = 0;
 
 	// ジャンプ力
-	static constexpr float POW_JUMP = 80.0f;
+	static constexpr float POW_JUMP = 70.0f;
 
 	// ジャンプ受付時間
 	static constexpr float TIME_JUMP_IN = 0.5f;

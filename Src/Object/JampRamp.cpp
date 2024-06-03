@@ -5,7 +5,7 @@
 #include "JampRamp.h"
 #include "Common/Capsule.h"
 
-JampRamp::JampRamp() : resMng_(ResourceManager::GetInstance())
+JampRamp::JampRamp()
 {
 }
 
@@ -23,7 +23,7 @@ void JampRamp::Init(void)
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal = 
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });
-	transform_.pos = { 1590.0f, -260.0f, 4000.0f };
+	transform_.pos = { 1590.0f, -260.0f, 24000.0f };
 
 	transform_.Update();
 

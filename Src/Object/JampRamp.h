@@ -25,9 +25,6 @@ public:
 	const Capsule* GetCapsule(void) const;
 private:
 
-	// シングルトン参照
-	ResourceManager& resMng_;
-
 	// 移動後の座標
 	VECTOR movedPos_;
 

@@ -28,6 +28,9 @@ public:
 	//攻撃状態にするためのプレイヤーからヘリまでの相対座標
 	static constexpr VECTOR ATTACK_LINE_LOCAL_POS = { 0.0f,0.0f,5000.0f };
 
+	//攻撃状態の最大範囲を作るためのプレイヤーからヘリまでの相対座標
+	static constexpr VECTOR ATTACK_LINE_MAX_LOCAL_POS = { 0.0f,0.0f,10000.0f };
+
 	// HPの最大値
 	static constexpr int MAX_HP = 100;
 
@@ -184,6 +187,9 @@ private:
 
 	// 移動量の計算
 	void CalcGravityPow(void);
+
+	//バイクとの距離による処理
+	void BikeDisFunc(void);
 
 	// 着地モーション終了
 	bool IsEndLanding(void);
