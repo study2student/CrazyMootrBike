@@ -155,6 +155,10 @@ void ResourceManager::Init(void)
 	// バイクモデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Weapon/BusterSword/sword.mv1");
 	resourcesMap_.emplace(SRC::W_SWORD, res);
+
+	// ヒットした時のエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
+	resourcesMap_.emplace(SRC::HitEffect, res);
 }
 
 
