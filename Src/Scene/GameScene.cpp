@@ -1,6 +1,8 @@
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
+#include "../Manager/ResourceManager.h"
 #include "../Manager/Camera.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Capsule.h"
@@ -89,13 +91,16 @@ void GameScene::Init(void)
 	SceneManager::GetInstance().GetCamera()->SetFollow(&bike_->GetTransform());
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FOLLOW);
 
+	// エフェクト初期化
+	InitEffect();
+
 	//エンカウントリセット
 	enCounter = 0;
 
 	//敵が生成されたか
 	isCreateEnemy_ = false;
 
-	hitStopDuration = 6000.0f;
+	hitStopDuration = 60000.0f;
 	hitStopTimer = 0.0f;
 	isHitStop = false;
 }
@@ -127,6 +132,10 @@ void GameScene::Update(void)
 		if (hitStopTimer <= 0.f) {
 			isHitStop = false;
 		}
+		int scale = 50;
+		FireBlessEffect();
+		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+		SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 	}
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	helicopter_->SetBikeTrans(bike_->GetTransform());
@@ -218,7 +227,7 @@ void GameScene::Update(void)
 			eB->Init();
 			isCreateEnemy_ = true;
 
-
+			
 			////デバッグ
 			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
 
@@ -365,4 +374,18 @@ void GameScene::Collision(void)
 		//当たった
 		helicopter_->GetBomb()->SetIsCol(true);
 	}
+}
+
+void GameScene::InitEffect(void)
+{
+	// ヒットエフェクト
+	effectHitResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::HitEffect).handleId_;
+}
+
+void GameScene::FireBlessEffect(void)
+{
+	auto pPos = bike_->GetTransform();
+	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
+	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
 }

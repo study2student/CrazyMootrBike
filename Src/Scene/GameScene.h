@@ -89,4 +89,13 @@ private:
 	float hitStopDuration;  // ヒットストップの持続時間（秒）
 	float hitStopTimer;      // ヒットストップのタイマー
 	bool isHitStop;        // ヒットストップ中かどうかのフラグ
+
+	// ヒットエフェクト
+	int effectHitResId_;
+	int effectHitPlayId_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+	// Hitエフェクトの位置
+	void FireBlessEffect(void);
 };
