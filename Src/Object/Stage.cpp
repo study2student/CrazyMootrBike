@@ -1,7 +1,8 @@
 #include <vector>
 #include <map>
-#include <queue>
+#include <stdexcept>
 #include <algorithm>
+#include <queue>
 #include <DxLib.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
@@ -70,6 +71,14 @@ Stage::~Stage(void)
 	}
 	loopStage_.clear();
 
+	// ループ用のステージを削除
+	//while (!loopStage_->empty())
+	//{
+	//	auto loop = loopStage_->front();
+	//	loopStage_->pop();
+	//	delete loop;
+	//}
+
 	delete jampRamp_;
 }
 
@@ -105,6 +114,13 @@ void Stage::Update(void)
 	{
 		ls->Update();
 	}
+
+	//while (!loopStage_.empty())
+	//{
+	//	LoopStage* ls = loopStage_.front();
+	//	loopStage_.pop();
+	//	ls->Update();
+	//}
 
 	//ステージを生成する
 	MakeLoopStage();
@@ -151,6 +167,14 @@ void Stage::Draw(void)
 		ls->Draw();
 	}
 
+	//loopStage_.emplace();
+	//while (!loopStage_.empty())
+	//{
+	//	LoopStage* ls = loopStage_.front();
+	//	loopStage_.pop();
+	//	ls->Draw();
+	//}
+
 	jampRamp_->Draw();
 
 	DrawFormatString(0, 200, 0xff0000, "IsJump:%d", isJamp_);
@@ -178,6 +202,15 @@ void Stage::ChangeStage(NAME type)
 		jampRamp_->AddCollider(ls->GetTransform().collider);
 		bomb_->AddCollider(ls->GetTransform().collider);
 	}
+	
+	//while (!loopStage_.empty())
+	//{
+	//	LoopStage* ls = loopStage_.front();
+	//	loopStage_.pop();
+	//	bike_->AddCollider(ls->GetTransform().collider);
+	//	jampRamp_->AddCollider(ls->GetTransform().collider);
+	//	bomb_->AddCollider(ls->GetTransform().collider);
+	//}
 
 	enemy_->ClearCollider();
 	enemy_->AddCollider(activePlanet_->GetTransform().collider);
@@ -185,13 +218,25 @@ void Stage::ChangeStage(NAME type)
 	for (const auto& ls : loopStage_)
 	{
 		//enemy_->AddCollider(ls->GetTransform().collider);
-
 		std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
 		for (int i = 0; i < enemys_.size(); i++)
 		{
 			enemys_[i]->AddCollider(ls->GetTransform().collider);
 		}
 	}
+
+	//loopStage_.emplace();
+	//while (!loopStage_.empty())
+	//{
+	//	LoopStage* ls = loopStage_.front();
+	//	loopStage_.pop();
+	//	
+	//	std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+	//	for (int i = 0; i < enemys_.size(); i++)
+	//	{
+	//		enemys_[i]->AddCollider(ls->GetTransform().collider);
+	//	}
+	//}
 
 	step_ = TIME_STAGE_CHANGE;
 
@@ -222,12 +267,22 @@ VECTOR Stage::GetForwardLoopPos(void)
 	//先頭ループステージの座標を取得
 	int size = (int)loopStage_.size();
 	return loopStage_[size - 1]->GetPos();
+	//loopStage_.emplace();
+	//while (!loopStage_.empty())
+	//{
+	//	return loopStage_.back()->GetPos();
+	//}
 }
 
 void Stage::Jump(void)
 {
 	//bike_->SetSpeed(120.0f,50.0f, 3000.0f);
 	bike_->Jump();
+}
+
+int Stage::GetLoopStageSize(void)
+{
+	return loopStage_.size();
 }
 
 void Stage::MakeMainStage(void)
@@ -261,7 +316,6 @@ void Stage::MakeMainStage(void)
 void Stage::MakeLoopStage(void)
 {
 
-
 	//すり抜けるためここでバイクと敵のコライダーも追加しとく
 	if (gameScene_->GetIsCreateEnemy())
 	{
@@ -274,6 +328,19 @@ void Stage::MakeLoopStage(void)
 				enemys_[i]->AddCollider(ls->GetTransform().collider);
 			}
 		}
+
+		//while (!loopStage_.empty())
+		//{
+		//	LoopStage* ls = loopStage_.front();
+		//	loopStage_.pop();
+
+		//	std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+		//	for (int i = 0; i < enemys_.size(); i++)
+		//	{
+		//		enemys_[i]->AddCollider(activePlanet_->GetTransform().collider);
+		//		enemys_[i]->AddCollider(ls->GetTransform().collider);
+		//	}
+		//}
 	}
 
 	Transform loopTrans;
@@ -310,11 +377,21 @@ void Stage::MakeLoopStage(void)
 			bomb_->AddCollider(ls->GetTransform().collider);
 		}
 
-		stage = new LoopStage(bike_, loopTrans);
+
+		stage = new LoopStage (bike_, loopTrans);
 		stage->Init();
 		loopStage_.push_back(stage);
+		//loopStage_.emplace(stage);
+		//while (!loopStage_.empty())
+		//{
+		//	LoopStage* ls = loopStage_.front();
+		//	//loopStage_.pop();
+		//	bike_->AddCollider(ls->GetTransform().collider);
+		//	bomb_->AddCollider(ls->GetTransform().collider);
+		//}
+		//AddStage(stage);
 		isMakeLoopStage_ = true;
-
+		
 	}
 	else
 	{
@@ -339,6 +416,26 @@ void Stage::MakeLoopStage(void)
 			// ステージを削除する
 			LoopStage* tailLoop = loopStage_[size-5];
 			tailLoop->Destroy();
+
+			//int size = static_cast<int>(loopStage_.size());
+			//if (size < 5) {
+			//	throw std::runtime_error("Queue does not contain enough elements");
+			//}
+
+			//// 最後から5番目の要素にアクセスするための準備
+			//std::queue<LoopStage*> tempQueue = loopStage_; // 元のキューをコピー
+			//LoopStage* tailLoop = nullptr;
+
+			//// 後ろから5番目の要素までポップする
+			//for (int i = 0; i < size - 4; ++i) {
+			//	tailLoop = tempQueue.front();
+			//	tempQueue.pop();
+			//}
+
+			//// 目的の要素を操作
+			//if (tailLoop != nullptr) {
+			//	tailLoop->Destroy();
+			//}
 
 			//// 条件に一致するイテレータを削除
 			//loopStage_.erase(
@@ -375,29 +472,29 @@ void Stage::MakeLoopStage(void)
 
 }
 
-//// ステージを追加する関数
-//void Stage::AddStage(LoopStage* newStage)
-//{
-//	std::queue<LoopStage*> stageQueue;
-//	int size = 0; // sizeはloopStage_のサイズを指す
-//	loopStage_.push_back(newStage);
-//	stageQueue.push(newStage);
-//	size++;
-//
-//	// 6以上のステージがある場合は古いステージを削除
-//	if (stageQueue.size() > 5) {
-//		LoopStage* oldStage = stageQueue.front();
-//		stageQueue.pop();
-//
-//		oldStage->Destroy();
-//
-//		// 古いステージをloopStage_から削除
-//		loopStage_.erase(
-//			std::remove(loopStage_.begin(), loopStage_.end(), oldStage),
-//			loopStage_.end()
-//		);
-//	}
-//}
+// ステージを追加する関数
+void Stage::AddStage(LoopStage* newStage)
+{
+	
+	loopStage_.push_back(newStage);
+	//stageQueue(newStage);
+	sizeS++;
+	
+	// 6以上のステージがある場合は古いステージを削除
+	if (loopStage_.size() > 5) {
+		LoopStage* oldStage = loopStage_.front();
+		loopStage_.pop_front();
+		
+		oldStage->Destroy();
+
+		// 古いステージをloopStage_から削除
+		//loopStage_.erase(
+		//	std::remove(loopStage_.begin(), loopStage_.end(), oldStage),
+		//	loopStage_.end()
+		//);
+	}
+}
+
 void Stage::MakeWarpStar(void)
 {
 

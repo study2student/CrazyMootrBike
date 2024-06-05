@@ -85,4 +85,8 @@ private:
 	
 	//衝突判定
 	void Collision(void);
+
+	float hitStopDuration;  // ヒットストップの持続時間（秒）
+	float hitStopTimer;      // ヒットストップのタイマー
+	bool isHitStop;        // ヒットストップ中かどうかのフラグ
 };

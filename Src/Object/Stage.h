@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <queue>
 #include "Common/Transform.h"
 class ResourceManager;
 class WarpStar;
@@ -68,6 +69,9 @@ public:
 
 	// ジャンプ台に当たった時の処理
 	void Jump(void);
+
+	//ループステージのサイズ
+	int GetLoopStageSize(void);
 private:
 
 	//ゲームシーンポインタ
@@ -87,7 +91,11 @@ private:
 	//ループ用のステージ
 	//Transform loopStage_;
 	//ループ用のステージ
-	std::vector<LoopStage*> loopStage_;
+	//std::vector<LoopStage*> loopStage_;
+
+	//deque使ってもいいよ
+	//std::queue<LoopStage*> loopStage_;
+	std::deque<LoopStage*> loopStage_;
 
 	JampRamp* jampRamp_;
 
@@ -113,6 +121,11 @@ private:
 
 	//ループ用のステージ(最初)
 	void MakeLoopStage(void);
+
+	void AddStage(LoopStage* newStage);
+
+	// sizeはloopStage_のサイズを指す
+	int sizeS = 0;
 
 	// ワープスター
 	void MakeWarpStar(void);

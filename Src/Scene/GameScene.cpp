@@ -33,7 +33,6 @@ GameScene::GameScene(void)
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
 	score_ = nullptr;
-
 }
 
 GameScene::~GameScene(void)
@@ -96,6 +95,9 @@ void GameScene::Init(void)
 	//敵が生成されたか
 	isCreateEnemy_ = false;
 
+	hitStopDuration = 6000.0f;
+	hitStopTimer = 0.0f;
+	isHitStop = false;
 }
 
 void GameScene::Update(void)
@@ -107,10 +109,25 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+	if (stage_->GetLoopStageSize() >= 25)
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+	}
 
+	float deltaTime = 1 / 60.0f;
 	skyDome_->Update();
-
-	bike_->Update();
+	if (!isHitStop)
+	{
+		bike_->Update();
+	}
+	else
+	{
+		// ヒットストップ中の場合、タイマーを更新
+		hitStopTimer -= deltaTime;
+		if (hitStopTimer <= 0.f) {
+			isHitStop = false;
+		}
+	}
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	helicopter_->SetBikeTrans(bike_->GetTransform());
 
@@ -121,6 +138,7 @@ void GameScene::Update(void)
 		enemys_[i]->Update();
 		if (enemys_[i]->GetIsAddScore())
 		{
+			isHitStop = true;
 			//スコア加算
 			score_->AddScore();
 		}
@@ -131,6 +149,12 @@ void GameScene::Update(void)
 	for (int t = 0; t < sizeEb; t++)
 	{
 		enemyBikes_[t]->Update();
+	}
+	
+	
+	if (isHitStop == true)
+	{
+
 	}
 
 	//衝突判定
@@ -277,6 +301,7 @@ void GameScene::DrawDubg(void)
 {
 	DrawFormatString(840, 100, 0x000000,"DrawCall:%d", GetDrawCallCount());
 	DrawFormatString(840, 120, 0x000000,"FPS:%f", GetFPS());
+	DrawFormatString(0, 140, 0x000000, "IsHitStop:%d", isHitStop);
 }
 
 void GameScene::Collision(void)
