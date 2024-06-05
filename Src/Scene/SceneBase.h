@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 class ResourceManager;
 
 class SceneBase

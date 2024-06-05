@@ -163,7 +163,7 @@ void Bike::Draw(void)
 	//player_->Draw();
 
 	// デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 }
 
 void Bike::AddCollider(Collider* collider)

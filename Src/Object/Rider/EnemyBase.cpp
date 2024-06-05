@@ -138,7 +138,7 @@ void EnemyBase::Draw(void)
 
 	DrawLine3D(fowardPos_, backPos_, 0x0000ff);
 
-	capsule_->Draw();
+	//capsule_->Draw();
 }
 
 void EnemyBase::AddCollider(Collider* collider)

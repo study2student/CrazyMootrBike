@@ -116,7 +116,7 @@ void GameScene::Update(void)
 	}
 	if (stage_->GetLoopStageSize() >= 25)
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 
 	float deltaTime = 1 / 60.0f;
@@ -132,6 +132,8 @@ void GameScene::Update(void)
 		if (hitStopTimer <= 0.f) {
 			isHitStop = false;
 		}
+
+		// ヒットエフェクト
 		int scale = 50;
 		FireBlessEffect();
 		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
@@ -284,11 +286,11 @@ void GameScene::Draw(void)
 
 
 	// ヘルプ
-	DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
-	DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
-	DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
-	DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-	DrawDubg();
+	//DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
+	//DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
+	//DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
+	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
+	//DrawDubg();
 }
 
 std::vector<EnemyBase*> GameScene::GetEnemys(void)

@@ -18,13 +18,12 @@ public:
 	//スコア加算
 	void AddScore(void);
 
+	int GetScore(void);
+
 private:
 
 	//スコア
 	int score_;
-
-
-
 };
 
 
