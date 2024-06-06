@@ -26,7 +26,7 @@ public:
 	static constexpr float SPEED = 30.0f;
 
 	//ƒ_ƒ[ƒW
-	static constexpr int BOMB_DAMAGE = 20.0f;
+	static constexpr int BOMB_DAMAGE = 20;
 
 	// ó‘Ô
 	enum class STATE

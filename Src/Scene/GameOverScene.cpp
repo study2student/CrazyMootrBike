@@ -1,5 +1,7 @@
 #include <DxLib.h>
 #include "../Application.h"
+#include "../Manager/InputManager.h"
+#include "../Manager/SceneManager.h"
 #include "../../Src/Object/Score.h"
 #include "GameOverScene.h"
 
@@ -14,13 +16,19 @@ GameOverScene::~GameOverScene(void)
 
 void GameOverScene::Init(void)
 {
-	score_ = std::make_unique<Score>();
-	score_->Init();
+	score_ = std::make_shared<Score>();
+	//score_->Init();
 }
 
 void GameOverScene::Update(void)
 {
 	score_->Update();
+	// ÉVÅ[ÉìëJà⁄
+	InputManager& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+	}
 }
 
 void GameOverScene::Draw(void)

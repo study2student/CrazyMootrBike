@@ -114,7 +114,7 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-	if (stage_->GetLoopStageSize() >= 25)
+	if (stage_->GetLoopStageSize() >= 20)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
@@ -134,7 +134,7 @@ void GameScene::Update(void)
 		}
 
 		// ヒットエフェクト
-		int scale = 50;
+		float scale = 50.0f;
 		FireBlessEffect();
 		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
 		SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);

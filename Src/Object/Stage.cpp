@@ -37,6 +37,10 @@ Stage::Stage(Bike* bike, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
 
 	isJamp_ = false;
 
+	activePlanet_ = nullptr;
+
+	jampRamp_ = nullptr;
+
 	//ループ用のステージ
 	/*loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
 	loopStage_.pos = { -5000.0f, -5600.0f, 6500.0f };
