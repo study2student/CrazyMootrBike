@@ -17,7 +17,6 @@
 
 Bike::Bike(void)
 {
-	player_ = nullptr;
 
 	weapon_ = nullptr;
 
@@ -58,10 +57,7 @@ Bike::Bike(void)
 
 Bike::~Bike(void)
 {
-	delete player_;
 	delete weapon_;
-	delete capsule_;
-	delete animationController_;
 }
 
 void Bike::Init(void)
@@ -69,9 +65,6 @@ void Bike::Init(void)
 	// エフェクト初期化
 	InitEffect();
 
-	// プレイヤー
-	player_ = new Player();
-	player_->Init();
 	
 	// 武器
 	weapon_ = new Weapon();
@@ -107,7 +100,7 @@ void Bike::Init(void)
 	InitAnimation();
 
 	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
+	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
 	capsule_->SetRadius(135.0f);
@@ -136,7 +129,7 @@ void Bike::Update(void)
 		break;
 	}
 
-	player_->Update();
+	//player_->Update();
 
 	weapon_->Update();
 
@@ -180,7 +173,7 @@ void Bike::ClearCollider(void)
 	colliders_.clear();
 }
 
-const Capsule* Bike::GetCapsule(void) const
+const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 {
 	return capsule_;
 }
@@ -259,7 +252,7 @@ void Bike::Damage(int damage)
 void Bike::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Player/";
-	animationController_ = new AnimationController(transformPlayer_.modelId);
+	animationController_ = std::make_unique<AnimationController>(transformPlayer_.modelId);
 	animationController_->Add((int)ANIM_TYPE::IDLE, path + "Idle.mv1", 20.0f);
 	animationController_->Add((int)ANIM_TYPE::RUN, path + "Run.mv1", 20.0f);
 	animationController_->Add((int)ANIM_TYPE::FAST_RUN, path + "FastRun.mv1", 20.0f);

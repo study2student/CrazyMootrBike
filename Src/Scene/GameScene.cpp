@@ -9,11 +9,9 @@
 #include "../Object/Common/Collider.h"
 #include "../Object/SkyDome.h"
 #include "../Object/Stage.h"
-#include "../Object/Rider/Player.h"
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/EnemyBike.h"
 #include "../Object/Rider/Rider.h"
-#include "../Object/Rider/Enemy.h"
 #include "../Object/Rider/EnemyBase.h"
 #include "../Object/Rider/ShortDisEnemy.h"
 #include "../Object/Rider/LongDisEnemy.h"
@@ -26,8 +24,6 @@
 
 GameScene::GameScene(void)
 {
-	rider_ = nullptr;
-	//player_ = nullptr;
 	bike_ = nullptr;
 	enemy_ = nullptr;
 	skyDome_ = nullptr;
@@ -39,9 +35,7 @@ GameScene::GameScene(void)
 
 GameScene::~GameScene(void)
 {
-	//delete player_;
 	delete enemy_;
-	delete rider_;
 }
 
 void GameScene::Init(void)
@@ -68,7 +62,7 @@ void GameScene::Init(void)
 	// 敵
 	enemy_ = new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 
-	//ヘリコプター　
+	//ヘリコプター
 	helicopter_ = std::make_unique<Helicopter>();
 	helicopter_->Init();
 
@@ -285,7 +279,7 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	//DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-	//DrawDubg();
+	DrawDubg();
 }
 
 std::vector<EnemyBase*> GameScene::GetEnemys(void)
@@ -325,8 +319,8 @@ void GameScene::Collision(void)
 				continue;
 			}
 
-			auto b1Pos = enemyBikes_[b1]->GetCapsule()->GetCenter();
-			auto b2Pos = enemyBikes_[b2]->GetCapsule()->GetCenter();
+			auto b1Pos = enemyBikes_[b1]->GetCapsule().lock()->GetCenter();
+			auto b2Pos = enemyBikes_[b2]->GetCapsule().lock()->GetCenter();
 
 			VECTOR diff = VSub(b1Pos, b2Pos);
 			float  dis = AsoUtility::SqrMagnitudeF(diff);
@@ -361,9 +355,9 @@ void GameScene::Collision(void)
 	auto heliCap = helicopter_->GetBomb()->GetCapsule();
 	auto bikeCap = bike_->GetCapsule();
 
-	VECTOR diff = VSub(heliCap.lock()->GetCenter(), bikeCap->GetCenter());
+	VECTOR diff = VSub(heliCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < heliCap.lock()->GetRadius() * bikeCap->GetRadius())
+	if (dis < heliCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 	{
 		//プレイヤーにダメージ
 		bike_->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);

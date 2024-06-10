@@ -156,7 +156,7 @@ void MagicEnemy::ProcessMove(void)
 	// ˆÚ“®ˆ—
 	//speed_ = SPEED_MOVE;
 	//Õ“Ë”»’è(“G‚ÆƒvƒŒƒCƒ„[)
-	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
+	VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
 	if (dis < RADIUS * RADIUS)
 	{

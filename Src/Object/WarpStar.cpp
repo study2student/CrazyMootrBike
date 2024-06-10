@@ -5,7 +5,7 @@
 #include "WarpStar.h"
 
 WarpStar::WarpStar(
-	Player* player, const Transform& transform)
+	std::shared_ptr<Player> player, const Transform& transform)
 {
 	
 	player_ = player;

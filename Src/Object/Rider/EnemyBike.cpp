@@ -55,7 +55,6 @@ EnemyBike::EnemyBike(EnemyBase* enemy)
 EnemyBike::~EnemyBike(void)
 {
 	delete weapon_;
-	delete capsule_;
 	delete animationController_;
 }
 
@@ -86,7 +85,7 @@ void EnemyBike::Init(void)
 	InitAnimation();
 
 	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
+	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
 	capsule_->SetRadius(135.0f);
@@ -139,7 +138,7 @@ void EnemyBike::Draw(void)
 	DrawDebug();
 }
 
-void EnemyBike::AddCollider(Collider* collider)
+void EnemyBike::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
@@ -149,7 +148,7 @@ void EnemyBike::ClearCollider(void)
 	colliders_.clear();
 }
 
-const Capsule* EnemyBike::GetCapsule(void) const
+const std::weak_ptr<Capsule> EnemyBike::GetCapsule(void) const
 {
 	return capsule_;
 }

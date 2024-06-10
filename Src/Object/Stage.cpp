@@ -54,21 +54,21 @@ Stage::Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy, std::shared_ptr<Bomb>
 Stage::~Stage(void)
 {
 
-	// ワープスター
-	for (auto star : warpStars_)
-	{
-		delete star;
-	}
-	warpStars_.clear();
+	//// ワープスター
+	//for (auto star : warpStars_)
+	//{
+	//	delete star;
+	//}
+	//warpStars_.clear();
 
 	// 惑星
 	planets_.clear();
 
-	//ループ用のステージ
-	for (auto loop : loopStage_)
-	{
-		delete loop;
-	}
+	////ループ用のステージ
+	//for (auto loop : loopStage_)
+	//{
+	//	delete loop;
+	//}
 	loopStage_.clear();
 
 	// ループ用のステージを削除
@@ -79,7 +79,6 @@ Stage::~Stage(void)
 	//	delete loop;
 	//}
 
-	delete jampRamp_;
 }
 
 void Stage::Init(void)
@@ -88,7 +87,7 @@ void Stage::Init(void)
 	MakeLoopStage();
 	MakeWarpStar();
 
-	jampRamp_ = new JampRamp();
+	jampRamp_ = std::make_unique<JampRamp>();
 	jampRamp_->Init();
 
 	step_ = -1.0f;
@@ -98,10 +97,10 @@ void Stage::Update(void)
 {
 
 	// ワープスター
-	for (const auto& s : warpStars_)
-	{
-		s->Update();
-	}
+	//for (const auto& s : warpStars_)
+	//{
+	//	s->Update();
+	//}
 
 	// 惑星
 	for (const auto& s : planets_)
@@ -129,9 +128,9 @@ void Stage::Update(void)
 	auto bikeCap = bike_->GetCapsule();
 	auto jumpRampCap = jampRamp_->GetCapsule();
 
-	VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap->GetCenter());
+	VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < bikeCap->GetRadius() * jumpRampCap.lock()->GetRadius())
+	if (dis < bikeCap.lock()->GetRadius() * jumpRampCap.lock()->GetRadius())
 	{
 		isJamp_ = true;
 		Jump();
@@ -150,10 +149,10 @@ void Stage::Draw(void)
 {
 
 	// ワープスター
-	for (const auto& s : warpStars_)
-	{
-		s->Draw();
-	}
+	//for (const auto& s : warpStars_)
+	//{
+	//	s->Draw();
+	//}
 
 	// 惑星
 	for (const auto& s : planets_)
@@ -344,7 +343,7 @@ void Stage::MakeLoopStage(void)
 	}
 
 	Transform loopTrans;
-	LoopStage* stage;
+	std::shared_ptr<LoopStage> stage;
 
 
 	float z = bike_->GetTransform().pos.z;
@@ -378,7 +377,7 @@ void Stage::MakeLoopStage(void)
 		}
 
 
-		stage = new LoopStage (bike_, loopTrans);
+		stage = std::make_shared<LoopStage> (bike_, loopTrans);
 		stage->Init();
 		loopStage_.push_back(stage);
 		//loopStage_.emplace(stage);
@@ -414,7 +413,7 @@ void Stage::MakeLoopStage(void)
 			//lt.pop();
 
 			// ステージを削除する
-			LoopStage* tailLoop = loopStage_[size-5];
+			std::shared_ptr<LoopStage> tailLoop = loopStage_[size-5];
 			tailLoop->Destroy();
 
 			//int size = static_cast<int>(loopStage_.size());
@@ -473,16 +472,16 @@ void Stage::MakeLoopStage(void)
 }
 
 // ステージを追加する関数
-void Stage::AddStage(LoopStage* newStage)
+void Stage::AddStage(std::shared_ptr<LoopStage> newStage)
 {
-	
+
 	loopStage_.push_back(newStage);
 	//stageQueue(newStage);
 	sizeS++;
 	
 	// 6以上のステージがある場合は古いステージを削除
 	if (loopStage_.size() > 5) {
-		LoopStage* oldStage = loopStage_.front();
+		std::shared_ptr<LoopStage> oldStage = loopStage_.front();
 		loopStage_.pop_front();
 		
 		oldStage->Destroy();

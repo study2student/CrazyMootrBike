@@ -5,13 +5,11 @@
 class Stage;
 class SkyDome;
 class Rider;
-//class Player;
 class Bike;
 class EnemyBase;
 class ShortDisEnemy;
 class LongDisEnemy;
 class MagicEnemy;
-class Enemy;
 class EnemyBike;
 class Helicopter;
 class Score;
@@ -52,11 +50,6 @@ private:
 	// スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
 
-	// プレイヤー
-	Rider* rider_;
-
-	//// プレイヤー
-	//Player* player_;
 
 	// プレイヤー
 	std::shared_ptr<Bike> bike_;

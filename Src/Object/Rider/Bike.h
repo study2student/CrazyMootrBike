@@ -80,7 +80,7 @@ public:
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
-	const Capsule* GetCapsule(void) const;
+	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
 	void SetSpeed(float speed, float rotRad, float posY);
 
@@ -95,9 +95,8 @@ private:
 	Transform transformPlayer_;
 
 	// アニメーション
-	AnimationController* animationController_;
+	std::unique_ptr<AnimationController> animationController_;
 
-	Player* player_;
 
 	Weapon* weapon_;
 
@@ -142,7 +141,7 @@ private:
 
 	// 衝突判定に用いられるコライダ
 	std::vector<std::shared_ptr<Collider>> colliders_;
-	Capsule* capsule_;
+	std::shared_ptr<Capsule> capsule_;
 
 	// 衝突チェック
 	VECTOR gravHitPosDown_;

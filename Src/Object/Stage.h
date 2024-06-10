@@ -95,15 +95,15 @@ private:
 
 	//deque使ってもいいよ
 	//std::queue<LoopStage*> loopStage_;
-	std::deque<LoopStage*> loopStage_;
+	std::deque<std::shared_ptr<LoopStage>> loopStage_;
 
-	JampRamp* jampRamp_;
+	std::unique_ptr<JampRamp> jampRamp_;
 
 	// 惑星
 	std::map<NAME, std::shared_ptr<Planet>> planets_;
 
 	// ワープスター
-	std::vector<WarpStar*> warpStars_;
+	//std::vector<WarpStar*> warpStars_;
 
 	// 空のPlanet
 	std::shared_ptr<Planet> nullPlanet = nullptr;
@@ -122,7 +122,7 @@ private:
 	//ループ用のステージ(最初)
 	void MakeLoopStage(void);
 
-	void AddStage(LoopStage* newStage);
+	void AddStage(std::shared_ptr<LoopStage> newStage);
 
 	// sizeはloopStage_のサイズを指す
 	int sizeS = 0;

@@ -55,7 +55,6 @@ EnemyBase::EnemyBase(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR loc
 
 EnemyBase::~EnemyBase(void)
 {
-	delete capsule_;
 	delete animationController_;
 }
 
@@ -78,7 +77,7 @@ void EnemyBase::Init(void)
 	InitAnimation();
 
 	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
+	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
 	capsule_->SetRadius(20.0f);
@@ -151,7 +150,7 @@ void EnemyBase::ClearCollider(void)
 	colliders_.clear();
 }
 
-const Capsule* EnemyBase::GetCapsule(void) const
+const std::weak_ptr<Capsule> EnemyBase::GetCapsule(void) const
 {
 	return capsule_;
 }
@@ -504,7 +503,7 @@ void EnemyBase::ProcessMove(void)
 	// 移動処理
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
-	VECTOR diff = VSub(bike_->GetCapsule()->GetCenter(), capsule_->GetCenter());
+	VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
 	if (dis < RADIUS * RADIUS)
 	{

@@ -39,7 +39,7 @@ public:
 
 	// コンストラクタ
 	WarpStar(
-		Player* player, const Transform& transform);
+		std::shared_ptr<Player> player, const Transform& transform);
 
 	// デストラクタ
 	~WarpStar(void);
@@ -51,7 +51,7 @@ public:
 private:
 
 	// プレイヤー
-	Player* player_;
+	std::shared_ptr<Player> player_;
 
 	// 状態管理
 	STATE state_;
