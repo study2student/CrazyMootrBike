@@ -1,4 +1,5 @@
 #include <string>
+#include <EffekseerForDXLib.h>
 #include "../../Application.h"
 #include "../..//Utility/AsoUtility.h"
 #include "../..//Manager/InputManager.h"
@@ -65,6 +66,9 @@ Bike::~Bike(void)
 
 void Bike::Init(void)
 {
+	// エフェクト初期化
+	InitEffect();
+
 	// プレイヤー
 	player_ = new Player();
 	player_->Init();
@@ -163,10 +167,10 @@ void Bike::Draw(void)
 	//player_->Draw();
 
 	// デバッグ描画
-	//DrawDebug();
+	DrawDebug();
 }
 
-void Bike::AddCollider(Collider* collider)
+void Bike::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
@@ -449,7 +453,7 @@ void Bike::ProcessMove(void)
 
 		// 移動処理
 		speed_ = SPEED_MOVE;
-		
+
 
 		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
 		{
@@ -504,6 +508,12 @@ void Bike::ProcessMove(void)
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
 	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
+
+	// ソニックブームエフェクト
+	float scale = 100.0f;
+	SonicBoomEffect();
+	effectSonicPlayId_ = PlayEffekseer3DEffect(effectSonicResId_);
+	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
 }
 
 void Bike::ProcessJump(void)
@@ -802,3 +812,15 @@ bool Bike::IsEndLanding(void)
 	return false;
 }
 
+void Bike::InitEffect(void)
+{
+	// ヒットエフェクト
+	effectSonicResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SonicEffect).handleId_;
+}
+
+void Bike::SonicBoomEffect(void)
+{
+	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + 200);
+	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
+}

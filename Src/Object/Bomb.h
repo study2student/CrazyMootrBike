@@ -3,7 +3,6 @@
 #include "Common/Transform.h"
 #include "ActorBase.h"
 class Player;
-class Bike;
 class Collider;
 class Capsule;
 
@@ -48,11 +47,11 @@ public:
 	void Draw(void) override;
 
 	// 衝突判定に用いられるコライダ制御
-	void AddCollider(Collider* collider);
+	void AddCollider(std::shared_ptr<Collider> collider);
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
-	const Capsule* GetCapsule(void) const;
+	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
 	//ヘリの情報設定用
 	void SetHeliTrans(const Transform& heliTrans);
@@ -65,8 +64,6 @@ public:
 
 private:
 
-	// プレイヤー
-	Bike* bike_;
 
 	//ヘリ
 	Transform heliTrans_;
@@ -102,8 +99,8 @@ private:
 	bool isCol_;
 
 	// 衝突判定に用いられるコライダ
-	std::vector<Collider*> colliders_;
-	Capsule* capsule_;
+	std::vector<std::shared_ptr<Collider>> colliders_;
+	std::shared_ptr<Capsule> capsule_;
 
 	// 衝突チェック
 	VECTOR gravHitPosDown_;

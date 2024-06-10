@@ -159,6 +159,12 @@ void ResourceManager::Init(void)
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	resourcesMap_.emplace(SRC::HitEffect, res);
+
+	// ソニックエフェクト
+	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
+	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "SonicBoom/SonicBoom.efkefc");
+	//resourcesMap_.emplace(SRC::SonicEffect, res);
+	
 }
 
 

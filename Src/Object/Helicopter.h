@@ -77,17 +77,17 @@ public:
 	void Draw(void) override;
 
 	// 衝突判定に用いられるコライダ制御
-	void AddCollider(Collider* collider);
+	void AddCollider(std::shared_ptr<Collider> collider);
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
-	const Capsule* GetCapsule(void) const;
+	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
 	//バイク情報の保存
 	void SetBikeTrans(const Transform& bikeTrans);
 
 	//爆弾取得
-	Bomb* GetBomb(void);
+	std::shared_ptr<Bomb> GetBomb(void);
 
 private:
 
@@ -95,7 +95,7 @@ private:
 	Rotor* rotor_;
 	
 	//爆弾
-	Bomb* bomb_;
+	std::shared_ptr<Bomb> bomb_;
 
 	//バイク情報
 	Transform bikeTrans_;
@@ -128,8 +128,8 @@ private:
 	float stepRotTime_;
 
 	// 衝突判定に用いられるコライダ
-	std::vector<Collider*> colliders_;
-	Capsule* capsule_;
+	std::vector<std::shared_ptr<Collider>> colliders_;
+	std::shared_ptr<Capsule> capsule_;
 
 	// 衝突チェック
 	VECTOR gravHitPosDown_;

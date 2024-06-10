@@ -14,7 +14,7 @@
 #include "../../Object/Score.h"
 #include "LongDisEnemy.h"
 
-LongDisEnemy::LongDisEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
+LongDisEnemy::LongDisEnemy(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;

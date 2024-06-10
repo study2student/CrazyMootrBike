@@ -18,19 +18,19 @@ public:
 	void Draw(void);
 
 	// 衝突判定に用いられるコライダ制御
-	void AddCollider(Collider* collider);
+	void AddCollider(std::shared_ptr<Collider> collider);
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
-	const Capsule* GetCapsule(void) const;
+	const std::weak_ptr<Capsule> GetCapsule(void) const;
 private:
 
 	// 移動後の座標
 	VECTOR movedPos_;
 
 	// 衝突判定に用いられるコライダ
-	std::vector<Collider*> colliders_;
-	Capsule* capsule_;
+	std::vector<std::shared_ptr<Collider>> colliders_;
+	std::shared_ptr<Capsule> capsule_;
 
 	void CollisionCapsule(void);
 

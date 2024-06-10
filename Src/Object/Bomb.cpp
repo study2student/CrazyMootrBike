@@ -3,7 +3,6 @@
 #include "../Manager/ResourceManager.h"
 #include "Common/Transform.h"
 #include "../Object/Rider/Player.h"
-#include "../Object/Rider/Bike.h"
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Object/Planet.h"
@@ -43,7 +42,8 @@ void Bomb::Init(void)
 	bombEffectResId_ = LoadEffekseerEffect("Data/Effect/Bomb/bombEffect.efkefc",1.0f);
 
 	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
+	//capsule_ = new Capsule(transform_);
+	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
 	capsule_->SetRadius(80.0f);
@@ -93,7 +93,7 @@ void Bomb::Draw(void)
 
 }
 
-void Bomb::AddCollider(Collider* collider)
+void Bomb::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
@@ -103,7 +103,7 @@ void Bomb::ClearCollider(void)
 	colliders_.clear();
 }
 
-const Capsule* Bomb::GetCapsule(void) const
+const std::weak_ptr<Capsule> Bomb::GetCapsule(void) const
 {
 	return capsule_;
 }
@@ -200,7 +200,6 @@ void Bomb::UpdateIdle(void)
 
 void Bomb::UpdateReserve(void)
 {
-
 	// 弾を移動させる
 	VECTOR movePow;
 	VECTOR targetDir = VNorm(VSub(bombTargetPos_, transform_.pos));

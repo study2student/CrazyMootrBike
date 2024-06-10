@@ -28,7 +28,7 @@ void JampRamp::Init(void)
 	transform_.Update();
 
 	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
+	capsule_ = std::make_shared<Capsule>(transform_);
 	/*capsule_->SetLocalPosTop({ -200.0f, 100.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 380.0f, 100.0f, 0.0f });*/
 	capsule_->SetLocalPosTop({ 100.0f, 100.0f, 0.0f });
@@ -50,7 +50,7 @@ void JampRamp::Draw(void)
 	DrawDebug();
 }
 
-void JampRamp::AddCollider(Collider* collider)
+void JampRamp::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
@@ -60,7 +60,7 @@ void JampRamp::ClearCollider(void)
 	colliders_.clear();
 }
 
-const Capsule* JampRamp::GetCapsule(void) const
+const std::weak_ptr<Capsule> JampRamp::GetCapsule(void) const
 {
 	return capsule_;
 }

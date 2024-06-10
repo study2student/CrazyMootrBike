@@ -96,7 +96,7 @@ public:
 	};
 
 	// コンストラクタ
-	EnemyBase(Bike* bike, VECTOR loopStagePos, VECTOR localPos);
+	EnemyBase(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos);
 
 	// デストラクタ
 	virtual ~EnemyBase(void);
@@ -110,7 +110,7 @@ public:
 	virtual void ProcessMove(void);
 
 	// 衝突判定に用いられるコライダ制御
-	void AddCollider(Collider* collider);
+	void AddCollider(std::shared_ptr<Collider> collider);
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
@@ -149,7 +149,7 @@ protected:
 	AnimationController* animationController_;
 
 	//バイク情報
-	Bike* bike_;
+	std::shared_ptr<Bike> bike_;
 
 	// 状態管理
 	STATE state_;
@@ -187,7 +187,7 @@ protected:
 	float stepJump_;
 
 	// 衝突判定に用いられるコライダ
-	std::vector<Collider*> colliders_;
+	std::vector<std::shared_ptr<Collider>> colliders_;
 	Capsule* capsule_;
 
 	// 衝突チェック

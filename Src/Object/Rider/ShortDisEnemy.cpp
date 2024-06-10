@@ -15,7 +15,7 @@
 #include "ShortDisEnemy.h"
 
 
-ShortDisEnemy::ShortDisEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
+ShortDisEnemy::ShortDisEnemy(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;

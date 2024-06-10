@@ -15,7 +15,7 @@
 #include "MagicEnemy.h"
 
 
-MagicEnemy::MagicEnemy(Bike* bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
+MagicEnemy::MagicEnemy(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;

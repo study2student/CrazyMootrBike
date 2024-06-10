@@ -5,7 +5,7 @@
 #include "../Object/Rider/Bike.h"
 #include "LoopStage.h"
 
-LoopStage::LoopStage(Bike* bike, const Transform& transform)
+LoopStage::LoopStage(std::shared_ptr<Bike> bike, const Transform& transform)
 {
 	bike_ = bike;
 
@@ -21,7 +21,7 @@ LoopStage::~LoopStage(void)
 
 void LoopStage::Init(void)
 {
-
+	
 	ChangeState(STATE::IDLE);
 }
 

@@ -13,7 +13,7 @@
 #include "../../Object/Score.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(Bike* bike, VECTOR loopStagePos, VECTOR localPos)
+EnemyBase::EnemyBase(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos)
 {
 	bike_ = bike;
 
@@ -141,7 +141,7 @@ void EnemyBase::Draw(void)
 	//capsule_->Draw();
 }
 
-void EnemyBase::AddCollider(Collider* collider)
+void EnemyBase::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }

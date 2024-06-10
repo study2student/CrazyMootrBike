@@ -47,7 +47,8 @@ public:
 
 		W_SWORD,//バスターソード
 
-		HitEffect//ヒットした時のエフェクト
+		HitEffect,//ヒットした時のエフェクト
+		SonicEffect//ソニックエフェクト
 	};
 
 	// 明示的にインステンスを生成する

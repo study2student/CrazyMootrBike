@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <memory>
 #include "Common/Transform.h"
 #include "ActorBase.h"
 class Player;
@@ -21,7 +22,7 @@ public:
 
 	// コンストラクタ
 	LoopStage(
-		Bike* bike, const Transform& transform);
+		std::shared_ptr<Bike> bike, const Transform& transform);
 
 	// デストラクタ
 	~LoopStage(void);
@@ -38,7 +39,7 @@ public:
 private:
 
 	// プレイヤー
-	Bike* bike_;
+	std::shared_ptr<Bike> bike_;
 
 	// 状態管理
 	STATE state_;

@@ -44,13 +44,13 @@ public:
 private:
 
 	// ステージ
-	Stage* stage_;
+	std::unique_ptr<Stage> stage_;
 
 	//スコア
-	Score* score_;
+	std::shared_ptr<Score> score_;
 
 	// スカイドーム
-	SkyDome* skyDome_;
+	std::unique_ptr<SkyDome> skyDome_;
 
 	// プレイヤー
 	Rider* rider_;
@@ -59,10 +59,10 @@ private:
 	//Player* player_;
 
 	// プレイヤー
-	Bike* bike_;
+	std::shared_ptr<Bike> bike_;
 
 	//ヘリコプター
-	Helicopter* helicopter_;
+	std::unique_ptr<Helicopter> helicopter_;
 
 	////	敵
 	//Enemy* enemy_;

@@ -40,13 +40,8 @@ GameScene::GameScene(void)
 GameScene::~GameScene(void)
 {
 	//delete player_;
-	delete bike_;
 	delete enemy_;
 	delete rider_;
-	delete stage_;
-	delete skyDome_;
-	delete helicopter_;
-	delete score_;
 }
 
 void GameScene::Init(void)
@@ -59,7 +54,7 @@ void GameScene::Init(void)
 	//player_ = new Player();
 	//player_->Init();
 
-	bike_ = new Bike();
+	bike_ = std::make_shared<Bike>();
 	bike_->Init();
 
 	//enemy_->Init();
@@ -67,25 +62,25 @@ void GameScene::Init(void)
 	enemyBike_->Init();*/
 
 	//スコア
-	score_ = new Score();
+	score_ = std::make_shared<Score>();
 	score_->Init();
 
 	// 敵
 	enemy_ = new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 
 	//ヘリコプター　
-	helicopter_ = new Helicopter();
+	helicopter_ = std::make_unique<Helicopter>();
 	helicopter_->Init();
 
 	// ステージ
-	stage_ = new Stage(bike_, enemy_,helicopter_->GetBomb(), this);
+	stage_ = std::make_unique<Stage>(bike_, enemy_,helicopter_->GetBomb(), this);
 	stage_->Init();
 
 	// ステージの初期設定
 	stage_->ChangeStage(Stage::NAME::MAIN_PLANET);
 
 	// スカイドーム
-	skyDome_ = new SkyDome(bike_->GetTransform());
+	skyDome_ = std::make_unique<SkyDome>(bike_->GetTransform());
 	skyDome_->Init();
 
 	SceneManager::GetInstance().GetCamera()->SetFollow(&bike_->GetTransform());
@@ -100,7 +95,7 @@ void GameScene::Init(void)
 	//敵が生成されたか
 	isCreateEnemy_ = false;
 
-	hitStopDuration = 60000.0f;
+	hitStopDuration = 6000.0f;
 	hitStopTimer = 0.0f;
 	isHitStop = false;
 }
@@ -114,12 +109,12 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-	if (stage_->GetLoopStageSize() >= 20)
+	if (stage_->GetLoopStageSize() >= 35)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 
-	float deltaTime = 1 / 60.0f;
+	float deltaTime = hitStopDuration;
 	skyDome_->Update();
 	if (!isHitStop)
 	{
@@ -366,9 +361,9 @@ void GameScene::Collision(void)
 	auto heliCap = helicopter_->GetBomb()->GetCapsule();
 	auto bikeCap = bike_->GetCapsule();
 
-	VECTOR diff = VSub(heliCap->GetCenter(), bikeCap->GetCenter());
+	VECTOR diff = VSub(heliCap.lock()->GetCenter(), bikeCap->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < heliCap->GetRadius() * bikeCap->GetRadius())
+	if (dis < heliCap.lock()->GetRadius() * bikeCap->GetRadius())
 	{
 		//プレイヤーにダメージ
 		bike_->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);

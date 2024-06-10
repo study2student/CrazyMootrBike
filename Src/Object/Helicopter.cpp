@@ -49,9 +49,7 @@ Helicopter::Helicopter(void)
 
 Helicopter::~Helicopter(void)
 {
-	delete capsule_;
 	delete rotor_;
-	delete bomb_;
 	//delete animationController_;
 }
 
@@ -62,7 +60,7 @@ void Helicopter::Init(void)
 	rotor_->Init();
 
 	//爆弾
-	bomb_ = new Bomb();
+	bomb_ = std::make_shared<Bomb>();
 	bomb_->Init();
 
 	// モデルの基本設定
@@ -80,7 +78,7 @@ void Helicopter::Init(void)
 	InitAnimation();
 
 	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
+	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
 	capsule_->SetRadius(135.0f);
@@ -145,7 +143,7 @@ void Helicopter::Draw(void)
 	DrawDebug();
 }
 
-void Helicopter::AddCollider(Collider* collider)
+void Helicopter::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
@@ -155,7 +153,7 @@ void Helicopter::ClearCollider(void)
 	colliders_.clear();
 }
 
-const Capsule* Helicopter::GetCapsule(void) const
+const std::weak_ptr<Capsule> Helicopter::GetCapsule(void) const
 {
 	return capsule_;
 }
@@ -165,7 +163,7 @@ void Helicopter::SetBikeTrans(const Transform& bikeTrans)
 	bikeTrans_ = bikeTrans;
 }
 
-Bomb* Helicopter::GetBomb(void)
+std::shared_ptr<Bomb> Helicopter::GetBomb(void)
 {
 	return bomb_;
 }

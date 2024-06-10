@@ -22,7 +22,7 @@
 #include "../Scene/GameScene.h"
 #include "Stage.h"
 
-Stage::Stage(Bike* bike, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
+Stage::Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy, std::shared_ptr<Bomb> bomb, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance())
 {
 	gameScene_ = gameScene;
@@ -37,7 +37,7 @@ Stage::Stage(Bike* bike, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
 
 	isJamp_ = false;
 
-	activePlanet_ = nullptr;
+	//activePlanet_ = nullptr;
 
 	jampRamp_ = nullptr;
 
@@ -62,10 +62,6 @@ Stage::~Stage(void)
 	warpStars_.clear();
 
 	// 惑星
-	for (auto pair : planets_)
-	{
-		delete pair.second;
-	}
 	planets_.clear();
 
 	//ループ用のステージ
@@ -133,9 +129,9 @@ void Stage::Update(void)
 	auto bikeCap = bike_->GetCapsule();
 	auto jumpRampCap = jampRamp_->GetCapsule();
 
-	VECTOR diff = VSub(jumpRampCap->GetCenter(), bikeCap->GetCenter());
+	VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap->GetCenter());
 	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < bikeCap->GetRadius() * jumpRampCap->GetRadius())
+	if (dis < bikeCap->GetRadius() * jumpRampCap.lock()->GetRadius())
 	{
 		isJamp_ = true;
 		Jump();
@@ -194,11 +190,11 @@ void Stage::ChangeStage(NAME type)
 
 	// ステージの当たり判定設定
 	bike_->ClearCollider();
-	bike_->AddCollider(activePlanet_->GetTransform().collider);
+	bike_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	jampRamp_->ClearCollider();
-	jampRamp_->AddCollider(activePlanet_->GetTransform().collider);
+	jampRamp_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	bomb_->ClearCollider();
-	bomb_->AddCollider(activePlanet_->GetTransform().collider);
+	bomb_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
@@ -217,7 +213,7 @@ void Stage::ChangeStage(NAME type)
 	//}
 
 	enemy_->ClearCollider();
-	enemy_->AddCollider(activePlanet_->GetTransform().collider);
+	enemy_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
@@ -246,7 +242,7 @@ void Stage::ChangeStage(NAME type)
 
 }
 
-Planet* Stage::GetPlanet(NAME type)
+std::weak_ptr<Planet> Stage::GetPlanet(NAME type)
 {
 	if (planets_.count(type) == 0)
 	{
@@ -328,7 +324,7 @@ void Stage::MakeLoopStage(void)
 			std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
 			for (int i = 0; i < enemys_.size(); i++)
 			{
-				enemys_[i]->AddCollider(activePlanet_->GetTransform().collider);
+				enemys_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
 				enemys_[i]->AddCollider(ls->GetTransform().collider);
 			}
 		}
@@ -406,16 +402,16 @@ void Stage::MakeLoopStage(void)
 	//後ろのステージを削除
 	if (loopStage_.size() >= 6)
 	{
-	/*	std::queue<int> lt;
+		//std::queue<int> lt;
 
-		for (size_t i = 0; i < loopStage_.size(); ++i) {
-			lt.push(i);
-		}
+		//for (size_t i = 0; i < loopStage_.size(); ++i) {
+		//	lt.push(i);
+		//}
 
-		while (!lt.empty() && loopStage_.size() >= 6)
-		{
-			int index = lt.front();
-			lt.pop();*/
+		//while (!lt.empty() && loopStage_.size() >= 6)
+		//{
+			//int index = lt.front();
+			//lt.pop();
 
 			// ステージを削除する
 			LoopStage* tailLoop = loopStage_[size-5];
@@ -460,9 +456,9 @@ void Stage::MakeLoopStage(void)
 
 	//for (const auto& ls : loopStage_)
 	//{
-	//	//	it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
-	//	//		return ls->GetState() == LoopStage::STATE::BACK;
-	//	//		});
+	//		it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
+	//			return ls->GetState() == LoopStage::STATE::BACK;
+	//			});
 	//}
 
 	//// 削除する条件をラムダ式で定義

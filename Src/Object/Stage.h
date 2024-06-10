@@ -45,7 +45,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(Bike* bike, EnemyBase* enemy,Bomb* bomb, GameScene* gameScene);
+	Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -58,7 +58,7 @@ public:
 	void ChangeStage(NAME type);
 
 	// 対象ステージを取得
-	Planet* GetPlanet(NAME type);
+	std::weak_ptr<Planet> GetPlanet(NAME type);
 
 	//ループ用のステージが生成されたかどうか取得
 	bool GetIsMakeLoopStage(void);
@@ -80,13 +80,13 @@ private:
 	// シングルトン参照
 	ResourceManager& resMng_;
 
-	Bike* bike_;
+	std::shared_ptr<Bike> bike_;
 	EnemyBase* enemy_;
-	Bomb* bomb_;
+	std::shared_ptr<Bomb> bomb_;
 
 	// ステージアクティブになっている惑星の情報
 	NAME activeName_;
-	Planet* activePlanet_;
+	std::weak_ptr<Planet> activePlanet_;
 
 	//ループ用のステージ
 	//Transform loopStage_;
@@ -100,13 +100,13 @@ private:
 	JampRamp* jampRamp_;
 
 	// 惑星
-	std::map<NAME, Planet*> planets_;
+	std::map<NAME, std::shared_ptr<Planet>> planets_;
 
 	// ワープスター
 	std::vector<WarpStar*> warpStars_;
 
 	// 空のPlanet
-	Planet* nullPlanet = nullptr;
+	std::shared_ptr<Planet> nullPlanet = nullptr;
 
 	float step_;
 

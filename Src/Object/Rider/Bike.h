@@ -76,7 +76,7 @@ public:
 	void Draw(void) override;
 
 	// 衝突判定に用いられるコライダ制御
-	void AddCollider(Collider* collider);
+	void AddCollider(std::shared_ptr<Collider> collider);
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
@@ -141,7 +141,7 @@ private:
 	float stepJumpSecond_;
 
 	// 衝突判定に用いられるコライダ
-	std::vector<Collider*> colliders_;
+	std::vector<std::shared_ptr<Collider>> colliders_;
 	Capsule* capsule_;
 
 	// 衝突チェック
@@ -200,5 +200,15 @@ private:
 
 	// 着地モーション終了
 	bool IsEndLanding(void);
+
+	//エフェクト系
+	// ヒットエフェクト
+	int effectSonicResId_;
+	int effectSonicPlayId_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+	// Hitエフェクトの位置
+	void SonicBoomEffect(void);
 };
 
