@@ -54,6 +54,9 @@ private:
 	// プレイヤー
 	std::shared_ptr<Bike> bike_;
 
+	// 複数プレイヤー
+	std::vector<std::shared_ptr<Bike>> bikes_;
+
 	//ヘリコプター
 	std::unique_ptr<Helicopter> helicopter_;
 
@@ -90,5 +93,5 @@ private:
 	// エフェクト初期化
 	void InitEffect(void);
 	// Hitエフェクトの位置
-	void FireBlessEffect(void);
+	void HitEffect(void);
 };

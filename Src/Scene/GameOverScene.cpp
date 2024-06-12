@@ -17,7 +17,7 @@ GameOverScene::~GameOverScene(void)
 void GameOverScene::Init(void)
 {
 	score_ = std::make_shared<Score>();
-	//score_->Init();
+	score_->Init();
 }
 
 void GameOverScene::Update(void)

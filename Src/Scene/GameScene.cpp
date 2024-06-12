@@ -48,8 +48,16 @@ void GameScene::Init(void)
 	//player_ = new Player();
 	//player_->Init();
 
-	bike_ = std::make_shared<Bike>();
+	bike_ = std::make_shared<Bike>(100);
 	bike_->Init();
+
+	for (int i = 0; i < 4; ++i) {
+		bikes_.push_back(std::make_shared<Bike>(200.0f * (i + 1)));
+	}
+
+	for (auto& bike : bikes_) {
+		bike->Init();
+	}
 
 	//enemy_->Init();
 	/*enemyBike_ = new EnemyBike(enemy_);
@@ -60,7 +68,7 @@ void GameScene::Init(void)
 	score_->Init();
 
 	// 敵
-	enemy_ = new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+	enemy_ =  new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 
 	//ヘリコプター
 	helicopter_ = std::make_unique<Helicopter>();
@@ -108,11 +116,17 @@ void GameScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 
+
 	float deltaTime = hitStopDuration;
 	skyDome_->Update();
 	if (!isHitStop)
 	{
 		bike_->Update();
+
+		for (auto& bike : bikes_) {
+			bike->Update();
+		}
+
 	}
 	else
 	{
@@ -124,7 +138,7 @@ void GameScene::Update(void)
 
 		// ヒットエフェクト
 		float scale = 50.0f;
-		FireBlessEffect();
+		HitEffect();
 		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
 		SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 	}
@@ -235,7 +249,7 @@ void GameScene::Update(void)
 		stage_->Update();
 		isCreateEnemy_ = false;
 	}
-		
+
 
 	helicopter_->Update();
 	score_->Update();
@@ -254,6 +268,11 @@ void GameScene::Draw(void)
 
 	//enemy_->Draw();
 	//enemyBike_->Draw();
+	
+	for (auto& bike : bikes_) {
+		bike->Draw();
+	}
+
 
 	size_t sizeE = enemys_.size();
 	for (int i = 0; i < sizeE; i++)
@@ -374,7 +393,7 @@ void GameScene::InitEffect(void)
 		ResourceManager::SRC::HitEffect).handleId_;
 }
 
-void GameScene::FireBlessEffect(void)
+void GameScene::HitEffect(void)
 {
 	auto pPos = bike_->GetTransform();
 	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);

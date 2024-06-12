@@ -54,7 +54,7 @@ void Rider::Init(void)
 	player_->Init();
 
 	// バイク
-	bike_ = new Bike();
+	bike_ = new Bike(2000);
 	bike_->Init();
 
 	// カプセルコライダ
