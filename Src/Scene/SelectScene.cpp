@@ -24,6 +24,8 @@ void SelectScene::Init(void)
 
 	//左上のおわるポジション
 	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
+
+	isCursorHit_ = false;
 }
 
 void SelectScene::Update(void)
@@ -52,11 +54,21 @@ void SelectScene::MouseProcess(void)
 	//1人でボタン
 	Vector2 startFontLenPos_ = { onePersonFontBasePos_.x + ONE_PERSON_FONT_LENGTH ,onePersonFontBasePos_.y + ONE_PERSON_FONT_HEIGHT };
 	if (mousePos_.x >= onePersonFontBasePos_.x && mousePos_.x <= startFontLenPos_.x
-		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y || state_==STATE::ONE_PERSON)
+		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y)
+	{
+		nowCursor_ = (int)STATE::ONE_PERSON;
+		isCursorHit_ = true;
+	}
+	else
+	{
+		isCursorHit_ = false;
+	}
+
+	if (state_ == STATE::ONE_PERSON)
 	{
 		//ボタンにふれている場合
 		onePersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
 			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
@@ -74,11 +86,21 @@ void SelectScene::MouseProcess(void)
 	//4人でボタン
 	Vector2 exitFontLenPos_ = { fourPersonFontBasePos_.x + FOUR_PERSON_FONT_LENGTH ,fourPersonFontBasePos_.y + FOUR_PERSON_FONT_HEIGHT };
 	if (mousePos_.x >= fourPersonFontBasePos_.x && mousePos_.x <= exitFontLenPos_.x
-		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y || state_ == STATE::FOUR_PERSON)
+		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y )
+	{
+		nowCursor_ = (int)STATE::FOUR_PERSON;
+		isCursorHit_ = true;
+	}
+	else
+	{
+		isCursorHit_ = false;
+	}
+
+	if (state_ == STATE::FOUR_PERSON)
 	{
 		//ボタンにふれている場合
 		fourPersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
 			//左クリックまたはスペースキーでゲームを終了する
 			Application::GetInstance().SetIsGameFinishKey(true);

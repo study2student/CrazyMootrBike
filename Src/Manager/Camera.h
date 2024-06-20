@@ -1,7 +1,9 @@
 #pragma once
 #include <DxLib.h>
+#include <memory>
 #include "../Common/Quaternion.h"
 class Transform;
+class GameScene;
 
 class Camera
 {
@@ -70,10 +72,16 @@ public:
 	// 追従対象の設定
 	void SetFollow(const Transform* follow);
 
+	//ポーズ中かどうか設定
+	void SetIsPause(bool isPause);
+
 private:
 
 	// カメラが追従対象とするTransform
 	const Transform* followTransform_;
+
+	//ポーズ中かどうか
+	bool isPause_;
 
 	// カメラモード
 	MODE mode_;

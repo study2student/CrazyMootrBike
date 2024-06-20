@@ -175,7 +175,8 @@ void Bomb::ChangeStateBlast(void)
 		localPos = { 0.0f,0.0f,0.0f };
 	}
 	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
-	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, 10.0f, 10.0f, 10.0f);
+	float scl = 10.0f;
+	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
 }
 
 void Bomb::UpdateNone(void)

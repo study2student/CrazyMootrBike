@@ -23,7 +23,7 @@ void JampRamp::Init(void)
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal = 
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });
-	transform_.pos = { 1590.0f, -260.0f, 24000.0f };
+	transform_.pos = { 1590.0f, -260.0f, 14000.0f };
 
 	transform_.Update();
 
@@ -64,6 +64,12 @@ const std::weak_ptr<Capsule> JampRamp::GetCapsule(void) const
 {
 	return capsule_;
 }
+
+void JampRamp::AddPosZ(float addZ)
+{
+	transform_.pos.z += addZ;
+}
+
 
 void JampRamp::CollisionCapsule(void)
 {

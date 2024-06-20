@@ -118,10 +118,18 @@ void ResourceManager::Init(void)
 	// 仮ステージ
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::DEMO_STAGE, res);
+
+	//カーブ
+	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Curve.mv1");
+	resourcesMap_.emplace(SRC::CURVE, res);
 	
 	// ジャンプ台
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/jampRanp/janpudai.mv1");
 	resourcesMap_.emplace(SRC::JUMP_RAMP, res);
+
+	//背景街並み
+	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/city/city.mv1");
+	resourcesMap_.emplace(SRC::CITY, res);
 
 	// 近距離敵
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");

@@ -36,6 +36,8 @@ public:
 
 		DEMO_STAGE,//仮ステージ
 		JUMP_RAMP,//ジャンプ台
+		CURVE,	//カーブ
+		CITY,	//背景街並み
 
 		ENEMY_SHORT,		//仮敵
 		ENEMY_LONG,

@@ -19,6 +19,37 @@ class GameScene : public SceneBase
 
 public:
 
+	enum class PAUSE_STATE
+	{
+		RESTART,//再開
+		RETRY,	//リトライ
+		END		//終わる
+	};
+
+	//再開ボタンの横の長さ
+	static constexpr int RESTART_FONT_LENGTH = 40;
+
+	//再開ボタンの高さ
+	static constexpr int RESTART_FONT_HEIGHT = 20;
+
+	//リトライボタンの横の長さ
+	static constexpr int RETRY_FONT_LENGTH = 80;
+
+	//リトライボタンの高さ
+	static constexpr int RETRY_FONT_HEIGHT = 20;
+
+	//終わるボタンの横の長さ
+	static constexpr int END_FONT_LENGTH = 60;
+
+	//終わるボタンの高さ
+	static constexpr int END_FONT_HEIGHT = 20;
+
+	//選択肢数
+	static constexpr int SELECT_MAX_NUM = 3;
+
+	//ポーズキー入力からもう一度押せるようになるまでの時間
+	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
+
 	//エンカウント値
 	static constexpr int ENCOUNT = 350;
 
@@ -94,4 +125,53 @@ private:
 	void InitEffect(void);
 	// Hitエフェクトの位置
 	void HitEffect(void);
+
+
+	//左上の再開ポジション
+	Vector2 reStartFontBasePos_;
+
+	//左上のリトライポジション
+	Vector2 reTryFontBasePos_;
+
+	//左上の終わるポジション
+	Vector2 endFontBasePos_;
+
+	//再開文字色
+	int reStartFontColor_;
+
+	//リトライ文字色
+	int reTryFontColor_;
+
+	//終わる文字色
+	int endFontColor_;
+
+	//現カーソル位置
+	int nowCursor_;
+
+	//ポーズメニュー中かどうか
+	bool isPause_;
+
+	//カーソルが文字にあってるかどうか
+	bool isCursorHit_;
+
+	//ポーズキー入力からの時間
+	float stepPauseKeyHit_;
+
+	//状態
+	PAUSE_STATE pState_;
+
+	//マウス操作
+	void MouseProcess(void);
+
+	//キー操作
+	void KeyProcess(void);
+
+	//状態遷移
+	void ChangePState(PAUSE_STATE pState);
+
+	//現カーソル番号から状態を変化させる
+	void CursorToPState(int cursor);
+
+	//ポーズ
+	void Pause(void);
 };

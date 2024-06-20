@@ -308,7 +308,7 @@ void Bike::UpdatePlay(void)
 	ProcessAttack();
 
 	// デバッグ用
-	ProcessDebug();
+	//ProcessDebug();
 
 	// 移動方向に応じた回転
 	Rotate();
@@ -430,12 +430,12 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetBack();
 	}
 
-	//// カメラ方向に前進したい
-	//if (ins.IsNew(KEY_INPUT_W))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0f);
-	//	dir = cameraRot.GetForward();
-	//}
+	// カメラ方向に前進したい
+	if (ins.IsNew(KEY_INPUT_W))
+	{
+		rotRad = AsoUtility::Deg2RadD(0.0f);
+		dir = cameraRot.GetForward();
+	}
 
 	// カメラ方向から後退したい
 	if (ins.IsNew(KEY_INPUT_S))

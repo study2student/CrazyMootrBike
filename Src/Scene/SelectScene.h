@@ -63,6 +63,9 @@ private:
 	//4人で文字色
 	int fourPersonFontColor_;
 
+	//カーソルが文字にあってるかどうか
+	bool isCursorHit_;
+
 	//現カーソル位置
 	int nowCursor_;
 

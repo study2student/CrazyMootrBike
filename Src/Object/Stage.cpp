@@ -1,4 +1,4 @@
-#include <vector>
+ï»¿#include <vector>
 #include <map>
 #include <stdexcept>
 #include <algorithm>
@@ -9,6 +9,7 @@
 #include "../Manager/ResourceManager.h"
 #include "WarpStar.h"
 #include "../Object/JampRamp.h"
+#include "../Object/City.h"
 #include "../Object/Rider/Player.h"
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Enemy.h"
@@ -20,6 +21,7 @@
 #include "Common/Capsule.h"
 #include "Common/Transform.h"
 #include "../Scene/GameScene.h"
+#include "../Object/StageCurve.h"
 #include "Stage.h"
 
 Stage::Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy, std::shared_ptr<Bomb> bomb, GameScene* gameScene)
@@ -41,7 +43,7 @@ Stage::Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy, std::shared_ptr<Bomb>
 
 	jampRamp_ = nullptr;
 
-	//ƒ‹[ƒv—p‚ÌƒXƒe[ƒW
+	//ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸
 	/*loopStage_.modelId = resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE);
 	loopStage_.pos = { -5000.0f, -5600.0f, 6500.0f };
 	loopStage_.scl = { 1.0f,1.0f,1.0f };
@@ -54,24 +56,24 @@ Stage::Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy, std::shared_ptr<Bomb>
 Stage::~Stage(void)
 {
 
-	//// ƒ[ƒvƒXƒ^[
+	//// ãƒ¯ãƒ¼ãƒ—ã‚¹ã‚¿ãƒ¼
 	//for (auto star : warpStars_)
 	//{
 	//	delete star;
 	//}
 	//warpStars_.clear();
 
-	// ˜f¯
+	// æƒ‘æ˜Ÿ
 	planets_.clear();
 
-	////ƒ‹[ƒv—p‚ÌƒXƒe[ƒW
+	////ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸
 	//for (auto loop : loopStage_)
 	//{
 	//	delete loop;
 	//}
 	loopStage_.clear();
 
-	// ƒ‹[ƒv—p‚ÌƒXƒe[ƒW‚ğíœ
+	// ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å‰Šé™¤
 	//while (!loopStage_->empty())
 	//{
 	//	auto loop = loopStage_->front();
@@ -86,6 +88,8 @@ void Stage::Init(void)
 	MakeMainStage();
 	MakeLoopStage();
 	MakeWarpStar();
+	//MakeCurveStage();
+	MakeCity();
 
 	jampRamp_ = std::make_unique<JampRamp>();
 	jampRamp_->Init();
@@ -96,19 +100,31 @@ void Stage::Init(void)
 void Stage::Update(void)
 {
 
-	// ƒ[ƒvƒXƒ^[
+	// ãƒ¯ãƒ¼ãƒ—ã‚¹ã‚¿ãƒ¼
 	//for (const auto& s : warpStars_)
 	//{
 	//	s->Update();
 	//}
 
-	// ˜f¯
+	//ã‚«ãƒ¼ãƒ–
+	for (const auto& cs : curve_)
+	{
+		cs->Update();
+	}
+
+	//ç”º
+	for (const auto& ct : city_)
+	{
+		ct->Update();
+	}
+
+	// æƒ‘æ˜Ÿ
 	for (const auto& s : planets_)
 	{
 		s.second->Update();
 	}
 
-	//ƒ‹[ƒv—p‚ÌƒXƒe[ƒW
+	//ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸
 	for (const auto& ls : loopStage_)
 	{
 		ls->Update();
@@ -121,10 +137,12 @@ void Stage::Update(void)
 	//	ls->Update();
 	//}
 
-	//ƒXƒe[ƒW‚ğ¶¬‚·‚é
+	//ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’ç”Ÿæˆã™ã‚‹
 	MakeLoopStage();
+	//MakeCurveStage();
+	MakeCity();
 
-	//ƒoƒCƒN‚ÆƒWƒƒƒ“ƒv‘ä‚Ì“–‚½‚è”»’è
+	//ãƒã‚¤ã‚¯ã¨ã‚¸ãƒ£ãƒ³ãƒ—å°ã®å½“ãŸã‚Šåˆ¤å®š
 	auto bikeCap = bike_->GetCapsule();
 	auto jumpRampCap = jampRamp_->GetCapsule();
 
@@ -148,19 +166,31 @@ void Stage::Update(void)
 void Stage::Draw(void)
 {
 
-	// ƒ[ƒvƒXƒ^[
+	// ãƒ¯ãƒ¼ãƒ—ã‚¹ã‚¿ãƒ¼
 	//for (const auto& s : warpStars_)
 	//{
 	//	s->Draw();
 	//}
 
-	// ˜f¯
+	//ã‚«ãƒ¼ãƒ–
+	for (const auto& cs : curve_)
+	{
+		cs->Draw();
+	}
+
+	//ç”º
+	for (const auto& ct : city_)
+	{
+		ct->Draw();
+	}
+
+	// æƒ‘æ˜Ÿ
 	for (const auto& s : planets_)
 	{
 		s.second->Draw();
 	}
 
-	//ƒ‹[ƒv—p‚ÌƒXƒe[ƒW
+	//ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸
 	for (const auto& ls : loopStage_)
 	{
 		ls->Draw();
@@ -184,17 +214,17 @@ void Stage::ChangeStage(NAME type)
 
 	activeName_ = type;
 
-	// ‘ÎÛ‚ÌƒXƒe[ƒW‚ğæ“¾‚·‚é
+	// å¯¾è±¡ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å–å¾—ã™ã‚‹
 	activePlanet_ = GetPlanet(activeName_);
 
-	// ƒXƒe[ƒW‚Ì“–‚½‚è”»’èİ’è
+	// ã‚¹ãƒ†ãƒ¼ã‚¸ã®å½“ãŸã‚Šåˆ¤å®šè¨­å®š
 	bike_->ClearCollider();
 	bike_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	jampRamp_->ClearCollider();
 	jampRamp_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	bomb_->ClearCollider();
 	bomb_->AddCollider(activePlanet_.lock()->GetTransform().collider);
-	//ƒ‹[ƒv—p‚ÌƒXƒe[ƒW
+	//ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸
 	for (const auto& ls : loopStage_)
 	{
 		bike_->AddCollider(ls->GetTransform().collider);
@@ -213,7 +243,7 @@ void Stage::ChangeStage(NAME type)
 
 	enemy_->ClearCollider();
 	enemy_->AddCollider(activePlanet_.lock()->GetTransform().collider);
-	//ƒ‹[ƒv—p‚ÌƒXƒe[ƒW
+	//ãƒ«ãƒ¼ãƒ—ç”¨ã®ã‚¹ãƒ†ãƒ¼ã‚¸
 	for (const auto& ls : loopStage_)
 	{
 		//enemy_->AddCollider(ls->GetTransform().collider);
@@ -263,7 +293,7 @@ void Stage::SetMakeLoopStage(bool value)
 
 VECTOR Stage::GetForwardLoopPos(void)
 {
-	//æ“ªƒ‹[ƒvƒXƒe[ƒW‚ÌÀ•W‚ğæ“¾
+	//å…ˆé ­ãƒ«ãƒ¼ãƒ—ã‚¹ãƒ†ãƒ¼ã‚¸ã®åº§æ¨™ã‚’å–å¾—
 	int size = (int)loopStage_.size();
 	return loopStage_[size - 1]->GetPos();
 	//loopStage_.emplace();
@@ -275,7 +305,6 @@ VECTOR Stage::GetForwardLoopPos(void)
 
 void Stage::Jump(void)
 {
-	//bike_->SetSpeed(120.0f,50.0f, 3000.0f);
 	bike_->Jump();
 }
 
@@ -287,7 +316,7 @@ int Stage::GetLoopStageSize(void)
 void Stage::MakeMainStage(void)
 {
 
-	// Å‰‚Ì˜f¯
+	// æœ€åˆã®æƒ‘æ˜Ÿ
 	//------------------------------------------------------------------------------
 	Transform planetTrans;
 	planetTrans.SetModel(
@@ -297,7 +326,7 @@ void Stage::MakeMainStage(void)
 	planetTrans.quaRot = Quaternion();
 	planetTrans.pos = { STAGE_START_POS };
 
-	// “–‚½‚è”»’è(ƒRƒ‰ƒCƒ_)ì¬
+	// å½“ãŸã‚Šåˆ¤å®š(ã‚³ãƒ©ã‚¤ãƒ€)ä½œæˆ
 	planetTrans.MakeCollider(Collider::TYPE::STAGE);
 
 	planetTrans.Update();
@@ -315,7 +344,7 @@ void Stage::MakeMainStage(void)
 void Stage::MakeLoopStage(void)
 {
 
-	//‚·‚è”²‚¯‚é‚½‚ß‚±‚±‚ÅƒoƒCƒN‚Æ“G‚ÌƒRƒ‰ƒCƒ_[‚à’Ç‰Á‚µ‚Æ‚­
+	//ã™ã‚ŠæŠœã‘ã‚‹ãŸã‚ã“ã“ã§ãƒã‚¤ã‚¯ã¨æ•µã®ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã‚‚è¿½åŠ ã—ã¨ã
 	if (gameScene_->GetIsCreateEnemy())
 	{
 		for (const auto& ls : loopStage_)
@@ -342,6 +371,7 @@ void Stage::MakeLoopStage(void)
 		//}
 	}
 
+
 	Transform loopTrans;
 	std::shared_ptr<LoopStage> stage;
 
@@ -351,7 +381,7 @@ void Stage::MakeLoopStage(void)
 	int mapZ = (int)((z + 6000.0f) / 5000.0f);
 	int size = (int)loopStage_.size();
 
-	//ˆê’è‚Ì‹——£’´‚¦‚½‚ç
+	//ä¸€å®šã®è·é›¢è¶…ãˆãŸã‚‰
 	if (size <= mapZ)
 	{
 
@@ -365,11 +395,11 @@ void Stage::MakeLoopStage(void)
 		loopTrans.quaRot = Quaternion();
 		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 5000.0f * (size + 1) };
 
-		// “–‚½‚è”»’è(ƒRƒ‰ƒCƒ_)ì¬
+		// å½“ãŸã‚Šåˆ¤å®š(ã‚³ãƒ©ã‚¤ãƒ€)ä½œæˆ
 		loopTrans.MakeCollider(Collider::TYPE::STAGE);
 		loopTrans.Update();
 
-		//‚·‚è”²‚¯‚é‚½‚ß‚±‚±‚ÅƒvƒŒƒCƒ„[‚ÌƒRƒ‰ƒCƒ_[‚à’Ç‰Á‚µ‚Æ‚­
+		//ã™ã‚ŠæŠœã‘ã‚‹ãŸã‚ã“ã“ã§ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ã‚³ãƒ©ã‚¤ãƒ€ãƒ¼ã‚‚è¿½åŠ ã—ã¨ã
 		for (const auto& ls : loopStage_)
 		{
 			bike_->AddCollider(ls->GetTransform().collider);
@@ -398,7 +428,7 @@ void Stage::MakeLoopStage(void)
 	}
 
 
-	//Œã‚ë‚ÌƒXƒe[ƒW‚ğíœ
+	//å¾Œã‚ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å‰Šé™¤
 	if (loopStage_.size() >= 6)
 	{
 		//std::queue<int> lt;
@@ -412,7 +442,7 @@ void Stage::MakeLoopStage(void)
 			//int index = lt.front();
 			//lt.pop();
 
-			// ƒXƒe[ƒW‚ğíœ‚·‚é
+			// ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å‰Šé™¤ã™ã‚‹
 			std::shared_ptr<LoopStage> tailLoop = loopStage_[size-5];
 			tailLoop->Destroy();
 
@@ -421,22 +451,22 @@ void Stage::MakeLoopStage(void)
 			//	throw std::runtime_error("Queue does not contain enough elements");
 			//}
 
-			//// ÅŒã‚©‚ç5”Ô–Ú‚Ì—v‘f‚ÉƒAƒNƒZƒX‚·‚é‚½‚ß‚Ì€”õ
-			//std::queue<LoopStage*> tempQueue = loopStage_; // Œ³‚ÌƒLƒ…[‚ğƒRƒs[
+			//// æœ€å¾Œã‹ã‚‰5ç•ªç›®ã®è¦ç´ ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹ãŸã‚ã®æº–å‚™
+			//std::queue<LoopStage*> tempQueue = loopStage_; // å…ƒã®ã‚­ãƒ¥ãƒ¼ã‚’ã‚³ãƒ”ãƒ¼
 			//LoopStage* tailLoop = nullptr;
 
-			//// Œã‚ë‚©‚ç5”Ô–Ú‚Ì—v‘f‚Ü‚Åƒ|ƒbƒv‚·‚é
+			//// å¾Œã‚ã‹ã‚‰5ç•ªç›®ã®è¦ç´ ã¾ã§ãƒãƒƒãƒ—ã™ã‚‹
 			//for (int i = 0; i < size - 4; ++i) {
 			//	tailLoop = tempQueue.front();
 			//	tempQueue.pop();
 			//}
 
-			//// –Ú“I‚Ì—v‘f‚ğ‘€ì
+			//// ç›®çš„ã®è¦ç´ ã‚’æ“ä½œ
 			//if (tailLoop != nullptr) {
 			//	tailLoop->Destroy();
 			//}
 
-			//// ğŒ‚Éˆê’v‚·‚éƒCƒeƒŒ[ƒ^‚ğíœ
+			//// æ¡ä»¶ã«ä¸€è‡´ã™ã‚‹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’å‰Šé™¤
 			//loopStage_.erase(
 			//	std::remove(
 			//		loopStage_.begin(),
@@ -460,18 +490,18 @@ void Stage::MakeLoopStage(void)
 	//			});
 	//}
 
-	//// íœ‚·‚éğŒ‚ğƒ‰ƒ€ƒ_®‚Å’è‹`
+	//// å‰Šé™¤ã™ã‚‹æ¡ä»¶ã‚’ãƒ©ãƒ ãƒ€å¼ã§å®šç¾©
 	//auto it = std::remove_if(loopStage_.begin(), loopStage_.end(),
 	//	[](LoopStage* ls) {
 	//		return ls->GetState() == LoopStage::STATE::BACK;
 	//	});
 
-	//// ƒxƒNƒ^[‚©‚ç—v‘f‚ğíœ
+	//// ãƒ™ã‚¯ã‚¿ãƒ¼ã‹ã‚‰è¦ç´ ã‚’å‰Šé™¤
 	//loopStage_.erase(it, loopStage_.end());
 
 }
 
-// ƒXƒe[ƒW‚ğ’Ç‰Á‚·‚éŠÖ”
+// ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’è¿½åŠ ã™ã‚‹é–¢æ•°
 void Stage::AddStage(std::shared_ptr<LoopStage> newStage)
 {
 
@@ -479,14 +509,14 @@ void Stage::AddStage(std::shared_ptr<LoopStage> newStage)
 	//stageQueue(newStage);
 	sizeS++;
 	
-	// 6ˆÈã‚ÌƒXƒe[ƒW‚ª‚ ‚éê‡‚ÍŒÃ‚¢ƒXƒe[ƒW‚ğíœ
+	// 6ä»¥ä¸Šã®ã‚¹ãƒ†ãƒ¼ã‚¸ãŒã‚ã‚‹å ´åˆã¯å¤ã„ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å‰Šé™¤
 	if (loopStage_.size() > 5) {
 		std::shared_ptr<LoopStage> oldStage = loopStage_.front();
 		loopStage_.pop_front();
 		
 		oldStage->Destroy();
 
-		// ŒÃ‚¢ƒXƒe[ƒW‚ğloopStage_‚©‚çíœ
+		// å¤ã„ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’loopStage_ã‹ã‚‰å‰Šé™¤
 		//loopStage_.erase(
 		//	std::remove(loopStage_.begin(), loopStage_.end(), oldStage),
 		//	loopStage_.end()
@@ -500,7 +530,7 @@ void Stage::MakeWarpStar(void)
 	//Transform trans;
 	//WarpStar* star;
 
-	//// —‚Æ‚µŒŠ˜f¯‚Ö‚Ìƒ[ƒvƒXƒ^[
+	//// è½ã¨ã—ç©´æƒ‘æ˜Ÿã¸ã®ãƒ¯ãƒ¼ãƒ—ã‚¹ã‚¿ãƒ¼
 	////------------------------------------------------------------------------------
 	//trans.pos = { -910.0f, 200.0f, 894.0f };
 	//trans.scl = { 0.6f, 0.6f, 0.6f };
@@ -515,4 +545,265 @@ void Stage::MakeWarpStar(void)
 	//warpStars_.push_back(star);
 	////------------------------------------------------------------------------------
 
+}
+
+void Stage::MakeCurveStage(void)
+{
+	if (gameScene_->GetIsCreateEnemy())
+	{
+		for (const auto& cs : curve_)
+		{
+			std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+			for (int i = 0; i < enemys_.size(); i++)
+			{
+				enemys_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
+				enemys_[i]->AddCollider(cs->GetTransform().collider);
+			}
+		}
+
+		//while (!loopStage_.empty())
+		//{
+		//	LoopStage* ls = loopStage_.front();
+		//	loopStage_.pop();
+
+		//	std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+		//	for (int i = 0; i < enemys_.size(); i++)
+		//	{
+		//		enemys_[i]->AddCollider(activePlanet_->GetTransform().collider);
+		//		enemys_[i]->AddCollider(ls->GetTransform().collider);
+		//	}
+		//}
+	}
+
+	Transform curveTrans;
+	std::shared_ptr<StageCurve> curve;
+
+
+	float z = bike_->GetTransform().pos.z;
+
+	int mapZ = (int)((z + 6000.0f) / 5000.0f);
+	int size = (int)curve_.size();
+
+	//ï¿½ï¿½ï¿½Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	if (size <= mapZ)
+	{
+
+		curveTrans.SetModel(
+			resMng_.LoadModelDuplicate(ResourceManager::SRC::CURVE));
+
+		float scale = 1.0f;
+		curveTrans.scl = { scale * 2.5f,scale,scale * 2.5f };
+		curveTrans.quaRot = Quaternion();
+		curveTrans.pos = { CURVE_START_POS.x,  CURVE_START_POS.y,  CURVE_START_POS.z + 5000.0f * (size + 1) };
+
+		// ï¿½ï¿½ï¿½ï¿½ï¿½è”»ï¿½ï¿½(ï¿½Rï¿½ï¿½ï¿½Cï¿½_)ï¿½ì¬
+		curveTrans.MakeCollider(Collider::TYPE::STAGE);
+		curveTrans.Update();
+
+		//ï¿½ï¿½ï¿½è”²ï¿½ï¿½ï¿½é‚½ï¿½ß‚ï¿½ï¿½ï¿½ï¿½Åƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ÌƒRï¿½ï¿½ï¿½Cï¿½_ï¿½[ï¿½ï¿½ï¿½Ç‰ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½
+		for (const auto& cs : curve_)
+		{
+			bike_->AddCollider(cs->GetTransform().collider);
+			bomb_->AddCollider(cs->GetTransform().collider);
+		}
+
+
+		curve = std::make_shared<StageCurve>(bike_, curveTrans);
+		curve->Init();
+		curve_.push_back(curve);
+		//loopStage_.emplace(curve);
+		//while (!loopStage_.empty())
+		//{
+		//	LoopStage* ls = loopStage_.front();
+		//	//loopStage_.pop();
+		//	bike_->AddCollider(ls->GetTransform().collider);
+		//	bomb_->AddCollider(ls->GetTransform().collider);
+		//}
+		//AddStage(stage);
+		isMakeLoopStage_ = true;
+
+	}
+	else
+	{
+		isMakeLoopStage_ = false;
+	}
+
+
+	//ï¿½ï¿½ï¿½ÌƒXï¿½eï¿½[ï¿½Wï¿½ï¿½ï¿½íœ
+	if (curve_.size() >= 6)
+	{
+		//std::queue<int> lt;
+
+		//for (size_t i = 0; i < loopStage_.size(); ++i) {
+		//	lt.push(i);
+		//}
+
+		//while (!lt.empty() && loopStage_.size() >= 6)
+		//{
+			//int index = lt.front();
+			//lt.pop();
+
+			// ï¿½Xï¿½eï¿½[ï¿½Wï¿½ï¿½ï¿½íœï¿½ï¿½ï¿½ï¿½
+		std::shared_ptr<StageCurve> tailLoop = curve_[size - 5];
+		tailLoop->Destroy();
+
+		//int size = static_cast<int>(loopStage_.size());
+		//if (size < 5) {
+		//	throw std::runtime_error("Queue does not contain enough elements");
+		//}
+
+		//// ï¿½ÅŒã‚©ï¿½ï¿½5ï¿½Ô–Ú‚Ì—vï¿½fï¿½ÉƒAï¿½Nï¿½Zï¿½Xï¿½ï¿½ï¿½é‚½ï¿½ß‚Ìï¿½ï¿½ï¿½
+		//std::queue<LoopStage*> tempQueue = loopStage_; // ï¿½ï¿½ï¿½ÌƒLï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Rï¿½sï¿½[
+		//LoopStage* tailLoop = nullptr;
+
+		//// ï¿½ï¿½ë‚©ï¿½ï¿½5ï¿½Ô–Ú‚Ì—vï¿½fï¿½Ü‚Åƒ|ï¿½bï¿½vï¿½ï¿½ï¿½ï¿½
+		//for (int i = 0; i < size - 4; ++i) {
+		//	tailLoop = tempQueue.front();
+		//	tempQueue.pop();
+		//}
+
+		//// ï¿½Ú“Iï¿½Ì—vï¿½fï¿½ğ‘€ï¿½
+		//if (tailLoop != nullptr) {
+		//	tailLoop->Destroy();
+		//}
+
+		//// ï¿½ï¿½ï¿½ï¿½ï¿½Éˆï¿½vï¿½ï¿½ï¿½ï¿½Cï¿½eï¿½ï¿½ï¿½[ï¿½^ï¿½ï¿½ï¿½íœ
+		//loopStage_.erase(
+		//	std::remove(
+		//		loopStage_.begin(),
+		//		loopStage_.end(),
+		//		tailLoop
+		//	),
+		//	loopStage_.end()
+		//);
+
+	}
+
+
+	//tailLoop->Destroy();
+	//std::_Vector_iterator<std::_Vector_val<std::_Simple_types<LoopStage*>>> it;
+
+
+	//for (const auto& ls : loopStage_)
+	//{
+	//		it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
+	//			return ls->GetState() == LoopStage::STATE::BACK;
+	//			});
+	//}
+
+	//// ï¿½íœï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½Å’ï¿½`
+	//auto it = std::remove_if(loopStage_.begin(), loopStage_.end(),
+	//	[](LoopStage* ls) {
+	//		return ls->GetState() == LoopStage::STATE::BACK;
+	//	});
+
+	//// ï¿½xï¿½Nï¿½^ï¿½[ï¿½ï¿½ï¿½ï¿½vï¿½fï¿½ï¿½ï¿½íœ
+	//loopStage_.erase(it, loopStage_.end());
+}
+
+void Stage::MakeCity(void)
+{
+	Transform cityTrans;
+	std::shared_ptr<City> city;
+
+
+	float z = bike_->GetTransform().pos.z;
+
+	int mapZ = (int)((z + 6000.0f) / 5000.0f);
+	int size = (int)city_.size();
+
+	//ä¸€å®šã®è·é›¢è¶…ãˆãŸã‚‰
+	if (size <= mapZ)
+	{
+
+		cityTrans.SetModel(
+			resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
+
+
+
+		float scale = 1.0f;
+		cityTrans.scl = { scale,scale,scale };
+		cityTrans.quaRot = Quaternion();
+		cityTrans.quaRotLocal =
+			Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });
+		cityTrans.pos = { CITY_START_POS.x,  CITY_START_POS.y,  CITY_START_POS.z + 5000.0f * (size + 1) };
+
+		cityTrans.Update();
+
+
+		city = std::make_shared<City>(bike_, cityTrans);
+		city->Init();
+		city_.push_back(city);
+		//loopStage_.emplace(stage);
+		//while (!loopStage_.empty())
+		//{
+		//	LoopStage* ls = loopStage_.front();
+		//	//loopStage_.pop();
+		//	bike_->AddCollider(ls->GetTransform().collider);
+		//	bomb_->AddCollider(ls->GetTransform().collider);
+		//}
+		//AddStage(stage);
+		isMakeLoopStage_ = true;
+
+	}
+	else
+	{
+		isMakeLoopStage_ = false;
+	}
+
+
+	//å¾Œã‚ã®ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å‰Šé™¤
+	if (city_.size() >= 6)
+	{
+		//std::queue<int> lt;
+
+		//for (size_t i = 0; i < loopStage_.size(); ++i) {
+		//	lt.push(i);
+		//}
+
+		//while (!lt.empty() && loopStage_.size() >= 6)
+		//{
+			//int index = lt.front();
+			//lt.pop();
+
+
+
+		// ã‚¹ãƒ†ãƒ¼ã‚¸ã‚’å‰Šé™¤ã™ã‚‹
+		std::shared_ptr<City> tailLoop = city_[size - 5];
+		tailLoop->Destroy();
+
+
+
+
+		//int size = static_cast<int>(loopStage_.size());
+		//if (size < 5) {
+		//	throw std::runtime_error("Queue does not contain enough elements");
+		//}
+
+		//// æœ€å¾Œã‹ã‚‰5ç•ªç›®ã®è¦ç´ ã«ã‚¢ã‚¯ã‚»ã‚¹ã™ã‚‹ãŸã‚ã®æº–å‚™
+		//std::queue<LoopStage*> tempQueue = loopStage_; // å…ƒã®ã‚­ãƒ¥ãƒ¼ã‚’ã‚³ãƒ”ãƒ¼
+		//LoopStage* tailLoop = nullptr;
+
+		//// å¾Œã‚ã‹ã‚‰5ç•ªç›®ã®è¦ç´ ã¾ã§ãƒãƒƒãƒ—ã™ã‚‹
+		//for (int i = 0; i < size - 4; ++i) {
+		//	tailLoop = tempQueue.front();
+		//	tempQueue.pop();
+		//}
+
+		//// ç›®çš„ã®è¦ç´ ã‚’æ“ä½œ
+		//if (tailLoop != nullptr) {
+		//	tailLoop->Destroy();
+		//}
+
+		//// æ¡ä»¶ã«ä¸€è‡´ã™ã‚‹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã‚’å‰Šé™¤
+		//loopStage_.erase(
+		//	std::remove(
+		//		loopStage_.begin(),
+		//		loopStage_.end(),
+		//		tailLoop
+		//	),
+		//	loopStage_.end()
+		//);
+
+	}
 }

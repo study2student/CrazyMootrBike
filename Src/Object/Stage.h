@@ -12,7 +12,9 @@ class JampRamp;
 class EnemyBase;
 class LoopStage;
 class GameScene;
+class StageCurve;
 class Bomb;
+class City;
 
 class Stage
 {
@@ -25,6 +27,13 @@ public:
 	//static constexpr VECTOR STAGE_START_POS = { -5000.0f, -5600.0f, 0.0f };
 	//ステージの初期位置
 	static constexpr VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
+
+	//カーブの初期位置
+	static constexpr VECTOR CURVE_START_POS = { 4000.0f,-100.0f, 4000.0f };
+	//static constexpr VECTOR CURVE_START_POS = { 6000.0f,-1100.0f, 4500.0f };
+
+	//町の初期位置
+	static constexpr VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
 
 	// ステージ名
 	enum class NAME
@@ -83,6 +92,8 @@ private:
 	std::shared_ptr<Bike> bike_;
 	EnemyBase* enemy_;
 	std::shared_ptr<Bomb> bomb_;
+	std::deque<std::shared_ptr<StageCurve>> curve_;
+	std::deque<std::shared_ptr<City>> city_;
 
 	// ステージアクティブになっている惑星の情報
 	NAME activeName_;
@@ -129,5 +140,11 @@ private:
 
 	// ワープスター
 	void MakeWarpStar(void);
+
+	//カーブ生成
+	void MakeCurveStage(void);
+
+	//町生成
+	void MakeCity(void);
 
 };

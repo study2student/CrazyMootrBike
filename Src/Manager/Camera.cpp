@@ -16,6 +16,7 @@ Camera::Camera(void)
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 	followTransform_ = nullptr;
 	stepRotTime_ = 0.0f;
+	isPause_ = false;
 }
 
 Camera::~Camera(void)
@@ -68,6 +69,11 @@ void Camera::Draw(void)
 void Camera::SetFollow(const Transform* follow)
 {
 	followTransform_ = follow;
+}
+
+void Camera::SetIsPause(bool isPause)
+{
+	isPause_ = isPause;
 }
 
 VECTOR Camera::GetPos(void) const
@@ -170,6 +176,12 @@ void Camera::SyncFollow(void)
 
 void Camera::ProcessRot(void)
 {
+	//É|Å[ÉYíÜÇÕâÒì]Ç≥ÇπÇ»Ç¢
+	if (isPause_)
+	{
+		return;
+	}
+
 
 	auto& ins = InputManager::GetInstance();
 

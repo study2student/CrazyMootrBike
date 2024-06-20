@@ -17,7 +17,7 @@ public:
 	static constexpr float SPEED_RUN = 130.0f;
 
 	//横移動のスピード
-	static constexpr float SPEED_MOVE_X = 20.0f;
+	static constexpr float SPEED_MOVE_X = 10.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;

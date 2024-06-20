@@ -23,6 +23,10 @@ public:
 
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
+
+	//位置制御
+	void AddPosZ(float addZ);
+
 private:
 
 	// 移動後の座標

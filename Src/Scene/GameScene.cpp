@@ -4,6 +4,7 @@
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "../Manager/Camera.h"
+#include "../Application.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Capsule.h"
 #include "../Object/Common/Collider.h"
@@ -31,6 +32,8 @@ GameScene::GameScene(void)
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
 	score_ = nullptr;
+
+	nowCursor_ = 0;
 }
 
 GameScene::~GameScene(void)
@@ -100,13 +103,51 @@ void GameScene::Init(void)
 	hitStopDuration = 6000.0f;
 	hitStopTimer = 0.0f;
 	isHitStop = false;
+
+	//ポーズメニュー
+	//色
+	reStartFontColor_ = GetColor(255, 255, 255);
+	reTryFontColor_ = GetColor(255, 255, 255);
+	endFontColor_ = GetColor(255, 255, 255);
+
+	//左上の再開ポジション
+	reStartFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 - 20 };
+
+	//左上のリトライポジション
+	reTryFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
+
+	//左上の終わるポジション
+	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 260 };
+
+	isPause_ = false;
+	isCursorHit_ = false;
+	stepPauseKeyHit_ = 0.0f;
+
+
 }
 
 void GameScene::Update(void)
 {
+	
+	InputManager& ins = InputManager::GetInstance();
+
+	//ポーズメニュー
+	if (ins.IsTrgDown(KEY_INPUT_C))
+	{
+		//ポーズ状態
+		isPause_ = true;
+	}
+	//ポーズ中はカメラの回転をさせないために情報を渡しておく
+	SceneManager::GetInstance().GetCamera()->SetIsPause(isPause_);
+
+	//ポーズ中は他処理中断
+	if (isPause_)
+	{
+		Pause();
+		return;
+	}
 
 	// シーン遷移
-	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
@@ -257,6 +298,8 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
+	
+	
 
 	// 背景
 	skyDome_->Draw();
@@ -299,6 +342,16 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	DrawDubg();
+
+	//ポーズ中
+	if (isPause_)
+	{
+		//文字表示
+		DrawString(reStartFontBasePos_.x, reStartFontBasePos_.y, "再開", reStartFontColor_);
+		DrawString(reTryFontBasePos_.x, reTryFontBasePos_.y, "リトライ", reTryFontColor_);
+		DrawString(endFontBasePos_.x, endFontBasePos_.y, "終わる", endFontColor_);
+
+	}
 }
 
 std::vector<EnemyBase*> GameScene::GetEnemys(void)
@@ -398,4 +451,252 @@ void GameScene::HitEffect(void)
 	auto pPos = bike_->GetTransform();
 	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
 	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
+}
+
+void GameScene::MouseProcess(void)
+{
+	//auto& ins_ = InputManager::GetInstance();
+
+	////マウス座標
+	//Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
+
+	////再開ボタン
+	//Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
+	//if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
+	//	&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y || pState_ == PAUSE_STATE::RESTART)
+	//{
+	//	//ボタンにふれている場合
+	//	reStartFontColor_ = GetColor(0, 0, 255);
+	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+	//	{
+	//		//ポーズ解除
+	//		isPause_ = false;
+	//	}
+	//}
+	//else
+	//{
+	//	//ボタンにふれいない場合
+	//	reStartFontColor_ = GetColor(255, 255, 255);
+	//}
+
+
+
+	////リトライボタン
+	//Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
+	//if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
+	//	&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y || pState_ == PAUSE_STATE::RETRY)
+	//{
+	//	
+	//	//ボタンにふれている場合
+	//	reTryFontColor_ = GetColor(0, 0, 255);
+	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+	//	{
+	//		//左クリックまたはスペースキーでリトライ
+	//		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	//	}
+	//}
+	//else
+	//{
+	//	//ボタンにふれいない場合
+	//	reTryFontColor_ = GetColor(255, 255, 255);
+	//}
+
+
+
+	//
+	//Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
+	//if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
+	//	&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y || pState_ == PAUSE_STATE::END)
+	//{
+	//
+	//	//ボタンにふれている場合
+	//	endFontColor_ = GetColor(0, 0, 255);
+	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+	//	{
+	//		//左クリックまたはスペースキーでタイトルへ
+	//		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+	//	}
+	//}
+	//else
+	//{
+	//	//ボタンにふれいない場合
+	//	endFontColor_ = GetColor(255, 255, 255);
+	//}
+
+
+
+	auto& ins_ = InputManager::GetInstance();
+
+	//マウス座標
+	Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
+
+	//再開ボタン
+	//カーソルが当たっている
+	Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
+	if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
+		&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y)
+	{
+		nowCursor_ = (int)PAUSE_STATE::RESTART;
+		isCursorHit_ = true;
+	}
+	else
+	{
+		isCursorHit_ = false;
+	}
+
+	if(pState_== PAUSE_STATE::RESTART)
+	{
+		//ボタンにふれている場合
+		reStartFontColor_ = GetColor(0, 0, 255);
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		{
+			//ポーズ解除
+			stepPauseKeyHit_ = 0.0f;
+			isPause_ = false;
+		}
+	}
+	else
+	{
+		//ボタンにふれいない場合
+		reStartFontColor_ = GetColor(255, 255, 255);
+	}
+
+
+
+	//リトライボタン
+	//カーソルが当たっている
+	Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
+	if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
+		&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y)
+	{
+		nowCursor_ = (int)PAUSE_STATE::RETRY;
+		isCursorHit_ = true;
+	}
+	else
+	{
+		isCursorHit_ = false;
+	}
+
+	if(pState_== PAUSE_STATE::RETRY)
+	{
+		//ボタンにふれている場合
+		reTryFontColor_ = GetColor(0, 0, 255);
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		{
+			//左クリックまたはスペースキーでリトライ
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+		}
+	}
+	else
+	{
+		//ボタンにふれいない場合
+		reTryFontColor_ = GetColor(255, 255, 255);
+	}
+
+
+
+	//終わるボタン
+	//カーソルが当たっている
+	Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
+	if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
+		&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y)
+	{
+		nowCursor_ = (int)PAUSE_STATE::END;
+		isCursorHit_ = true;
+	}
+	else
+	{
+		isCursorHit_ = false;
+	}
+
+	if(pState_== PAUSE_STATE::END)
+	{
+		//ボタンにふれている場合
+		endFontColor_ = GetColor(0, 0, 255);
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		{
+			//左クリックまたはスペースキーでタイトルへ
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		}
+	}
+	else
+	{
+		//ボタンにふれいない場合
+		endFontColor_ = GetColor(255, 255, 255);
+	}
+
+
+	//ポーズキーがもう一度押せるようになるまで
+	stepPauseKeyHit_ += SceneManager::GetInstance().GetDeltaTime();
+	if (stepPauseKeyHit_ >= PAUSE_KEY_HIT_MAX_TIME)
+	{
+		//もう一度ポーズキー押下でポーズメニュー解除
+		if (ins_.IsTrgDown(KEY_INPUT_C) && isPause_)
+		{
+			//ポーズ解除
+			stepPauseKeyHit_ = 0.0f;
+			isPause_ = false;
+		}
+	}
+
+	
+}
+
+void GameScene::KeyProcess(void)
+{
+	auto& ins_ = InputManager::GetInstance();
+
+	//カーソル番号による上下操作
+	if (ins_.IsTrgDown(KEY_INPUT_UP))
+	{
+		nowCursor_--;
+		if (nowCursor_ <= 0)
+		{
+			nowCursor_ = 0;
+		}
+	}
+	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
+	{
+		nowCursor_++;
+		if (nowCursor_ >= SELECT_MAX_NUM - 1)
+		{
+			nowCursor_ = SELECT_MAX_NUM - 1;
+		}
+	}
+
+	//現カーソルから状態を変化
+	CursorToPState(nowCursor_);
+}
+
+void GameScene::ChangePState(PAUSE_STATE pState)
+{
+	pState_ = pState;
+}
+
+void GameScene::CursorToPState(int cursor)
+{
+	switch (cursor)
+	{
+	case (int)PAUSE_STATE::RESTART:
+		ChangePState(PAUSE_STATE::RESTART);
+		break;
+	case (int)PAUSE_STATE::RETRY:
+		ChangePState(PAUSE_STATE::RETRY);
+		break;
+	case (int)PAUSE_STATE::END:
+		ChangePState(PAUSE_STATE::END);
+		break;
+	}
+}
+
+void GameScene::Pause(void)
+{
+
+	//マウス操作
+	MouseProcess();
+
+	//キー操作
+	KeyProcess();
+
+	
 }
