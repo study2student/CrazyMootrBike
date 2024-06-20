@@ -308,7 +308,7 @@ void Bike::UpdatePlay(void)
 	ProcessAttack();
 
 	// デバッグ用
-	//ProcessDebug();
+	ProcessDebug();
 
 	// 移動方向に応じた回転
 	Rotate();

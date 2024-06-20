@@ -51,7 +51,7 @@ void GameScene::Init(void)
 	//player_ = new Player();
 	//player_->Init();
 
-	bike_ = std::make_shared<Bike>(100,0);
+	bike_ = std::make_shared<Bike>(100,3);
 	bike_->Init();
 
 	for (int i = 0; i < 4; ++i) {
@@ -72,7 +72,7 @@ void GameScene::Init(void)
 
 	// “G
 	for (auto& bike : bikes_) {
-		enemy_ = new EnemyBase(bike, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+		enemy_ = new EnemyBase(bikes_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 	}
 
 	//ƒwƒŠƒRƒvƒ^[
@@ -267,13 +267,13 @@ void GameScene::Update(void)
 				switch (type)
 				{
 				case EnemyBase::TYPE::SHORT_DIS:
-					e = new ShortDisEnemy(bike, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					e = new ShortDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 					break;
 				case EnemyBase::TYPE::LONG_DIS:
-					e = new LongDisEnemy(bike, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					e = new LongDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 					break;
 				case EnemyBase::TYPE::BOMB:
-					e = new MagicEnemy(bike, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					e = new MagicEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 					break;
 				}
 			}
@@ -459,9 +459,11 @@ void GameScene::InitEffect(void)
 
 void GameScene::HitEffect(void)
 {
-	auto pPos = bike_->GetTransform();
-	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
-	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
+	for (auto& bike : bikes_) {
+		auto pPos = bike->GetTransform();
+		SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
+		SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
+	}
 }
 
 void GameScene::MouseProcess(void)

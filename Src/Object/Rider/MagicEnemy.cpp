@@ -15,7 +15,7 @@
 #include "MagicEnemy.h"
 
 
-MagicEnemy::MagicEnemy(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
+MagicEnemy::MagicEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos,localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -144,7 +144,10 @@ void MagicEnemy::ProcessMove(void)
 	//	dir = cameraRot.GetLeft();
 	//}
 
-	Transform bikeTrans_ = bike_->GetTransform();
+	for (const auto& bike : bikes_) {
+		Transform bikeTrans_ = bike->GetTransform();
+	}
+
 
 	//プレイヤーへに向けた方向取得
 	/*VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
@@ -156,31 +159,32 @@ void MagicEnemy::ProcessMove(void)
 	// 移動処理
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
-	VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < RADIUS * RADIUS)
-	{
-		//範囲に入った
-		speed_ = 0;
-		isBikeCol_ = true;
-		isAddScore_ = true;
-		if (isBikeCol_)
+	for (const auto& bike : bikes_) {
+		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
+		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		if (dis < RADIUS * RADIUS)
 		{
-			ChangeState(STATE::DEAD);
+			//範囲に入った
+			speed_ = 0;
+			isBikeCol_ = true;
+			isAddScore_ = true;
+			if (isBikeCol_)
+			{
+				ChangeState(STATE::DEAD);
+			}
+		}
+		else
+		{
+			speed_ = SPEED_MOVE;
+			isAddScore_ = false;
+			if (!isJump_ && IsEndLanding())
+			{
+
+				animationController_->Play((int)ANIM_TYPE::BOMB);
+
+			}
 		}
 	}
-	else
-	{
-		speed_ = SPEED_MOVE;
-		isAddScore_ = false;
-		if (!isJump_ && IsEndLanding())
-		{
-
-			animationController_->Play((int)ANIM_TYPE::BOMB);
-
-		}
-	}
-
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
 	{
 		speed_ = SPEED_RUN;
@@ -191,9 +195,9 @@ void MagicEnemy::ProcessMove(void)
 	//movePow_ = VScale(dir, speed_);
 
 	// 回転処理(プレイヤーの方向を向かせる)
-	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
-	double subDeg = atan2(subVec.x, subVec.z);
-	SetGoalRotate(subDeg);
+	//VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
+	//double subDeg = atan2(subVec.x, subVec.z);
+	//SetGoalRotate(subDeg);
 
 	
 

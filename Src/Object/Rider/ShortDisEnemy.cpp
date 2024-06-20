@@ -15,7 +15,7 @@
 #include "ShortDisEnemy.h"
 
 
-ShortDisEnemy::ShortDisEnemy(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bike, loopStagePos,localPos)
+ShortDisEnemy::ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos,localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -115,35 +115,9 @@ void ShortDisEnemy::ProcessMove(void)
 	//VECTOR dir = AsoUtility::DIR_F;
 	VECTOR dir;// = AsoUtility::DIR_F;
 
-	//// カメラ方向に前進したい
-	//if (ins.IsNew(KEY_INPUT_W))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0);
-	//	dir = cameraRot.GetForward();
-	//}
-
-	//// カメラ方向から後退したい
-	//if (ins.IsNew(KEY_INPUT_S))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0);
-	//	dir = cameraRot.GetBack();
-	//}
-
-	//// カメラ方向から右側へ移動したい
-	//if (ins.IsNew(KEY_INPUT_D))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(90.0);
-	//	dir = cameraRot.GetRight();
-	//}
-
-	//// カメラ方向から左側へ移動したい
-	//if (ins.IsNew(KEY_INPUT_A))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(270.0);
-	//	dir = cameraRot.GetLeft();
-	//}
-
-	Transform bikeTrans_ = bike_->GetTransform();
+	for (const auto& bike : bikes_) {
+		Transform bikeTrans_ = bike->GetTransform();
+	}
 
 	//プレイヤーへ向けた方向取得
 	/*VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
@@ -155,34 +129,35 @@ void ShortDisEnemy::ProcessMove(void)
 	// 移動処理
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
-	VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < RADIUS * RADIUS)
-	{
-		//範囲に入った
-		speed_ = 0;
-		isBikeCol_ = true;
-		isAddScore_ = true;
-		if (isBikeCol_)
+	for (const auto& bike : bikes_) {
+		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
+		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		if (dis < RADIUS * RADIUS)
 		{
-			ChangeState(STATE::DEAD);
-		}
+			//範囲に入った
+			speed_ = 0;
+			isBikeCol_ = true;
+			isAddScore_ = true;
+			if (isBikeCol_)
+			{
+				ChangeState(STATE::DEAD);
+			}
 
-		//アニメーション
-		animationController_->Play((int)ANIM_TYPE::SHORT);
-	}
-	else
-	{
-		speed_ = SPEED_MOVE;
-		isAddScore_ = false;
-		if (!isJump_ && IsEndLanding())
+			//アニメーション
+			animationController_->Play((int)ANIM_TYPE::SHORT);
+		}
+		else
 		{
+			speed_ = SPEED_MOVE;
+			isAddScore_ = false;
+			if (!isJump_ && IsEndLanding())
+			{
 
-			animationController_->Play((int)ANIM_TYPE::FAST_RUN);
+				animationController_->Play((int)ANIM_TYPE::FAST_RUN);
 
+			}
 		}
 	}
-
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
 	{
 		speed_ = SPEED_RUN;
@@ -193,9 +168,9 @@ void ShortDisEnemy::ProcessMove(void)
 	//movePow_ = VScale(dir, speed_);
 
 	// 回転処理(プレイヤーの方向を向かせる)
-	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
-	double subDeg = atan2(subVec.x, subVec.z);
-	SetGoalRotate(subDeg);
+	//VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
+	//double subDeg = atan2(subVec.x, subVec.z);
+	//SetGoalRotate(subDeg);
 
 
 	//}

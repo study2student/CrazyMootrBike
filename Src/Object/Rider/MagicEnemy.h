@@ -4,7 +4,7 @@ class MagicEnemy : public EnemyBase
 {
 public:
 
-	MagicEnemy(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos);
+	MagicEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;

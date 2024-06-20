@@ -96,7 +96,7 @@ public:
 	};
 
 	// コンストラクタ
-	EnemyBase(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos);
+	EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos);
 
 	// デストラクタ
 	virtual ~EnemyBase(void);
@@ -150,6 +150,8 @@ protected:
 
 	//バイク情報
 	std::shared_ptr<Bike> bike_;
+
+	std::vector< std::shared_ptr<Bike>> bikes_;
 
 	// 状態管理
 	STATE state_;

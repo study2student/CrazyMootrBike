@@ -13,9 +13,9 @@
 #include "../../Object/Score.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(std::shared_ptr<Bike> bike, VECTOR loopStagePos, VECTOR localPos)
+EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos)
 {
-	bike_ = bike;
+	bikes_ = bikes;
 
 	animationController_ = nullptr;
 	state_ = STATE::NONE;
@@ -491,7 +491,9 @@ void EnemyBase::ProcessMove(void)
 	//	dir = cameraRot.GetLeft();
 	//}
 
-	Transform bikeTrans_ = bike_->GetTransform();
+	for (const auto& bike : bikes_) {
+		Transform bikeTrans_ = bike->GetTransform();
+	}
 
 	//プレイヤーへに向けた方向取得
 	/*VECTOR len = VSub(bikeTrans_.pos, transform_.pos);
@@ -503,29 +505,30 @@ void EnemyBase::ProcessMove(void)
 	// 移動処理
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
-	VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < RADIUS * RADIUS)
-	{
-		//範囲に入った
-		speed_ = 0;
-		isAddScore_ = true;
-		isBikeCol_ = true;
-		if (isBikeCol_)
+	for (const auto& bike : bikes_) {
+		VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
+		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		if (dis < RADIUS * RADIUS)
 		{
-			ChangeState(STATE::DEAD);
+			//範囲に入った
+			speed_ = 0;
+			isAddScore_ = true;
+			isBikeCol_ = true;
+			if (isBikeCol_)
+			{
+				ChangeState(STATE::DEAD);
+			}
+		}
+		else
+		{
+			if (!isEnemyCol_)
+			{
+				speed_ = SPEED_MOVE;
+				isBikeCol_ = false;
+				isAddScore_ = false;
+			}
 		}
 	}
-	else
-	{
-		if (!isEnemyCol_)
-		{
-			speed_ = SPEED_MOVE;
-			isBikeCol_ = false;
-			isAddScore_ = false;
-		}
-	}
-
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
 	{
 		speed_ = SPEED_RUN;
@@ -536,9 +539,9 @@ void EnemyBase::ProcessMove(void)
 	movePow_ = VScale(dir, speed_);*/
 
 	// 回転処理(プレイヤーの方向を向かせる)
-	VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
-	double subDeg = atan2(subVec.x, subVec.z);
-	SetGoalRotate(subDeg);
+	//VECTOR subVec = VSub(bikeTrans_.pos, transform_.pos);
+	//double subDeg = atan2(subVec.x, subVec.z);
+	//SetGoalRotate(subDeg);
 
 	if (!isJump_ && IsEndLanding())
 	{
