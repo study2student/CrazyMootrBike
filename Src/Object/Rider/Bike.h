@@ -66,7 +66,7 @@ public:
 	};
 
 	// コンストラクタ
-	Bike(float localpos);
+	Bike(float localpos, int playerID);
 
 	// デストラクタ
 	~Bike();
@@ -102,6 +102,9 @@ private:
 
 	// 状態管理
 	STATE state_;
+
+	// プレイヤーIDを保持
+	int playerID_;
 
 	// 攻撃状態管理
 	ATTACK_TYPE attackState_;

@@ -44,7 +44,7 @@ Rider::~Rider(void)
 {
 	delete capsule_;
 	delete player_;
-	delete bike_;
+	//delete bike_;
 }
 
 void Rider::Init(void)
@@ -54,8 +54,8 @@ void Rider::Init(void)
 	player_->Init();
 
 	// バイク
-	bike_ = new Bike(2000);
-	bike_->Init();
+	//bike_ = new Bike(2000);
+	//bike_->Init();
 
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
@@ -147,7 +147,7 @@ void Rider::UpdateNone(void)
 void Rider::UpdatePlay(void)
 {
 	player_->Update();
-	bike_->Update();
+	//bike_->Update();
 
 	// 移動処理
 	ProcessMove();
@@ -172,7 +172,7 @@ void Rider::UpdateDestroy(void)
 void Rider::DrawPlay(void)
 {
 	player_->Draw();
-	bike_->Draw();
+	//bike_->Draw();
 }
 
 void Rider::DrawDestroy(void)

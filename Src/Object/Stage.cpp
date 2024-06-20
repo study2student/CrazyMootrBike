@@ -24,12 +24,12 @@
 #include "../Object/StageCurve.h"
 #include "Stage.h"
 
-Stage::Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy, std::shared_ptr<Bomb> bomb, GameScene* gameScene)
-	: resMng_(ResourceManager::GetInstance())
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, std::shared_ptr<Bomb> bomb, GameScene* gameScene)
+	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
 
-	bike_ = bike;
+	//bike_ = bike;
 	enemy_ = enemy;
 	bomb_ = bomb;
 	activeName_ = NAME::MAIN_PLANET;
@@ -142,23 +142,26 @@ void Stage::Update(void)
 	//MakeCurveStage();
 	MakeCity();
 
-	//バイクとジャンプ台の当たり判定
-	auto bikeCap = bike_->GetCapsule();
-	auto jumpRampCap = jampRamp_->GetCapsule();
-
-	VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < bikeCap.lock()->GetRadius() * jumpRampCap.lock()->GetRadius())
+	for (const auto& bike : bikes_)
 	{
-		isJamp_ = true;
-		Jump();
-	}
-	else
-	{
-		isJamp_ = false;
 
-	}
+		//バイクとジャンプ台の当たり判定
+		auto bikeCap = bike->GetCapsule();
+		auto jumpRampCap = jampRamp_->GetCapsule();
 
+		VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		if (dis < bikeCap.lock()->GetRadius() * jumpRampCap.lock()->GetRadius())
+		{
+			isJamp_ = true;
+			Jump();
+		}
+		else
+		{
+			isJamp_ = false;
+
+		}
+	}
 	jampRamp_->Update();
 
 }
@@ -217,9 +220,15 @@ void Stage::ChangeStage(NAME type)
 	// 対象のステージを取得する
 	activePlanet_ = GetPlanet(activeName_);
 
+	for (const auto& bike : bikes_)
+	{
+		bike->ClearCollider();
+		bike->AddCollider(activePlanet_.lock()->GetTransform().collider);
+	}
+
 	// ステージの当たり判定設定
-	bike_->ClearCollider();
-	bike_->AddCollider(activePlanet_.lock()->GetTransform().collider);
+	//bike_->ClearCollider();
+	//bike_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	jampRamp_->ClearCollider();
 	jampRamp_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	bomb_->ClearCollider();
@@ -227,7 +236,11 @@ void Stage::ChangeStage(NAME type)
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
-		bike_->AddCollider(ls->GetTransform().collider);
+		for (const auto& bike : bikes_)
+		{
+			bike->AddCollider(ls->GetTransform().collider);
+		}
+		//bike_->AddCollider(ls->GetTransform().collider);
 		jampRamp_->AddCollider(ls->GetTransform().collider);
 		bomb_->AddCollider(ls->GetTransform().collider);
 	}
@@ -305,7 +318,7 @@ VECTOR Stage::GetForwardLoopPos(void)
 
 void Stage::Jump(void)
 {
-	bike_->Jump();
+	//bike_->Jump();
 }
 
 int Stage::GetLoopStageSize(void)
@@ -376,7 +389,8 @@ void Stage::MakeLoopStage(void)
 	std::shared_ptr<LoopStage> stage;
 
 
-	float z = bike_->GetTransform().pos.z;
+	//float z = bike_->GetTransform().pos.z;
+	float z = bikes_.front()->GetTransform().pos.z;
 
 	int mapZ = (int)((z + 6000.0f) / 5000.0f);
 	int size = (int)loopStage_.size();
@@ -402,12 +416,16 @@ void Stage::MakeLoopStage(void)
 		//すり抜けるためここでプレイヤーのコライダーも追加しとく
 		for (const auto& ls : loopStage_)
 		{
-			bike_->AddCollider(ls->GetTransform().collider);
+			for (const auto& bike : bikes_)
+			{
+				bike->AddCollider(ls->GetTransform().collider);
+			}
+			//bike_->AddCollider(ls->GetTransform().collider);
 			bomb_->AddCollider(ls->GetTransform().collider);
 		}
 
 
-		stage = std::make_shared<LoopStage> (bike_, loopTrans);
+		stage = std::make_shared<LoopStage> (bikes_.front(), loopTrans);
 		stage->Init();
 		loopStage_.push_back(stage);
 		//loopStage_.emplace(stage);
@@ -561,25 +579,13 @@ void Stage::MakeCurveStage(void)
 			}
 		}
 
-		//while (!loopStage_.empty())
-		//{
-		//	LoopStage* ls = loopStage_.front();
-		//	loopStage_.pop();
-
-		//	std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
-		//	for (int i = 0; i < enemys_.size(); i++)
-		//	{
-		//		enemys_[i]->AddCollider(activePlanet_->GetTransform().collider);
-		//		enemys_[i]->AddCollider(ls->GetTransform().collider);
-		//	}
-		//}
 	}
 
 	Transform curveTrans;
 	std::shared_ptr<StageCurve> curve;
 
 
-	float z = bike_->GetTransform().pos.z;
+	float z = bikes_.front()->GetTransform().pos.z;
 
 	int mapZ = (int)((z + 6000.0f) / 5000.0f);
 	int size = (int)curve_.size();
@@ -603,12 +609,16 @@ void Stage::MakeCurveStage(void)
 		//���蔲���邽�߂����Ńv���C���[�̃R���C�_�[���ǉ����Ƃ�
 		for (const auto& cs : curve_)
 		{
-			bike_->AddCollider(cs->GetTransform().collider);
+			for (const auto& bike : bikes_)
+			{
+				bike->AddCollider(cs->GetTransform().collider);
+			}
+			//bike_->AddCollider(cs->GetTransform().collider);
 			bomb_->AddCollider(cs->GetTransform().collider);
 		}
 
 
-		curve = std::make_shared<StageCurve>(bike_, curveTrans);
+		curve = std::make_shared<StageCurve>(bikes_.front(), curveTrans);
 		curve->Init();
 		curve_.push_back(curve);
 		//loopStage_.emplace(curve);
@@ -646,59 +656,8 @@ void Stage::MakeCurveStage(void)
 			// �X�e�[�W���폜����
 		std::shared_ptr<StageCurve> tailLoop = curve_[size - 5];
 		tailLoop->Destroy();
-
-		//int size = static_cast<int>(loopStage_.size());
-		//if (size < 5) {
-		//	throw std::runtime_error("Queue does not contain enough elements");
-		//}
-
-		//// �Ōォ��5�Ԗڂ̗v�f�ɃA�N�Z�X���邽�߂̏���
-		//std::queue<LoopStage*> tempQueue = loopStage_; // ���̃L���[���R�s�[
-		//LoopStage* tailLoop = nullptr;
-
-		//// ��납��5�Ԗڂ̗v�f�܂Ń|�b�v����
-		//for (int i = 0; i < size - 4; ++i) {
-		//	tailLoop = tempQueue.front();
-		//	tempQueue.pop();
-		//}
-
-		//// �ړI�̗v�f�𑀍�
-		//if (tailLoop != nullptr) {
-		//	tailLoop->Destroy();
-		//}
-
-		//// �����Ɉ�v����C�e���[�^���폜
-		//loopStage_.erase(
-		//	std::remove(
-		//		loopStage_.begin(),
-		//		loopStage_.end(),
-		//		tailLoop
-		//	),
-		//	loopStage_.end()
-		//);
-
 	}
 
-
-	//tailLoop->Destroy();
-	//std::_Vector_iterator<std::_Vector_val<std::_Simple_types<LoopStage*>>> it;
-
-
-	//for (const auto& ls : loopStage_)
-	//{
-	//		it = std::remove_if(loopStage_.begin(), loopStage_.end(), [=]() {
-	//			return ls->GetState() == LoopStage::STATE::BACK;
-	//			});
-	//}
-
-	//// �폜��������������_���Œ�`
-	//auto it = std::remove_if(loopStage_.begin(), loopStage_.end(),
-	//	[](LoopStage* ls) {
-	//		return ls->GetState() == LoopStage::STATE::BACK;
-	//	});
-
-	//// �x�N�^�[����v�f���폜
-	//loopStage_.erase(it, loopStage_.end());
 }
 
 void Stage::MakeCity(void)
@@ -707,7 +666,7 @@ void Stage::MakeCity(void)
 	std::shared_ptr<City> city;
 
 
-	float z = bike_->GetTransform().pos.z;
+	float z = bikes_.front()->GetTransform().pos.z;
 
 	int mapZ = (int)((z + 6000.0f) / 5000.0f);
 	int size = (int)city_.size();
@@ -731,7 +690,7 @@ void Stage::MakeCity(void)
 		cityTrans.Update();
 
 
-		city = std::make_shared<City>(bike_, cityTrans);
+		city = std::make_shared<City>(bikes_.front(), cityTrans);
 		city->Init();
 		city_.push_back(city);
 		//loopStage_.emplace(stage);

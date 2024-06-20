@@ -54,7 +54,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(std::shared_ptr<Bike> bike, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
+	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -89,7 +89,11 @@ private:
 	// シングルトン参照
 	ResourceManager& resMng_;
 
-	std::shared_ptr<Bike> bike_;
+	//std::shared_ptr<Bike> bike_;
+
+	// 複数プレイヤー
+	std::vector<std::shared_ptr<Bike>> bikes_;
+
 	EnemyBase* enemy_;
 	std::shared_ptr<Bomb> bomb_;
 	std::deque<std::shared_ptr<StageCurve>> curve_;

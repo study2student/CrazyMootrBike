@@ -15,9 +15,9 @@
 #include "../Bomb.h"
 #include "Bike.h"
 
-Bike::Bike(float localpos)
+Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playerID)
 {
-	localPosX_ = localpos;
+	//localPosX_ = localpos;
 
 	weapon_ = nullptr;
 
@@ -387,14 +387,69 @@ void Bike::ProcessMove(void)
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
 	
+	enum class JoypadButton {
+		UP = PAD_INPUT_UP,
+		DOWN = PAD_INPUT_DOWN,
+		LEFT = PAD_INPUT_LEFT,
+		RIGHT = PAD_INPUT_RIGHT,
+		ACTION = PAD_INPUT_1
+	};
+
+	// プレイヤーごとの入力マッピング
+	struct PlayerInput {
+		int padId;
+		JoypadButton up;
+		JoypadButton down;
+		JoypadButton left;
+		JoypadButton right;
+		JoypadButton action;
+	};
+
+	std::array<PlayerInput, 4> playerInputs = { {
+		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
+		{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
+		{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
+		{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
+	} };
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
 	//前に進む
 	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE );
 
+	// プレイヤーごとの入力処理
+	const auto& input = playerInputs[playerID_];
+	int padState = GetJoypadInputState(input.padId);
 
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
+	if (padState & static_cast<int>(input.right)) {
+		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+		dir = cameraRot.GetRight();
+	}
+
+	if (padState & static_cast<int>(input.left)) {
+		rotRadZ = AsoUtility::Deg2RadD(45.0f);
+		dir = cameraRot.GetLeft();
+	}
+
+	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
+	{
+		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+		dir = cameraRot.GetRight();
+	}
+
+	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
+	{
+		rotRadZ = AsoUtility::Deg2RadD(45.0f);
+		dir = cameraRot.GetLeft();
+	}
+
+	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
+	{
+		rotRad = AsoUtility::Deg2RadD(180.0f);
+		dir = cameraRot.GetBack();
+	}
+
+	/*if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
 		rotRad = AsoUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
@@ -428,14 +483,14 @@ void Bike::ProcessMove(void)
 	{
 		rotRad = AsoUtility::Deg2RadD(180.0f);
 		dir = cameraRot.GetBack();
-	}
+	}*/
 
 	// カメラ方向に前進したい
-	if (ins.IsNew(KEY_INPUT_W))
-	{
-		rotRad = AsoUtility::Deg2RadD(0.0f);
-		dir = cameraRot.GetForward();
-	}
+	//if (ins.IsNew(KEY_INPUT_W))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(0.0f);
+	//	dir = cameraRot.GetForward();
+	//}
 
 	// カメラ方向から後退したい
 	if (ins.IsNew(KEY_INPUT_S))

@@ -51,11 +51,11 @@ void GameScene::Init(void)
 	//player_ = new Player();
 	//player_->Init();
 
-	bike_ = std::make_shared<Bike>(100);
+	bike_ = std::make_shared<Bike>(100,0);
 	bike_->Init();
 
 	for (int i = 0; i < 4; ++i) {
-		bikes_.push_back(std::make_shared<Bike>(200.0f * (i + 1)));
+		bikes_.push_back(std::make_shared<Bike>(200.0f * (i + 1), i));
 	}
 
 	for (auto& bike : bikes_) {
@@ -71,24 +71,30 @@ void GameScene::Init(void)
 	score_->Init();
 
 	// 敵
-	enemy_ =  new EnemyBase(bike_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+	for (auto& bike : bikes_) {
+		enemy_ = new EnemyBase(bike, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+	}
 
 	//ヘリコプター
 	helicopter_ = std::make_unique<Helicopter>();
 	helicopter_->Init();
 
 	// ステージ
-	stage_ = std::make_unique<Stage>(bike_, enemy_,helicopter_->GetBomb(), this);
+	stage_ = std::make_unique<Stage>(bikes_, enemy_,helicopter_->GetBomb(), this);
 	stage_->Init();
 
 	// ステージの初期設定
 	stage_->ChangeStage(Stage::NAME::MAIN_PLANET);
 
 	// スカイドーム
-	skyDome_ = std::make_unique<SkyDome>(bike_->GetTransform());
+	for (auto& bike : bikes_) {
+		skyDome_ = std::make_unique<SkyDome>(bike->GetTransform());
+	}
 	skyDome_->Init();
 
-	SceneManager::GetInstance().GetCamera()->SetFollow(&bike_->GetTransform());
+	for (auto& bike : bikes_) {
+		SceneManager::GetInstance().GetCamera()->SetFollow(&bike->GetTransform());
+	}
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FOLLOW);
 
 	// エフェクト初期化
@@ -183,6 +189,10 @@ void GameScene::Update(void)
 		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
 		SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 	}
+	for (auto& bike : bikes_)
+	{
+		enemy_->SetBikeTrans(bike->GetTransform());
+	}
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	helicopter_->SetBikeTrans(bike_->GetTransform());
 
@@ -253,18 +263,19 @@ void GameScene::Update(void)
 			EnemyBase* e = nullptr;
 			int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
 			EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
-
-			switch (type)
-			{
-			case EnemyBase::TYPE::SHORT_DIS:
-				e = new ShortDisEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-				break;
-			case EnemyBase::TYPE::LONG_DIS:
-				e = new LongDisEnemy(bike_,stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-				break;
-			case EnemyBase::TYPE::BOMB:
-				e = new MagicEnemy(bike_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-				break;
+			for (auto& bike : bikes_) {
+				switch (type)
+				{
+				case EnemyBase::TYPE::SHORT_DIS:
+					e = new ShortDisEnemy(bike, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					break;
+				case EnemyBase::TYPE::LONG_DIS:
+					e = new LongDisEnemy(bike, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					break;
+				case EnemyBase::TYPE::BOMB:
+					e = new MagicEnemy(bike, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					break;
+				}
 			}
 			e->Init();
 
