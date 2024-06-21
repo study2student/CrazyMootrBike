@@ -1,9 +1,12 @@
 #pragma once
 #include "SceneBase.h"
 #include "../Object/Common/Transform.h"
+#include <memory>
+#include <vector>
 class SceneManager;
 class SkyDome;
 class AnimationController;
+class Bike;
 
 class TitleScene : public SceneBase
 {
@@ -32,12 +35,19 @@ private:
 	// スカイドーム(背景)
 	SkyDome* skyDome_;
 
-	// 惑星
-	Transform planet_;
-	Transform movePlanet_;
+	//道路
+	Transform mainStage_;
+
+	//ビル
+	/*std::vector<Transform*> sity_;*/
+	Transform sity_;
 
 	// キャラクター
 	Transform charactor_;
+
+	//バイク
+	Transform bike;
+
 
 	// アニメーション
 	AnimationController* animationController_;

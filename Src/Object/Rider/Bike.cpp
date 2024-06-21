@@ -370,7 +370,8 @@ void Bike::DrawDebug(void)
 		AsoUtility::Rad2DegD(transform_.quaRot.ToEuler().y),
 		AsoUtility::Deg2RadF( transform_.quaRotLocal.ToEuler().z));
 
-	DrawFormatString(0, 80, 0x000000, "bikePos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	DrawFormatString(0, 80, 0xffffff, "bikePos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
+
 }
 
 void Bike::ProcessMove(void)

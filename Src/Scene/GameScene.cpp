@@ -194,7 +194,7 @@ void GameScene::Update(void)
 		enemy_->SetBikeTrans(bike->GetTransform());
 	}
 	enemy_->SetBikeTrans(bike_->GetTransform());
-	helicopter_->SetBikeTrans(bike_->GetTransform());
+	helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
 
 	//“G
 	size_t sizeE = enemys_.size();

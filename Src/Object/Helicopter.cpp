@@ -295,7 +295,7 @@ void Helicopter::DrawShadow(void)
 
 void Helicopter::DrawDebug(void)
 {
-	DrawFormatString(0, 100, 0x000000, "copterPos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	DrawFormatString(0, 100, 0xffffff, "copterPos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }
 
 void Helicopter::ProcessMove(void)
