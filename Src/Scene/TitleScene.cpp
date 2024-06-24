@@ -1,5 +1,6 @@
 #include <string>
 #include <DxLib.h>
+#include <EffekseerForDXLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
@@ -18,6 +19,8 @@ TitleScene::TitleScene(void)
 	imgTitle_ = -1;
 	skyDome_ = nullptr;
 	animationController_ = nullptr;
+	stepBikeDeparture_ = 0.0f;
+	effectBurnoutPosY_ = BURNOUT_EFFECT_FIRST_POS_Y;
 }
 
 TitleScene::~TitleScene(void)
@@ -102,22 +105,25 @@ void TitleScene::Init(void)
 	// 定点カメラ
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 
+	//待機状態
+	state_ = STATE::IDLE;
+
+	//エフェクト読み込み
+	InitEffect();
+
 }
 
 void TitleScene::Update(void)
 {
-
-	// シーン遷移
-	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	switch (state_)
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::SELECT);
+	case TitleScene::STATE::IDLE:
+		UpdateIdle();
+		break;
+	case TitleScene::STATE::START:
+		UpdateStart();
+		break;
 	}
-
-	// キャラアニメーション
-	animationController_->Update();
-
-	skyDome_->Update();
 
 }
 
@@ -134,7 +140,108 @@ void TitleScene::Draw(void)
 	MV1DrawModel(sity_[1]->modelId);*/
 	
 
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 250, 1.0, 0.0, imgTitle_, true);
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 500, 1.0, 0.0, imgPush_, true);
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 1.2, 250, 1.0, 0.0, imgTitle_, true);
+	//ボタンが押されたら表示しない
+	if(state_==STATE::IDLE)
+	{
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 1.5, 700, 1.0, 0.0, imgPush_, true);
+	}
 
+}
+
+void TitleScene::InitEffect(void)
+{
+	effectBurnoutResId_=ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::BURNOUT_EFFECT).handleId_;
+}
+
+void TitleScene::ChangeState(STATE state)
+{
+	state_ = state;
+
+	switch (state_)
+	{
+	case TitleScene::STATE::IDLE:
+		ChangeStateIdle();
+		break;
+	case TitleScene::STATE::START:
+		ChangeStateStart();
+		break;
+	}
+}
+
+void TitleScene::ChangeStateIdle(void)
+{
+}
+
+void TitleScene::ChangeStateStart(void)
+{
+}
+
+void TitleScene::UpdateIdle(void)
+{
+	//演出スタート
+	InputManager& ins = InputManager::GetInstance();
+	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	{
+		ChangeState(STATE::START);
+	}
+
+	// キャラアニメーション
+	animationController_->Update();
+
+	skyDome_->Update();
+}
+
+void TitleScene::UpdateStart(void)
+{
+
+	// シーン遷移
+	//時間経過
+	stepBikeDeparture_ += SceneManager::GetInstance().GetDeltaTime();
+	if (stepBikeDeparture_ <= BIKE_IDLE__MAX_TIME)
+	{
+		//待機中エフェクト
+		BurnoutEffect();
+	}
+	else
+	{
+		//バイク発車
+		BikeDeparture();
+	}
+	if (stepBikeDeparture_ >= BIKE_DEPARTURE_TO_NEXT_MAX_TIME)
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::SELECT);
+		stepBikeDeparture_ = 0.0f;
+	}
+
+	// キャラアニメーション
+	animationController_->Update();
+}
+
+void TitleScene::BikeDeparture(void)
+{
+	//バイクを前方方向へ
+	//バイクスピード
+	float bikeSpeed_ = 40.0f;
+	bike.pos = VAdd(bike.pos, VScale(bike.GetForward(), bikeSpeed_ * 1.5f));
+	bike.Update();
+	charactor_.pos.z = bike.pos.z;
+	charactor_.Update();
+}
+
+void TitleScene::BurnoutEffect(void)
+{
+	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
+	float scale = 60.0f;
+	SetScalePlayingEffekseer3DEffect(effectBurnoutPlayId_, scale / 2, scale, scale);
+	//徐々に高さを上げる
+	effectBurnoutPosY_ += stepBikeDeparture_ * 1.1f;
+	if (effectBurnoutPosY_ >= BURNOUT_EFFECT_MAX_POS_Y)
+	{
+		//高さ制限
+		effectBurnoutPosY_ = BURNOUT_EFFECT_MAX_POS_Y;
+	}
+	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, bike.pos.y + effectBurnoutPosY_, bike.pos.z);
+	SetRotationPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
 }

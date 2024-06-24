@@ -47,15 +47,14 @@ void Camera::SetBeforeDraw(void)
 		break;
 	case Camera::MODE::FOLLOW:
 		SetBeforeDrawFollow();
+		// カメラの設定(位置と注視点による制御)
+		SetCameraPositionAndTargetAndUpVec(
+			pos_,
+			targetPos_,
+			cameraUp_
+		);
 		break;
 	}
-
-	// カメラの設定(位置と注視点による制御)
-	SetCameraPositionAndTargetAndUpVec(
-		pos_, 
-		targetPos_, 
-		cameraUp_
-	);
 
 	// DXライブラリのカメラとEffekseerのカメラを同期する。
 	Effekseer_Sync3DSetting();
@@ -250,7 +249,21 @@ void Camera::ProcessRot(void)
 
 void Camera::SetBeforeDrawFixedPoint(void)
 {
-	// 何もしない
+	//最初の固定カメラ
+	//プレイヤー座標
+	static constexpr VECTOR pPos_ = { -80.0f, -10.0f, -380.0f };
+
+	pos_ = pPos_;
+	angles_ = { AsoUtility::Deg2RadF(0.0f),  AsoUtility::Deg2RadF(-10.0f), 0.0f };
+
+	//カメラの設定(位置と角度による制御)
+	SetCameraPositionAndAngle(
+		pos_,
+		angles_.x,
+		angles_.y,
+		angles_.z
+	);
+
 }
 
 void Camera::SetBeforeDrawFollow(void)

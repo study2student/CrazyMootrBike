@@ -160,9 +160,13 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/bike.mv1");
 	resourcesMap_.emplace(SRC::BIKE, res);
 
-	// バイクモデル
+	// 武器モデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Weapon/BusterSword/sword.mv1");
 	resourcesMap_.emplace(SRC::W_SWORD, res);
+
+	// バーンアウト時のエフェクト(バイク発車前)
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BikeStart/burnoutEffect.efkefc");
+	resourcesMap_.emplace(SRC::BURNOUT_EFFECT, res);
 
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
