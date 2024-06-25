@@ -19,18 +19,11 @@ public:
 		START
 	};
 
-	//バーンアウトエフェクト初期高さ
-	static constexpr float BURNOUT_EFFECT_FIRST_POS_Y = -290.0f;
-
-	//バーンアウトエフェクト最大高さ
-	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
-
 	//ボタンが押されてからのバイクの待機最大時間
 	static constexpr float BIKE_IDLE__MAX_TIME = 3.0f;
 
 	//バイクが発車してから次のシーンまでの最大時間
 	static constexpr float BIKE_DEPARTURE_TO_NEXT_MAX_TIME = 4.5f;
-
 
 	// コンストラクタ
 	TitleScene(void);
@@ -64,11 +57,20 @@ private:
 	// キャラクター
 	Transform charactor_;
 
+	//フロントタイヤ
+	Transform frontTyre_;
+
+	//リアタイヤ
+	Transform rearTyre_;
+
 	// アニメーション
 	AnimationController* animationController_;
 
 	//バイク
 	Transform bike;
+
+	//回転
+	Quaternion tyreRotX_;
 
 	//エフェクト系
 	// バーンアウトエフェクト
@@ -96,6 +98,9 @@ private:
 
 	//バイク発車演出
 	void BikeDeparture(void);
+
+	//タイヤ回転
+	void BikeTyreRot(void);
 
 	//バーンアウトエフェクト
 	void BurnoutEffect(void);

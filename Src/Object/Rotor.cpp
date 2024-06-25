@@ -97,8 +97,6 @@ void Rotor::Update(void)
 
 	// モデル制御更新
 	transform_.Update();
-	//// アニメーション再生
-	//animationController_->Update();
 }
 
 void Rotor::Draw(void)
@@ -233,24 +231,6 @@ void Rotor::ProcessJump(void)
 
 void Rotor::ProcessAttack(void)
 {
-
-	//// 攻撃更新
-	//switch (attackState_)
-	//{
-	//case Bike::ATTACK_TYPE::NONE:
-	//	break;
-	//case Bike::ATTACK_TYPE::NORMAL:
-	//	NormalAttack();
-	//	break;
-	//case Bike::ATTACK_TYPE::SPECIAL:
-	//	SpecialAttack();
-	//	break;
-	//case Bike::ATTACK_TYPE::LONG:
-	//	LongAttack();
-	//	break;
-	//default:
-	//	break;
-	//}
 
 	NormalAttack();
 	SpecialAttack();

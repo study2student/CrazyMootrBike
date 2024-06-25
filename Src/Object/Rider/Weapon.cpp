@@ -87,6 +87,7 @@ void Weapon::Update(void)
 	VECTOR local= bikeTransform_.quaRot.PosAxis(localPos);
 	transform_.pos = VAdd(transform_.pos, local);
 	
+	transform_.quaRot = bikeTransform_.quaRot;
 	transform_.Update();
 
 	// ‰ñ“]‚³‚¹‚é

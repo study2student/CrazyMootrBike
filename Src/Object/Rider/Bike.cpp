@@ -13,6 +13,8 @@
 #include "Player.h"
 #include "Weapon.h"
 #include "../Bomb.h"
+#include "FrontTyre.h"
+#include "RearTyre.h"
 #include "Bike.h"
 
 Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playerID)
@@ -70,6 +72,12 @@ void Bike::Init(void)
 	// 武器
 	weapon_ = new Weapon();
 	weapon_->Init();
+
+	//タイヤ
+	frontTyre_ = std::make_shared<FrontTyre>();
+	frontTyre_->Init();
+	rearTyre_ = std::make_shared<RearTyre>();
+	rearTyre_->Init();
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -133,8 +141,11 @@ void Bike::Update(void)
 	//player_->Update();
 
 	weapon_->Update();
-
 	weapon_->SetTransForm(transform_);
+	frontTyre_->Update();
+	frontTyre_->SetTransform(transform_);
+	rearTyre_->Update();
+	rearTyre_->SetTransform(transform_);
 	
 	// モデル制御更新
 	transform_.Update();
@@ -151,6 +162,10 @@ void Bike::Draw(void)
 
 	// 武器
 	weapon_->Draw();
+
+	//タイヤ
+	frontTyre_->Draw();
+	rearTyre_->Draw();
 
 	// 体力とかゲージとか
 	DrawUI();
@@ -177,13 +192,6 @@ void Bike::ClearCollider(void)
 const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 {
 	return capsule_;
-}
-
-void Bike::SetSpeed(float speed, float rotRad, float posY)
-{
-	speed_ = speed;
-
-	transform_.pos.y += posY;
 }
 
 void Bike::Jump(void)

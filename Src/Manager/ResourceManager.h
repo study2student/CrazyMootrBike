@@ -46,6 +46,7 @@ public:
 		HELICOPTER_ROTOR,
 		BOMB,		//爆弾
 		BIKE,		//バイク
+		TYRE,		//タイヤ
 		BURNOUT_EFFECT, //バーンアウトエフェクト(バイク発車前)
 
 		W_SWORD,//バスターソード

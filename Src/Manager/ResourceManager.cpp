@@ -160,6 +160,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/bike.mv1");
 	resourcesMap_.emplace(SRC::BIKE, res);
 
+	// タイヤモデル
+	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/tyre.mv1");
+	resourcesMap_.emplace(SRC::TYRE, res);
+
 	// 武器モデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Weapon/BusterSword/sword.mv1");
 	resourcesMap_.emplace(SRC::W_SWORD, res);

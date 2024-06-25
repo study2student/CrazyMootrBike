@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <DxLib.h>
+#include <memory>
 #include "../ActorBase.h"
 #include <vector>
 class AnimationController;
@@ -8,6 +9,8 @@ class Collider;
 class Capsule;
 class Player;
 class Weapon;
+class FrontTyre;
+class RearTyre;
 
 class Bike : public ActorBase
 {
@@ -17,7 +20,7 @@ public:
 	static constexpr float SPEED_RUN = 130.0f;
 
 	//横移動のスピード
-	static constexpr float SPEED_MOVE_X = 8.0f;
+	static constexpr float SPEED_MOVE_X = 10.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
@@ -33,6 +36,18 @@ public:
 
 	// ジャンプ受付時間
 	static constexpr float TIME_JUMP_IN = 0.5f;
+
+	//バーンアウトエフェクト初期高さ
+	static constexpr float BURNOUT_EFFECT_FIRST_POS_Y = -290.0f;
+
+	//バーンアウトエフェクト最大高さ
+	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
+
+	//バイクからフロントタイヤ相対座標
+	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS = { 10.0f,68.0f,45.0f };
+
+	//バイクからリアタイヤ相対座標
+	static constexpr VECTOR BIKE_TO_REAR_TYRE_LOCALPOS = { -5.0f,58.0f,-157.0f };
 
 	// 状態
 	enum class STATE
@@ -82,7 +97,6 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
-	void SetSpeed(float speed, float rotRad, float posY);
 
 	//ジャンプ台用のジャンプ
 	void Jump(void);
@@ -97,8 +111,12 @@ private:
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 
-
+	//武器
 	Weapon* weapon_;
+
+	//タイヤ
+	std::shared_ptr<FrontTyre> frontTyre_;
+	std::shared_ptr<RearTyre> rearTyre_;
 
 	// 状態管理
 	STATE state_;
