@@ -175,7 +175,7 @@ void LongDisEnemy::ProcessMove(void)
 		else
 		{
 			speed_ = SPEED_MOVE;
-			isAddScore_ = false;
+			//isAddScore_ = false;
 		}
 	}
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))

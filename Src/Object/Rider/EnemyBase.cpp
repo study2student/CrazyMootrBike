@@ -525,7 +525,7 @@ void EnemyBase::ProcessMove(void)
 			{
 				speed_ = SPEED_MOVE;
 				isBikeCol_ = false;
-				isAddScore_ = false;
+				//isAddScore_ = false;
 			}
 		}
 	}

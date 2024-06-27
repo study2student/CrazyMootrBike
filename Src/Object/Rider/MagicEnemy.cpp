@@ -176,7 +176,7 @@ void MagicEnemy::ProcessMove(void)
 		else
 		{
 			speed_ = SPEED_MOVE;
-			isAddScore_ = false;
+			//isAddScore_ = false;
 			if (!isJump_ && IsEndLanding())
 			{
 

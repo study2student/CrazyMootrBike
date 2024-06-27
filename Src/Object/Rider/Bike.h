@@ -8,7 +8,6 @@ class AnimationController;
 class Collider;
 class Capsule;
 class Player;
-class Weapon;
 class FrontTyre;
 class RearTyre;
 
@@ -18,6 +17,9 @@ public:
 	// スピード
 	static constexpr float SPEED_MOVE = 100.0f;
 	static constexpr float SPEED_RUN = 130.0f;
+
+	//半径
+	static constexpr float RADIUS = 50.0f;
 
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 10.0f;
@@ -54,6 +56,7 @@ public:
 	{
 		NONE,
 		PLAY,
+		FLIPED,
 		DEAD,
 		END
 	};
@@ -80,6 +83,25 @@ public:
 		LONG,
 	};
 
+	//ボタンごとのアクション
+	enum class JoypadButton {
+		UP = PAD_INPUT_UP,
+		DOWN = PAD_INPUT_DOWN,
+		LEFT = PAD_INPUT_LEFT,
+		RIGHT = PAD_INPUT_RIGHT,
+		ACTION = PAD_INPUT_1
+	};
+
+	// プレイヤーごとの入力マッピング
+	struct PlayerInput {
+		int padId;
+		JoypadButton up;
+		JoypadButton down;
+		JoypadButton left;
+		JoypadButton right;
+		JoypadButton action;
+	};
+
 	// コンストラクタ
 	Bike(float localpos, int playerID);
 
@@ -97,6 +119,11 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
+	// スコア加算
+	void AddScore(int score);
+
+	// スコアゲッター
+	const int GetScore() const;
 
 	//ジャンプ台用のジャンプ
 	void Jump(void);
@@ -104,15 +131,14 @@ public:
 	//ダメージ
 	void Damage(int damage);
 
+	// プレイヤー同士の当たり判定
+	void Flip(VECTOR dir);
 private:
 
 	Transform transformPlayer_;
 
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
-
-	//武器
-	Weapon* weapon_;
 
 	//タイヤ
 	std::shared_ptr<FrontTyre> frontTyre_;
@@ -170,14 +196,18 @@ private:
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
 
-	// 丸影
-	int imgShadow_;
-
 	// 体力
 	int hp_;
 
 	// 攻撃が当たったか
 	bool isAttack_;
+
+	//プレイヤー同士の当たり判定用
+	float flipSpeed_;
+	VECTOR flipDir_;
+
+	// スコア
+	int score_;
 
 	//アニメーション
 	void InitAnimation(void);
@@ -186,14 +216,15 @@ private:
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
+	void ChangeStateFliped(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
 	void UpdatePlay(void);
+	void UpdateFliped(void);
 
 	// 描画系
 	void DrawUI(void);
-	void DrawShadow(void);
 	void DrawDebug(void);
 
 	// 操作

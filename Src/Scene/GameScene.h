@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include <vector>
 #include <list>
+class Camera;
 class Stage;
 class SkyDome;
 class Rider;
@@ -13,6 +14,7 @@ class MagicEnemy;
 class EnemyBike;
 class Helicopter;
 class Score;
+class SelectScene;
 
 class GameScene : public SceneBase
 {
@@ -70,7 +72,13 @@ public:
 	//敵が追加されたタイミングかどうか
 	bool GetIsCreateEnemy(void);
  
+	// スコア加算メソッド
+	void AddScoreToPlayer(int playerId, int score);
 private:
+	int mainScreen_;
+
+	// カメラ
+	std::vector<std::shared_ptr<Camera>> cameras_;
 
 	// ステージ
 	std::unique_ptr<Stage> stage_;
@@ -81,9 +89,11 @@ private:
 	// スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
 
+	// プレイ人数
+	std::unique_ptr<SelectScene> selectScene_;
 
 	// プレイヤー
-	std::shared_ptr<Bike> bike_;
+	//std::shared_ptr<Bike> bike_;
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
@@ -108,10 +118,14 @@ private:
 	//敵が追加されたタイミングかどうか
 	bool isCreateEnemy_;
 
+	//デバッグ描画
 	void DrawDubg(void);
 	
 	//衝突判定
 	void Collision(void);
+
+	// バイク同士の当たり判定
+	void BikeCollision(void);
 
 	float hitStopDuration;  // ヒットストップの持続時間（秒）
 	float hitStopTimer;      // ヒットストップのタイマー

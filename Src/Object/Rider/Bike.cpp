@@ -11,7 +11,6 @@
 #include "../Common/Collider.h"
 #include "../Planet.h"
 #include "Player.h"
-#include "Weapon.h"
 #include "../Bomb.h"
 #include "FrontTyre.h"
 #include "RearTyre.h"
@@ -20,8 +19,6 @@
 Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playerID)
 {
 	//localPosX_ = localpos;
-
-	weapon_ = nullptr;
 
 	animationController_ = nullptr;
 
@@ -44,13 +41,14 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	stepJumpSecond_ = 0.0f;
 	jumpSpeed_ = 1.0f;
 
+	// スコア
+	score_ = 0;
+
 	isAttack_ = false;
 
 	// 衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
-
-	imgShadow_ = -1;
 
 	hp_ = 0;
 
@@ -60,18 +58,12 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 
 Bike::~Bike(void)
 {
-	delete weapon_;
 }
 
 void Bike::Init(void)
 {
 	// エフェクト初期化
 	InitEffect();
-
-	
-	// 武器
-	weapon_ = new Weapon();
-	weapon_->Init();
 
 	//タイヤ
 	frontTyre_ = std::make_shared<FrontTyre>();
@@ -103,22 +95,17 @@ void Bike::Init(void)
 	transform_.Update();
 	transformPlayer_.Update();
 
-	weapon_->SetTransForm(transform_);
-
 	// アニメーションの設定
 	InitAnimation();
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
-	capsule_->SetRadius(135.0f);
+	capsule_->SetLocalPosTop({ 0.0f, 130.0f, -30.0f });
+	capsule_->SetLocalPosDown({ 0.0f, 130.0f, -120.0f });
+	capsule_->SetRadius(RADIUS);
 
 	// 体力
 	hp_ = MAX_HP;
-
-	// 丸影画像
-	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
 
 	// 初期状態
 	ChangeState(STATE::PLAY);
@@ -136,12 +123,13 @@ void Bike::Update(void)
 	case Bike::STATE::PLAY:
 		UpdatePlay();
 		break;
+	case Bike::STATE::FLIPED:
+		UpdateFliped();
+		break;
 	}
 
 	//player_->Update();
 
-	weapon_->Update();
-	weapon_->SetTransForm(transform_);
 	frontTyre_->Update();
 	frontTyre_->SetTransform(transform_);
 	rearTyre_->Update();
@@ -160,18 +148,12 @@ void Bike::Draw(void)
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
 
-	// 武器
-	weapon_->Draw();
-
 	//タイヤ
 	frontTyre_->Draw();
 	rearTyre_->Draw();
 
 	// 体力とかゲージとか
 	DrawUI();
-
-	// 丸影描画
-	DrawShadow();
 
 	//player_->Draw();
 
@@ -192,6 +174,16 @@ void Bike::ClearCollider(void)
 const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 {
 	return capsule_;
+}
+
+void Bike::AddScore(int score)
+{
+	score_ += score;
+}
+
+const int Bike::GetScore() const
+{
+	return score_;
 }
 
 void Bike::Jump(void)
@@ -258,6 +250,13 @@ void Bike::Damage(int damage)
 	}
 }
 
+void Bike::Flip(VECTOR dir)
+{
+	flipDir_ = dir;
+	flipSpeed_ = 5.0f;
+	ChangeState(STATE::FLIPED);
+}
+
 void Bike::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Player/";
@@ -288,6 +287,9 @@ void Bike::ChangeState(STATE state)
 	case Bike::STATE::PLAY:
 		ChangeStatePlay();
 		break;
+	case Bike::STATE::FLIPED:
+		ChangeStateFliped();
+		break;
 	}
 }
 
@@ -296,6 +298,10 @@ void Bike::ChangeStateNone(void)
 }
 
 void Bike::ChangeStatePlay(void)
+{
+}
+
+void Bike::ChangeStateFliped(void)
 {
 }
 
@@ -334,6 +340,36 @@ void Bike::UpdatePlay(void)
 	transformPlayer_.quaRot = playerRotY_;
 }
 
+void Bike::UpdateFliped(void)
+{
+	// 移動処理
+	ProcessMove();
+
+	// 吹っ飛ばされる
+	flipSpeed_ -= 0.16f;
+	if (flipSpeed_ < 0.0f)
+	{
+		flipSpeed_ = 0.0f;
+		ChangeState(STATE::PLAY);
+	}
+	movePow_ = VAdd(movePow_, VScale(flipDir_, flipSpeed_));
+
+	// ジャンプ処理
+	ProcessJump();
+
+	// 移動方向に応じた回転
+	Rotate();
+
+	// 重力による移動量
+	CalcGravityPow();
+
+	// 衝突判定
+	Collision();
+
+	// 回転させる
+	transform_.quaRot = playerRotY_;
+}
+
 void Bike::DrawUI(void)
 {
 	using ap = Application;
@@ -355,10 +391,9 @@ void Bike::DrawUI(void)
 
 	// HP
 	DrawFormatString(0, 20, 0x00ff00, "HP : %d", hp_);
-}
 
-void Bike::DrawShadow(void)
-{
+	//スコア
+	DrawExtendFormatString(Application::SCREEN_SIZE_X / 3, 0, 3, 3, 0xff0000, "スコア:%.d", score_);
 }
 
 void Bike::DrawDebug(void)
@@ -395,24 +430,7 @@ void Bike::ProcessMove(void)
 	// 回転したい角度
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
-	
-	enum class JoypadButton {
-		UP = PAD_INPUT_UP,
-		DOWN = PAD_INPUT_DOWN,
-		LEFT = PAD_INPUT_LEFT,
-		RIGHT = PAD_INPUT_RIGHT,
-		ACTION = PAD_INPUT_1
-	};
 
-	// プレイヤーごとの入力マッピング
-	struct PlayerInput {
-		int padId;
-		JoypadButton up;
-		JoypadButton down;
-		JoypadButton left;
-		JoypadButton right;
-		JoypadButton action;
-	};
 
 	std::array<PlayerInput, 4> playerInputs = { {
 		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
@@ -458,41 +476,7 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetBack();
 	}
 
-	/*if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = AsoUtility::Deg2RadD(0.0f);
-		dir = cameraRot.GetForward();
-	}
-	
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = AsoUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetForward();
-	}
-	
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = AsoUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
-	{
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetRight();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
-	{
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
-	{
-		rotRad = AsoUtility::Deg2RadD(180.0f);
-		dir = cameraRot.GetBack();
-	}*/
+	//デバッグ用
 
 	// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
@@ -531,7 +515,7 @@ void Bike::ProcessMove(void)
 		speed_ = SPEED_MOVE;
 
 
-		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
+		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT || GetJoypadInputState(DX_INPUT_PAD1)&PAD_INPUT_RIGHT))
 		{
 			speed_ = SPEED_MOVE_X;
 		}

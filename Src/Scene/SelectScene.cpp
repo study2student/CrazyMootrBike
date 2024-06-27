@@ -26,6 +26,8 @@ void SelectScene::Init(void)
 	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
 
 	isCursorHit_ = false;
+
+	playNumber_ = 4;
 }
 
 void SelectScene::Update(void)
@@ -44,6 +46,11 @@ void SelectScene::Draw(void)
 	DrawString(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, "4人で", fourPersonFontColor_);
 }
 
+const int SelectScene::GetPlayNumber(void) const
+{
+	return playNumber_;
+}
+
 void SelectScene::MouseProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
@@ -57,6 +64,7 @@ void SelectScene::MouseProcess(void)
 		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y)
 	{
 		nowCursor_ = (int)STATE::ONE_PERSON;
+		playNumber_ = 1;
 		isCursorHit_ = true;
 	}
 	else
@@ -89,6 +97,7 @@ void SelectScene::MouseProcess(void)
 		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y )
 	{
 		nowCursor_ = (int)STATE::FOUR_PERSON;
+		playNumber_ = 4;
 		isCursorHit_ = true;
 	}
 	else
@@ -103,7 +112,9 @@ void SelectScene::MouseProcess(void)
 		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
 			//左クリックまたはスペースキーでゲームを終了する
-			Application::GetInstance().SetIsGameFinishKey(true);
+			//左クリックまたはスペースキーでゲームを開始する
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+
 		}
 	}
 	else
