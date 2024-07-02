@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 class ResourceManager;
+class Score;
 
 class SceneBase
 {
@@ -26,5 +27,9 @@ protected:
 
 	// リソース管理
 	ResourceManager& resMng_;
+
+	//スコア
+	Score& score_;
+
 
 };

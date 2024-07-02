@@ -16,9 +16,6 @@ public:
 	//‰ñ“]‘¬“x
 	static constexpr float SPEED_ROT = 20.0f;
 
-	//‘Š‘ÎÀ•W
-	static constexpr VECTOR LOCAL_POS = { 0.0f,50.0f,0.0f };
-
 	// ó‘Ô
 	enum class STATE
 	{

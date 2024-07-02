@@ -22,9 +22,10 @@
 #include "Common/Transform.h"
 #include "../Scene/GameScene.h"
 #include "../Object/StageCurve.h"
+#include "../Object/Goal.h"
 #include "Stage.h"
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, std::shared_ptr<Bomb> bomb, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
@@ -93,6 +94,9 @@ void Stage::Init(void)
 
 	jampRamp_ = std::make_unique<JampRamp>();
 	jampRamp_->Init();
+
+	goal_ = std::make_unique<Goal>();
+	goal_->Init();
 
 	step_ = -1.0f;
 }
@@ -164,6 +168,25 @@ void Stage::Update(void)
 	}
 	jampRamp_->Update();
 
+	//ゴール
+	goal_->Update();
+
+	//誰かがゴールゾーンを超えたらクリア
+	for (const auto& bike : bikes_)
+	{
+		if (bike->GetTransform().pos.z >= goal_->GetTransform().pos.z)
+		{
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		}
+	}
+
+	//ステージを一定数生成したらゴールが出現
+	if (loopStage_.size() >= Goal::STAGE_NUM_MAX_FOR_GOAL)
+	{
+		goal_->SetPosZ(5000.0f * (Goal::STAGE_NUM_MAX_FOR_GOAL + 1));
+	}
+	
+
 }
 
 void Stage::Draw(void)
@@ -208,8 +231,10 @@ void Stage::Draw(void)
 	//}
 
 	jampRamp_->Draw();
+	goal_->Draw();
 
 	DrawFormatString(0, 200, 0xff0000, "IsJump:%d", isJamp_);
+	//DrawFormatString(840, 520, 0xffffff, "loopstageNum : %d", loopStage_.size());
 }
 
 void Stage::ChangeStage(NAME type)
@@ -405,7 +430,7 @@ void Stage::MakeLoopStage(void)
 
 
 		float scale = 1.0f;
-		loopTrans.scl = { scale * 2.5f,scale,scale };
+		loopTrans.scl = { scale * 2.5f,scale ,scale };
 		loopTrans.quaRot = Quaternion();
 		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 5000.0f * (size + 1) };
 

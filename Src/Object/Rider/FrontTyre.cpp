@@ -35,9 +35,11 @@ void FrontTyre::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::TYRE));
-	float scale = 1.0f;
-	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f, 0.0f, 0.0f };
+	float scale = 1.5f;
+	transform_.scl = { scale / 1.40f, scale, scale };
+	transform_.pos = { transformParent_.pos.x + Bike::BIKE_TO_FRONT_TYRE_LOCALPOS.x,
+		transformParent_.pos.y + Bike::BIKE_TO_FRONT_TYRE_LOCALPOS.y,
+		transformParent_.pos.z + Bike::BIKE_TO_FRONT_TYRE_LOCALPOS.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });
@@ -120,6 +122,7 @@ void FrontTyre::UpdateRot(void)
 
 void FrontTyre::DrawDebug(void)
 {
+	DrawFormatString(840, 300, 0xffffff, "frontPos = {%f, %f, %f}", transform_.pos.x,transform_.pos.y,transform_.pos.z);
 }
 
 void FrontTyre::ProcessDebug(void)
@@ -130,7 +133,7 @@ void FrontTyre::Rotate(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	//羽の回転
+	//フロントタイヤの回転
 	// デグリーからラジアン(変換)
 	float rad = AsoUtility::Deg2RadF(SPEED_ROT);
 
@@ -149,10 +152,13 @@ void FrontTyre::SyncParent(void)
 {
 	//親バイクの位置に合わせる
 	//座標も少し調整
-	transform_.pos = { transformParent_.pos.x,0.0f,transformParent_.pos.z };
-	transform_.pos = VAdd(transform_.pos, LOCAL_POS);
+	//transform_.pos = { transformParent_.pos.x,transformParent_.pos.y,transformParent_.pos.z };
+	transform_.pos = { transformParent_.pos.x + Bike::BIKE_TO_FRONT_TYRE_LOCALPOS.x,
+		transformParent_.pos.y + Bike::BIKE_TO_FRONT_TYRE_LOCALPOS.y,
+		transformParent_.pos.z + Bike::BIKE_TO_FRONT_TYRE_LOCALPOS.z };
+	//transform_.pos = VAdd(transform_.pos, Bike::BIKE_TO_FRONT_TYRE_LOCALPOS);
 	transform_.quaRot = transformParent_.quaRot;
-	transform_.quaRot.Mult(transform_.quaRot, transformParent_.quaRot);
+	//transform_.quaRot.Mult(rotX_, transformParent_.quaRot);
 	//// モデル制御更新
 	//transform_.Update();
 }

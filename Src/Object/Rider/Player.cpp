@@ -391,15 +391,15 @@ void Player::ProcessJump(void)
 
 		if (!isJump_)
 		{
-			// 制御無しジャンプ
+			//// 制御無しジャンプ
 			//mAnimationController->Play((int)ANIM_TYPE::JUMP);
-			// ループしないジャンプ
+			// //ループしないジャンプ
 			//mAnimationController->Play((int)ANIM_TYPE::JUMP, false);
-			// 切り取りアニメーション
+			//// 切り取りアニメーション
 			//mAnimationController->Play((int)ANIM_TYPE::JUMP, false, 13.0f, 24.0f);
-			// 無理やりアニメーション
-			/*animationController_->Play((int)ANIM_TYPE::JUMP, true, 13.0f, 25.0f);
-			animationController_->SetEndLoop(23.0f, 25.0f, 5.0f);*/
+			//// 無理やりアニメーション
+			//animationController_->Play((int)ANIM_TYPE::JUMP, true, 13.0f, 25.0f);
+			//animationController_->SetEndLoop(23.0f, 25.0f, 5.0f);
 		}
 
 		isJump_ = true;

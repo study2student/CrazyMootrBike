@@ -3,6 +3,7 @@
 #include "Manager/InputManager.h"
 #include "Manager/ResourceManager.h"
 #include "Manager/SceneManager.h"
+#include "Object/Score.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
@@ -53,6 +54,9 @@ void Application::Init(void)
 
 	// リソース管理初期化
 	ResourceManager::CreateInstance();
+
+	//スコア初期化
+	Score::CreateInstance();
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();

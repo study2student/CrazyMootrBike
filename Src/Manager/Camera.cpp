@@ -17,6 +17,7 @@ Camera::Camera(void)
 	followTransform_ = nullptr;
 	stepRotTime_ = 0.0f;
 	isPause_ = false;
+	isCameraReset_ = false;
 }
 
 Camera::~Camera(void)
@@ -73,6 +74,11 @@ void Camera::SetFollow(const Transform* follow)
 void Camera::SetIsPause(bool isPause)
 {
 	isPause_ = isPause;
+}
+
+void Camera::SetIsCameraReset(bool isCameraReset)
+{
+	isCameraReset_ = isCameraReset;
 }
 
 VECTOR Camera::GetPos(void) const
@@ -188,42 +194,46 @@ void Camera::ProcessRot(void)
 
 	//ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚©
 	bool isHitKey = false;
-	// ƒJƒƒ‰‰ñ“]
-	if (ins.IsNew(KEY_INPUT_RIGHT))
-	{
-		// ‰E‰ñ“]
-		angles_.y += AsoUtility::Deg2RadF(1.0f);
-		isHitKey = true;
-	}
-	if (ins.IsNew(KEY_INPUT_LEFT))
-	{
-		// ¶‰ñ“]
-		angles_.y += AsoUtility::Deg2RadF(-1.0f);
-		isHitKey = true;
-	}
 
-	// ã‰ñ“]
-	if (ins.IsNew(KEY_INPUT_UP))
+	if (!isCameraReset_)
 	{
-		angles_.x += AsoUtility::Deg2RadF(1.0f);
-		if (angles_.x > LIMIT_X_UP_RAD)
+		// ƒJƒƒ‰‰ñ“]
+		if (ins.IsNew(KEY_INPUT_RIGHT))
 		{
-			angles_.x = LIMIT_X_UP_RAD;
+			// ‰E‰ñ“]
+			angles_.y += AsoUtility::Deg2RadF(1.0f);
+			isHitKey = true;
 		}
-	}
-
-	// ‰º‰ñ“]
-	if (ins.IsNew(KEY_INPUT_DOWN))
-	{
-		angles_.x += AsoUtility::Deg2RadF(-1.0f);
-		if (angles_.x < -LIMIT_X_DW_RAD)
+		if (ins.IsNew(KEY_INPUT_LEFT))
 		{
-			angles_.x = -LIMIT_X_DW_RAD;
+			// ¶‰ñ“]
+			angles_.y += AsoUtility::Deg2RadF(-1.0f);
+			isHitKey = true;
+		}
+
+		// ã‰ñ“]
+		if (ins.IsNew(KEY_INPUT_UP))
+		{
+			angles_.x += AsoUtility::Deg2RadF(1.0f);
+			if (angles_.x > LIMIT_X_UP_RAD)
+			{
+				angles_.x = LIMIT_X_UP_RAD;
+			}
+		}
+
+		// ‰º‰ñ“]
+		if (ins.IsNew(KEY_INPUT_DOWN))
+		{
+			angles_.x += AsoUtility::Deg2RadF(-1.0f);
+			if (angles_.x < -LIMIT_X_DW_RAD)
+			{
+				angles_.x = -LIMIT_X_DW_RAD;
+			}
 		}
 	}
 
 	//‰ñ“]ˆ—‚ğ‚µ‚Ä‚È‚¢ƒJƒƒ‰‚ğ™X‚É‘O‚ÉŒü‚©‚¹‚é
-	if (!isHitKey)
+	if (!isHitKey || isCameraReset_)
 	{
 		Quaternion goalQuaRot_ = Quaternion::Euler({ 0.0f,0.0f,0.0f });
 

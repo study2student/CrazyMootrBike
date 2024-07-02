@@ -17,6 +17,6 @@ public:
 	void Draw(void) override;
 
 private:
-	std::shared_ptr<Score> score_;
+	//std::shared_ptr<Score> score_;
 };
 

@@ -11,6 +11,7 @@
 #include "../Object/SkyDome.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Rider/Bike.h"
+#include "../Object/Score.h"
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -99,7 +100,7 @@ void TitleScene::Init(void)
 	// フロントタイヤ
 	frontTyre_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::TYRE));
 	//frontTyre_.pos = { -150.0f, -32.0f, -55.0f };
-	frontTyre_.pos = VAdd(bike.pos, Bike::BIKE_TO_FRONT_TYRE_LOCALPOS);
+	frontTyre_.pos = VAdd(bike.pos, BIKE_TO_FRONT_TYRE_LOCALPOS_FOR_TITLE);
 	size = 1.3f;
 	frontTyre_.scl = { size, size, size };
 	frontTyre_.quaRot = Quaternion::Euler(
@@ -109,7 +110,7 @@ void TitleScene::Init(void)
 	// リアタイヤ
 	rearTyre_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::TYRE));
 	//rearTyre_.pos = { -155.0f, -42.0f, -257.0f };
-	rearTyre_.pos = VAdd(bike.pos, Bike::BIKE_TO_REAR_TYRE_LOCALPOS);
+	rearTyre_.pos = VAdd(bike.pos, BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE);
 	size = 1.7f;
 	rearTyre_.scl = { size, size, size };
 	rearTyre_.quaRot = Quaternion::Euler(
@@ -127,9 +128,13 @@ void TitleScene::Init(void)
 
 	//待機状態
 	state_ = STATE::IDLE;
+	isBikeDeparture_ = false;
 
 	//エフェクト読み込み
 	InitEffect();
+
+	//スコアリセット
+	score_.ResetScore();
 
 }
 
@@ -208,6 +213,12 @@ void TitleScene::UpdateIdle(void)
 		ChangeState(STATE::START);
 	}
 
+	//スキップデバッグ
+	if (ins.IsTrgDown(KEY_INPUT_S))
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	}
+
 	// キャラアニメーション
 	animationController_->Update();
 
@@ -251,17 +262,18 @@ void TitleScene::BikeDeparture(void)
 	bike.Update();
 	charactor_.pos.z = bike.pos.z;
 	charactor_.Update();
-	frontTyre_.pos = VAdd(bike.pos, Bike::BIKE_TO_FRONT_TYRE_LOCALPOS);
-	rearTyre_.pos = VAdd(bike.pos, Bike::BIKE_TO_REAR_TYRE_LOCALPOS);
+	frontTyre_.pos = VAdd(bike.pos, BIKE_TO_FRONT_TYRE_LOCALPOS_FOR_TITLE);
+	rearTyre_.pos = VAdd(bike.pos, BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE);
 	frontTyre_.Update();
 	rearTyre_.Update();
+	isBikeDeparture_ = true;
 }
 
 void TitleScene::BikeTyreRot(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	//羽の回転
+	//タイヤの回転
 	// デグリーからラジアン(変換)
 	float speedRot = 20.0f;
 	float rad = AsoUtility::Deg2RadF(speedRot);
@@ -273,10 +285,15 @@ void TitleScene::BikeTyreRot(void)
 	tyreRotX_ = tyreRotX_.Mult(rotPow);
 
 	// 回転させる
-	frontTyre_.quaRot = tyreRotX_;
-	frontTyre_.Update();
+	//後輪駆動のため最初はリアタイヤだけ回す
 	rearTyre_.quaRot = tyreRotX_;
 	rearTyre_.Update();
+	if(isBikeDeparture_)
+	{
+		//発車したらフロントタイヤ回す
+		frontTyre_.quaRot = tyreRotX_;
+		frontTyre_.Update();
+	}
 
 }
 
@@ -285,6 +302,7 @@ void TitleScene::BurnoutEffect(void)
 	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
 	float scale = 60.0f;
 	SetScalePlayingEffekseer3DEffect(effectBurnoutPlayId_, scale / 2, scale, scale);
+
 	//徐々に高さを上げる
 	effectBurnoutPosY_ += stepBikeDeparture_ * 1.1f;
 	if (effectBurnoutPosY_ >= Bike::BURNOUT_EFFECT_MAX_POS_Y)

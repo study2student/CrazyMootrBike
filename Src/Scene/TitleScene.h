@@ -7,6 +7,7 @@ class SceneManager;
 class SkyDome;
 class AnimationController;
 class Bike;
+class Score;
 
 class TitleScene : public SceneBase
 {
@@ -24,6 +25,12 @@ public:
 
 	//バイクが発車してから次のシーンまでの最大時間
 	static constexpr float BIKE_DEPARTURE_TO_NEXT_MAX_TIME = 4.5f;
+
+	//バイクからフロントタイヤ相対座標
+	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS_FOR_TITLE = { 10.0f,68.0f,45.0f };
+
+	//バイクからリアタイヤ相対座標
+	static constexpr VECTOR BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE = { -5.0f,58.0f,-157.0f };
 
 	// コンストラクタ
 	TitleScene(void);
@@ -68,6 +75,9 @@ private:
 
 	//バイク
 	Transform bike;
+
+	//バイクが発車したかどうか
+	bool isBikeDeparture_;
 
 	//回転
 	Quaternion tyreRotX_;

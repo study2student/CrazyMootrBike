@@ -73,10 +73,10 @@ public:
 private:
 
 	// ステージ
-	std::unique_ptr<Stage> stage_;
+	std::shared_ptr<Stage> stage_;
 
-	//スコア
-	std::shared_ptr<Score> score_;
+	////スコア
+	//std::shared_ptr<Score> score_;
 
 	// スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
@@ -89,7 +89,7 @@ private:
 	std::vector<std::shared_ptr<Bike>> bikes_;
 
 	//ヘリコプター
-	std::unique_ptr<Helicopter> helicopter_;
+	std::shared_ptr<Helicopter> helicopter_;
 
 	////	敵
 	//Enemy* enemy_;

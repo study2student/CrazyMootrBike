@@ -44,10 +44,10 @@ public:
 	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
 
 	//バイクからフロントタイヤ相対座標
-	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS = { 10.0f,68.0f,45.0f };
+	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS = { 0.0f,38.0f,170.0f };
 
 	//バイクからリアタイヤ相対座標
-	static constexpr VECTOR BIKE_TO_REAR_TYRE_LOCALPOS = { -5.0f,58.0f,-157.0f };
+	static constexpr VECTOR BIKE_TO_REAR_TYRE_LOCALPOS = { -3.0f,53.0f,-47.0f };
 
 	// 状態
 	enum class STATE

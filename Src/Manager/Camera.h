@@ -75,6 +75,9 @@ public:
 	//ポーズ中かどうか設定
 	void SetIsPause(bool isPause);
 
+	//カメラを正面に戻すかどうか設定(ステージ外にでた場合)
+	void SetIsCameraReset(bool isCameraReset);
+
 private:
 
 	// カメラが追従対象とするTransform
@@ -82,6 +85,9 @@ private:
 
 	//ポーズ中かどうか
 	bool isPause_;
+
+	//カメラを正面に戻すかどうか(ステージ外にでた場合)
+	bool isCameraReset_;
 
 	// カメラモード
 	MODE mode_;

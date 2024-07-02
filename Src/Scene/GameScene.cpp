@@ -31,7 +31,7 @@ GameScene::GameScene(void)
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
-	score_ = nullptr;
+	//score_ = nullptr;
 
 	nowCursor_ = 0;
 }
@@ -66,9 +66,9 @@ void GameScene::Init(void)
 	/*enemyBike_ = new EnemyBike(enemy_);
 	enemyBike_->Init();*/
 
-	//スコア
-	score_ = std::make_shared<Score>();
-	score_->Init();
+	////スコア
+	//score_ = std::make_shared<Score>();
+	//score_->Init();
 
 	// 敵
 	for (auto& bike : bikes_) {
@@ -76,11 +76,11 @@ void GameScene::Init(void)
 	}
 
 	//ヘリコプター
-	helicopter_ = std::make_unique<Helicopter>();
+	helicopter_ = std::make_shared<Helicopter>();
 	helicopter_->Init();
 
 	// ステージ
-	stage_ = std::make_unique<Stage>(bikes_, enemy_,helicopter_->GetBomb(), this);
+	stage_ = std::make_shared<Stage>(bikes_, enemy_,helicopter_->GetBomb(), this);
 	stage_->Init();
 
 	// ステージの初期設定
@@ -129,12 +129,13 @@ void GameScene::Init(void)
 	isCursorHit_ = false;
 	stepPauseKeyHit_ = 0.0f;
 
+	//スコアリセット
+	score_.ResetScore();
 
 }
 
 void GameScene::Update(void)
 {
-	
 	InputManager& ins = InputManager::GetInstance();
 
 	//ポーズメニュー
@@ -158,10 +159,10 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-	if (stage_->GetLoopStageSize() >= 35)
+	/*if (stage_->GetLoopStageSize() >= 35)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
-	}
+	}*/
 
 
 	float deltaTime = hitStopDuration;
@@ -205,7 +206,7 @@ void GameScene::Update(void)
 		{
 			isHitStop = true;
 			//スコア加算
-			score_->AddScore();
+			score_.AddScore();
 		}
 	}
 
@@ -304,7 +305,7 @@ void GameScene::Update(void)
 
 
 	helicopter_->Update();
-	score_->Update();
+	score_.Update();
 }
 
 void GameScene::Draw(void)
@@ -318,7 +319,7 @@ void GameScene::Draw(void)
 
 	bike_->Draw();
 	helicopter_->Draw();
-	score_->Draw();
+	score_.Draw();
 
 	//enemy_->Draw();
 	//enemyBike_->Draw();
@@ -384,6 +385,8 @@ void GameScene::DrawDubg(void)
 {
 	DrawFormatString(840, 100, 0x000000,"DrawCall:%d", GetDrawCallCount());
 	DrawFormatString(840, 120, 0x000000,"FPS:%f", GetFPS());
+	//DrawFormatString(840, 420, 0x000000,"カウンタ = %d", helicopter_.use_count());
+	//DrawFormatString(840, 420, 0x000000,"bombPosY = %f", helicopter_->GetBomb().lock()->GetTransform().pos.y);
 	DrawFormatString(0, 140, 0x000000, "IsHitStop:%d", isHitStop);
 }
 
@@ -435,18 +438,35 @@ void GameScene::Collision(void)
 		return;
 	}
 
-	auto heliCap = helicopter_->GetBomb()->GetCapsule();
-	auto bikeCap = bike_->GetCapsule();
+	//auto bombCap = helicopter_->GetBomb()->GetCapsule();
+	//auto bikeCap = bikes_[3]->GetCapsule();
 
-	VECTOR diff = VSub(heliCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-	float  dis = AsoUtility::SqrMagnitudeF(diff);
-	if (dis < heliCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+	//VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+	//float  dis = AsoUtility::SqrMagnitudeF(diff);
+	//if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+	//{
+	//	//プレイヤーにダメージ
+	//	bikes_[3]->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+	//	//当たった
+	//	helicopter_->GetBomb()->SetIsCol(true);
+	//}
+
+	for (const auto& bike : bikes_)
 	{
-		//プレイヤーにダメージ
-		bike_->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+		auto bombCap = helicopter_->GetBomb()->GetCapsule();
+		auto bikeCap = bike->GetCapsule();
 
-		//当たった
-		helicopter_->GetBomb()->SetIsCol(true);
+		VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+		{
+			//プレイヤーにダメージ
+			bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+			//当たった
+			helicopter_->GetBomb()->SetIsCol(true);
+		}
 	}
 }
 
@@ -468,75 +488,6 @@ void GameScene::HitEffect(void)
 
 void GameScene::MouseProcess(void)
 {
-	//auto& ins_ = InputManager::GetInstance();
-
-	////マウス座標
-	//Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
-
-	////再開ボタン
-	//Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
-	//if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
-	//	&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y || pState_ == PAUSE_STATE::RESTART)
-	//{
-	//	//ボタンにふれている場合
-	//	reStartFontColor_ = GetColor(0, 0, 255);
-	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
-	//	{
-	//		//ポーズ解除
-	//		isPause_ = false;
-	//	}
-	//}
-	//else
-	//{
-	//	//ボタンにふれいない場合
-	//	reStartFontColor_ = GetColor(255, 255, 255);
-	//}
-
-
-
-	////リトライボタン
-	//Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
-	//if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
-	//	&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y || pState_ == PAUSE_STATE::RETRY)
-	//{
-	//	
-	//	//ボタンにふれている場合
-	//	reTryFontColor_ = GetColor(0, 0, 255);
-	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
-	//	{
-	//		//左クリックまたはスペースキーでリトライ
-	//		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	//	}
-	//}
-	//else
-	//{
-	//	//ボタンにふれいない場合
-	//	reTryFontColor_ = GetColor(255, 255, 255);
-	//}
-
-
-
-	//
-	//Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
-	//if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
-	//	&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y || pState_ == PAUSE_STATE::END)
-	//{
-	//
-	//	//ボタンにふれている場合
-	//	endFontColor_ = GetColor(0, 0, 255);
-	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
-	//	{
-	//		//左クリックまたはスペースキーでタイトルへ
-	//		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-	//	}
-	//}
-	//else
-	//{
-	//	//ボタンにふれいない場合
-	//	endFontColor_ = GetColor(255, 255, 255);
-	//}
-
-
 
 	auto& ins_ = InputManager::GetInstance();
 

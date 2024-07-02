@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <DxLib.h>
+#include <memory>
 #include "ActorBase.h"
 #include <vector>
 class AnimationController;
@@ -87,7 +88,8 @@ public:
 	void SetBikeTrans(const Transform& bikeTrans);
 
 	//”š’eæ“¾
-	std::shared_ptr<Bomb> GetBomb(void);
+	//std::weak_ptr<Bomb> GetBomb(void);
+	Bomb* GetBomb(void);
 
 private:
 
@@ -95,7 +97,8 @@ private:
 	Rotor* rotor_;
 	
 	//”š’e
-	std::shared_ptr<Bomb> bomb_;
+	//std::shared_ptr<Bomb> bomb_;
+	Bomb* bomb_;
 
 	//ƒoƒCƒNî•ñ
 	Transform bikeTrans_;

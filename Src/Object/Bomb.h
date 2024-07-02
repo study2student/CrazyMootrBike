@@ -5,6 +5,7 @@
 class Player;
 class Collider;
 class Capsule;
+class Helicopter;
 
 class Bomb : public ActorBase
 {
@@ -131,9 +132,6 @@ private:
 
 	// ˆÚ“®—Ê‚ÌŒvZ
 	void CalcGravityPow(void);
-
-	//”š’e‚Ì¶¬
-	void CreateBomb(void);
 
 };
 

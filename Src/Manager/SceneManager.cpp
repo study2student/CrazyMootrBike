@@ -218,7 +218,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	sceneId_ = sceneId;
 
 	// Œ»İ‚ÌƒV[ƒ“‚ğ‰ğ•ú
-	if (scene_ != nullptr)
+	if (scene_ != nullptr )
 	{
 		delete scene_;
 	}

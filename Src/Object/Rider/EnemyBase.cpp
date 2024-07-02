@@ -132,8 +132,8 @@ void EnemyBase::Draw(void)
 	// ŠÛ‰e•`‰æ
 	DrawShadow();
 
-	//Hp•\Ž¦
-	DrawHpBar();
+	////Hp•\Ž¦
+	//DrawHpBar();
 
 	DrawLine3D(fowardPos_, backPos_, 0x0000ff);
 

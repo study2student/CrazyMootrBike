@@ -99,7 +99,7 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BlackHole/BlackHole.efkefc");
 	resourcesMap_.emplace(SRC::BLACK_HOLE, res);
 
-	// ÉSÅ[Éã
+	// ÉSÅ[ÉãÉXÉ^Å[
 	res = new RES(RES_T::MODEL, PATH_MDL + "GoalStar/GoalStar.mv1");
 	resourcesMap_.emplace(SRC::GOAL_STAR, res);
 
@@ -130,6 +130,10 @@ void ResourceManager::Init(void)
 	//îwåiäXï¿Ç›
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/city/city.mv1");
 	resourcesMap_.emplace(SRC::CITY, res);
+
+	//ÉSÅ[Éã
+	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/GoalPost/Goal.mv1");
+	resourcesMap_.emplace(SRC::GOAL, res);
 
 	// ãﬂãóó£ìG
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");

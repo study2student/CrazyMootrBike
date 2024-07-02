@@ -76,8 +76,10 @@ void Bike::Init(void)
 	//タイヤ
 	frontTyre_ = std::make_shared<FrontTyre>();
 	frontTyre_->Init();
+	frontTyre_->SetTransform(transform_);
 	rearTyre_ = std::make_shared<RearTyre>();
 	rearTyre_->Init();
+	rearTyre_->SetTransform(transform_);
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -164,8 +166,8 @@ void Bike::Draw(void)
 	weapon_->Draw();
 
 	//タイヤ
-	frontTyre_->Draw();
-	rearTyre_->Draw();
+	/*frontTyre_->Draw();
+	rearTyre_->Draw();*/
 
 	// 体力とかゲージとか
 	DrawUI();
@@ -327,8 +329,6 @@ void Bike::UpdatePlay(void)
 	// 衝突判定
 	Collision();
 
-	// 
-
 	// 回転させる
 	transform_.quaRot = playerRotY_;
 	transformPlayer_.quaRot = playerRotY_;
@@ -384,6 +384,7 @@ void Bike::DrawDebug(void)
 
 void Bike::ProcessMove(void)
 {
+
 	auto& ins = InputManager::GetInstance();
 
 	// 移動量をゼロ
@@ -501,28 +502,104 @@ void Bike::ProcessMove(void)
 	//	dir = cameraRot.GetForward();
 	//}
 
-	// カメラ方向から後退したい
-	if (ins.IsNew(KEY_INPUT_S))
+
+
+
+	//// カメラ方向から後退したい
+	//if (ins.IsNew(KEY_INPUT_S))
+	//{
+	//	rotRad = AsoUtility::Deg2RadD(180.0f);
+	//	dir = cameraRot.GetBack();
+	//}
+
+	//// カメラ方向から右側へ移動したい
+	//if (ins.IsNew(KEY_INPUT_D))
+	//{
+	//	rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+	//	dir = cameraRot.GetRight();
+	//}
+
+	//// カメラ方向から左側へ移動したい
+	//if (ins.IsNew(KEY_INPUT_A))
+	//{
+	//	rotRadZ = AsoUtility::Deg2RadD(45.0f);
+	//	dir = cameraRot.GetLeft();
+
+	//}
+
+
+	//もし上ってしまったら戻す
+	//右側
+	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0f);
-		dir = cameraRot.GetBack();
+		dir = AsoUtility::DIR_L;
+		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
+
+	}
+	else
+	{
+		if (!(transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX))
+		{
+			SceneManager::GetInstance().GetCamera()->SetIsCameraReset(false);
+			// カメラ方向から後退したい
+			if (ins.IsNew(KEY_INPUT_S))
+			{
+				rotRad = AsoUtility::Deg2RadD(180.0f);
+				dir = cameraRot.GetBack();
+			}
+
+			// カメラ方向から右側へ移動したい
+			if (ins.IsNew(KEY_INPUT_D))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+				dir = cameraRot.GetRight();
+			}
+
+			// カメラ方向から左側へ移動したい
+			if (ins.IsNew(KEY_INPUT_A))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(45.0f);
+				dir = cameraRot.GetLeft();
+
+			}
+		}
 	}
 
-	// カメラ方向から右側へ移動したい
-	if (ins.IsNew(KEY_INPUT_D))
+	//左側
+	if (transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX)
 	{
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetRight();
+		dir = AsoUtility::DIR_R;
+		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
 	}
-
-	// カメラ方向から左側へ移動したい
-	if (ins.IsNew(KEY_INPUT_A))
+	else
 	{
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetLeft();
+		if (!(transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX))
+		{
 
+			SceneManager::GetInstance().GetCamera()->SetIsCameraReset(false);
+			// カメラ方向から後退したい
+			if (ins.IsNew(KEY_INPUT_S))
+			{
+				rotRad = AsoUtility::Deg2RadD(180.0f);
+				dir = cameraRot.GetBack();
+			}
+
+			// カメラ方向から右側へ移動したい
+			if (ins.IsNew(KEY_INPUT_D))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+				dir = cameraRot.GetRight();
+			}
+
+			// カメラ方向から左側へ移動したい
+			if (ins.IsNew(KEY_INPUT_A))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(45.0f);
+				dir = cameraRot.GetLeft();
+
+			}
+		}
 	}
-
 
 
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
@@ -580,6 +657,7 @@ void Bike::ProcessMove(void)
 		// 回転処理
 		SetGoalRotateZ(rotRadZ);
 	}
+
 
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;

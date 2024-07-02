@@ -60,8 +60,10 @@ void Helicopter::Init(void)
 	rotor_->Init();
 
 	//”š’e
-	bomb_ = std::make_shared<Bomb>();
+	//bomb_ = std::make_shared<Bomb>();
+	bomb_ = new Bomb();
 	bomb_->Init();
+
 
 	// ƒ‚ƒfƒ‹‚ÌŠî–{İ’è
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -163,7 +165,12 @@ void Helicopter::SetBikeTrans(const Transform& bikeTrans)
 	bikeTrans_ = bikeTrans;
 }
 
-std::shared_ptr<Bomb> Helicopter::GetBomb(void)
+//std::weak_ptr<Bomb> Helicopter::GetBomb(void)
+//{
+//	return bomb_;
+//}
+
+Bomb* Helicopter::GetBomb(void)
 {
 	return bomb_;
 }

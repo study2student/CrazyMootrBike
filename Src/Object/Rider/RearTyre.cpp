@@ -34,9 +34,11 @@ void RearTyre::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::TYRE));
-	float scale = 1.0f;
-	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f, 0.0f, 0.0f };
+	float scale = 2.05f;
+	transform_.scl = { scale , scale, scale };
+	transform_.pos = { transformParent_.pos.x + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.x,
+		transformParent_.pos.y + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.y,
+		transformParent_.pos.z + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });
@@ -119,6 +121,7 @@ void RearTyre::UpdateRot(void)
 
 void RearTyre::DrawDebug(void)
 {
+	DrawFormatString(840, 320, 0xffffff, "rearPos = {%f, %f, %f}", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }
 
 void RearTyre::ProcessDebug(void)
@@ -129,7 +132,7 @@ void RearTyre::Rotate(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	//羽の回転
+	//リアタイヤの回転
 	// デグリーからラジアン(変換)
 	float rad = AsoUtility::Deg2RadF(SPEED_ROT);
 
@@ -149,8 +152,10 @@ void RearTyre::SyncParent(void)
 	//親バイクの位置に合わせる
 	//座標も少し調整
 	//transform_.pos = transformParent_.pos;
-	transform_.pos = { transformParent_.pos.x, 0.0f, transformParent_.pos.z };
-	transform_.pos = VAdd(transform_.pos, LOCAL_POS);
+	transform_.pos = { transformParent_.pos.x + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.x,
+		transformParent_.pos.y + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.y,
+		transformParent_.pos.z + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.z };
+	//transform_.pos = VAdd(transform_.pos, Bike::BIKE_TO_REAR_TYRE_LOCALPOS);
 	transform_.quaRot = transformParent_.quaRot;
-	transform_.quaRot.Mult(transform_.quaRot, transformParent_.quaRot);
+	//transform_.Update();
 }
