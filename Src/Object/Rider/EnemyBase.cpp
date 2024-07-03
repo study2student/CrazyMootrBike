@@ -203,6 +203,15 @@ void EnemyBase::Destroy(void)
 	ChangeState(STATE::DEAD);
 }
 
+void EnemyBase::AddScoreToPlayer(int playerId, int score)
+{
+	if (playerId >= 0 && playerId < bikes_.size()) {
+		bikes_[playerId]->AddScore(score);
+		// デバッグログ
+		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
+	}
+}
+
 void EnemyBase::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Enemy/";

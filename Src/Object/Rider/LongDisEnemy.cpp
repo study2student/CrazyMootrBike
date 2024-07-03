@@ -167,6 +167,7 @@ void LongDisEnemy::ProcessMove(void)
 			speed_ = 0;
 			isBikeCol_ = true;
 			isAddScore_ = true;
+			AddScoreToPlayer(bike->GetPlayerID(), 10);
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);

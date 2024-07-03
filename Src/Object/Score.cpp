@@ -1,3 +1,4 @@
+#include <DxLib.h>
 #include "../Application.h"
 #include "Rider/EnemyBase.h"
 #include "Score.h"
@@ -21,18 +22,14 @@ void Score::Update(void)
 
 void Score::Draw(void)
 {
-	DrawFormatString(840, 140, 0x000000, "SCORE：%d", score_);
-	//スコア
-	//DrawExtendFormatString(Application::SCREEN_SIZE_X / 3, 0, 3, 3, 0xff0000, "スコア:%.d", score_);
 }
 
-void Score::AddScore(void)
+void Score::SetScore(int score)
 {
-	//スコア加算
-	//score_ += EnemyBase::SCORE_INCREMENT;
+	score_ += score;
 }
 
-int Score::GetScore(void)
+const int Score::GetScore(void) const
 {
 	return score_;
 }

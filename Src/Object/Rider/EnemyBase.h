@@ -143,6 +143,8 @@ public:
 	//死亡状態へ
 	void Destroy(void);
 
+	// スコア加算メソッド
+	void AddScoreToPlayer(int playerId, int score);
 protected:
 
 	// アニメーション

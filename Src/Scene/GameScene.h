@@ -55,6 +55,8 @@ public:
 	//エンカウント値
 	static constexpr int ENCOUNT = 350;
 
+	static constexpr int STAGE_COUNT = 35;
+
 	// コンストラクタ
 	GameScene(void);
 
@@ -72,8 +74,6 @@ public:
 	//敵が追加されたタイミングかどうか
 	bool GetIsCreateEnemy(void);
  
-	// スコア加算メソッド
-	void AddScoreToPlayer(int playerId, int score);
 private:
 	int mainScreen_;
 

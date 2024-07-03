@@ -10,6 +10,7 @@ class Capsule;
 class Player;
 class FrontTyre;
 class RearTyre;
+class Score;
 
 class Bike : public ActorBase
 {
@@ -133,6 +134,8 @@ public:
 
 	// プレイヤー同士の当たり判定
 	void Flip(VECTOR dir);
+
+	const int GetPlayerID(void) const;
 private:
 
 	Transform transformPlayer_;
@@ -207,7 +210,7 @@ private:
 	VECTOR flipDir_;
 
 	// スコア
-	int score_;
+	std::shared_ptr<Score>score_;
 
 	//アニメーション
 	void InitAnimation(void);

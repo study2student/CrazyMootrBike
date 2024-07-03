@@ -47,22 +47,17 @@ void GameScene::Init(void)
 	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2);
 
 	// プレイヤー
-	//rider_ = new Rider();
-	//rider_->Init();
-
-	//player_ = new Player();
-	//player_->Init();
-
 	//bike_ = std::make_shared<Bike>(100,3);
 	//bike_->Init();
 
 	for (int i = 0; i < 4; i++) {
-		bikes_.push_back(std::make_shared<Bike>(200.0f * (i + 1), i));
+		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
 	}
 
 	for (auto& bike : bikes_) {
-		bike->Init();
+	bike->Init();
 	}
+
 
 	//enemy_->Init();
 	/*enemyBike_ = new EnemyBike(enemy_);
@@ -80,9 +75,10 @@ void GameScene::Init(void)
 	selectScene_ = std::make_unique<SelectScene>();
 	selectScene_->Init();
 	
+	//各プレイヤーのカメラを生成
 	if (selectScene_->GetPlayNumber() == 1)
 	{
-		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
+		cameras_.push_back(std::make_shared<Camera>());
 	}
 	else if (selectScene_->GetPlayNumber() == 4)
 	{
@@ -182,7 +178,7 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-	if (stage_->GetLoopStageSize() >= 35)
+	if (stage_->GetLoopStageSize() >= STAGE_COUNT)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
@@ -237,11 +233,6 @@ void GameScene::Update(void)
 			isHitStop = true;
 			//スコア加算
 			//score_->AddScore();
-
-			for (int p = 0; p < bikes_.size(); p++)
-			{
-				AddScoreToPlayer(p, 10);
-			}
 
 		}
 	}
@@ -374,7 +365,7 @@ void GameScene::Draw(void)
 		//}
 		// 背景
 		skyDome_->Draw();
-		//stage_->Draw();
+		stage_->Draw();
 
 		//bike_->Draw();
 		helicopter_->Draw();
@@ -404,21 +395,39 @@ void GameScene::Draw(void)
 		for (auto& bike : bikes_) {
 			bike->Draw();
 		}
-		SetDrawScreen(DX_SCREEN_BACK);
-		switch (i)
-		{
-		case 0:
-			DrawGraph(0, 0, mainScreen_, false);
-			break;
-		case 1:
-			DrawGraph(Application::SCREEN_SIZE_X / 2, 0, mainScreen_, false);
-			break;
-		case 2:
-			DrawGraph(0, Application::SCREEN_SIZE_Y / 2, mainScreen_, false);
-			break;
-		case 3:
-			DrawGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, mainScreen_, false);
-			break;
+
+		for (int p = 0; p < bikes_.size(); p++) {
+			int score = bikes_[p]->GetScore();
+			int x = 50; // スコアの描画位置X
+			int y = 50 + p * 30; // 各プレイヤーのスコアを縦に並べて表示
+
+			// スコアを描画
+			DrawFormatString(x, y, 0xff0000, "Player %d Score:%d", p + 1, score);
+
+			SetDrawScreen(DX_SCREEN_BACK);
+
+			int sx = Application::SCREEN_SIZE_X;
+			int sy = Application::SCREEN_SIZE_Y;
+
+			switch (i)
+			{
+			case 0:
+				DrawGraph(0, 0, mainScreen_, false);
+				DrawExtendFormatString(sx / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
+				break;
+			case 1:
+				DrawGraph(sx / 2, 0, mainScreen_, false);
+				DrawExtendFormatString(sx - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 2, bikes_[1]->GetScore());
+				break;
+			case 2:
+				DrawGraph(0, sy / 2, mainScreen_, false);
+				DrawExtendFormatString(sx / 2 - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 3, bikes_[2]->GetScore());
+				break;
+			case 3:
+				DrawGraph(sx / 2, sy / 2, mainScreen_, false);
+				DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
+				break;
+			}
 		}
 	}
 
@@ -456,14 +465,6 @@ std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
 bool GameScene::GetIsCreateEnemy(void)
 {
 	return isCreateEnemy_;
-}
-
-void GameScene::AddScoreToPlayer(int playerId, int score)
-{
-	if (playerId >= 0 && playerId < bikes_.size()) {
-		bikes_[playerId]->AddScore(score);
-		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore()); // デバッグログ
-	}
 }
 
 void GameScene::DrawDubg(void)
@@ -542,7 +543,7 @@ void GameScene::Collision(void)
 
 void GameScene::BikeCollision(void)
 {
-	//敵同士の当たり判定(弾く)
+	//敵同士の当たり判定(弾く)q
 	size_t sizeBb = bikes_.size();
 	for (int b1 = 0; b1 < sizeBb; b1++)
 	{
@@ -591,7 +592,7 @@ void GameScene::InitEffect(void)
 void GameScene::HitEffect(void)
 {
 	for (auto& bike : bikes_) {
-		auto pPos = bike->GetTransform();
+		const auto pPos = bike->GetTransform();
 		SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
 		SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
 	}

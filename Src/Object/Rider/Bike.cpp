@@ -11,6 +11,7 @@
 #include "../Common/Collider.h"
 #include "../Planet.h"
 #include "Player.h"
+#include "../Score.h"
 #include "../Bomb.h"
 #include "FrontTyre.h"
 #include "RearTyre.h"
@@ -40,9 +41,6 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	stepJump_ = 0.0f;
 	stepJumpSecond_ = 0.0f;
 	jumpSpeed_ = 1.0f;
-
-	// スコア
-	score_ = 0;
 
 	isAttack_ = false;
 
@@ -107,6 +105,10 @@ void Bike::Init(void)
 	// 体力
 	hp_ = MAX_HP;
 
+	// スコア
+	score_ = std::make_shared<Score>();
+	score_->Init();
+
 	// 初期状態
 	ChangeState(STATE::PLAY);
 
@@ -135,6 +137,9 @@ void Bike::Update(void)
 	rearTyre_->Update();
 	rearTyre_->SetTransform(transform_);
 	
+	// スコア
+	score_->Update();
+
 	// モデル制御更新
 	transform_.Update();
 	transformPlayer_.Update();
@@ -178,12 +183,12 @@ const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 
 void Bike::AddScore(int score)
 {
-	score_ += score;
+	score_->SetScore(score);
 }
 
 const int Bike::GetScore() const
 {
-	return score_;
+	return score_->GetScore();
 }
 
 void Bike::Jump(void)
@@ -255,6 +260,11 @@ void Bike::Flip(VECTOR dir)
 	flipDir_ = dir;
 	flipSpeed_ = 5.0f;
 	ChangeState(STATE::FLIPED);
+}
+
+const int Bike::GetPlayerID(void) const
+{
+	return playerID_;
 }
 
 void Bike::InitAnimation(void)
@@ -393,7 +403,7 @@ void Bike::DrawUI(void)
 	DrawFormatString(0, 20, 0x00ff00, "HP : %d", hp_);
 
 	//スコア
-	DrawExtendFormatString(Application::SCREEN_SIZE_X / 3, 0, 3, 3, 0xff0000, "スコア:%.d", score_);
+	//DrawExtendFormatString(Application::SCREEN_SIZE_X / 3, 0, 3, 3, 0xff0000, "スコア:%.d", score_);
 }
 
 void Bike::DrawDebug(void)
