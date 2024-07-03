@@ -179,6 +179,9 @@ void TitleScene::InitEffect(void)
 {
 	effectBurnoutResId_=ResourceManager::GetInstance().Load(
 			ResourceManager::SRC::BURNOUT_EFFECT).handleId_;
+
+	effectStartResId_= ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::START_EFFECT).handleId_;
 }
 
 void TitleScene::ChangeState(STATE state)
@@ -202,10 +205,17 @@ void TitleScene::ChangeStateIdle(void)
 
 void TitleScene::ChangeStateStart(void)
 {
+	StartEffect();
 }
 
 void TitleScene::UpdateIdle(void)
 {
+	//タイヤ回転
+	BikeTyreRot();
+
+	//待機中エフェクト(スタート前)
+	BurnoutIdleEffect();
+
 	//演出スタート
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
@@ -235,8 +245,8 @@ void TitleScene::UpdateStart(void)
 	stepBikeDeparture_ += SceneManager::GetInstance().GetDeltaTime();
 	if (stepBikeDeparture_ <= BIKE_IDLE__MAX_TIME)
 	{
-		//待機中エフェクト
-		BurnoutEffect();
+		//待機中エフェクト(スタート直後)
+		BurnoutMoveEffect();
 	}
 	else
 	{
@@ -274,8 +284,18 @@ void TitleScene::BikeTyreRot(void)
 	auto& ins = InputManager::GetInstance();
 
 	//タイヤの回転
+	//速度変更
+	float speedRot = 0.0f;
+	switch (state_)
+	{
+	case TitleScene::STATE::IDLE:
+		speedRot = 10.0f;
+		break;
+	case TitleScene::STATE::START:
+		speedRot = 20.0f;
+		break;
+	}
 	// デグリーからラジアン(変換)
-	float speedRot = 20.0f;
 	float rad = AsoUtility::Deg2RadF(speedRot);
 
 	// ラジアンからクォータニオン(指定軸を指定角分回転させる)
@@ -297,7 +317,26 @@ void TitleScene::BikeTyreRot(void)
 
 }
 
-void TitleScene::BurnoutEffect(void)
+void TitleScene::StartEffect(void)
+{
+	effectStartPlayId_ = PlayEffekseer3DEffect(effectStartResId_);
+	float scale = 50.0f;
+	SetScalePlayingEffekseer3DEffect(effectStartPlayId_, scale, scale, scale);
+	SetPosPlayingEffekseer3DEffect(effectStartPlayId_, bike.pos.x, bike.pos.y + 100.0f , bike.pos.z -100.0f);
+	SetRotationPlayingEffekseer3DEffect(effectStartPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
+}
+
+void TitleScene::BurnoutIdleEffect(void)
+{
+	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
+	float scale = 60.0f;
+	SetScalePlayingEffekseer3DEffect(effectBurnoutPlayId_, scale / 2, scale, scale);
+	float localPosZ = 80.0f;
+	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, Bike::IDLE_EFFECT_POS_Y, bike.pos.z - localPosZ);
+	SetRotationPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
+}
+
+void TitleScene::BurnoutMoveEffect(void)
 {
 	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
 	float scale = 60.0f;

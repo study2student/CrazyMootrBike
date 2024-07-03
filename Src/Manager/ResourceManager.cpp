@@ -188,6 +188,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BikeStart/burnoutEffect.efkefc");
 	resourcesMap_.emplace(SRC::BURNOUT_EFFECT, res);
 
+	// ゲーム開始エフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Start/startEffect.efkefc");
+	resourcesMap_.emplace(SRC::START_EFFECT, res);
+
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	resourcesMap_.emplace(SRC::HitEffect, res);

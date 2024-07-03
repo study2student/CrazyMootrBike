@@ -468,6 +468,12 @@ void GameScene::Collision(void)
 			//当たった
 			helicopter_->GetBomb()->SetIsCol(true);
 		}
+
+		//ゲームオーバー処理
+		if (bike->GetHP() <= 0)
+		{
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		}
 	}
 }
 

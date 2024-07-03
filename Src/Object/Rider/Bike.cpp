@@ -261,6 +261,11 @@ void Bike::Damage(int damage)
 	}
 }
 
+const int& Bike::GetHP(void)
+{
+	return hp_;
+}
+
 const bool& Bike::GetIsOutSide(void)
 {
 	return isOutSide_;

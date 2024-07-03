@@ -83,6 +83,10 @@ private:
 	Quaternion tyreRotX_;
 
 	//エフェクト系
+	//開始エフェクト
+	int effectStartResId_;
+	int effectStartPlayId_;
+
 	// バーンアウトエフェクト
 	int effectBurnoutResId_;
 	int effectBurnoutPlayId_;
@@ -112,7 +116,14 @@ private:
 	//タイヤ回転
 	void BikeTyreRot(void);
 
-	//バーンアウトエフェクト
-	void BurnoutEffect(void);
+	//スタートエフェクト
+	void StartEffect(void);
+
+	//バーンアウトエフェクト(スタート押す前)
+	void BurnoutIdleEffect(void);
+
+	//バーンアウトエフェクト(スタート押した後)
+	void BurnoutMoveEffect(void);
+
 
 };

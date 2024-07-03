@@ -49,6 +49,7 @@ public:
 		BIKE,		//バイク
 		TYRE,		//タイヤ
 		BURNOUT_EFFECT, //バーンアウトエフェクト(バイク発車前)
+		START_EFFECT, //ゲーム開始エフェクト
 
 		GOLD_MEDAL,		//金メダル
 		SILVER_MEDAL,	//銀メダル

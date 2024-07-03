@@ -38,10 +38,13 @@ public:
 	static constexpr float TIME_JUMP_IN = 0.5f;
 
 	//バーンアウトエフェクト初期高さ
-	static constexpr float BURNOUT_EFFECT_FIRST_POS_Y = -290.0f;
+	static constexpr float BURNOUT_EFFECT_FIRST_POS_Y = -280.0f; //-290.0f
 
 	//バーンアウトエフェクト最大高さ
 	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
+
+	//待機エフェクト初期高
+	static constexpr float IDLE_EFFECT_POS_Y = -510.0f; 
 
 	//バイクからフロントタイヤ相対座標
 	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS = { 0.0f,38.0f,170.0f };
@@ -103,6 +106,9 @@ public:
 
 	//ダメージ
 	void Damage(int damage);
+
+	//現HP取得
+	const int& GetHP(void);
 
 	//バイクが場外に出たか取得
 	const bool& GetIsOutSide(void);
