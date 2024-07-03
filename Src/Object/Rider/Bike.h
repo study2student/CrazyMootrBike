@@ -104,6 +104,9 @@ public:
 	//ダメージ
 	void Damage(int damage);
 
+	//バイクが場外に出たか取得
+	const bool& GetIsOutSide(void);
+
 private:
 
 	Transform transformPlayer_;
@@ -120,6 +123,9 @@ private:
 
 	// 状態管理
 	STATE state_;
+
+	//場外にいるかどうか
+	bool isOutSide_;
 
 	// プレイヤーIDを保持
 	int playerID_;

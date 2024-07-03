@@ -196,6 +196,7 @@ void GameScene::Update(void)
 	}
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
+	helicopter_->SetBikeIsOutside(bikes_[3]->GetIsOutSide());
 
 	//“G
 	size_t sizeE = enemys_.size();
