@@ -160,15 +160,15 @@ const std::weak_ptr<Capsule> Helicopter::GetCapsule(void) const
 	return capsule_;
 }
 
-void Helicopter::SetBikeTrans(const Transform& bikeTrans)
+void Helicopter::SetBikeIsOutside(const bool& isOutside)
 {
-	bikeTrans_ = bikeTrans;
+	isTargetOutside_ = isOutside;
 }
 
-//std::weak_ptr<Bomb> Helicopter::GetBomb(void)
-//{
-//	return bomb_;
-//}
+void Helicopter::SetBikeTrans(const Transform& bikeTrans)
+{
+	targetTrans_ = bikeTrans;
+}
 
 Bomb* Helicopter::GetBomb(void)
 {
@@ -325,34 +325,15 @@ void Helicopter::ProcessMove(void)
 
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
-	//バイクプレイヤーに合わせる
-	transform_.pos.x = bikeTrans_.pos.x;
+	//バイクプレイヤーに合わせる(ステージ内にいるときのみ)
+	if(!isTargetOutside_)
+	{
+		transform_.pos.x = targetTrans_.pos.x;
+	}
+
 
 	//前に進む
 	VECTOR movePowF_ = VScale(transform_.GetForward(), speed_);
-
-	//// カメラ方向から後退したい
-	//if (ins.IsNew(KEY_INPUT_S))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0f);
-	//	dir = cameraRot.GetBack();
-	//}
-
-	//// カメラ方向から右側へ移動したい
-	//if (ins.IsNew(KEY_INPUT_D))
-	//{
-	//	rotRadZ = AsoUtility::Deg2RadD(-45.0f);
-	//	dir = cameraRot.GetRight();
-	//}
-
-	//// カメラ方向から左側へ移動したい
-	//if (ins.IsNew(KEY_INPUT_A))
-	//{
-	//	rotRadZ = AsoUtility::Deg2RadD(45.0f);
-	//	dir = cameraRot.GetLeft();
-
-	//}
-
 
 
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
@@ -425,9 +406,18 @@ void Helicopter::ProcessDebug(void)
 
 void Helicopter::NormalAttack(void)
 {
-	//爆弾情報
-	bomb_->Update();
+
+	//爆弾の位置更新
 	bomb_->SetHeliTrans(transform_);
+
+	//ターゲットが場外にいたら動かさない(爆弾未設置状態のみ)
+	if (isTargetOutside_ && bomb_->GetState() == Bomb::STATE::IDLE)
+	{
+		return;
+	}
+
+	//爆弾
+	bomb_->Update();
 }
 
 void Helicopter::LongAttack(void)
@@ -495,49 +485,6 @@ void Helicopter::Collision(void)
 
 void Helicopter::CollisionGravity(void)
 {
-
-	//// 重力方向
-	//VECTOR dirGravity = AsoUtility::DIR_D;
-
-	//// 重力方向の反対
-	//VECTOR dirUpGravity = AsoUtility::DIR_U;
-
-	//// 重力の強さ
-	//float gravityPow = Planet::DEFAULT_GRAVITY_POW;
-
-	//float checkPow = 10.0f;
-	//gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	//gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
-	//gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	//for (const auto c : colliders_)
-	//{
-
-	//	// 地面との衝突
-	//	auto hit = MV1CollCheck_Line(
-	//		c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
-
-	//	// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
-	//	if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
-	//	{
-
-	//		// 衝突地点から、少し上に移動
-	//		movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
-
-	//	
-	//
-
-	//		if (isJump_)
-	//		{
-	//			// 着地モーション
-	//			animationController_->Play(
-	//				(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
-	//		}
-
-	//		isJump_ = false;
-
-	//	}
-
-	//}
 }
 
 void Helicopter::CollisionCapsule(void)
@@ -551,7 +498,6 @@ void Helicopter::CollisionCapsule(void)
 	// カプセルとの衝突判定
 	for (const auto c : colliders_)
 	{
-
 		auto hits = MV1CollCheck_Capsule(
 			c->modelId_, -1,
 			cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius());
@@ -601,22 +547,13 @@ void Helicopter::CalcGravityPow(void)
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 
-	// 最初は実装しない。地面と突き抜けることを確認する。
-	// 内積
-	//float dot = VDot(dirGravity, jumpPow_);
-	//if (dot >= 0.0f)
-	//{
-	//	// 重力方向と反対方向(マイナス)でなければ、ジャンプ力を無くす
-	//	jumpPow_ = gravity;
-	//}
-
 }
 
 void Helicopter::BikeDisFunc(void)
 {
 	//バイクとヘリの距離をはかる
-	VECTOR atkLinePos = VAdd(bikeTrans_.pos, ATTACK_LINE_LOCAL_POS);
-	VECTOR atkLineMaxPos = VAdd(bikeTrans_.pos, ATTACK_LINE_MAX_LOCAL_POS);
+	VECTOR atkLinePos = VAdd(targetTrans_.pos, ATTACK_LINE_LOCAL_POS);
+	VECTOR atkLineMaxPos = VAdd(targetTrans_.pos, ATTACK_LINE_MAX_LOCAL_POS);
 
 	switch (state_)
 	{
@@ -667,12 +604,6 @@ void Helicopter::BikeDisFunc(void)
 bool Helicopter::IsEndLanding(void)
 {
 	bool ret = true;
-
-	//// アニメーションが終了しているか
-	//if (animationController_->IsEnd())
-	//{
-	//	return ret;
-	//}
 
 	return false;
 }

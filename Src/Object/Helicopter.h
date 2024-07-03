@@ -84,8 +84,9 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
-	//バイク情報の保存
+	//バイク情報の保存(バイクの位置回転情報、場外にいるかどうか)
 	void SetBikeTrans(const Transform& bikeTrans);
+	void SetBikeIsOutside(const bool& isOutside);
 
 	//爆弾取得
 	//std::weak_ptr<Bomb> GetBomb(void);
@@ -101,7 +102,8 @@ private:
 	Bomb* bomb_;
 
 	//バイク情報
-	Transform bikeTrans_;
+	Transform targetTrans_;
+	bool isTargetOutside_;
 
 	//// アニメーション
 	//AnimationController* animationController_;

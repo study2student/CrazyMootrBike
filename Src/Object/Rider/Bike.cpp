@@ -45,6 +45,7 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	jumpSpeed_ = 1.0f;
 
 	isAttack_ = false;
+	isOutSide_ = false;
 
 	// 衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
@@ -258,6 +259,11 @@ void Bike::Damage(int damage)
 	{
 		hp_ = MIN_HP;
 	}
+}
+
+const bool& Bike::GetIsOutSide(void)
+{
+	return isOutSide_;
 }
 
 void Bike::InitAnimation(void)
@@ -503,31 +509,6 @@ void Bike::ProcessMove(void)
 	//}
 
 
-
-
-	//// カメラ方向から後退したい
-	//if (ins.IsNew(KEY_INPUT_S))
-	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0f);
-	//	dir = cameraRot.GetBack();
-	//}
-
-	//// カメラ方向から右側へ移動したい
-	//if (ins.IsNew(KEY_INPUT_D))
-	//{
-	//	rotRadZ = AsoUtility::Deg2RadD(-45.0f);
-	//	dir = cameraRot.GetRight();
-	//}
-
-	//// カメラ方向から左側へ移動したい
-	//if (ins.IsNew(KEY_INPUT_A))
-	//{
-	//	rotRadZ = AsoUtility::Deg2RadD(45.0f);
-	//	dir = cameraRot.GetLeft();
-
-	//}
-
-
 	//もし上ってしまったら戻す
 	//右側
 	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
@@ -535,6 +516,8 @@ void Bike::ProcessMove(void)
 		dir = AsoUtility::DIR_L;
 		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
 
+		//場外にでている
+		isOutSide_ = true;
 	}
 	else
 	{
@@ -570,6 +553,9 @@ void Bike::ProcessMove(void)
 	{
 		dir = AsoUtility::DIR_R;
 		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
+
+		//場外にでている
+		isOutSide_ = true;
 	}
 	else
 	{
@@ -599,6 +585,12 @@ void Bike::ProcessMove(void)
 
 			}
 		}
+	}
+
+	//場外にでていない
+	if (!(transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX) && !(transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX))
+	{
+		isOutSide_ = false;
 	}
 
 

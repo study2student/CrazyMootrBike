@@ -123,6 +123,11 @@ bool Bomb::GetIsCol(void)
 	return isCol_;
 }
 
+const Bomb::STATE& Bomb::GetState(void)
+{
+	return state_;
+}
+
 void Bomb::ChangeState(STATE state)
 {
 	//ó‘Ô•ÏX

@@ -63,6 +63,9 @@ public:
 	//”š’e‚ª“–‚½‚Á‚½‚ªæ“¾
 	bool GetIsCol(void);
 
+	//ó‘Ôæ“¾
+	const STATE& GetState(void);
+
 private:
 
 
