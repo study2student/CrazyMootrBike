@@ -207,8 +207,6 @@ void EnemyBase::AddScoreToPlayer(int playerId, int score)
 {
 	if (playerId >= 0 && playerId < bikes_.size()) {
 		bikes_[playerId]->AddScore(score);
-		// デバッグログ
-		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
 	}
 }
 

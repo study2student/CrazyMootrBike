@@ -208,6 +208,12 @@ void TitleScene::UpdateIdle(void)
 		ChangeState(STATE::START);
 	}
 
+	//スキップデバッグ
+	if (ins.IsTrgDown(KEY_INPUT_S))
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	}
+
 	// キャラアニメーション
 	animationController_->Update();
 

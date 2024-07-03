@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 
 class Score
 {
@@ -13,8 +12,6 @@ public:
 	~Score(void);
 
 	void Init(void);
-	void Update(void);
-	void Draw(void);
 
 	void SetScore(int score);
 

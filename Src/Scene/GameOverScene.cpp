@@ -22,7 +22,6 @@ void GameOverScene::Init(void)
 
 void GameOverScene::Update(void)
 {
-	score_->Update();
 	// ƒV[ƒ“‘JˆÚ
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))

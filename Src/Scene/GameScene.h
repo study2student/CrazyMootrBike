@@ -77,6 +77,11 @@ public:
 private:
 	int mainScreen_;
 
+	// ゲームスタート時のカウント
+	float startCount_;
+	// スタートフラグ
+	bool isStart_;
+
 	// カメラ
 	std::vector<std::shared_ptr<Camera>> cameras_;
 
@@ -87,7 +92,7 @@ private:
 	std::shared_ptr<Score> score_;
 
 	// スカイドーム
-	std::unique_ptr<SkyDome> skyDome_;
+	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
 	// プレイ人数
 	std::unique_ptr<SelectScene> selectScene_;

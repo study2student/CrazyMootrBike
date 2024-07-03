@@ -74,7 +74,7 @@ void Bike::Init(void)
 		ResourceManager::SRC::BIKE));
 	float scale = 1.3f;
 	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f + localPosX_, 0.0f, 0.0f };
+	transform_.pos = { 1670.0f + localPosX_, -100.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -136,9 +136,6 @@ void Bike::Update(void)
 	frontTyre_->SetTransform(transform_);
 	rearTyre_->Update();
 	rearTyre_->SetTransform(transform_);
-	
-	// スコア
-	score_->Update();
 
 	// モデル制御更新
 	transform_.Update();

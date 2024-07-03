@@ -28,7 +28,6 @@ GameScene::GameScene(void)
 {
 	//bike_ = nullptr;
 	enemy_ = nullptr;
-	skyDome_ = nullptr;
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
@@ -47,15 +46,12 @@ void GameScene::Init(void)
 	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2);
 
 	// プレイヤー
-	//bike_ = std::make_shared<Bike>(100,3);
-	//bike_->Init();
-
 	for (int i = 0; i < 4; i++) {
 		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
 	}
 
 	for (auto& bike : bikes_) {
-	bike->Init();
+		bike->Init();
 	}
 
 
@@ -90,9 +86,10 @@ void GameScene::Init(void)
 
 
 
-	for (auto& camera : cameras_) {
-		camera->Init();
-		//camera->ChangeMode(Camera::MODE::FOLLOW);
+	for (int i = 0; i < cameras_.size(); i++) {
+		cameras_[i]->Init();
+		cameras_[i]->ChangeMode(Camera::MODE::FOLLOW);
+		cameras_[i]->SetFollow(&bikes_[i]->GetTransform()); // 各プレイヤーのバイクを追従
 	}
 
 	//ヘリコプター
@@ -108,9 +105,10 @@ void GameScene::Init(void)
 
 	// スカイドーム
 	for (auto& bike : bikes_) {
-		skyDome_ = std::make_unique<SkyDome>(bike->GetTransform());
+		auto sky = std::make_unique<SkyDome>(bike->GetTransform());
+		sky->Init();
+		skyDomes_.emplace_back(std::move(sky));
 	}
-	skyDome_->Init();
 
 	//for (auto& bike : bikes_) {
 	//	SceneManager::GetInstance().GetCamera()->SetFollow(&bike->GetTransform());
@@ -149,7 +147,9 @@ void GameScene::Init(void)
 	isCursorHit_ = false;
 	stepPauseKeyHit_ = 0.0f;
 
-
+	// ゲームスタート時のカウント
+	startCount_ = 3.0f;
+	isStart_ = false;
 }
 
 void GameScene::Update(void)
@@ -183,159 +183,173 @@ void GameScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 	}
 
-
-	float deltaTime = hitStopDuration;
-	skyDome_->Update();
-	if (!isHitStop)
+	// スタート時のカウントダウンを減らす
+	if (startCount_ > 0.0f)
 	{
-		//bike_->Update();
-
-		for (auto& bike : bikes_) {
-			bike->Update();
-		}
-
+		startCount_ -= 1 / 60.0f;
 	}
-	else
+	else if (startCount_ <= 0.0f)
 	{
-		// ヒットストップ中の場合、タイマーを更新
-		hitStopTimer -= deltaTime;
-		if (hitStopTimer <= 0.f) {
-			isHitStop = false;
-		}
-
-		// ヒットエフェクト
-		float scale = 50.0f;
-		HitEffect();
-		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
-		SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
-	}
-	for (auto& bike : bikes_)
-	{
-		enemy_->SetBikeTrans(bike->GetTransform());
-	}
-	//enemy_->SetBikeTrans(bike_->GetTransform());
-	helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
-
-	//カメラ
-	for (int i = 0; i < cameras_.size(); i++) {
-		cameras_[i]->ChangeMode(Camera::MODE::FOLLOW);
-		cameras_[i]->SetFollow(&bikes_[i]->GetTransform()); // 各プレイヤーのバイクを追従
-		cameras_[i]->Update();
+		isStart_ = true;
 	}
 
-	//敵
-	size_t sizeE = enemys_.size();
-	for (int i = 0; i < sizeE; i++)
+	if (isStart_)
 	{
-		enemys_[i]->Update();
-		if (enemys_[i]->GetIsAddScore())
+		float deltaTime = hitStopDuration;
+		for (auto& skyDome : skyDomes_)
 		{
-			isHitStop = true;
-			//スコア加算
-			//score_->AddScore();
-
-		}
-	}
-
-	//敵バイク
-	size_t sizeEb = enemyBikes_.size();
-	for (int t = 0; t < sizeEb; t++)
-	{
-		enemyBikes_[t]->Update();
-	}
-	
-	
-	if (isHitStop == true)
-	{
-
-	}
-
-	//衝突判定
-	Collision();
-
-	// プレイヤー同士の当たり判定
-	BikeCollision();
-
-	//ステージが生成されたら敵を配置する
-	if (stage_->GetIsMakeLoopStage())
-	{
-
-		stage_->SetMakeLoopStage(false);
-		
-		//センター方向からの横の移動幅
-		float shiftX_ = {};
-
-
-		//道のランダムな場所に生成(3パターン)
-		int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
-		EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
-
-		Vector2 randPos;
-		switch (dir)
-		{
-		case EnemyBase::DIR::LEFT:
-			shiftX_ = -EnemyBase::DIR_LEN;
-			break;
-		case EnemyBase::DIR::CENTER:
-			shiftX_ = 0.0f;
-			break;
-		case EnemyBase::DIR::RIGHT:
-			shiftX_ = EnemyBase::DIR_LEN;
-			break;
+			skyDome->Update();
 		}
 
-		//縦に敵を生成する
-		for (int i = 0; i < EnemyBase::MAX_MAKE_NUM; i++)
+		if (!isHitStop)
 		{
-			//縦に並ぶ敵と敵の距離
-			float len = EnemyBase::X_LEN;
 
-			//敵の生成
-			EnemyBase* e = nullptr;
-			int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
-			EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+			//bikes_[0]->Update();
+
 			for (auto& bike : bikes_) {
-				switch (type)
-				{
-				case EnemyBase::TYPE::SHORT_DIS:
-					e = new ShortDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-					break;
-				case EnemyBase::TYPE::LONG_DIS:
-					e = new LongDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-					break;
-				case EnemyBase::TYPE::BOMB:
-					e = new MagicEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-					break;
-				}
+				bike->Update();
 			}
-			e->Init();
 
-			EnemyBike* eB = nullptr;
-			eB = new EnemyBike(e);
-			eB->Init();
-			isCreateEnemy_ = true;
-
-			
-			////デバッグ
-			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
-
-			////座標の設定
-			//e->setPos(randPos.ToVector2F());
-
-			//可変長配列に要素を追加
-			enemys_.push_back(e);
-			enemyBikes_.push_back(eB);
 		}
-	}
-	else
-	{
-		stage_->Update();
-		isCreateEnemy_ = false;
-	}
+		else
+		{
+			// ヒットストップ中の場合、タイマーを更新
+			hitStopTimer -= deltaTime;
+			if (hitStopTimer <= 0.f) {
+				isHitStop = false;
+			}
+
+			// ヒットエフェクト
+			float scale = 50.0f;
+			HitEffect();
+			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+		}
+		for (auto& bike : bikes_)
+		{
+			enemy_->SetBikeTrans(bike->GetTransform());
+		}
+		//enemy_->SetBikeTrans(bike_->GetTransform());
+		helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
+
+		//カメラ
+		for (int i = 0; i < cameras_.size(); i++) {
+			cameras_[i]->Update();
+		}
+
+		//敵
+		size_t sizeE = enemys_.size();
+		for (int i = 0; i < sizeE; i++)
+		{
+			enemys_[i]->Update();
+			if (enemys_[i]->GetIsAddScore())
+			{
+				isHitStop = true;
+				//スコア加算
+				//score_->AddScore();
+
+			}
+		}
+
+		//敵バイク
+		size_t sizeEb = enemyBikes_.size();
+		for (int t = 0; t < sizeEb; t++)
+		{
+			enemyBikes_[t]->Update();
+		}
 
 
-	helicopter_->Update();
-	score_->Update();
+		if (isHitStop == true)
+		{
+
+		}
+
+		//衝突判定
+		Collision();
+
+		// プレイヤー同士の当たり判定
+		BikeCollision();
+
+		//ステージが生成されたら敵を配置する
+		if (stage_->GetIsMakeLoopStage())
+		{
+
+			stage_->SetMakeLoopStage(false);
+
+			//センター方向からの横の移動幅
+			float shiftX_ = {};
+
+
+			//道のランダムな場所に生成(3パターン)
+			int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
+			EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
+
+			Vector2 randPos;
+			switch (dir)
+			{
+			case EnemyBase::DIR::LEFT:
+				shiftX_ = -EnemyBase::DIR_LEN;
+				break;
+			case EnemyBase::DIR::CENTER:
+				shiftX_ = 0.0f;
+				break;
+			case EnemyBase::DIR::RIGHT:
+				shiftX_ = EnemyBase::DIR_LEN;
+				break;
+			}
+
+			//縦に敵を生成する
+			for (int i = 0; i < EnemyBase::MAX_MAKE_NUM; i++)
+			{
+				//縦に並ぶ敵と敵の距離
+				float len = EnemyBase::X_LEN;
+
+				//敵の生成
+				EnemyBase* e = nullptr;
+				int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
+				EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+				for (auto& bike : bikes_) {
+					switch (type)
+					{
+					case EnemyBase::TYPE::SHORT_DIS:
+						e = new ShortDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						break;
+					case EnemyBase::TYPE::LONG_DIS:
+						e = new LongDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						break;
+					case EnemyBase::TYPE::BOMB:
+						e = new MagicEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						break;
+					}
+				}
+				e->Init();
+
+				EnemyBike* eB = nullptr;
+				eB = new EnemyBike(e);
+				eB->Init();
+				isCreateEnemy_ = true;
+
+
+				////デバッグ
+				//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
+
+				////座標の設定
+				//e->setPos(randPos.ToVector2F());
+
+				//可変長配列に要素を追加
+				enemys_.push_back(e);
+				enemyBikes_.push_back(eB);
+			}
+		}
+		else
+		{
+			stage_->Update();
+			isCreateEnemy_ = false;
+		}
+
+
+		helicopter_->Update();
+	}
 }
 
 void GameScene::Draw(void)
@@ -348,6 +362,14 @@ void GameScene::Draw(void)
 		// 画面を初期化
 		ClearDrawScreen();
 
+
+		cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
+
+		// スタート時のカウントを減らす
+		if (startCount_ >= 0.0f)
+		{
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+		}
 		//// プレイヤーごとにビューを分割して描画iiiiiii
 		//switch (i) {
 		//case 0:
@@ -364,13 +386,13 @@ void GameScene::Draw(void)
 		//	break;
 		//}
 		// 背景
-		skyDome_->Draw();
+
+		skyDomes_[i]->Draw();
+		
 		stage_->Draw();
 
 		//bike_->Draw();
 		helicopter_->Draw();
-		score_->Draw();
-		cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
 		//敵描画
 		size_t sizeE = enemys_.size();
@@ -398,11 +420,6 @@ void GameScene::Draw(void)
 
 		for (int p = 0; p < bikes_.size(); p++) {
 			int score = bikes_[p]->GetScore();
-			int x = 50; // スコアの描画位置X
-			int y = 50 + p * 30; // 各プレイヤーのスコアを縦に並べて表示
-
-			// スコアを描画
-			DrawFormatString(x, y, 0xff0000, "Player %d Score:%d", p + 1, score);
 
 			SetDrawScreen(DX_SCREEN_BACK);
 
