@@ -40,15 +40,19 @@ public:
 		CITY,	//背景街並み
 		GOAL,	//ゴール
 
-		ENEMY_SHORT,		//仮敵
-		ENEMY_LONG,
-		ENEMY_MAGIC,
+		//ENEMY_SHORT,		//仮敵
+		//ENEMY_LONG,
+		//ENEMY_MAGIC,
 		HELICOPTER,
 		HELICOPTER_ROTOR,
 		BOMB,		//爆弾
 		BIKE,		//バイク
 		TYRE,		//タイヤ
 		BURNOUT_EFFECT, //バーンアウトエフェクト(バイク発車前)
+
+		GOLD_MEDAL,		//金メダル
+		SILVER_MEDAL,	//銀メダル
+		COPPER_MEDAL,	//銅メダル
 
 		W_SWORD,//バスターソード
 

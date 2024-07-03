@@ -54,7 +54,7 @@ void Enemy::Init(void)
 {
 	// ƒ‚ƒfƒ‹‚ÌŠî–{İ’è
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::ENEMY_SHORT));
+		ResourceManager::SRC::COPPER_MEDAL));
 	transform_.scl = AsoUtility::VECTOR_ONE;
 	transform_.pos = { 700.0f, -800.0f, -2500.0f };
 	transform_.quaRot = Quaternion();

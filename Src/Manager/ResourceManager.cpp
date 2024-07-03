@@ -135,17 +135,17 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/GoalPost/Goal.mv1");
 	resourcesMap_.emplace(SRC::GOAL, res);
 
-	// ‹ß‹——£“G
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_SHORT, res);
+	//// ‹ß‹——£“G
+	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");
+	//resourcesMap_.emplace(SRC::ENEMY_SHORT, res);
 
-	// ‰“‹——£“G
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_LONG, res);
+	//// ‰“‹——£“G
+	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
+	//resourcesMap_.emplace(SRC::ENEMY_LONG, res);
 
-	// ”š’e“G
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_MAGIC, res);
+	//// ”š’e“G
+	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
+	//resourcesMap_.emplace(SRC::ENEMY_MAGIC, res);
 
 	//ƒwƒŠ
 	res = new RES(RES_T::MODEL, PATH_MDL + "Helicopter/Aircraft04.mv1");
@@ -158,6 +158,18 @@ void ResourceManager::Init(void)
 	// “G‚ª—‚Æ‚·”š’e
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
 	resourcesMap_.emplace(SRC::BOMB, res);
+
+	//‹àƒƒ_ƒ‹
+	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/GoldCoin.mv1");
+	resourcesMap_.emplace(SRC::GOLD_MEDAL, res);
+
+	//‹âƒƒ_ƒ‹
+	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/SilverCoin.mv1");
+	resourcesMap_.emplace(SRC::SILVER_MEDAL, res);
+
+	// “ºƒƒ_ƒ‹
+	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/CopperCoin.mv1");
+	resourcesMap_.emplace(SRC::COPPER_MEDAL, res);
 
 
 	// ƒoƒCƒNƒ‚ƒfƒ‹

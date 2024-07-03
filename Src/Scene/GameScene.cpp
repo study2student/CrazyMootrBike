@@ -339,14 +339,14 @@ void GameScene::Draw(void)
 		}
 	}
 
-	size_t sizeEb = enemyBikes_.size();
-	for (int i = 0; i < sizeEb; i++)
-	{
-		if (!enemys_[i]->IsDestroy())
-		{
-			enemyBikes_[i]->Draw();
-		}
-	}
+	//size_t sizeEb = enemyBikes_.size();
+	//for (int i = 0; i < sizeEb; i++)
+	//{
+	//	if (!enemys_[i]->IsDestroy())
+	//	{
+	//		enemyBikes_[i]->Draw();
+	//	}
+	//}
 
 
 	// ƒwƒ‹ƒv

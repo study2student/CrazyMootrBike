@@ -46,6 +46,15 @@ public:
 	//倒した時のスコア増分
 	static constexpr int SCORE_INCREMENT = 100;
 
+	//地面衝突後の座標
+	static constexpr float COLL_AFTER_POS_Y = -150.0f;
+
+	//回転スピード
+	static constexpr float SPEED_ROT = 7.0f;
+
+	//死亡状態になるまでの最大時間
+	static constexpr float TO_DEAD_TIME_MAX = 4.0f;
+
 	// 状態
 	enum class STATE
 	{
@@ -174,6 +183,12 @@ protected:
 	//先頭の敵から次の敵までの相対座標
 	VECTOR localPos_;
 
+	//地面と衝突したかどうか
+	bool isCollGround_;
+
+	//生成されてからの秒数
+	float stepMade_;
+
 	// 回転
 	Quaternion enemyRotY_;
 	Quaternion goalQuaRot_;
@@ -244,7 +259,7 @@ protected:
 
 	// 回転
 	void SetGoalRotate(double rotRad);
-	void Rotate(void);
+	void RotY(void);
 
 	// 衝突判定
 	void Collision(void);

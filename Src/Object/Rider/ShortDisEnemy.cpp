@@ -25,8 +25,9 @@ void ShortDisEnemy::SetParam(void)
 {
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::ENEMY_SHORT));
-	transform_.scl = AsoUtility::VECTOR_ONE;
+		ResourceManager::SRC::GOLD_MEDAL));
+	float SCL = 200.0f;
+	transform_.scl = { SCL,SCL,SCL };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
@@ -34,8 +35,8 @@ void ShortDisEnemy::SetParam(void)
 	transform_.Update();
 
 
-	// アニメーションの設定
-	InitAnimation();
+	//// アニメーションの設定
+	//InitAnimation();
 
 
 	//// カプセルコライダ
@@ -74,8 +75,8 @@ void ShortDisEnemy::Update(void)
 	// モデル制御更新
 	transform_.Update();
 
-	// アニメーション再生
-	animationController_->Update();
+	//// アニメーション再生
+	//animationController_->Update();
 }
 
 void ShortDisEnemy::UpdatePlay(void)
@@ -86,8 +87,8 @@ void ShortDisEnemy::UpdatePlay(void)
 	// ジャンプ処理
 	ProcessJump();
 
-	// 移動方向に応じた回転
-	Rotate();
+	//回転
+	RotY();
 
 	// 重力による移動量
 	CalcGravityPow();
@@ -181,4 +182,12 @@ void ShortDisEnemy::ProcessMove(void)
 			animationController_->Play((int)ANIM_TYPE::IDLE);
 		}
 	}*/
+
+	//削除処理
+	stepMade_ += SceneManager::GetInstance().GetDeltaTime();
+	if (stepMade_ >= TO_DEAD_TIME_MAX)
+	{
+		stepMade_ = TO_DEAD_TIME_MAX;
+		ChangeState(STATE::DEAD);
+	}
 }
