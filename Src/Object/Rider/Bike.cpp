@@ -47,6 +47,12 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	isAttack_ = false;
 	isOutSide_ = false;
 
+	// ブースト時の加算速度
+	speedBoost_ = 0.0f;
+
+	// ブースト使用間隔
+	deleyBoost_ = 0;
+
 	// 衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
 	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
@@ -65,11 +71,7 @@ Bike::~Bike(void)
 }
 
 void Bike::Init(void)
-{
-	// エフェクト初期化
-	InitEffect();
-
-	
+{	
 	// 武器
 	weapon_ = new Weapon();
 	weapon_->Init();
@@ -110,6 +112,9 @@ void Bike::Init(void)
 
 	// アニメーションの設定
 	InitAnimation();
+
+	// エフェクト初期化
+	InitEffect();
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
@@ -312,15 +317,21 @@ void Bike::ChangeStatePlay(void)
 {
 }
 
+
 void Bike::UpdateNone(void)
 {
 }
+
+
 
 void Bike::UpdatePlay(void)
 {
 
 	// 移動処理
 	ProcessMove();
+
+	//ブースト
+	ProcessBoost();
 
 	// ジャンプ処理
 	ProcessJump();
@@ -436,7 +447,7 @@ void Bike::ProcessMove(void)
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
 	//前に進む
-	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE );
+	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE + speedBoost_);
 
 	// プレイヤーごとの入力処理
 	const auto& input = playerInputs[playerID_];
@@ -695,6 +706,41 @@ void Bike::ProcessAttack(void)
 	NormalAttack();
 	SpecialAttack();
 	LongAttack();
+}
+
+void Bike::ProcessBoost(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0)
+	{
+		SceneManager::GetInstance().GetCamera()->SetIsBoost(true);
+		deleyBoost_ = DELEY_BOOST_MAX;
+		speedBoost_ = 80.0f;
+		effectBoostPlayId_ = PlayEffekseer3DEffect(effectBoostResId_);
+
+		// 大きさ
+		float boostSCALE = 30.0f;
+		SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, boostSCALE, boostSCALE, boostSCALE);
+
+		SyncBoostEffect();
+	}
+	else
+	{
+		deleyBoost_--;
+		if (deleyBoost_ <= 0)
+		{
+			deleyBoost_ = 0.0f;
+		}
+		speedBoost_ -= 0.340f;
+		if (speedBoost_ <= 0)
+		{
+			speedBoost_ = 0.0f;
+			SceneManager::GetInstance().GetCamera()->SetIsBoost(false);
+		}
+
+		SyncBoostEffect();
+	}
 }
 
 void Bike::ProcessDebug(void)
@@ -968,10 +1014,27 @@ void Bike::InitEffect(void)
 	// ヒットエフェクト
 	effectSonicResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::SonicEffect).handleId_;
+
+	//ブーストエフェクト
+	effectBoostResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::BOOST_EFFECT).handleId_;
 }
 
 void Bike::SonicBoomEffect(void)
 {
 	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.pos.x, transform_.pos.y + 200.0f, transform_.pos.z + 1000);
 	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.rot.x, transform_.rot.y + 180.0f, transform_.rot.z);
+}
+
+void Bike::SyncBoostEffect(void)
+{
+	VECTOR pos = transform_.pos;
+
+	pos = Quaternion::PosAxis(transform_.quaRot, RELATIVE_P2EB_POS);
+	pos = VAdd(transform_.pos, pos);
+	SetPosPlayingEffekseer3DEffect(effectBoostPlayId_, pos.x, pos.y, pos.z);
+
+	//角度の同期
+	VECTOR angles = transform_.quaRot.ToEuler();
+	SetRotationPlayingEffekseer3DEffect(effectBoostPlayId_, angles.x, angles.y, angles.z);
 }

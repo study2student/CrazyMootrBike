@@ -24,9 +24,22 @@ public:
 
 	// 追従位置からカメラ位置までの相対座標
 	static constexpr VECTOR LOCAL_F2C_POS = { 0.0f, 300.0f, -400.0f };
+	//static constexpr VECTOR LOCAL_F2C_POS = { 0.0f, 300.0f, -900.0f };
+
+	// 追従位置からカメラ位置までの相対座標(ブースト)
+	static constexpr VECTOR BOOST_LOCAL_F2C_MAX_POS = { 0.0f, 300.0f, -1000.0f };
 
 	// 追従位置から注視点までの相対座標
 	static constexpr VECTOR LOCAL_F2T_POS = { 0.0f, 0.0f, 500.0f }; 
+
+	// 追従対象からカメラ位置までの相対座標(ブースト開始時)
+	static constexpr VECTOR RELATIVE_F2C_POS_BOOST_START = { 0.0f, 40.0f, 150.0f };
+
+	// ブースト使用時のカメラ速度増分
+	static constexpr float ADD_CAMERA_SPEED = 0.32f;
+
+	// ブースト使用時のカメラ速度上限値
+	static constexpr float CAMERA_SPEED_MAX = 3.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 0.6f; 
@@ -78,6 +91,9 @@ public:
 	//カメラを正面に戻すかどうか設定(ステージ外にでた場合)
 	void SetIsCameraReset(bool isCameraReset);
 
+	//ブースト中かどうか設定
+	void SetIsBoost(bool isBoost);
+
 private:
 
 	// カメラが追従対象とするTransform
@@ -88,6 +104,15 @@ private:
 
 	//カメラを正面に戻すかどうか(ステージ外にでた場合)
 	bool isCameraReset_;
+
+	//ブースト中か
+	bool isBoost_;
+
+	//ブースト手前に行ったときの位置
+	VECTOR boostLocalPos_;
+
+	//手前にくるまでの経過時間
+	float stepMoveFront_;
 
 	// カメラモード
 	MODE mode_;
@@ -103,6 +128,9 @@ private:
 
 	// カメラ角度
 	Quaternion rot_;
+
+	//カメラ速度
+	float velocity_;
 
 	// 注視点
 	VECTOR targetPos_;

@@ -210,14 +210,6 @@ void GameScene::Update(void)
 			score_.AddScore();
 		}
 	}
-
-	//敵バイク
-	size_t sizeEb = enemyBikes_.size();
-	for (int t = 0; t < sizeEb; t++)
-	{
-		enemyBikes_[t]->Update();
-	}
-	
 	
 	if (isHitStop == true)
 	{
@@ -295,7 +287,6 @@ void GameScene::Update(void)
 
 			//可変長配列に要素を追加
 			enemys_.push_back(e);
-			enemyBikes_.push_back(eB);
 		}
 	}
 	else
@@ -338,15 +329,6 @@ void GameScene::Draw(void)
 			enemys_[i]->Draw();
 		}
 	}
-
-	//size_t sizeEb = enemyBikes_.size();
-	//for (int i = 0; i < sizeEb; i++)
-	//{
-	//	if (!enemys_[i]->IsDestroy())
-	//	{
-	//		enemyBikes_[i]->Draw();
-	//	}
-	//}
 
 
 	// ヘルプ

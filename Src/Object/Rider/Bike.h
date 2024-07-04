@@ -19,6 +19,9 @@ public:
 	static constexpr float SPEED_MOVE = 100.0f;
 	static constexpr float SPEED_RUN = 130.0f;
 
+	//ブースト
+	static constexpr float DELEY_BOOST_MAX = 220.0f;
+
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 10.0f;
 
@@ -51,6 +54,9 @@ public:
 
 	//バイクからリアタイヤ相対座標
 	static constexpr VECTOR BIKE_TO_REAR_TYRE_LOCALPOS = { -3.0f,53.0f,-47.0f };
+
+	// バイクからブーストエフェクトまでの相対座標
+	static constexpr VECTOR RELATIVE_P2EB_POS = { 0.0f, 100.0f, -200.0f };
 
 	// 状態
 	enum class STATE
@@ -212,6 +218,7 @@ private:
 	void ProcessMove(void);//移動
 	void ProcessJump(void);//ジャンプ
 	void ProcessAttack(void);//攻撃
+	void ProcessBoost(void); //ブースト
 	void ProcessDebug(void);//デバッグ用
 
 	// 攻撃種別
@@ -240,9 +247,25 @@ private:
 	int effectSonicResId_;
 	int effectSonicPlayId_;
 
+	// ブースト時の加算速度
+	float speedBoost_;
+
+	// ブースト使用間隔
+	float deleyBoost_;
+
+	//ブーストエフェクト位置
+	VECTOR boostEffectPos;
+
+	//ブーストエフェクト
+	int effectBoostResId_;
+	int effectBoostPlayId_;
+
 	// エフェクト初期化
 	void InitEffect(void);
 	// Hitエフェクトの位置
 	void SonicBoomEffect(void);
+
+	// エフェクト制御
+	void SyncBoostEffect(void);
 };
 

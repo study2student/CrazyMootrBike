@@ -200,6 +200,11 @@ void ResourceManager::Init(void)
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "SonicBoom/SonicBoom.efkefc");
 	//resourcesMap_.emplace(SRC::SonicEffect, res);
+
+	// ブーストエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
+	resourcesMap_.emplace(SRC::BOOST_EFFECT, res);
+
 	
 }
 
