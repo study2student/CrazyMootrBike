@@ -168,6 +168,10 @@ void LongDisEnemy::ProcessMove(void)
 			isBikeCol_ = true;
 			isAddScore_ = true;
 			AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+			//ƒRƒCƒ“ûW‚Ì‰¹
+			isCoinSND_ = true;
+
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -176,6 +180,7 @@ void LongDisEnemy::ProcessMove(void)
 		else
 		{
 			speed_ = SPEED_MOVE;
+			isCoinSND_ = false;
 			//isAddScore_ = false;
 		}
 	}
@@ -183,6 +188,11 @@ void LongDisEnemy::ProcessMove(void)
 	{
 		speed_ = SPEED_RUN;
 	}*/
+	if (isCoinSND_)
+	{
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, false);
+	}
 
 	//Œü‚¢‚Ä‚é•ûŒü‚ÉˆÚ“®
 	/*moveDir_ = dir;

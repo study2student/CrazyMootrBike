@@ -220,6 +220,9 @@ protected:
 	//スコアを加算してもよいか
 	bool isAddScore_;
 
+	//コイン収集時の音
+	bool isCoinSND_;
+
 	float flipSpeed_;
 	VECTOR flipDir_;
 
@@ -261,7 +264,6 @@ protected:
 
 	//攻撃モーション入ってからどのくらいで攻撃判定になるか管理
 	bool IsAtkStart(void);
-
 
 };
 

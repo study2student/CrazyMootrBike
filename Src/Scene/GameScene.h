@@ -97,6 +97,8 @@ private:
 	// プレイ人数
 	std::unique_ptr<SelectScene> selectScene_;
 
+	int playNumber = 1;
+
 	// プレイヤー
 	//std::shared_ptr<Bike> bike_;
 
@@ -145,6 +147,8 @@ private:
 	// Hitエフェクトの位置
 	void HitEffect(void);
 
+	// ゲームBGM
+	bool isBGM_;
 
 	//左上の再開ポジション
 	Vector2 reStartFontBasePos_;

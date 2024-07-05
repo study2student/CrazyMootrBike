@@ -27,7 +27,7 @@ void SelectScene::Init(void)
 
 	isCursorHit_ = false;
 
-	playNumber_ = 4;
+	playNumber_ = 1;
 }
 
 void SelectScene::Update(void)

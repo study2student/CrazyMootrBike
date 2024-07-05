@@ -137,6 +137,9 @@ void Bike::Update(void)
 	rearTyre_->Update();
 	rearTyre_->SetTransform(transform_);
 
+	PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_BACK, false);
+
 	// モデル制御更新
 	transform_.Update();
 	transformPlayer_.Update();
@@ -883,7 +886,7 @@ void Bike::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectSonicResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SonicEffect).handleId_;
+		ResourceManager::SRC::SONICEFFECT).handleId_;
 }
 
 void Bike::SonicBoomEffect(void)

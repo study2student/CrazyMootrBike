@@ -51,8 +51,14 @@ public:
 
 		W_SWORD,//バスターソード
 
-		HitEffect,//ヒットした時のエフェクト
-		SonicEffect//ソニックエフェクト
+		//エフェクト関連
+		HITEFFECT,//ヒットした時のエフェクト
+		SONICEFFECT,//ソニックエフェクト
+
+		//サウンド関連
+		SND_BGM,//ゲームBGM
+		SND_COIN,//コイン収集時の音
+		SND_MOTOR//モーター音
 	};
 
 	// 明示的にインステンスを生成する

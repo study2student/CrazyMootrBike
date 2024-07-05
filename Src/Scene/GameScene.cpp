@@ -43,13 +43,20 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
-	mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2);
-
+	if (playNumber == 1)
+	{
+		mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y);
+	}
+	else
+	{
+		mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2);
+	}
+	
 	// プレイヤー
 	for (int i = 0; i < 4; i++) {
 		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
 	}
-
+	
 	for (auto& bike : bikes_) {
 		bike->Init();
 	}
@@ -72,11 +79,11 @@ void GameScene::Init(void)
 	selectScene_->Init();
 	
 	//各プレイヤーのカメラを生成
-	if (selectScene_->GetPlayNumber() == 1)
+	if (playNumber == 1)
 	{
 		cameras_.push_back(std::make_shared<Camera>());
 	}
-	else if (selectScene_->GetPlayNumber() == 4)
+	else if (playNumber == 4)
 	{
 		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
 		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
@@ -148,8 +155,11 @@ void GameScene::Init(void)
 	stepPauseKeyHit_ = 0.0f;
 
 	// ゲームスタート時のカウント
-	startCount_ = 3.0f;
+	startCount_ = 0.0f;
 	isStart_ = false;
+
+	//ゲームBGM
+	isBGM_ = false;
 }
 
 void GameScene::Update(void)
@@ -171,6 +181,12 @@ void GameScene::Update(void)
 	{
 		Pause();
 		return;
+	}
+
+	if (isBGM_)
+	{
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_BGM).handleId_, DX_PLAYTYPE_BACK, false);
 	}
 
 	// シーン遷移
@@ -196,6 +212,10 @@ void GameScene::Update(void)
 	if (isStart_)
 	{
 		float deltaTime = hitStopDuration;
+
+		//BGMを鳴らす
+		isBGM_ = true;
+
 		for (auto& skyDome : skyDomes_)
 		{
 			skyDome->Update();
@@ -205,10 +225,17 @@ void GameScene::Update(void)
 		{
 
 			//bikes_[0]->Update();
-
-			for (auto& bike : bikes_) {
-				bike->Update();
+			if (playNumber == 1)
+			{
+				bikes_[0]->Update();
 			}
+			else
+			{
+				for (auto& bike : bikes_) {
+					bike->Update();
+				}
+			}
+
 
 		}
 		else
@@ -354,8 +381,7 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-
-	for (int i = 0; i < cameras_.size(); i++) 
+	if (playNumber == 1)
 	{
 		SetDrawScreen(mainScreen_);
 
@@ -363,32 +389,17 @@ void GameScene::Draw(void)
 		ClearDrawScreen();
 
 
-		cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
+		cameras_[0]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
 			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
 		}
-		//// プレイヤーごとにビューを分割して描画iiiiiii
-		//switch (i) {
-		//case 0:
-		//	SetDrawArea(0, 0, Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2);
-		//	break;
-		//case 1:
-		//	SetDrawArea(Application::SCREEN_SIZE_X / 2, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y / 2);
-		//	break;
-		//case 2:
-		//	SetDrawArea(0, Application::SCREEN_SIZE_Y / 2, Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y);
-		//	break;
-		//case 3:
-		//	SetDrawArea(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y);
-		//	break;
-		//}
-		// 背景
 
-		skyDomes_[i]->Draw();
-		
+		// 背景
+		skyDomes_[0]->Draw();
+
 		stage_->Draw();
 
 		//bike_->Draw();
@@ -414,40 +425,99 @@ void GameScene::Draw(void)
 		}
 
 		// 各バイクを描画
-		for (auto& bike : bikes_) {
-			bike->Draw();
-		}
+		bikes_[0]->Draw();
 
 		for (int p = 0; p < bikes_.size(); p++) {
-			int score = bikes_[p]->GetScore();
+			int score = bikes_[0]->GetScore();
 
 			SetDrawScreen(DX_SCREEN_BACK);
 
 			int sx = Application::SCREEN_SIZE_X;
 			int sy = Application::SCREEN_SIZE_Y;
 
-			switch (i)
+			DrawGraph(0, 0, mainScreen_, false);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < cameras_.size(); i++)
+		{
+			SetDrawScreen(mainScreen_);
+
+			// 画面を初期化
+			ClearDrawScreen();
+
+
+			cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
+
+			// スタート時のカウントを減らす
+			if (startCount_ >= 0.0f)
 			{
-			case 0:
-				DrawGraph(0, 0, mainScreen_, false);
-				DrawExtendFormatString(sx / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
-				break;
-			case 1:
-				DrawGraph(sx / 2, 0, mainScreen_, false);
-				DrawExtendFormatString(sx - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 2, bikes_[1]->GetScore());
-				break;
-			case 2:
-				DrawGraph(0, sy / 2, mainScreen_, false);
-				DrawExtendFormatString(sx / 2 - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 3, bikes_[2]->GetScore());
-				break;
-			case 3:
-				DrawGraph(sx / 2, sy / 2, mainScreen_, false);
-				DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
-				break;
+				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+			}
+
+			// 背景
+			skyDomes_[i]->Draw();
+
+			stage_->Draw();
+
+			//bike_->Draw();
+			helicopter_->Draw();
+
+			//敵描画
+			size_t sizeE = enemys_.size();
+			for (int i = 0; i < sizeE; i++)
+			{
+				if (!enemys_[i]->IsDestroy())
+				{
+					enemys_[i]->Draw();
+				}
+			}
+
+			size_t sizeEb = enemyBikes_.size();
+			for (int i = 0; i < sizeEb; i++)
+			{
+				if (!enemys_[i]->IsDestroy())
+				{
+					enemyBikes_[i]->Draw();
+				}
+			}
+
+			// 各バイクを描画
+			for (auto& bike : bikes_) {
+				bike->Draw();
+			}
+
+			for (int p = 0; p < bikes_.size(); p++) {
+				int score = bikes_[p]->GetScore();
+
+				SetDrawScreen(DX_SCREEN_BACK);
+
+				int sx = Application::SCREEN_SIZE_X;
+				int sy = Application::SCREEN_SIZE_Y;
+
+				switch (i)
+				{
+				case 0:
+					DrawGraph(0, 0, mainScreen_, false);
+					DrawExtendFormatString(sx / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
+					break;
+				case 1:
+					DrawGraph(sx / 2, 0, mainScreen_, false);
+					DrawExtendFormatString(sx - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 2, bikes_[1]->GetScore());
+					break;
+				case 2:
+					DrawGraph(0, sy / 2, mainScreen_, false);
+					DrawExtendFormatString(sx / 2 - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 3, bikes_[2]->GetScore());
+					break;
+				case 3:
+					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
+					DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
+					break;
+				}
 			}
 		}
 	}
-
 
 	// ヘルプ
 	//DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
@@ -603,7 +673,7 @@ void GameScene::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectHitResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::HitEffect).handleId_;
+		ResourceManager::SRC::HITEFFECT).handleId_;
 }
 
 void GameScene::HitEffect(void)

@@ -48,6 +48,8 @@ EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loo
 	isAddScore_=false;
 	toAtkStep_ = 0.0f;
 
+	isCoinSND_ = false;
+
 	imgShadow_ = -1;
 
 	capsule_ = nullptr;
@@ -519,8 +521,13 @@ void EnemyBase::ProcessMove(void)
 		{
 			//範囲に入った
 			speed_ = 0;
+			//スコア加算
 			isAddScore_ = true;
+			//衝突判定
 			isBikeCol_ = true;
+			//コイン収集時の音
+			isCoinSND_ = true;
+
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -540,6 +547,12 @@ void EnemyBase::ProcessMove(void)
 	{
 		speed_ = SPEED_RUN;
 	}*/
+
+	if (isCoinSND_)
+	{
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, false);
+	}
 
 	//向いてる方向
 	/*moveDir_ = dir;

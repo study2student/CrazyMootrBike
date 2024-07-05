@@ -28,11 +28,12 @@ void ResourceManager::Init(void)
 	static std::string PATH_IMG = Application::PATH_IMAGE;
 	static std::string PATH_MDL = Application::PATH_MODEL;
 	static std::string PATH_EFF = Application::PATH_EFFECT;
+	static std::string PATH_SND = Application::PATH_SOUND;
 
 	Resource* res;
 
 	// タイトル画像
-	res = new RES(RES_T::IMG, PATH_IMG + "Title.png");
+	res = new RES(RES_T::IMG, PATH_IMG + "Crazy_title2.png");
 	resourcesMap_.emplace(SRC::TITLE, res);
 
 	// PushSpace
@@ -174,13 +175,25 @@ void ResourceManager::Init(void)
 
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
-	resourcesMap_.emplace(SRC::HitEffect, res);
+	resourcesMap_.emplace(SRC::HITEFFECT, res);
 
 	// ソニックエフェクト
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "SonicBoom/SonicBoom.efkefc");
 	//resourcesMap_.emplace(SRC::SonicEffect, res);
 	
+
+	// ゲームBGM
+	res = new RES(RES_T::SOUND, PATH_SND + "BURNING_MY_HEART.mp3");
+	resourcesMap_.emplace(SRC::SND_BGM, res);
+
+	//コイン収集時の音
+	res = new RES(RES_T::SOUND, PATH_SND + "collectcoin.mp3");
+	resourcesMap_.emplace(SRC::SND_COIN, res);
+
+	//モーター音
+	res = new RES(RES_T::SOUND, PATH_SND + "motor.mp3");
+	resourcesMap_.emplace(SRC::SND_MOTOR, res);
 }
 
 

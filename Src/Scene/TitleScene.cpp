@@ -160,11 +160,11 @@ void TitleScene::Draw(void)
 	MV1DrawModel(rearTyre_.modelId);
 	/*MV1DrawModel(sity_[0]->modelId);
 	MV1DrawModel(sity_[1]->modelId);*/
-	
+	int GSizeX, GSizeY;
 	//ƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚ç•\Ž¦‚µ‚È‚¢
 	if(state_==STATE::IDLE)
 	{
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 1.2, 250, 1.0, 0.0, imgTitle_, true);
+		DrawGraph(Application::SCREEN_SIZE_X / 2 - 333, 250, imgTitle_, true);
 		DrawRotaGraph(Application::SCREEN_SIZE_X / 1.5, 700, 1.0, 0.0, imgPush_, true);
 	}
 
