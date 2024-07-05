@@ -68,6 +68,8 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 Bike::~Bike(void)
 {
 	delete weapon_;
+
+	StopEffekseer3DEffect(effectBoostPlayId_);
 }
 
 void Bike::Init(void)
@@ -259,11 +261,6 @@ void Bike::Jump(void)
 void Bike::Damage(int damage)
 {
 	hp_ -= damage;
-	//‰ºŒÀ’l
-	if (hp_ <= MIN_HP)
-	{
-		hp_ = MIN_HP;
-	}
 }
 
 const int& Bike::GetHP(void)
@@ -354,6 +351,13 @@ void Bike::UpdatePlay(void)
 	// ‰ñ“]‚³‚¹‚é
 	transform_.quaRot = playerRotY_;
 	transformPlayer_.quaRot = playerRotY_;
+
+	//HP‰ºŒÀ’l
+	if (hp_ <= MIN_HP)
+	{
+		hp_ = MIN_HP;
+		state_ = STATE::DEAD;
+	}
 }
 
 void Bike::DrawUI(void)
@@ -676,6 +680,7 @@ void Bike::ProcessMove(void)
 	SonicBoomEffect();
 	effectSonicPlayId_ = PlayEffekseer3DEffect(effectSonicResId_);
 	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
+
 }
 
 void Bike::ProcessJump(void)
@@ -714,6 +719,9 @@ void Bike::ProcessBoost(void)
 
 	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0)
 	{
+		//HP‚ðÁ”ï‚µ‚Ä”­“®
+		hp_ -= BOOST_USE_HP;
+
 		SceneManager::GetInstance().GetCamera()->SetIsBoost(true);
 		deleyBoost_ = DELEY_BOOST_MAX;
 		speedBoost_ = 80.0f;

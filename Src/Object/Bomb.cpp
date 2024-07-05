@@ -23,6 +23,7 @@ Bomb::Bomb()
 
 Bomb::~Bomb(void)
 {
+	StopEffekseer3DEffect(bombEffectPlayId_);
 }
 
 void Bomb::Init(void)

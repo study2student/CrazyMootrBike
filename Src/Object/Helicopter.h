@@ -18,7 +18,7 @@ public:
 	static constexpr float SPEED_MOVE = 110.0f;
 
 	// 追いつくためのスピード
-	static constexpr float SPEED_FAST = 130.0f;
+	static constexpr float SPEED_FAST = 160.0f;
 
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 80.0f;
@@ -89,7 +89,6 @@ public:
 	void SetBikeIsOutside(const bool& isOutside);
 
 	//爆弾取得
-	//std::weak_ptr<Bomb> GetBomb(void);
 	Bomb* GetBomb(void);
 
 private:

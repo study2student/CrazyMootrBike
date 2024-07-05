@@ -16,6 +16,7 @@ class StageCurve;
 class Bomb;
 class City;
 class Goal;
+class TyreThrow;
 
 class Stage
 {
@@ -62,7 +63,7 @@ public:
 
 	// コンストラクタ
 	//Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
-	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene);
+	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -105,6 +106,7 @@ private:
 	EnemyBase* enemy_;
 	//std::shared_ptr<Bomb> bomb_;
 	Bomb* bomb_;
+	TyreThrow* throwTyre_;
 	std::deque<std::shared_ptr<StageCurve>> curve_;
 	std::deque<std::shared_ptr<City>> city_;
 

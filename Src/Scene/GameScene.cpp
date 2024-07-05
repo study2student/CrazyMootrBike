@@ -21,6 +21,7 @@
 #include "../Object/Bomb.h"
 #include "../Object/Score.h"
 #include "../Object/Helicopter.h"
+#include "../Object/TyreThrow.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -31,6 +32,7 @@ GameScene::GameScene(void)
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
+	throwTyre_ = nullptr;
 	//score_ = nullptr;
 
 	nowCursor_ = 0;
@@ -39,6 +41,7 @@ GameScene::GameScene(void)
 GameScene::~GameScene(void)
 {
 	delete enemy_;
+	delete throwTyre_;
 }
 
 void GameScene::Init(void)
@@ -79,8 +82,12 @@ void GameScene::Init(void)
 	helicopter_ = std::make_shared<Helicopter>();
 	helicopter_->Init();
 
+	//投げタイヤ
+	throwTyre_ = new TyreThrow();
+	throwTyre_->Init();
+
 	// ステージ
-	stage_ = std::make_shared<Stage>(bikes_, enemy_,helicopter_->GetBomb(), this);
+	stage_ = std::make_shared<Stage>(bikes_, enemy_,helicopter_->GetBomb(),throwTyre_, this);
 	stage_->Init();
 
 	// ステージの初期設定
@@ -137,7 +144,7 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-
+	throwTyre_->Update();
 	//ポーズメニュー
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
@@ -197,6 +204,8 @@ void GameScene::Update(void)
 	enemy_->SetBikeTrans(bike_->GetTransform());
 	helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
 	helicopter_->SetBikeIsOutside(bikes_[3]->GetIsOutSide());
+
+	throwTyre_->SetTransform(bikes_[3]->GetTransform());
 
 	//敵
 	size_t sizeE = enemys_.size();
@@ -297,6 +306,7 @@ void GameScene::Update(void)
 
 
 	helicopter_->Update();
+	//throwTyre_->Update();
 	score_.Update();
 }
 
@@ -311,6 +321,7 @@ void GameScene::Draw(void)
 
 	bike_->Draw();
 	helicopter_->Draw();
+	throwTyre_->Draw();
 	score_.Draw();
 
 	//enemy_->Draw();

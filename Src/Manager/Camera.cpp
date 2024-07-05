@@ -89,6 +89,7 @@ void Camera::SetIsBoost(bool isBoost)
 	if (isBoost)
 	{
 		boostLocalPos_ = BOOST_LOCAL_F2C_MAX_POS;
+		
 	}
 }
 
@@ -211,6 +212,8 @@ void Camera::SyncFollow(void)
 	//ブースト使用時にカメラを動かす
 	if (isBoost_)
 	{
+		
+
 		velocity_ += ADD_CAMERA_SPEED;
 		if (velocity_>= CAMERA_SPEED_MAX)
 		{

@@ -22,6 +22,9 @@ public:
 	//ブースト
 	static constexpr float DELEY_BOOST_MAX = 220.0f;
 
+	//ブースト発動させるためのHP消費量
+	static constexpr int BOOST_USE_HP = 50;
+
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 10.0f;
 
@@ -118,6 +121,7 @@ public:
 
 	//バイクが場外に出たか取得
 	const bool& GetIsOutSide(void);
+
 
 private:
 

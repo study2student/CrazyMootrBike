@@ -23,9 +23,10 @@
 #include "../Scene/GameScene.h"
 #include "../Object/StageCurve.h"
 #include "../Object/Goal.h"
+#include "../Object/TyreThrow.h"
 #include "Stage.h"
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb,TyreThrow* throwTyre, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
@@ -33,6 +34,7 @@ Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, 
 	//bike_ = bike;
 	enemy_ = enemy;
 	bomb_ = bomb;
+	throwTyre_ = throwTyre;
 	activeName_ = NAME::MAIN_PLANET;
 	step_ = 0.0f;
 
@@ -258,6 +260,8 @@ void Stage::ChangeStage(NAME type)
 	jampRamp_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	bomb_->ClearCollider();
 	bomb_->AddCollider(activePlanet_.lock()->GetTransform().collider);
+	throwTyre_->ClearCollider();
+	throwTyre_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
@@ -268,6 +272,7 @@ void Stage::ChangeStage(NAME type)
 		//bike_->AddCollider(ls->GetTransform().collider);
 		jampRamp_->AddCollider(ls->GetTransform().collider);
 		bomb_->AddCollider(ls->GetTransform().collider);
+		throwTyre_->AddCollider(ls->GetTransform().collider);
 	}
 	
 	//while (!loopStage_.empty())
@@ -447,6 +452,7 @@ void Stage::MakeLoopStage(void)
 			}
 			//bike_->AddCollider(ls->GetTransform().collider);
 			bomb_->AddCollider(ls->GetTransform().collider);
+			throwTyre_->AddCollider(ls->GetTransform().collider);
 		}
 
 

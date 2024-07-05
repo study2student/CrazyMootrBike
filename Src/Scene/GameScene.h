@@ -13,6 +13,7 @@ class MagicEnemy;
 class EnemyBike;
 class Helicopter;
 class Score;
+class TyreThrow;
 
 class GameScene : public SceneBase
 {
@@ -80,6 +81,9 @@ private:
 
 	// スカイドーム
 	std::unique_ptr<SkyDome> skyDome_;
+
+	//タイヤ
+	TyreThrow* throwTyre_;
 
 
 	// プレイヤー

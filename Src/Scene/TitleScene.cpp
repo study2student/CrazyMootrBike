@@ -28,6 +28,9 @@ TitleScene::~TitleScene(void)
 {
 	delete skyDome_;
 	delete animationController_;
+
+	StopEffekseer3DEffect(effectBurnoutPlayId_);
+	StopEffekseer3DEffect(effectStartPlayId_);
 }
 
 void TitleScene::Init(void)
