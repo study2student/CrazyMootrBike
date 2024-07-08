@@ -14,7 +14,11 @@ class MagicEnemy;
 class EnemyBike;
 class Helicopter;
 class Score;
+<<<<<<< HEAD
 class SelectScene;
+=======
+class TyreThrow;
+>>>>>>> main
 
 class GameScene : public SceneBase
 {
@@ -86,18 +90,24 @@ private:
 	std::vector<std::shared_ptr<Camera>> cameras_;
 
 	// ステージ
-	std::unique_ptr<Stage> stage_;
+	std::shared_ptr<Stage> stage_;
 
-	//スコア
-	std::shared_ptr<Score> score_;
+	////スコア
+	//std::shared_ptr<Score> score_;
 
 	// スカイドーム
 	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
+<<<<<<< HEAD
 	// プレイ人数
 	std::unique_ptr<SelectScene> selectScene_;
 
 	int playNumber = 1;
+=======
+	//タイヤ
+	TyreThrow* throwTyre_;
+
+>>>>>>> main
 
 	// プレイヤー
 	//std::shared_ptr<Bike> bike_;
@@ -106,7 +116,7 @@ private:
 	std::vector<std::shared_ptr<Bike>> bikes_;
 
 	//ヘリコプター
-	std::unique_ptr<Helicopter> helicopter_;
+	std::shared_ptr<Helicopter> helicopter_;
 
 	////	敵
 	//Enemy* enemy_;

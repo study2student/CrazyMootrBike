@@ -53,6 +53,10 @@ EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loo
 	imgShadow_ = -1;
 
 	capsule_ = nullptr;
+
+	isCollGround_ = false;
+
+	stepMade_ = 0.0f;
 }
 
 EnemyBase::~EnemyBase(void)
@@ -65,7 +69,7 @@ void EnemyBase::Init(void)
 	
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::ENEMY_SHORT));
+		ResourceManager::SRC::COPPER_MEDAL));
 	transform_.scl = AsoUtility::VECTOR_ONE;
 	//transform_.pos = { 700.0f, -800.0f, -2500.0f };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, -800.0f, makePos_.z };
@@ -128,14 +132,20 @@ void EnemyBase::Update(void)
 
 void EnemyBase::Draw(void)
 {
+	//死亡状態は描画しない
+	if (state_ == STATE::DEAD)
+	{
+		return;
+	}
+
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
 
 	// 丸影描画
 	DrawShadow();
 
-	//Hp表示
-	DrawHpBar();
+	////Hp表示
+	//DrawHpBar();
 
 	DrawLine3D(fowardPos_, backPos_, 0x0000ff);
 
@@ -292,9 +302,6 @@ void EnemyBase::UpdateFliped(void)
 	// ジャンプ処理
 	ProcessJump();
 
-	// 移動方向に応じた回転
-	Rotate();
-
 	// 重力による移動量
 	CalcGravityPow();
 
@@ -321,8 +328,8 @@ void EnemyBase::UpdatePlay(void)
 	// ジャンプ処理
 	ProcessJump();
 
-	// 移動方向に応じた回転
-	Rotate();
+	//回転
+	RotY();
 
 	// 重力による移動量
 	CalcGravityPow();
@@ -578,6 +585,15 @@ void EnemyBase::ProcessMove(void)
 			animationController_->Play((int)ANIM_TYPE::IDLE);
 		}
 	}*/
+
+	//削除処理
+	stepMade_ += SceneManager::GetInstance().GetDeltaTime();
+	if (stepMade_ >= TO_DEAD_TIME_MAX)
+	{
+		stepMade_ = TO_DEAD_TIME_MAX;
+		ChangeState(STATE::DEAD);
+	}
+
 }
 
 void EnemyBase::ProcessJump(void)
@@ -636,13 +652,21 @@ void EnemyBase::SetGoalRotate(double rotRad)
 	goalQuaRot_ = axis;
 }
 
-void EnemyBase::Rotate(void)
+void EnemyBase::RotY(void)
 {
-	stepRotTime_ -= scnMng_.GetDeltaTime();
+	//地面と衝突したら回転
+	if (isCollGround_)
+	{
+		//回転
+		// デグリーからラジアン(変換)
+		float rad = AsoUtility::Deg2RadF(SPEED_ROT);
 
-	// 回転の球面補間
-	enemyRotY_ = Quaternion::Slerp(
-		enemyRotY_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
+		// ラジアンからクォータニオン(指定軸を指定角分回転させる)
+		Quaternion rotPow = Quaternion::AngleAxis(rad, AsoUtility::AXIS_Y);
+
+		//クォータニオン(回転)の合成
+		enemyRotY_ = enemyRotY_.Mult(rotPow);
+	}
 }
 
 void EnemyBase::Collision(void)
@@ -668,6 +692,7 @@ void EnemyBase::Collision(void)
 
 void EnemyBase::CollisionGravity(void)
 {
+
 	// ジャンプ量を加算
 	movedPos_ = VAdd(movedPos_, jumpPow_);
 
@@ -711,6 +736,7 @@ void EnemyBase::CollisionGravity(void)
 			}
 
 			isJump_ = false;
+			isCollGround_ = true;
 
 		}
 
@@ -771,6 +797,13 @@ void EnemyBase::CollisionCapsule(void)
 
 void EnemyBase::CalcGravityPow(void)
 {
+	//1回当たったら中断
+	if (isCollGround_)
+	{
+		transform_.pos.y = COLL_AFTER_POS_Y;
+		return;
+	}
+
 	// 重力方向
 	VECTOR dirGravity = AsoUtility::DIR_D;
 

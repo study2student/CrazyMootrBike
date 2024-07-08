@@ -15,6 +15,8 @@ class GameScene;
 class StageCurve;
 class Bomb;
 class City;
+class Goal;
+class TyreThrow;
 
 class Stage
 {
@@ -35,6 +37,12 @@ public:
 	//町の初期位置
 	static constexpr VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
 
+	//下のステージ左側の最大座標
+	static constexpr float STAGE_LEFT_POS_X_MAX = 910.0f;
+
+	//下のステージ右側の最大座標
+	static constexpr float STAGE_RIGHT_POS_X_MAX = 2400.0f;
+
 	// ステージ名
 	enum class NAME
 	{
@@ -54,7 +62,8 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
+	//Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
+	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -95,9 +104,14 @@ private:
 	std::vector<std::shared_ptr<Bike>> bikes_;
 
 	EnemyBase* enemy_;
-	std::shared_ptr<Bomb> bomb_;
+	//std::shared_ptr<Bomb> bomb_;
+	Bomb* bomb_;
+	TyreThrow* throwTyre_;
 	std::deque<std::shared_ptr<StageCurve>> curve_;
 	std::deque<std::shared_ptr<City>> city_;
+
+	//ゴール
+	std::unique_ptr<Goal> goal_;
 
 	// ステージアクティブになっている惑星の情報
 	NAME activeName_;

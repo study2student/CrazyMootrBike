@@ -1,6 +1,7 @@
 #pragma once
 #include <map>
 #include <DxLib.h>
+#include <memory>
 #include "ActorBase.h"
 #include <vector>
 class AnimationController;
@@ -17,7 +18,7 @@ public:
 	static constexpr float SPEED_MOVE = 110.0f;
 
 	// 追いつくためのスピード
-	static constexpr float SPEED_FAST = 130.0f;
+	static constexpr float SPEED_FAST = 160.0f;
 
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 80.0f;
@@ -83,11 +84,12 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
-	//バイク情報の保存
+	//バイク情報の保存(バイクの位置回転情報、場外にいるかどうか)
 	void SetBikeTrans(const Transform& bikeTrans);
+	void SetBikeIsOutside(const bool& isOutside);
 
 	//爆弾取得
-	std::shared_ptr<Bomb> GetBomb(void);
+	Bomb* GetBomb(void);
 
 private:
 
@@ -95,10 +97,12 @@ private:
 	Rotor* rotor_;
 	
 	//爆弾
-	std::shared_ptr<Bomb> bomb_;
+	//std::shared_ptr<Bomb> bomb_;
+	Bomb* bomb_;
 
 	//バイク情報
-	Transform bikeTrans_;
+	Transform targetTrans_;
+	bool isTargetOutside_;
 
 	//// アニメーション
 	//AnimationController* animationController_;

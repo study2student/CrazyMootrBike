@@ -25,8 +25,9 @@ void LongDisEnemy::SetParam(void)
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::ENEMY_LONG));
-	transform_.scl = AsoUtility::VECTOR_ONE;
+		ResourceManager::SRC::SILVER_MEDAL));
+	float SCL = 200.0f;
+	transform_.scl = { SCL,SCL,SCL };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
@@ -35,8 +36,8 @@ void LongDisEnemy::SetParam(void)
 
 	
 
-	// アニメーションの設定
-	InitAnimation();
+	//// アニメーションの設定
+	//InitAnimation();
 
 
 	//// カプセルコライダ
@@ -75,8 +76,8 @@ void LongDisEnemy::Update(void)
 	// モデル制御更新
 	transform_.Update();
 
-	// アニメーション再生
-	animationController_->Update();
+	//// アニメーション再生
+	//animationController_->Update();
 }
 
 void LongDisEnemy::UpdatePlay(void)
@@ -87,8 +88,8 @@ void LongDisEnemy::UpdatePlay(void)
 	// ジャンプ処理
 	ProcessJump();
 
-	// 移動方向に応じた回転
-	Rotate();
+	//回転
+	RotY();
 
 	// 重力による移動量
 	CalcGravityPow();
@@ -220,18 +221,24 @@ void LongDisEnemy::ProcessMove(void)
 	}*/
 
 
-	VECTOR fowardPos;
-	VECTOR backPos;
+	//VECTOR fowardPos;
+	//VECTOR backPos;
 
-	//攻撃
-	if(ins.IsNew(KEY_INPUT_C))
+	////攻撃
+	//if(ins.IsNew(KEY_INPUT_C))
+	//{
+	//	float Length = 100.0f;
+	//	fowardPos_ = VAdd(transform_.pos, VGet(0, 0, Length));
+	//	backPos_ = transform_.pos;
+	//}
+
+	//削除処理
+	stepMade_ += SceneManager::GetInstance().GetDeltaTime();
+	if (stepMade_ >= TO_DEAD_TIME_MAX)
 	{
-		float Length = 100.0f;
-		fowardPos_ = VAdd(transform_.pos, VGet(0, 0, Length));
-		backPos_ = transform_.pos;
+		stepMade_ = TO_DEAD_TIME_MAX;
+		ChangeState(STATE::DEAD);
 	}
-
-	
 	
 
 }

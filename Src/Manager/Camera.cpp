@@ -16,7 +16,10 @@ Camera::Camera(void)
 	targetPos_ = AsoUtility::VECTOR_ZERO;
 	followTransform_ = nullptr;
 	stepRotTime_ = 0.0f;
+	stepMoveFront_ = 0.0f;
 	isPause_ = false;
+	isBoost_ = false;
+	isCameraReset_ = false;
 }
 
 Camera::~Camera(void)
@@ -73,6 +76,21 @@ void Camera::SetFollow(const Transform* follow)
 void Camera::SetIsPause(bool isPause)
 {
 	isPause_ = isPause;
+}
+
+void Camera::SetIsCameraReset(bool isCameraReset)
+{
+	isCameraReset_ = isCameraReset;
+}
+
+void Camera::SetIsBoost(bool isBoost)
+{
+	isBoost_ = isBoost;
+	if (isBoost)
+	{
+		boostLocalPos_ = BOOST_LOCAL_F2C_MAX_POS;
+		
+	}
 }
 
 VECTOR Camera::GetPos(void) const
@@ -148,6 +166,32 @@ void Camera::SetDefault(void)
 void Camera::SyncFollow(void)
 {
 
+	//// 同期先の位置
+	//VECTOR pos = followTransform_->pos;
+
+	//// 重力の方向制御に従う
+	//// 正面から設定されたY軸分、回転させる
+	//rotOutX_ = Quaternion::AngleAxis(angles_.y, AsoUtility::AXIS_Y);
+
+	//// 正面から設定されたX軸分、回転させる
+	//rot_ = rotOutX_.Mult(Quaternion::AngleAxis(angles_.x, AsoUtility::AXIS_X));
+
+	//VECTOR localPos;
+
+	//// 注視点(通常重力でいうところのY値を追従対象と同じにする)
+	//localPos = rotOutX_.PosAxis(LOCAL_F2T_POS);
+	//targetPos_ = VAdd(pos, localPos);
+
+	//localPos = rot_.PosAxis(LOCAL_F2C_POS);
+	//pos_ = VAdd(pos, localPos);
+
+	//// カメラの上方向
+	//cameraUp_ = AsoUtility::DIR_U;
+
+
+
+
+
 	// 同期先の位置
 	VECTOR pos = followTransform_->pos;
 
@@ -165,7 +209,32 @@ void Camera::SyncFollow(void)
 	targetPos_ = VAdd(pos, localPos);
 
 	// カメラ位置
-	localPos = rot_.PosAxis(LOCAL_F2C_POS);
+	//ブースト使用時にカメラを動かす
+	if (isBoost_)
+	{
+		
+
+		velocity_ += ADD_CAMERA_SPEED;
+		if (velocity_>= CAMERA_SPEED_MAX)
+		{
+			velocity_ = CAMERA_SPEED_MAX;
+		}
+
+		boostLocalPos_.z += velocity_;
+		if (boostLocalPos_.z >= LOCAL_F2C_POS.z)
+		{
+			boostLocalPos_.z = LOCAL_F2C_POS.z;
+		}
+
+		localPos = rot_.PosAxis(boostLocalPos_);
+	}
+	else
+	{
+		localPos = rot_.PosAxis(LOCAL_F2C_POS);
+		velocity_ = 0.0f;
+
+	}
+	//localPos = rot_.PosAxis(LOCAL_F2C_POS);
 	pos_ = VAdd(pos, localPos);
 
 	// カメラの上方向
@@ -188,42 +257,46 @@ void Camera::ProcessRot(void)
 
 	//ボタンが押されたか
 	bool isHitKey = false;
-	// カメラ回転
-	if (ins.IsNew(KEY_INPUT_RIGHT))
-	{
-		// 右回転
-		angles_.y += AsoUtility::Deg2RadF(1.0f);
-		isHitKey = true;
-	}
-	if (ins.IsNew(KEY_INPUT_LEFT))
-	{
-		// 左回転
-		angles_.y += AsoUtility::Deg2RadF(-1.0f);
-		isHitKey = true;
-	}
 
-	// 上回転
-	if (ins.IsNew(KEY_INPUT_UP))
+	if (!isCameraReset_)
 	{
-		angles_.x += AsoUtility::Deg2RadF(1.0f);
-		if (angles_.x > LIMIT_X_UP_RAD)
+		// カメラ回転
+		if (ins.IsNew(KEY_INPUT_RIGHT))
 		{
-			angles_.x = LIMIT_X_UP_RAD;
+			// 右回転
+			angles_.y += AsoUtility::Deg2RadF(1.0f);
+			isHitKey = true;
 		}
-	}
-
-	// 下回転
-	if (ins.IsNew(KEY_INPUT_DOWN))
-	{
-		angles_.x += AsoUtility::Deg2RadF(-1.0f);
-		if (angles_.x < -LIMIT_X_DW_RAD)
+		if (ins.IsNew(KEY_INPUT_LEFT))
 		{
-			angles_.x = -LIMIT_X_DW_RAD;
+			// 左回転
+			angles_.y += AsoUtility::Deg2RadF(-1.0f);
+			isHitKey = true;
+		}
+
+		// 上回転
+		if (ins.IsNew(KEY_INPUT_UP))
+		{
+			angles_.x += AsoUtility::Deg2RadF(1.0f);
+			if (angles_.x > LIMIT_X_UP_RAD)
+			{
+				angles_.x = LIMIT_X_UP_RAD;
+			}
+		}
+
+		// 下回転
+		if (ins.IsNew(KEY_INPUT_DOWN))
+		{
+			angles_.x += AsoUtility::Deg2RadF(-1.0f);
+			if (angles_.x < -LIMIT_X_DW_RAD)
+			{
+				angles_.x = -LIMIT_X_DW_RAD;
+			}
 		}
 	}
 
 	//回転処理をしてない時カメラを徐々に前に向かせる
-	if (!isHitKey)
+	if (!isHitKey || isCameraReset_)
 	{
 		Quaternion goalQuaRot_ = Quaternion::Euler({ 0.0f,0.0f,0.0f });
 

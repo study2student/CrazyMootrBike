@@ -43,6 +43,13 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	jumpSpeed_ = 1.0f;
 
 	isAttack_ = false;
+	isOutSide_ = false;
+
+	// ブースト時の加算速度
+	speedBoost_ = 0.0f;
+
+	// ブースト使用間隔
+	deleyBoost_ = 0;
 
 	// 衝突チェック
 	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
@@ -56,18 +63,33 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 
 Bike::~Bike(void)
 {
+<<<<<<< HEAD
 }
 
 void Bike::Init(void)
 {
 	// エフェクト初期化
 	InitEffect();
+=======
+	delete weapon_;
+
+	StopEffekseer3DEffect(effectBoostPlayId_);
+}
+
+void Bike::Init(void)
+{	
+	// 武器
+	weapon_ = new Weapon();
+	weapon_->Init();
+>>>>>>> main
 
 	//タイヤ
 	frontTyre_ = std::make_shared<FrontTyre>();
 	frontTyre_->Init();
+	frontTyre_->SetTransform(transform_);
 	rearTyre_ = std::make_shared<RearTyre>();
 	rearTyre_->Init();
+	rearTyre_->SetTransform(transform_);
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -95,6 +117,9 @@ void Bike::Init(void)
 
 	// アニメーションの設定
 	InitAnimation();
+
+	// エフェクト初期化
+	InitEffect();
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
@@ -154,8 +179,8 @@ void Bike::Draw(void)
 	MV1DrawModel(transformPlayer_.modelId);
 
 	//タイヤ
-	frontTyre_->Draw();
-	rearTyre_->Draw();
+	/*frontTyre_->Draw();
+	rearTyre_->Draw();*/
 
 	// 体力とかゲージとか
 	DrawUI();
@@ -248,11 +273,16 @@ void Bike::Jump(void)
 void Bike::Damage(int damage)
 {
 	hp_ -= damage;
-	//下限値
-	if (hp_ <= MIN_HP)
-	{
-		hp_ = MIN_HP;
-	}
+}
+
+const int& Bike::GetHP(void)
+{
+	return hp_;
+}
+
+const bool& Bike::GetIsOutSide(void)
+{
+	return isOutSide_;
 }
 
 void Bike::Flip(VECTOR dir)
@@ -311,19 +341,27 @@ void Bike::ChangeStatePlay(void)
 {
 }
 
+<<<<<<< HEAD
 void Bike::ChangeStateFliped(void)
 {
 }
+=======
+>>>>>>> main
 
 void Bike::UpdateNone(void)
 {
 }
+
+
 
 void Bike::UpdatePlay(void)
 {
 
 	// 移動処理
 	ProcessMove();
+
+	//ブースト
+	ProcessBoost();
 
 	// ジャンプ処理
 	ProcessJump();
@@ -343,11 +381,16 @@ void Bike::UpdatePlay(void)
 	// 衝突判定
 	Collision();
 
-	// 
-
 	// 回転させる
 	transform_.quaRot = playerRotY_;
 	transformPlayer_.quaRot = playerRotY_;
+
+	//HP下限値
+	if (hp_ <= MIN_HP)
+	{
+		hp_ = MIN_HP;
+		state_ = STATE::DEAD;
+	}
 }
 
 void Bike::UpdateFliped(void)
@@ -429,6 +472,7 @@ void Bike::DrawDebug(void)
 
 void Bike::ProcessMove(void)
 {
+
 	auto& ins = InputManager::GetInstance();
 
 	// 移動量をゼロ
@@ -452,7 +496,7 @@ void Bike::ProcessMove(void)
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
 	//前に進む
-	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE );
+	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE + speedBoost_);
 
 	// プレイヤーごとの入力処理
 	const auto& input = playerInputs[playerID_];
@@ -495,28 +539,90 @@ void Bike::ProcessMove(void)
 	//	dir = cameraRot.GetForward();
 	//}
 
-	// カメラ方向から後退したい
-	if (ins.IsNew(KEY_INPUT_S))
+
+	//もし上ってしまったら戻す
+	//右側
+	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0f);
-		dir = cameraRot.GetBack();
+		dir = AsoUtility::DIR_L;
+		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
+
+		//場外にでている
+		isOutSide_ = true;
+	}
+	else
+	{
+		if (!(transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX))
+		{
+			SceneManager::GetInstance().GetCamera()->SetIsCameraReset(false);
+			// カメラ方向から後退したい
+			if (ins.IsNew(KEY_INPUT_S))
+			{
+				rotRad = AsoUtility::Deg2RadD(180.0f);
+				dir = cameraRot.GetBack();
+			}
+
+			// カメラ方向から右側へ移動したい
+			if (ins.IsNew(KEY_INPUT_D))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+				dir = cameraRot.GetRight();
+			}
+
+			// カメラ方向から左側へ移動したい
+			if (ins.IsNew(KEY_INPUT_A))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(45.0f);
+				dir = cameraRot.GetLeft();
+
+			}
+		}
 	}
 
-	// カメラ方向から右側へ移動したい
-	if (ins.IsNew(KEY_INPUT_D))
+	//左側
+	if (transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX)
 	{
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetRight();
+		dir = AsoUtility::DIR_R;
+		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
+
+		//場外にでている
+		isOutSide_ = true;
+	}
+	else
+	{
+		if (!(transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX))
+		{
+
+			SceneManager::GetInstance().GetCamera()->SetIsCameraReset(false);
+			// カメラ方向から後退したい
+			if (ins.IsNew(KEY_INPUT_S))
+			{
+				rotRad = AsoUtility::Deg2RadD(180.0f);
+				dir = cameraRot.GetBack();
+			}
+
+			// カメラ方向から右側へ移動したい
+			if (ins.IsNew(KEY_INPUT_D))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+				dir = cameraRot.GetRight();
+			}
+
+			// カメラ方向から左側へ移動したい
+			if (ins.IsNew(KEY_INPUT_A))
+			{
+				rotRadZ = AsoUtility::Deg2RadD(45.0f);
+				dir = cameraRot.GetLeft();
+
+			}
+		}
 	}
 
-	// カメラ方向から左側へ移動したい
-	if (ins.IsNew(KEY_INPUT_A))
+	//場外にでていない
+	if (!(transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX) && !(transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX))
 	{
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetLeft();
-
+		isOutSide_ = false;
 	}
-
 
 
 	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
@@ -575,6 +681,7 @@ void Bike::ProcessMove(void)
 		SetGoalRotateZ(rotRadZ);
 	}
 
+
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
 	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
@@ -584,6 +691,7 @@ void Bike::ProcessMove(void)
 	SonicBoomEffect();
 	effectSonicPlayId_ = PlayEffekseer3DEffect(effectSonicResId_);
 	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
+
 }
 
 void Bike::ProcessJump(void)
@@ -614,6 +722,44 @@ void Bike::ProcessAttack(void)
 	NormalAttack();
 	SpecialAttack();
 	LongAttack();
+}
+
+void Bike::ProcessBoost(void)
+{
+	auto& ins = InputManager::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0)
+	{
+		//HPを消費して発動
+		hp_ -= BOOST_USE_HP;
+
+		SceneManager::GetInstance().GetCamera()->SetIsBoost(true);
+		deleyBoost_ = DELEY_BOOST_MAX;
+		speedBoost_ = 80.0f;
+		effectBoostPlayId_ = PlayEffekseer3DEffect(effectBoostResId_);
+
+		// 大きさ
+		float boostSCALE = 30.0f;
+		SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, boostSCALE, boostSCALE, boostSCALE);
+
+		SyncBoostEffect();
+	}
+	else
+	{
+		deleyBoost_--;
+		if (deleyBoost_ <= 0)
+		{
+			deleyBoost_ = 0.0f;
+		}
+		speedBoost_ -= 0.340f;
+		if (speedBoost_ <= 0)
+		{
+			speedBoost_ = 0.0f;
+			SceneManager::GetInstance().GetCamera()->SetIsBoost(false);
+		}
+
+		SyncBoostEffect();
+	}
 }
 
 void Bike::ProcessDebug(void)
@@ -886,11 +1032,32 @@ void Bike::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectSonicResId_ = ResourceManager::GetInstance().Load(
+<<<<<<< HEAD
 		ResourceManager::SRC::SONICEFFECT).handleId_;
+=======
+		ResourceManager::SRC::SonicEffect).handleId_;
+
+	//ブーストエフェクト
+	effectBoostResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::BOOST_EFFECT).handleId_;
+>>>>>>> main
 }
 
 void Bike::SonicBoomEffect(void)
 {
 	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.pos.x, transform_.pos.y + 200.0f, transform_.pos.z + 1000);
 	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.rot.x, transform_.rot.y + 180.0f, transform_.rot.z);
+}
+
+void Bike::SyncBoostEffect(void)
+{
+	VECTOR pos = transform_.pos;
+
+	pos = Quaternion::PosAxis(transform_.quaRot, RELATIVE_P2EB_POS);
+	pos = VAdd(transform_.pos, pos);
+	SetPosPlayingEffekseer3DEffect(effectBoostPlayId_, pos.x, pos.y, pos.z);
+
+	//角度の同期
+	VECTOR angles = transform_.quaRot.ToEuler();
+	SetRotationPlayingEffekseer3DEffect(effectBoostPlayId_, angles.x, angles.y, angles.z);
 }

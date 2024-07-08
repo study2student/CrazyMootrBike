@@ -21,7 +21,11 @@
 #include "../Object/Bomb.h"
 #include "../Object/Score.h"
 #include "../Object/Helicopter.h"
+<<<<<<< HEAD
 #include "../Scene/SelectScene.h"
+=======
+#include "../Object/TyreThrow.h"
+>>>>>>> main
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -31,7 +35,8 @@ GameScene::GameScene(void)
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
-	score_ = nullptr;
+	throwTyre_ = nullptr;
+	//score_ = nullptr;
 
 	nowCursor_ = 0;
 }
@@ -39,6 +44,7 @@ GameScene::GameScene(void)
 GameScene::~GameScene(void)
 {
 	delete enemy_;
+	delete throwTyre_;
 }
 
 void GameScene::Init(void)
@@ -66,9 +72,9 @@ void GameScene::Init(void)
 	/*enemyBike_ = new EnemyBike(enemy_);
 	enemyBike_->Init();*/
 
-	//スコア
-	score_ = std::make_shared<Score>();
-	score_->Init();
+	////スコア
+	//score_ = std::make_shared<Score>();
+	//score_->Init();
 
 	// 敵
 	for (auto& bike : bikes_) {
@@ -100,11 +106,15 @@ void GameScene::Init(void)
 	}
 
 	//ヘリコプター
-	helicopter_ = std::make_unique<Helicopter>();
+	helicopter_ = std::make_shared<Helicopter>();
 	helicopter_->Init();
 
+	//投げタイヤ
+	throwTyre_ = new TyreThrow();
+	throwTyre_->Init();
+
 	// ステージ
-	stage_ = std::make_unique<Stage>(bikes_, enemy_,helicopter_->GetBomb(), this);
+	stage_ = std::make_shared<Stage>(bikes_, enemy_,helicopter_->GetBomb(),throwTyre_, this);
 	stage_->Init();
 
 	// ステージの初期設定
@@ -154,9 +164,14 @@ void GameScene::Init(void)
 	isCursorHit_ = false;
 	stepPauseKeyHit_ = 0.0f;
 
+<<<<<<< HEAD
 	// ゲームスタート時のカウント
 	startCount_ = 0.0f;
 	isStart_ = false;
+=======
+	//スコアリセット
+	score_.ResetScore();
+>>>>>>> main
 
 	//ゲームBGM
 	isBGM_ = false;
@@ -164,9 +179,9 @@ void GameScene::Init(void)
 
 void GameScene::Update(void)
 {
-	
 	InputManager& ins = InputManager::GetInstance();
-
+	throwTyre_->Update();
+	throwTyre_->SetTransform(bikes_[3]->GetTransform());
 	//ポーズメニュー
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
@@ -194,10 +209,14 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+<<<<<<< HEAD
 	if (stage_->GetLoopStageSize() >= STAGE_COUNT)
+=======
+	/*if (stage_->GetLoopStageSize() >= 35)
+>>>>>>> main
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
-	}
+	}*/
 
 	// スタート時のカウントダウンを減らす
 	if (startCount_ > 0.0f)
@@ -208,6 +227,18 @@ void GameScene::Update(void)
 	{
 		isStart_ = true;
 	}
+<<<<<<< HEAD
+=======
+	for (auto& bike : bikes_)
+	{
+		enemy_->SetBikeTrans(bike->GetTransform());
+	}
+	enemy_->SetBikeTrans(bike_->GetTransform());
+	helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
+	helicopter_->SetBikeIsOutside(bikes_[3]->GetIsOutSide());
+
+	//throwTyre_->SetTransform(bikes_[3]->GetTransform());
+>>>>>>> main
 
 	if (isStart_)
 	{
@@ -218,7 +249,50 @@ void GameScene::Update(void)
 
 		for (auto& skyDome : skyDomes_)
 		{
+<<<<<<< HEAD
 			skyDome->Update();
+=======
+			isHitStop = true;
+			//スコア加算
+			score_.AddScore();
+		}
+	}
+	
+	if (isHitStop == true)
+	{
+
+	}
+
+	//衝突判定
+	Collision();
+
+	//ステージが生成されたら敵を配置する
+	if (stage_->GetIsMakeLoopStage())
+	{
+
+		stage_->SetMakeLoopStage(false);
+		
+		//センター方向からの横の移動幅
+		float shiftX_ = {};
+
+
+		//道のランダムな場所に生成(3パターン)
+		int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
+		EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
+
+		Vector2 randPos;
+		switch (dir)
+		{
+		case EnemyBase::DIR::LEFT:
+			shiftX_ = -EnemyBase::DIR_LEN;
+			break;
+		case EnemyBase::DIR::CENTER:
+			shiftX_ = 0.0f;
+			break;
+		case EnemyBase::DIR::RIGHT:
+			shiftX_ = EnemyBase::DIR_LEN;
+			break;
+>>>>>>> main
 		}
 
 		if (!isHitStop)
@@ -237,6 +311,18 @@ void GameScene::Update(void)
 			}
 
 
+<<<<<<< HEAD
+=======
+			
+			////デバッグ
+			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
+
+			////座標の設定
+			//e->setPos(randPos.ToVector2F());
+
+			//可変長配列に要素を追加
+			enemys_.push_back(e);
+>>>>>>> main
 		}
 		else
 		{
@@ -286,6 +372,7 @@ void GameScene::Update(void)
 		}
 
 
+<<<<<<< HEAD
 		if (isHitStop == true)
 		{
 
@@ -377,11 +464,41 @@ void GameScene::Update(void)
 
 		helicopter_->Update();
 	}
+=======
+	helicopter_->Update();
+	//throwTyre_->Update();
+	score_.Update();
+>>>>>>> main
 }
 
 void GameScene::Draw(void)
 {
+<<<<<<< HEAD
 	if (playNumber == 1)
+=======
+	
+	
+
+	// 背景
+	skyDome_->Draw();
+	stage_->Draw();
+
+	bike_->Draw();
+	helicopter_->Draw();
+	throwTyre_->Draw();
+	score_.Draw();
+
+	//enemy_->Draw();
+	//enemyBike_->Draw();
+	
+	for (auto& bike : bikes_) {
+		bike->Draw();
+	}
+
+
+	size_t sizeE = enemys_.size();
+	for (int i = 0; i < sizeE; i++)
+>>>>>>> main
 	{
 		SetDrawScreen(mainScreen_);
 
@@ -438,6 +555,7 @@ void GameScene::Draw(void)
 			DrawGraph(0, 0, mainScreen_, false);
 		}
 	}
+<<<<<<< HEAD
 	else
 	{
 		for (int i = 0; i < cameras_.size(); i++)
@@ -519,6 +637,10 @@ void GameScene::Draw(void)
 		}
 	}
 
+=======
+
+
+>>>>>>> main
 	// ヘルプ
 	//DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
 	//DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
@@ -558,6 +680,8 @@ void GameScene::DrawDubg(void)
 {
 	DrawFormatString(840, 100, 0x000000,"DrawCall:%d", GetDrawCallCount());
 	DrawFormatString(840, 120, 0x000000,"FPS:%f", GetFPS());
+	//DrawFormatString(840, 420, 0x000000,"カウンタ = %d", helicopter_.use_count());
+	//DrawFormatString(840, 420, 0x000000,"bombPosY = %f", helicopter_->GetBomb().lock()->GetTransform().pos.y);
 	DrawFormatString(0, 140, 0x000000, "IsHitStop:%d", isHitStop);
 }
 
@@ -609,6 +733,7 @@ void GameScene::Collision(void)
 		return;
 	}
 
+<<<<<<< HEAD
 	auto heliCap = helicopter_->GetBomb()->GetCapsule();
 
 	for (auto& bike : bikes_) {
@@ -666,6 +791,43 @@ void GameScene::BikeCollision(void)
 
 		}
 
+=======
+	//auto bombCap = helicopter_->GetBomb()->GetCapsule();
+	//auto bikeCap = bikes_[3]->GetCapsule();
+
+	//VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+	//float  dis = AsoUtility::SqrMagnitudeF(diff);
+	//if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+	//{
+	//	//プレイヤーにダメージ
+	//	bikes_[3]->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+	//	//当たった
+	//	helicopter_->GetBomb()->SetIsCol(true);
+	//}
+
+	for (const auto& bike : bikes_)
+	{
+		auto bombCap = helicopter_->GetBomb()->GetCapsule();
+		auto bikeCap = bike->GetCapsule();
+
+		VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+		{
+			//プレイヤーにダメージ
+			bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+			//当たった
+			helicopter_->GetBomb()->SetIsCol(true);
+		}
+
+		//ゲームオーバー処理
+		if (bike->GetHP() <= 0)
+		{
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		}
+>>>>>>> main
 	}
 }
 
@@ -687,75 +849,6 @@ void GameScene::HitEffect(void)
 
 void GameScene::MouseProcess(void)
 {
-	//auto& ins_ = InputManager::GetInstance();
-
-	////マウス座標
-	//Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
-
-	////再開ボタン
-	//Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
-	//if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
-	//	&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y || pState_ == PAUSE_STATE::RESTART)
-	//{
-	//	//ボタンにふれている場合
-	//	reStartFontColor_ = GetColor(0, 0, 255);
-	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
-	//	{
-	//		//ポーズ解除
-	//		isPause_ = false;
-	//	}
-	//}
-	//else
-	//{
-	//	//ボタンにふれいない場合
-	//	reStartFontColor_ = GetColor(255, 255, 255);
-	//}
-
-
-
-	////リトライボタン
-	//Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
-	//if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
-	//	&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y || pState_ == PAUSE_STATE::RETRY)
-	//{
-	//	
-	//	//ボタンにふれている場合
-	//	reTryFontColor_ = GetColor(0, 0, 255);
-	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
-	//	{
-	//		//左クリックまたはスペースキーでリトライ
-	//		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	//	}
-	//}
-	//else
-	//{
-	//	//ボタンにふれいない場合
-	//	reTryFontColor_ = GetColor(255, 255, 255);
-	//}
-
-
-
-	//
-	//Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
-	//if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
-	//	&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y || pState_ == PAUSE_STATE::END)
-	//{
-	//
-	//	//ボタンにふれている場合
-	//	endFontColor_ = GetColor(0, 0, 255);
-	//	if (GetMouseInput() & MOUSE_INPUT_LEFT || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
-	//	{
-	//		//左クリックまたはスペースキーでタイトルへ
-	//		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-	//	}
-	//}
-	//else
-	//{
-	//	//ボタンにふれいない場合
-	//	endFontColor_ = GetColor(255, 255, 255);
-	//}
-
-
 
 	auto& ins_ = InputManager::GetInstance();
 

@@ -38,19 +38,26 @@ public:
 		JUMP_RAMP,//ジャンプ台
 		CURVE,	//カーブ
 		CITY,	//背景街並み
+		GOAL,	//ゴール
 
-		ENEMY_SHORT,		//仮敵
-		ENEMY_LONG,
-		ENEMY_MAGIC,
+		//ENEMY_SHORT,		//仮敵
+		//ENEMY_LONG,
+		//ENEMY_MAGIC,
 		HELICOPTER,
 		HELICOPTER_ROTOR,
 		BOMB,		//爆弾
 		BIKE,		//バイク
 		TYRE,		//タイヤ
 		BURNOUT_EFFECT, //バーンアウトエフェクト(バイク発車前)
+		START_EFFECT, //ゲーム開始エフェクト
+
+		GOLD_MEDAL,		//金メダル
+		SILVER_MEDAL,	//銀メダル
+		COPPER_MEDAL,	//銅メダル
 
 		W_SWORD,//バスターソード
 
+<<<<<<< HEAD
 		//エフェクト関連
 		HITEFFECT,//ヒットした時のエフェクト
 		SONICEFFECT,//ソニックエフェクト
@@ -59,6 +66,11 @@ public:
 		SND_BGM,//ゲームBGM
 		SND_COIN,//コイン収集時の音
 		SND_MOTOR//モーター音
+=======
+		HitEffect,//ヒットした時のエフェクト
+		SonicEffect,//ソニックエフェクト
+		BOOST_EFFECT //ブーストエフェクト
+>>>>>>> main
 	};
 
 	// 明示的にインステンスを生成する

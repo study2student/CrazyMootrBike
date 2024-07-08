@@ -100,7 +100,7 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BlackHole/BlackHole.efkefc");
 	resourcesMap_.emplace(SRC::BLACK_HOLE, res);
 
-	// ゴール
+	// ゴールスター
 	res = new RES(RES_T::MODEL, PATH_MDL + "GoalStar/GoalStar.mv1");
 	resourcesMap_.emplace(SRC::GOAL_STAR, res);
 
@@ -132,17 +132,21 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/city/city.mv1");
 	resourcesMap_.emplace(SRC::CITY, res);
 
-	// 近距離敵
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_SHORT, res);
+	//ゴール
+	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/GoalPost/Goal.mv1");
+	resourcesMap_.emplace(SRC::GOAL, res);
 
-	// 遠距離敵
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_LONG, res);
+	//// 近距離敵
+	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");
+	//resourcesMap_.emplace(SRC::ENEMY_SHORT, res);
 
-	// 爆弾敵
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
-	resourcesMap_.emplace(SRC::ENEMY_MAGIC, res);
+	//// 遠距離敵
+	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
+	//resourcesMap_.emplace(SRC::ENEMY_LONG, res);
+
+	//// 爆弾敵
+	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
+	//resourcesMap_.emplace(SRC::ENEMY_MAGIC, res);
 
 	//ヘリ
 	res = new RES(RES_T::MODEL, PATH_MDL + "Helicopter/Aircraft04.mv1");
@@ -155,6 +159,18 @@ void ResourceManager::Init(void)
 	// 敵が落とす爆弾
 	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
 	resourcesMap_.emplace(SRC::BOMB, res);
+
+	//金メダル
+	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/GoldCoin.mv1");
+	resourcesMap_.emplace(SRC::GOLD_MEDAL, res);
+
+	//銀メダル
+	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/SilverCoin.mv1");
+	resourcesMap_.emplace(SRC::SILVER_MEDAL, res);
+
+	// 銅メダル
+	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/CopperCoin.mv1");
+	resourcesMap_.emplace(SRC::COPPER_MEDAL, res);
 
 
 	// バイクモデル
@@ -173,6 +189,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BikeStart/burnoutEffect.efkefc");
 	resourcesMap_.emplace(SRC::BURNOUT_EFFECT, res);
 
+	// ゲーム開始エフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Start/startEffect.efkefc");
+	resourcesMap_.emplace(SRC::START_EFFECT, res);
+
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	resourcesMap_.emplace(SRC::HITEFFECT, res);
@@ -181,6 +201,11 @@ void ResourceManager::Init(void)
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "SonicBoom/SonicBoom.efkefc");
 	//resourcesMap_.emplace(SRC::SonicEffect, res);
+
+	// ブーストエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
+	resourcesMap_.emplace(SRC::BOOST_EFFECT, res);
+
 	
 
 	// ゲームBGM

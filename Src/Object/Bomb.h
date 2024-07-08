@@ -5,6 +5,7 @@
 class Player;
 class Collider;
 class Capsule;
+class Helicopter;
 
 class Bomb : public ActorBase
 {
@@ -25,7 +26,7 @@ public:
 	static constexpr float SPEED = 30.0f;
 
 	//ダメージ
-	static constexpr int BOMB_DAMAGE = 20;
+	static constexpr int BOMB_DAMAGE = 50;
 
 	// 状態
 	enum class STATE
@@ -61,6 +62,9 @@ public:
 
 	//爆弾が当たったが取得
 	bool GetIsCol(void);
+
+	//状態取得
+	const STATE& GetState(void);
 
 private:
 
@@ -131,9 +135,6 @@ private:
 
 	// 移動量の計算
 	void CalcGravityPow(void);
-
-	//爆弾の生成
-	void CreateBomb(void);
 
 };
 

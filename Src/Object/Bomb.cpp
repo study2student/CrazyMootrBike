@@ -23,6 +23,7 @@ Bomb::Bomb()
 
 Bomb::~Bomb(void)
 {
+	StopEffekseer3DEffect(bombEffectPlayId_);
 }
 
 void Bomb::Init(void)
@@ -121,6 +122,11 @@ void Bomb::SetIsCol(bool isCol)
 bool Bomb::GetIsCol(void)
 {
 	return isCol_;
+}
+
+const Bomb::STATE& Bomb::GetState(void)
+{
+	return state_;
 }
 
 void Bomb::ChangeState(STATE state)

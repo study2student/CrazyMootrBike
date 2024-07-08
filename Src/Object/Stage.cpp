@@ -22,9 +22,11 @@
 #include "Common/Transform.h"
 #include "../Scene/GameScene.h"
 #include "../Object/StageCurve.h"
+#include "../Object/Goal.h"
+#include "../Object/TyreThrow.h"
 #include "Stage.h"
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, std::shared_ptr<Bomb> bomb, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb,TyreThrow* throwTyre, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
@@ -32,6 +34,7 @@ Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, 
 	//bike_ = bike;
 	enemy_ = enemy;
 	bomb_ = bomb;
+	throwTyre_ = throwTyre;
 	activeName_ = NAME::MAIN_PLANET;
 	step_ = 0.0f;
 
@@ -93,6 +96,9 @@ void Stage::Init(void)
 
 	jampRamp_ = std::make_unique<JampRamp>();
 	jampRamp_->Init();
+
+	goal_ = std::make_unique<Goal>();
+	goal_->Init();
 
 	step_ = -1.0f;
 }
@@ -164,6 +170,25 @@ void Stage::Update(void)
 	}
 	jampRamp_->Update();
 
+	//ゴール
+	goal_->Update();
+
+	//誰かがゴールゾーンを超えたらクリア
+	for (const auto& bike : bikes_)
+	{
+		if (bike->GetTransform().pos.z >= goal_->GetTransform().pos.z)
+		{
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		}
+	}
+
+	//ステージを一定数生成したらゴールが出現
+	if (loopStage_.size() >= Goal::STAGE_NUM_MAX_FOR_GOAL)
+	{
+		goal_->SetPosZ(5000.0f * (Goal::STAGE_NUM_MAX_FOR_GOAL + 1));
+	}
+	
+
 }
 
 void Stage::Draw(void)
@@ -208,8 +233,10 @@ void Stage::Draw(void)
 	//}
 
 	jampRamp_->Draw();
+	goal_->Draw();
 
 	DrawFormatString(0, 200, 0xff0000, "IsJump:%d", isJamp_);
+	//DrawFormatString(840, 520, 0xffffff, "loopstageNum : %d", loopStage_.size());
 }
 
 void Stage::ChangeStage(NAME type)
@@ -233,6 +260,8 @@ void Stage::ChangeStage(NAME type)
 	jampRamp_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	bomb_->ClearCollider();
 	bomb_->AddCollider(activePlanet_.lock()->GetTransform().collider);
+	throwTyre_->ClearCollider();
+	throwTyre_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
@@ -243,6 +272,7 @@ void Stage::ChangeStage(NAME type)
 		//bike_->AddCollider(ls->GetTransform().collider);
 		jampRamp_->AddCollider(ls->GetTransform().collider);
 		bomb_->AddCollider(ls->GetTransform().collider);
+		throwTyre_->AddCollider(ls->GetTransform().collider);
 	}
 	
 	//while (!loopStage_.empty())
@@ -405,7 +435,7 @@ void Stage::MakeLoopStage(void)
 
 
 		float scale = 1.0f;
-		loopTrans.scl = { scale * 2.5f,scale,scale };
+		loopTrans.scl = { scale * 2.5f,scale ,scale };
 		loopTrans.quaRot = Quaternion();
 		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 5000.0f * (size + 1) };
 
@@ -422,6 +452,7 @@ void Stage::MakeLoopStage(void)
 			}
 			//bike_->AddCollider(ls->GetTransform().collider);
 			bomb_->AddCollider(ls->GetTransform().collider);
+			throwTyre_->AddCollider(ls->GetTransform().collider);
 		}
 
 
