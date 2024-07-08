@@ -18,25 +18,28 @@ public:
 	static constexpr float SPEED_ROT = 20.0f;
 
 	//速度
-	static constexpr float SPEED_MOVE = 30.0f;
+	static constexpr float SPEED_MOVE = 20.0f;
 
 	//場所表示時間
 	static constexpr float PLACE_DRAW_MAX_TIME = 3.0f;
 
 	//消えるまでの時間
-	static constexpr float TO_DELETE_MAX_TIME = 3.5f;
+	static constexpr float TO_DELETE_MAX_TIME = 4.5f;
 
 	//タイヤ復活時間
-	static constexpr float TYRE_REMAKE_MAX_TIME = 9.0f;
+	static constexpr float TYRE_REMAKE_MAX_TIME = 8.0f;
 
 	//タイヤの投げる位置(少し横に)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_SIDE = { 0.0f,0.0f,4000.0f };
+	static constexpr VECTOR THROW_LOCAL_POS_TO_SIDE = { -600.0f,0.0f,15000.0f };
 
 	//タイヤの投げる位置(少し斜めに)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { 0.0f,0.0f,3000.0f };
+	static constexpr VECTOR THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -200.0f,0.0f,11000.0f };
 
 	//タイヤの投げる位置(大きく斜めに)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { 0.0f,0.0f,2000.0f };
+	static constexpr VECTOR THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -50.0f,0.0f,6000.0f };
+
+	//タイヤローカル待機座標
+	static constexpr VECTOR TYRE_IDLE_ROCAL_POS = { 500.0f,300.0f,15000.0f };
 
 
 	// 状態

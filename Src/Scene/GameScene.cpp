@@ -145,6 +145,7 @@ void GameScene::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
 	throwTyre_->Update();
+	throwTyre_->SetTransform(bikes_[3]->GetTransform());
 	//ポーズメニュー
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
@@ -205,7 +206,7 @@ void GameScene::Update(void)
 	helicopter_->SetBikeTrans(bikes_[3]->GetTransform());
 	helicopter_->SetBikeIsOutside(bikes_[3]->GetIsOutSide());
 
-	throwTyre_->SetTransform(bikes_[3]->GetTransform());
+	//throwTyre_->SetTransform(bikes_[3]->GetTransform());
 
 	//敵
 	size_t sizeE = enemys_.size();

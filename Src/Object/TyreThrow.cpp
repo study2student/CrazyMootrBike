@@ -34,9 +34,9 @@ void TyreThrow::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::TYRE));
-	float scale = 2.05f;
+	float scale = 4.05f;
 	transform_.scl = { scale , scale, scale };
-	transform_.pos = { 1500.0f,100.0f, 3000.0f };
+	transform_.pos = { 1500.0f,1000.0f, 3000.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });
@@ -75,11 +75,16 @@ void TyreThrow::Update(void)
 
 void TyreThrow::Draw(void)
 {
-	// モデルの描画
-	MV1DrawModel(transform_.modelId);
-
 	// デバッグ描画
 	DrawDebug();
+
+	if (state_ == STATE::DESTROY)
+	{
+		return;
+	}
+
+	// モデルの描画
+	MV1DrawModel(transform_.modelId);
 }
 
 void TyreThrow::SetTransform(Transform transformTarget)
@@ -132,11 +137,20 @@ void TyreThrow::ChangeState(STATE state)
 
 void TyreThrow::ChangeStateIdle(void)
 {
+	isCol_ = false;
 }
 
 
 void TyreThrow::ChangeStateThrow(void)
 {
+	//////プレイヤーの少し先で待機
+	//VECTOR myPos;
+	//myPos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+	//myPos.x = 2500.0f;
+
+	transform_.pos=VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+	transform_.pos.x = 2500.0f;
+
 	//ランダムで向きを決める
 	//道のランダムな場所に生成(3パターン)
 	int randDir = GetRand(static_cast<int>(TyreThrow::DIR::MAX) - 1);
@@ -157,6 +171,7 @@ void TyreThrow::ChangeStateThrow(void)
 		break;
 	}
 
+	//targetDir_ = VNorm(VSub(targetPos, myPos));
 	targetDir_ = VNorm(VSub(targetPos, transform_.pos));
 }
 
@@ -168,7 +183,8 @@ void TyreThrow::ChangeStateDestroy(void)
 void TyreThrow::UpdateIdle(void)
 {
 	//プレイヤーの少し先で待機
-	transform_.pos = transformTarget_.pos;
+	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+
 
 	//5秒後に投げる
 	stepPlaceDrawTime_ += SceneManager::GetInstance().GetDeltaTime();
@@ -216,6 +232,15 @@ void TyreThrow::UpdateThrowMove(void)
 
 void TyreThrow::UpdateDestroy(void)
 {
+	//5秒後に復活
+	stepTyreDestroy_ += SceneManager::GetInstance().GetDeltaTime();
+
+	if (stepTyreDestroy_ >= TYRE_REMAKE_MAX_TIME)
+	{
+		//爆弾爆発発射前状態に移行
+		ChangeState(STATE::IDLE);
+		stepTyreDestroy_ = 0.0f;
+	}
 }
 
 void TyreThrow::DrawDebug(void)
