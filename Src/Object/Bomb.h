@@ -86,9 +86,11 @@ private:
 
 	//爆発エフェクト
 	int bombEffectResId_;
-
-	//爆発エフェクト
 	int bombEffectPlayId_;
+
+	// 爆発位置エフェクト
+	int bombPlaceEffectResId_;
+	int bombPlaceEffectPlayId_;
 
 	//爆発目標
 	VECTOR bombTargetPos_;
@@ -110,7 +112,10 @@ private:
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
 
-	
+	//爆発エフェクト
+	void InitEffect(void);
+	void BombEffect(void);
+	void SyncBombPlaceEffect(void);
 
 	// 状態遷移
 	void ChangeState(STATE state);

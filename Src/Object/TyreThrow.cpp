@@ -1,4 +1,5 @@
 #include <string>
+#include <EffekseerForDXLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
 #include "../Manager/InputManager.h"
@@ -33,8 +34,8 @@ void TyreThrow::Init(void)
 {
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::TYRE));
-	float scale = 4.05f;
+		ResourceManager::SRC::SPIKE_BALL));
+	float scale = 120.0f;
 	transform_.scl = { scale , scale, scale };
 	transform_.pos = { 1500.0f,1000.0f, 3000.0f };
 	transform_.quaRot = Quaternion();
@@ -42,16 +43,18 @@ void TyreThrow::Init(void)
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });
 	transform_.Update();
 
-
 	// カプセルコライダ
 	//capsule_ = new Capsule(transform_);
 	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
-	capsule_->SetRadius(80.0f);
+	capsule_->SetRadius(120.0f);
+
+	//エフェクト
+	InitEffect();
 
 	// 初期状態
-	ChangeState(STATE::IDLE);
+	ChangeState(STATE::DESTROY);
 }
 
 void TyreThrow::Update(void)
@@ -78,7 +81,8 @@ void TyreThrow::Draw(void)
 	// デバッグ描画
 	DrawDebug();
 
-	if (state_ == STATE::DESTROY)
+	//動いている時以外は描画しない
+	if (!(state_ == STATE::THROW_MOVE))
 	{
 		return;
 	}
@@ -117,6 +121,49 @@ bool TyreThrow::GetIsCol(void)
 	return isCol_;
 }
 
+bool TyreThrow::IsIdle(void)
+{
+	return state_ == STATE::IDLE;
+}
+
+void TyreThrow::InitEffect(void)
+{
+	effectMakeResId_= ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::THROW_MAKE_EFFECT).handleId_;
+
+	bombEffectResId_= ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::BOMB_EFFECT).handleId_;
+}
+
+void TyreThrow::MakeEffect(void)
+{
+	effectMakePlayId_ = PlayEffekseer3DEffect(effectMakeResId_);
+	float scale = 130.0f;
+	SetScalePlayingEffekseer3DEffect(effectMakePlayId_, scale, scale, scale);
+	VECTOR localPos = { 0.0f,300.0f,0.0f };
+	SetPosPlayingEffekseer3DEffect(effectMakePlayId_, transform_.pos.x, transform_.pos.y + localPos.y, transform_.pos.z);
+	SetRotationPlayingEffekseer3DEffect(effectMakePlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
+}
+
+void TyreThrow::BombEffect(void)
+{
+	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
+
+	//何かに当たった時は前で爆発
+	VECTOR localPos = {};
+	if (isCol_)
+	{
+		localPos = { 0.0f,0.0f,2200.0f };
+	}
+	else
+	{
+		localPos = { 0.0f,0.0f,0.0f };
+	}
+	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
+	float scl = 10.0f;
+	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
+}
+
 void TyreThrow::ChangeState(STATE state)
 {
 	state_ = state;
@@ -143,48 +190,90 @@ void TyreThrow::ChangeStateIdle(void)
 
 void TyreThrow::ChangeStateThrow(void)
 {
-	//////プレイヤーの少し先で待機
-	//VECTOR myPos;
-	//myPos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
-	//myPos.x = 2500.0f;
 
-	transform_.pos=VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
-	transform_.pos.x = 2500.0f;
+	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
 
-	//ランダムで向きを決める
-	//道のランダムな場所に生成(3パターン)
+	//どこから投げるかランダムで決める
 	int randDir = GetRand(static_cast<int>(TyreThrow::DIR::MAX) - 1);
 	TyreThrow::DIR dir = static_cast<TyreThrow::DIR>(randDir);
-	VECTOR targetPos;
 
-	Vector2 randPos;
 	switch (dir)
 	{
-	case TyreThrow::DIR::SIDE:
-		targetPos = VAdd(transformTarget_.pos, THROW_LOCAL_POS_TO_SIDE);
+	case TyreThrow::DIR::LEFT:
+		transform_.pos.x = MAKE_LEFT_POS_X;
 		break;
-	case TyreThrow::DIR::SLIGHTLY_OBLIPUE:
-		targetPos = VAdd(transformTarget_.pos, THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE);
+	case TyreThrow::DIR::RIGHT:
+		transform_.pos.x = MAKE_RIGHT_POS_X;
 		break;
-	case TyreThrow::DIR::LARGE_OBLIPUE:
-		targetPos = VAdd(transformTarget_.pos, THROW_LOCAL_POS_TO_LARGE_OBLIPUE);
+	case TyreThrow::DIR::MAX:
 		break;
 	}
 
-	//targetDir_ = VNorm(VSub(targetPos, myPos));
+	//発生エフェクト
+	MakeEffect();
+
+	//ランダムな3パターンの動作
+	int randAngle = GetRand(static_cast<int>(TyreThrow::ANGLE::MAX) - 1);
+	TyreThrow::ANGLE angle = static_cast<TyreThrow::ANGLE>(randAngle);
+	VECTOR targetPos;
+	VECTOR throwLocalPos;
+
+	switch (angle)
+	{
+	case TyreThrow::ANGLE::SIDE:
+		if (dir == DIR::LEFT)
+		{
+			throwLocalPos = LEFT_THROW_LOCAL_POS_TO_SIDE;
+		}
+		if (dir == DIR::RIGHT)
+		{
+			throwLocalPos = RIGHT_THROW_LOCAL_POS_TO_SIDE;
+		}
+
+		targetPos = VAdd(transformTarget_.pos, throwLocalPos);
+		break;
+	case TyreThrow::ANGLE::SLIGHTLY_OBLIPUE:
+		if (dir == DIR::LEFT)
+		{
+			throwLocalPos = LEFT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE;
+		}
+		if (dir == DIR::RIGHT)
+		{
+			throwLocalPos = RIGHT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE;
+		}
+
+		targetPos = VAdd(transformTarget_.pos, throwLocalPos);
+		break;
+	case TyreThrow::ANGLE::LARGE_OBLIPUE:
+		if (dir == DIR::LEFT)
+		{
+			throwLocalPos = LEFT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE;
+		}
+		if (dir == DIR::RIGHT)
+		{
+			throwLocalPos = RIGHT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE;
+		}
+
+		targetPos = VAdd(transformTarget_.pos, throwLocalPos);
+		break;
+	}
+
 	targetDir_ = VNorm(VSub(targetPos, transform_.pos));
+	//保存
+	targetDirSave_ = targetDir_;
 }
 
 
 void TyreThrow::ChangeStateDestroy(void)
 {
+	//爆発エフェクト
+	BombEffect();
 }
 
 void TyreThrow::UpdateIdle(void)
 {
 	//プレイヤーの少し先で待機
 	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
-
 
 	//5秒後に投げる
 	stepPlaceDrawTime_ += SceneManager::GetInstance().GetDeltaTime();
@@ -205,7 +294,18 @@ void TyreThrow::UpdateThrowMove(void)
 	// 移動方向に応じた回転
 	Rotate();
 
-	// タイヤを移動させる
+	//壁に当たったたら反射
+	if (transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX)
+	{
+		targetDir_ = VAdd(targetDirSave_, Stage::LEFT_NORMAL_VEC);
+	}
+	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
+	{
+		targetDir_ = VAdd(targetDirSave_, Stage::RIGHT_NORMAL_VEC);
+
+	}
+
+	// 移動させる
 	VECTOR movePow;
 	movePow = VScale(targetDir_, SPEED_MOVE);
 
@@ -350,6 +450,7 @@ void TyreThrow::CollisionCapsule(void)
 				if (pHit)
 				{
 					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
+					
 					// カプセルを移動させる
 					trans.pos = movedPos_;
 					trans.Update();
@@ -370,5 +471,4 @@ void TyreThrow::CollisionCapsule(void)
 
 void TyreThrow::CalcGravityPow(void)
 {
-
 }

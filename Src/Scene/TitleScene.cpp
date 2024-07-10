@@ -11,6 +11,7 @@
 #include "../Object/SkyDome.h"
 #include "../Object/Common/Transform.h"
 #include "../Object/Rider/Bike.h"
+#include "../Object/Rider/Player.h"
 #include "../Object/Score.h"
 #include "TitleScene.h"
 
@@ -93,7 +94,7 @@ void TitleScene::Init(void)
 
 	// キャラ
 	charactor_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
-	charactor_.pos = { -150.0f, -32.0f, -105.0f };
+	charactor_.pos = { -150.0f, -42.0f, -105.0f };
 	size = 1.0f;
 	charactor_.scl = { size, size, size };
 	charactor_.quaRot = Quaternion::Euler(
@@ -123,8 +124,9 @@ void TitleScene::Init(void)
 	// アニメーションの設定
 	std::string path = Application::PATH_MODEL + "Player/";
 	animationController_ = new AnimationController(charactor_.modelId);
-	animationController_->Add(0, path + "Run.mv1", 20.0f);
-	animationController_->Play(0);
+	// 無理やりアニメーション
+	animationController_->Add(0, path + "Sit.mv1",1.0f);
+	animationController_->Play(0,true,35.0f,36.0f);
 
 	// 定点カメラ
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
@@ -152,6 +154,9 @@ void TitleScene::Update(void)
 		UpdateStart();
 		break;
 	}
+
+	//アニメーションループ
+	animationController_->SetEndLoop(35.0f, 36.0f, 1.0f);
 
 }
 

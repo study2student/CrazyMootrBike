@@ -478,7 +478,7 @@ void Stage::MakeLoopStage(void)
 
 
 	//後ろのステージを削除
-	if (loopStage_.size() >= 6)
+	if (loopStage_.size() >= 12)
 	{
 		//std::queue<int> lt;
 
@@ -492,7 +492,7 @@ void Stage::MakeLoopStage(void)
 			//lt.pop();
 
 			// ステージを削除する
-			std::shared_ptr<LoopStage> tailLoop = loopStage_[size-5];
+			std::shared_ptr<LoopStage> tailLoop = loopStage_[size-11];
 			tailLoop->Destroy();
 
 			//int size = static_cast<int>(loopStage_.size());

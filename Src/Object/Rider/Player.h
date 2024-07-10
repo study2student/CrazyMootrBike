@@ -47,7 +47,8 @@ public:
 		WARP_PAUSE,
 		FLY,
 		FALLING,
-		VICTORY
+		VICTORY,
+		SIT
 	};
 
 	// コンストラクタ

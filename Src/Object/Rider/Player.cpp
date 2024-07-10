@@ -140,8 +140,9 @@ void Player::InitAnimation(void)
 	animationController_->Add((int)ANIM_TYPE::FLY, path + "Flying.mv1", 60.0f);
 	animationController_->Add((int)ANIM_TYPE::FALLING, path + "Falling.mv1", 80.0f);
 	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
+	animationController_->Add((int)ANIM_TYPE::SIT, path + "Sit.mv1", 1.0f);
 
-	animationController_->Play((int)ANIM_TYPE::IDLE);
+	animationController_->Play((int)ANIM_TYPE::SIT,true,35.0f,36.0f);
 
 }
 
@@ -358,25 +359,27 @@ void Player::ProcessMove(void)
 
 		if (!isJump_ && IsEndLanding())
 		{
-			// アニメーション
-			if (ins.IsNew(KEY_INPUT_RSHIFT))
-			{
-				animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-			}
-			else
-			{
-				animationController_->Play((int)ANIM_TYPE::RUN);
-			}
+			//// アニメーション
+			//if (ins.IsNew(KEY_INPUT_RSHIFT))
+			//{
+			//	animationController_->Play((int)ANIM_TYPE::FAST_RUN);
+			//}
+			//else
+			//{
+			//	animationController_->Play((int)ANIM_TYPE::RUN);
+			//}
 		}
 
 	}
 	else
 	{
-		if (!isJump_ && IsEndLanding())
+		/*if (!isJump_ && IsEndLanding())
 		{
 			animationController_->Play((int)ANIM_TYPE::IDLE);
-		}
+		}*/
 	}
+
+	animationController_->Play((int)ANIM_TYPE::SIT, true, 35.0f, 36.0f);
 
 }
 

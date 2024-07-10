@@ -136,6 +136,11 @@ void GameScene::Init(void)
 	isCursorHit_ = false;
 	stepPauseKeyHit_ = 0.0f;
 
+	//画像
+	imgWarning_= resMng_.Load(ResourceManager::SRC::WARNING).handleId_;
+	
+	warningImgScale_ = WARNING_IMG_MIN_SCALE;
+
 	//スコアリセット
 	score_.ResetScore();
 
@@ -350,6 +355,35 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	DrawDubg();
 
+	//投げモノが待機状態のときに描画
+	if (throwTyre_->IsIdle())
+	{
+		//拡大縮小
+		if(warningImgScale_ > WARNING_IMG_MAX_SCALE)
+		{
+			isMaxWarningScale_ = true;
+		}
+		else if(warningImgScale_ < WARNING_IMG_MIN_SCALE)
+		{
+			isMaxWarningScale_ = false;
+		}
+
+		if (isMaxWarningScale_)
+		{
+			warningImgScale_ -= WARNING_IMG_CHANGE_SCALE;
+		}
+		else
+		{
+			warningImgScale_ += WARNING_IMG_CHANGE_SCALE;
+		}
+		
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
+	}
+	else
+	{
+		warningImgScale_ = WARNING_IMG_MIN_SCALE;
+	}
+
 	//ポーズ中
 	if (isPause_)
 	{
@@ -426,12 +460,12 @@ void GameScene::Collision(void)
 	}
 
 
-	//爆弾とプレイヤーの当たり判定
+	//爆弾とプレイヤーの当たり判定、投げモノとプレイヤーの判定
 	//HPが減り続けてしまうので当たった時は処理中断
-	if (helicopter_->GetBomb()->GetIsCol())
+	/*if (helicopter_->GetBomb()->GetIsCol() || throwTyre_->GetIsCol())
 	{
 		return;
-	}
+	}*/
 
 	//auto bombCap = helicopter_->GetBomb()->GetCapsule();
 	//auto bikeCap = bikes_[3]->GetCapsule();
@@ -449,18 +483,40 @@ void GameScene::Collision(void)
 
 	for (const auto& bike : bikes_)
 	{
-		auto bombCap = helicopter_->GetBomb()->GetCapsule();
 		auto bikeCap = bike->GetCapsule();
-
-		VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		float  dis = AsoUtility::SqrMagnitudeF(diff);
-		if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+		if(!helicopter_->GetBomb()->GetIsCol())
 		{
-			//プレイヤーにダメージ
-			bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+			//爆弾
+			auto bombCap = helicopter_->GetBomb()->GetCapsule();
 
-			//当たった
-			helicopter_->GetBomb()->SetIsCol(true);
+			VECTOR diffB = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+			float  disB = AsoUtility::SqrMagnitudeF(diffB);
+			if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+			{
+				//プレイヤーにダメージ
+				bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+				//当たった
+				helicopter_->GetBomb()->SetIsCol(true);
+			}
+		}
+
+		if (!throwTyre_->GetIsCol())
+		{
+
+			//投げモノ
+			auto throwCap = throwTyre_->GetCapsule();
+
+			VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+			float  disT = AsoUtility::SqrMagnitudeF(diffT);
+			if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+			{
+				//プレイヤーにダメージ
+				bike->Damage(throwTyre_->THROW_DAMAGE);
+
+				//当たった
+				throwTyre_->SetIsCol(true);
+			}
 		}
 
 		//ゲームオーバー処理

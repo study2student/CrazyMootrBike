@@ -102,7 +102,7 @@ void Bike::Init(void)
 		ResourceManager::SRC::PLAYER));
 	float pScale = 1.0f;
 	transformPlayer_.scl = { pScale, pScale, pScale };
-	transformPlayer_.pos = { transform_.pos.x, transform_.pos.y + 20.0f, transform_.pos.z };
+	transformPlayer_.pos = { transform_.pos.x, transform_.pos.y , transform_.pos.z };
 	//transformPlayer_.quaRot = Quaternion();
 	transformPlayer_.quaRot = transform_.quaRot;
 	transformPlayer_.quaRotLocal =
@@ -185,8 +185,8 @@ void Bike::Draw(void)
 
 	//player_->Draw();
 
-	// デバッグ描画
-	DrawDebug();
+	//// デバッグ描画
+	//DrawDebug();
 }
 
 void Bike::AddCollider(std::shared_ptr<Collider> collider)
@@ -285,8 +285,9 @@ void Bike::InitAnimation(void)
 	animationController_->Add((int)ANIM_TYPE::FLY, path + "Flying.mv1", 60.0f);
 	animationController_->Add((int)ANIM_TYPE::FALLING, path + "Falling.mv1", 80.0f);
 	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
+	animationController_->Add((int)ANIM_TYPE::SIT, path + "Sit.mv1", 1.0f);
 
-	animationController_->Play((int)ANIM_TYPE::IDLE);
+	animationController_->Play((int)ANIM_TYPE::SIT, true, 35.0f, 36.0f);
 }
 
 void Bike::ChangeState(STATE state)
@@ -415,6 +416,7 @@ void Bike::ProcessMove(void)
 
 	// 移動量をゼロ
 	movePow_ = AsoUtility::VECTOR_ZERO;
+
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -643,15 +645,15 @@ void Bike::ProcessMove(void)
 
 		if (!isJump_ && IsEndLanding())
 		{
-			//アニメーション
-			if (ins.IsNew(KEY_INPUT_RSHIFT))
-			{
-				animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-			}
-			else
-			{
-				animationController_->Play((int)ANIM_TYPE::RUN);
-			}
+			////アニメーション
+			//if (ins.IsNew(KEY_INPUT_RSHIFT))
+			//{
+			//	animationController_->Play((int)ANIM_TYPE::FAST_RUN);
+			//}
+			//else
+			//{
+			//	animationController_->Play((int)ANIM_TYPE::RUN);
+			//}
 		}
 
 	}
@@ -659,7 +661,7 @@ void Bike::ProcessMove(void)
 	{
 		if (!isJump_ && IsEndLanding())
 		{
-			animationController_->Play((int)ANIM_TYPE::IDLE);
+		/*	animationController_->Play((int)ANIM_TYPE::IDLE);*/
 		}
 
 		//傾きっぱになるので角度リセットしておく
@@ -717,9 +719,9 @@ void Bike::ProcessBoost(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0)
+	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
 	{
-		//HPを消費して発動
+		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;
 
 		SceneManager::GetInstance().GetCamera()->SetIsBoost(true);
@@ -794,7 +796,7 @@ void Bike::SpecialAttack(void)
 	float rotRad = 0.0f;
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
-	if (ins.IsNew(KEY_INPUT_Z))
+	/*if (ins.IsNew(KEY_INPUT_Z))
 	{
 		attackState_ = ATTACK_TYPE::SPECIAL;
 		animationController_->Play((int)ANIM_TYPE::FALLING);
@@ -811,7 +813,7 @@ void Bike::SpecialAttack(void)
 	{
 		attackState_ = ATTACK_TYPE::NONE;
 		isAttack_ = false;
-	}
+	}*/
 }
 
 void Bike::SetGoalRotate(float rotRad)
@@ -861,7 +863,7 @@ void Bike::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
-	movedPos_ = VAdd(transformPlayer_.pos, movePow_);
+	//movedPos_ = VAdd(transformPlayer_.pos, movePow_);
 
 	// 衝突(カプセル)
 	CollisionCapsule();
@@ -872,6 +874,7 @@ void Bike::Collision(void)
 	// 移動
 	transform_.pos = movedPos_;
 	transformPlayer_.pos = movedPos_;
+
 }
 
 void Bike::CollisionGravity(void)

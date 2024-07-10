@@ -18,7 +18,7 @@ public:
 	static constexpr float SPEED_ROT = 20.0f;
 
 	//速度
-	static constexpr float SPEED_MOVE = 20.0f;
+	static constexpr float SPEED_MOVE = 60.0f;
 
 	//場所表示時間
 	static constexpr float PLACE_DRAW_MAX_TIME = 3.0f;
@@ -29,17 +29,38 @@ public:
 	//タイヤ復活時間
 	static constexpr float TYRE_REMAKE_MAX_TIME = 8.0f;
 
-	//タイヤの投げる位置(少し横に)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_SIDE = { -600.0f,0.0f,15000.0f };
+	//右から投げる位置(少し横に)
+	static constexpr VECTOR RIGHT_THROW_LOCAL_POS_TO_SIDE = { -900.0f,100.0f,13500.0f };
 
-	//タイヤの投げる位置(少し斜めに)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -200.0f,0.0f,11000.0f };
+	//右から投げる位置(少し斜めに)
+	static constexpr VECTOR RIGHT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -750.0f,100.0f,11000.0f };
 
-	//タイヤの投げる位置(大きく斜めに)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -50.0f,0.0f,6000.0f };
+	//右から投げる位置(大きく斜めに)
+	static constexpr VECTOR RIGHT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -600.0f,100.0f,7000.0f };
 
-	//タイヤローカル待機座標
-	static constexpr VECTOR TYRE_IDLE_ROCAL_POS = { 500.0f,300.0f,15000.0f };
+	//左から投げる位置(少し横に)
+	//static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_SIDE = { 900.0f,100.0f,13500.0f };
+	static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_SIDE = { 600.0f,100.0f,7000.0f };
+
+	//左から投げる位置(少し斜めに)
+	//static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { 750.0f,100.0f,11000.0f };
+	static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { 770.0f,100.0f,12800.0f };
+
+	//左から投げる位置(大きく斜めに)
+	//static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { 600.0f,100.0f,7000.0f };
+	static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { 900.0f,100.0f,13500.0f };
+
+	//右の場合の出現するX座標
+	static constexpr float MAKE_RIGHT_POS_X = 2499.0f;
+
+	//左の場合の出現するX座標
+	static constexpr float MAKE_LEFT_POS_X = 909.0f;
+
+	//ローカル待機座標
+	static constexpr VECTOR TYRE_IDLE_ROCAL_POS = { 0.0f,100.0f,15000.0f };
+
+	//ダメージ
+	static constexpr int THROW_DAMAGE = 20;
 
 
 	// 状態
@@ -50,12 +71,20 @@ public:
 		DESTROY
 	};
 
-	//投げる向き
-	enum class DIR
+	//投げる角度
+	enum class ANGLE
 	{
 		SIDE,				//横へ
 		SLIGHTLY_OBLIPUE,	//少し斜めに
 		LARGE_OBLIPUE,		//大きく斜めに
+		MAX
+	};
+
+	//どこから投げるか
+	enum class DIR
+	{
+		LEFT,
+		RIGHT,
 		MAX
 	};
 
@@ -80,11 +109,15 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
-	//爆弾が何かに当たったか設定
+	//何かに当たったか設定
 	void SetIsCol(bool isCol);
 
-	//爆弾が当たったが取得
+	//当たったか取得
 	bool GetIsCol(void);
+
+	//待機状態かどうか
+	bool IsIdle(void);
+
 
 private:
 
@@ -101,6 +134,9 @@ private:
 
 	//ターゲットに向けた向き
 	VECTOR targetDir_;
+
+	//ターゲットに向けた向き保存用
+	VECTOR targetDirSave_;
 
 	// 移動量
 	VECTOR movePow_;
@@ -130,6 +166,21 @@ private:
 	// 衝突チェック
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
+
+	// 発生エフェクト
+	int effectMakeResId_;
+	int effectMakePlayId_;
+
+	//爆発エフェクト
+	int bombEffectResId_;
+	int bombEffectPlayId_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+
+	// エフェクト
+	void MakeEffect(void);
+	void BombEffect(void);
 
 	// 状態遷移
 	void ChangeState(STATE state);

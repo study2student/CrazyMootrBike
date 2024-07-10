@@ -37,11 +37,15 @@ void ResourceManager::Init(void)
 
 	// PushSpace
 	res = new RES(RES_T::IMG, PATH_IMG + "PushSpace.png");
-	resourcesMap_.emplace(SRC::PUSH_SPACE, res);
+	resourcesMap_.emplace(SRC::PUSH_SPACE, res); 
 
 	// 吹き出し
 	res = new RES(RES_T::IMG, PATH_IMG + "SpeechBalloon.png");
 	resourcesMap_.emplace(SRC::SPEECH_BALLOON, res);
+
+	// 警告マーク
+	res = new RES(RES_T::IMG, PATH_IMG + "warning.png");
+	resourcesMap_.emplace(SRC::WARNING, res);
 
 	// プレイヤー
 	res = new RES(RES_T::MODEL, PATH_MDL + "Player/Great Sword Slash.mv1");
@@ -180,6 +184,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/tyre.mv1");
 	resourcesMap_.emplace(SRC::TYRE, res);
 
+	// とげ球
+	res = new RES(RES_T::MODEL, PATH_MDL + "Throw/Spikeball.mv1");
+	resourcesMap_.emplace(SRC::SPIKE_BALL, res);
+
 	// 武器モデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Weapon/BusterSword/sword.mv1");
 	resourcesMap_.emplace(SRC::W_SWORD, res);
@@ -195,6 +203,19 @@ void ResourceManager::Init(void)
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	resourcesMap_.emplace(SRC::HitEffect, res);
+
+	// 投げモノ発生のエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Throw/makeThrow.efkefc");
+	resourcesMap_.emplace(SRC::THROW_MAKE_EFFECT, res);
+
+	// 爆発エフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Bomb/bombEffect.efkefc");
+	resourcesMap_.emplace(SRC::BOMB_EFFECT, res);
+
+	// 爆弾場所のエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BombPlace/bombPlace.efkefc");
+	resourcesMap_.emplace(SRC::BOMB_PLACE_EFFECT, res);
+
 
 	// ソニックエフェクト
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");

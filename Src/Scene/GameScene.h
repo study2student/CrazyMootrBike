@@ -48,6 +48,15 @@ public:
 	//選択肢数
 	static constexpr int SELECT_MAX_NUM = 3;
 
+	//警告画像最大サイズ
+	static constexpr double WARNING_IMG_MAX_SCALE = 0.40;
+
+	//警告画像最小サイズ
+	static constexpr double WARNING_IMG_MIN_SCALE = 0.20;
+
+	//警告画像大きさ変化量
+	static constexpr double WARNING_IMG_CHANGE_SCALE = 0.005;
+
 	//ポーズキー入力からもう一度押せるようになるまでの時間
 	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
 
@@ -72,6 +81,13 @@ public:
 	bool GetIsCreateEnemy(void);
  
 private:
+
+	// 画像
+	int imgWarning_;
+	//大きさ
+	double warningImgScale_;
+	//最大サイズかどうか
+	bool isMaxWarningScale_;
 
 	// ステージ
 	std::shared_ptr<Stage> stage_;
