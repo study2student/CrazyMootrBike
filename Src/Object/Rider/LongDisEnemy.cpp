@@ -169,6 +169,11 @@ void LongDisEnemy::ProcessMove(void)
 			isBikeCol_ = true;
 			isAddScore_ = true;
 			AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+			//ƒRƒCƒ“ûW‚Ì‰¹‚ğÄ¶
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -229,6 +234,4 @@ void LongDisEnemy::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
-
-
 }

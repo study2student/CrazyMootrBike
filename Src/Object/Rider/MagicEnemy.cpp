@@ -170,6 +170,10 @@ void MagicEnemy::ProcessMove(void)
 			isBikeCol_ = true;
 			isAddScore_ = true;
 			AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+			//ƒRƒCƒ“ûW‚Ì‰¹‚ğÄ¶
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);

@@ -168,6 +168,9 @@ void GameScene::Init(void)
 	//スコアリセット
 	score_.ResetScore();
 
+	// ゲームスタート時のカウント
+	startCount_ = 3.0f;
+	isStart_ = false;
 }
 
 void GameScene::Update(void)
@@ -175,6 +178,7 @@ void GameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	throwTyre_->Update();
 	throwTyre_->SetTransform(bikes_[3]->GetTransform());
+
 	//ポーズメニュー
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
@@ -196,160 +200,164 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
-	/*if (stage_->GetLoopStageSize() >= 35)
+
+	// スタート時のカウントダウンを減らす
+	if (startCount_ > 0.0f)
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
-	}*/
-
-
-	float deltaTime = hitStopDuration;
-
-	for (auto& skyDome : skyDomes_)
-	{
-		skyDome->Update();
+		startCount_ -= 1 / 60.0f;
 	}
 
-	if (!isHitStop)
+
+	if (startCount_ <= 0.0f)
 	{
-		if (playNumber == 1)
+		float deltaTime = hitStopDuration;
+
+		// BGMを再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+
+		for (auto& skyDome : skyDomes_)
 		{
-			bikes_[0]->Update();
+			skyDome->Update();
+		}
+
+		if (!isHitStop)
+		{
+			if (playNumber == 1)
+			{
+				bikes_[0]->Update();
+			}
+			else
+			{
+				for (auto& bike : bikes_) {
+					bike->Update();
+				}
+			}
+
 		}
 		else
 		{
-			for (auto& bike : bikes_) {
-				bike->Update();
+			// ヒットストップ中の場合、タイマーを更新
+			hitStopTimer -= deltaTime;
+			if (hitStopTimer <= 0.f) {
+				isHitStop = false;
+			}
+
+			// ヒットエフェクト
+			float scale = 50.0f;
+			HitEffect();
+			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+		}
+		for (auto& bike : bikes_)
+		{
+			enemy_->SetBikeTrans(bike->GetTransform());
+		}
+		helicopter_->SetBikeTrans(bikes_[0]->GetTransform());
+		helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
+
+		//throwTyre_->SetTransform(bikes_[3]->GetTransform());
+
+		//敵
+		size_t sizeE = enemys_.size();
+		for (int i = 0; i < sizeE; i++)
+		{
+			enemys_[i]->Update();
+			if (enemys_[i]->GetIsAddScore())
+			{
+				isHitStop = true;
+				//スコア加算
+				//score_.AddScore();
 			}
 		}
 
-	}
-	else
-	{
-		// ヒットストップ中の場合、タイマーを更新
-		hitStopTimer -= deltaTime;
-		if (hitStopTimer <= 0.f) {
-			isHitStop = false;
-		}
+		//衝突判定
+		Collision();
 
-		// ヒットエフェクト
-		float scale = 50.0f;
-		HitEffect();
-		effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
-		SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
-	}
-	for (auto& bike : bikes_)
-	{
-		enemy_->SetBikeTrans(bike->GetTransform());
-	}
-	helicopter_->SetBikeTrans(bikes_[0]->GetTransform());
-	helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
+		// バイク同士の衝突判定
+		BikeCollision();
 
-	//throwTyre_->SetTransform(bikes_[3]->GetTransform());
-
-	//敵
-	size_t sizeE = enemys_.size();
-	for (int i = 0; i < sizeE; i++)
-	{
-		enemys_[i]->Update();
-		if (enemys_[i]->GetIsAddScore())
+		//ステージが生成されたら敵を配置する
+		if (stage_->GetIsMakeLoopStage())
 		{
-			isHitStop = true;
-			//スコア加算
-			//score_.AddScore();
-		}
-	}
 
-	if (isHitStop == true)
-	{
+			stage_->SetMakeLoopStage(false);
 
-	}
-
-	//衝突判定
-	Collision();
-
-	// バイク同士の衝突判定
-	BikeCollision();
-
-	//ステージが生成されたら敵を配置する
-	if (stage_->GetIsMakeLoopStage())
-	{
-
-		stage_->SetMakeLoopStage(false);
-
-		//センター方向からの横の移動幅
-		float shiftX_ = {};
+			//センター方向からの横の移動幅
+			float shiftX_ = {};
 
 
-		//道のランダムな場所に生成(3パターン)
-		int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
-		EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
+			//道のランダムな場所に生成(3パターン)
+			int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
+			EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
 
-		Vector2 randPos;
-		switch (dir)
-		{
-		case EnemyBase::DIR::LEFT:
-			shiftX_ = -EnemyBase::DIR_LEN;
-			break;
-		case EnemyBase::DIR::CENTER:
-			shiftX_ = 0.0f;
-			break;
-		case EnemyBase::DIR::RIGHT:
-			shiftX_ = EnemyBase::DIR_LEN;
-			break;
-		}
+			Vector2 randPos;
+			switch (dir)
+			{
+			case EnemyBase::DIR::LEFT:
+				shiftX_ = -EnemyBase::DIR_LEN;
+				break;
+			case EnemyBase::DIR::CENTER:
+				shiftX_ = 0.0f;
+				break;
+			case EnemyBase::DIR::RIGHT:
+				shiftX_ = EnemyBase::DIR_LEN;
+				break;
+			}
 
-		//縦に敵を生成する
-		for (int i = 0; i < EnemyBase::MAX_MAKE_NUM; i++)
-		{
-			//縦に並ぶ敵と敵の距離
-			float len = EnemyBase::X_LEN;
+			//縦に敵を生成する
+			for (int i = 0; i < EnemyBase::MAX_MAKE_NUM; i++)
+			{
+				//縦に並ぶ敵と敵の距離
+				float len = EnemyBase::X_LEN;
 
-			//敵の生成
-			EnemyBase* e = nullptr;
-			int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
-			EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
-			for (auto& bike : bikes_) {
-				switch (type)
-				{
-				case EnemyBase::TYPE::SHORT_DIS:
-					e = new ShortDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-					break;
-				case EnemyBase::TYPE::LONG_DIS:
-					e = new LongDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-					break;
-				case EnemyBase::TYPE::BOMB:
-					e = new MagicEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-					break;
+				//敵の生成
+				EnemyBase* e = nullptr;
+				int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
+				EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+				for (auto& bike : bikes_) {
+					switch (type)
+					{
+					case EnemyBase::TYPE::SHORT_DIS:
+						e = new ShortDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						break;
+					case EnemyBase::TYPE::LONG_DIS:
+						e = new LongDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						break;
+					case EnemyBase::TYPE::BOMB:
+						e = new MagicEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						break;
+					}
 				}
+				e->Init();
+
+				EnemyBike* eB = nullptr;
+				eB = new EnemyBike(e);
+				eB->Init();
+				isCreateEnemy_ = true;
+
+
+				////デバッグ
+				//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
+
+				////座標の設定
+				//e->setPos(randPos.ToVector2F());
+
+				//可変長配列に要素を追加
+				enemys_.push_back(e);
 			}
-			e->Init();
-
-			EnemyBike* eB = nullptr;
-			eB = new EnemyBike(e);
-			eB->Init();
-			isCreateEnemy_ = true;
-
-
-			////デバッグ
-			//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
-
-			////座標の設定
-			//e->setPos(randPos.ToVector2F());
-
-			//可変長配列に要素を追加
-			enemys_.push_back(e);
 		}
+		else
+		{
+			stage_->Update();
+			isCreateEnemy_ = false;
+		}
+
+
+		helicopter_->Update();
+		//throwTyre_->Update();
+
 	}
-	else
-	{
-		stage_->Update();
-		isCreateEnemy_ = false;
-	}
-
-
-	helicopter_->Update();
-	//throwTyre_->Update();
-
 }
 
 void GameScene::Draw(void)
@@ -363,12 +371,6 @@ void GameScene::Draw(void)
 
 
 		cameras_[0]->SetBeforeDraw(); // 各プレイヤーの視点を設定
-
-		// スタート時のカウントを減らす
-		//if (startCount_ >= 0.0f)
-		//{
-		//	DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
-		//}
 
 		// 背景
 		skyDomes_[0]->Draw();
@@ -407,6 +409,11 @@ void GameScene::Draw(void)
 		DrawGraph(0, 0, mainScreen_, false);
 		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, score);
 
+		// スタート時のカウントを減らす
+		if (startCount_ >= 0.0f)
+		{
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+		}
 	}
 	else
 	{
@@ -422,10 +429,10 @@ void GameScene::Draw(void)
 			cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
 			// スタート時のカウントを減らす
-			//if (startCount_ >= 0.0f)
-			//{
-			//	DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
-			//}
+			if (startCount_ >= 0.0f)
+			{
+				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+			}
 
 			// 背景
 			skyDomes_[i]->Draw();
@@ -706,13 +713,13 @@ void GameScene::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectHitResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::HitEffect).handleId_;
+		ResourceManager::SRC::HITEFFECT).handleId_;
 }
 
 void GameScene::HitEffect(void)
 {
 	for (auto& bike : bikes_) {
-		auto pPos = bike->GetTransform();
+		const auto pPos = bike->GetTransform();
 		SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
 		SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
 	}

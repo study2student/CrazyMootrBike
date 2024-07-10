@@ -28,6 +28,7 @@ void ResourceManager::Init(void)
 	static std::string PATH_IMG = Application::PATH_IMAGE;
 	static std::string PATH_MDL = Application::PATH_MODEL;
 	static std::string PATH_EFF = Application::PATH_EFFECT;
+	static std::string PATH_SND = Application::PATH_SOUND;
 
 	Resource* res;
 
@@ -202,7 +203,7 @@ void ResourceManager::Init(void)
 
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
-	resourcesMap_.emplace(SRC::HitEffect, res);
+	resourcesMap_.emplace(SRC::HITEFFECT, res);
 
 	// 投げモノ発生のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Throw/makeThrow.efkefc");
@@ -226,7 +227,17 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
 	resourcesMap_.emplace(SRC::BOOST_EFFECT, res);
 
+	// ゲームBGM
+	res = new RES(RES_T::SOUND, PATH_SND + "BURNING_MY_HEART.mp3");
+	resourcesMap_.emplace(SRC::SND_BGM, res);
 
+	//コイン収集時の音
+	res = new RES(RES_T::SOUND, PATH_SND + "collectcoin.mp3");
+	resourcesMap_.emplace(SRC::SND_COIN, res);
+
+	//モーター音
+	res = new RES(RES_T::SOUND, PATH_SND + "motor.mp3");
+	resourcesMap_.emplace(SRC::SND_MOTOR, res);
 }
 
 

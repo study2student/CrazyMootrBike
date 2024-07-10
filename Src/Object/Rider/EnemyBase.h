@@ -235,9 +235,6 @@ protected:
 	//スコアを加算してもよいか
 	bool isAddScore_;
 
-	//コイン収集時の音
-	bool isCoinSND_;
-
 	float flipSpeed_;
 	VECTOR flipDir_;
 

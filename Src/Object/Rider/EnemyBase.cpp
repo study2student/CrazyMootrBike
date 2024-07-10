@@ -529,8 +529,14 @@ void EnemyBase::ProcessMove(void)
 		{
 			//範囲に入った
 			speed_ = 0;
+			//スコア加算
 			isAddScore_ = true;
+			//衝突判定
 			isBikeCol_ = true;
+			//コイン収集時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -567,7 +573,6 @@ void EnemyBase::ProcessMove(void)
 
 	}
 
-	//}
 	/*else
 	{
 		if (!isJump_ && IsEndLanding())
@@ -583,7 +588,6 @@ void EnemyBase::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
-
 }
 
 void EnemyBase::ProcessJump(void)

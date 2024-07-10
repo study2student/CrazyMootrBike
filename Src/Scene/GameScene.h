@@ -84,6 +84,11 @@ public:
 private:
 	int mainScreen_;
 
+	// ゲームスタート時のカウント
+	float startCount_;
+	// スタートフラグ
+	bool isStart_;
+
 	// 画像
 	int imgWarning_;
 	//大きさ
@@ -113,7 +118,7 @@ private:
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
 	//プレイ人数
-	int playNumber = 4;
+	int playNumber = 1;
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;
@@ -135,6 +140,7 @@ private:
 	//敵が追加されたタイミングかどうか
 	bool isCreateEnemy_;
 
+	//デバッグ表示
 	void DrawDubg(void);
 
 	//衝突判定

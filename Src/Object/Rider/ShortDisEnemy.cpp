@@ -113,8 +113,7 @@ void ShortDisEnemy::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	VECTOR dir;
 
 	for (const auto& bike : bikes_) {
 		Transform bikeTrans_ = bike->GetTransform();
@@ -140,6 +139,11 @@ void ShortDisEnemy::ProcessMove(void)
 			isBikeCol_ = true;
 			isAddScore_ = true;
 			AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+			// コイン収集時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+			
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -191,4 +195,6 @@ void ShortDisEnemy::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
+
+
 }

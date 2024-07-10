@@ -3,6 +3,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
 #include "../../Src/Object/Score.h"
+#include "../../Src/Object/Rider/Bike.h"
 #include "GameOverScene.h"
 
 GameOverScene::GameOverScene(void)
@@ -18,6 +19,15 @@ void GameOverScene::Init(void)
 {
 	/*score_ = std::make_shared<Score>();
 	score_->Init();*/
+
+	//ÉoÉCÉNÇÃì«Ç›çûÇ›
+	for (int i = 0; i < 4; ++i) {
+		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
+	}
+	for (auto& bike : bikes_) {
+		bike->Init();
+	}
+
 }
 
 void GameOverScene::Update(void)
@@ -29,6 +39,7 @@ void GameOverScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+	bikes_[0]->Update();
 }
 
 void GameOverScene::Draw(void)
