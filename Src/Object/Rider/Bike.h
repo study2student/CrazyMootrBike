@@ -8,9 +8,9 @@ class AnimationController;
 class Collider;
 class Capsule;
 class Player;
+class Score;
 class FrontTyre;
 class RearTyre;
-class Score;
 
 class Bike : public ActorBase
 {
@@ -19,16 +19,14 @@ public:
 	static constexpr float SPEED_MOVE = 100.0f;
 	static constexpr float SPEED_RUN = 130.0f;
 
-<<<<<<< HEAD
 	//半径
 	static constexpr float RADIUS = 50.0f;
-=======
+
 	//ブースト
 	static constexpr float DELEY_BOOST_MAX = 220.0f;
 
 	//ブースト発動させるためのHP消費量
-	static constexpr int BOOST_USE_HP = 50;
->>>>>>> main
+	static constexpr int BOOST_USE_HP = 40;
 
 	//横移動のスピード
 	static constexpr float SPEED_MOVE_X = 10.0f;
@@ -55,7 +53,7 @@ public:
 	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
 
 	//待機エフェクト初期高
-	static constexpr float IDLE_EFFECT_POS_Y = -510.0f; 
+	static constexpr float IDLE_EFFECT_POS_Y = -510.0f;
 
 	//バイクからフロントタイヤ相対座標
 	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS = { 0.0f,38.0f,170.0f };
@@ -89,16 +87,6 @@ public:
 		VICTORY
 	};
 
-	// 攻撃種別
-	enum class ATTACK_TYPE
-	{
-		NONE,
-		NORMAL,
-		SPECIAL,
-		LONG,
-	};
-
-	//ボタンごとのアクション
 	enum class JoypadButton {
 		UP = PAD_INPUT_UP,
 		DOWN = PAD_INPUT_DOWN,
@@ -115,6 +103,15 @@ public:
 		JoypadButton left;
 		JoypadButton right;
 		JoypadButton action;
+	};
+
+	// 攻撃種別
+	enum class ATTACK_TYPE
+	{
+		NONE,
+		NORMAL,
+		SPECIAL,
+		LONG,
 	};
 
 	// コンストラクタ
@@ -134,11 +131,6 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
-	// スコア加算
-	void AddScore(int score);
-
-	// スコアゲッター
-	const int GetScore() const;
 
 	//ジャンプ台用のジャンプ
 	void Jump(void);
@@ -146,20 +138,22 @@ public:
 	//ダメージ
 	void Damage(int damage);
 
-<<<<<<< HEAD
-	// プレイヤー同士の当たり判定
-	void Flip(VECTOR dir);
-
-	const int GetPlayerID(void) const;
-=======
 	//現HP取得
 	const int& GetHP(void);
 
 	//バイクが場外に出たか取得
 	const bool& GetIsOutSide(void);
 
+	// スコア加算
+	void AddScore(int score);
+	// スコアゲッター
+	const int GetScore() const;
 
->>>>>>> main
+	//プレイヤーIDのゲッター
+	const int GetPlayerID(void) const;
+
+	// プレイヤー同士の当たり判定
+	void Flip(VECTOR dir);
 private:
 
 	Transform transformPlayer_;
@@ -194,7 +188,7 @@ private:
 
 	// 移動後の座標
 	VECTOR movedPos_;
-	
+
 	// プレイヤー同士の横幅の調整
 	float localPosX_;
 
@@ -226,8 +220,14 @@ private:
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
 
+	// 丸影
+	int imgShadow_;
+
 	// 体力
 	int hp_;
+
+	// スコア
+	std::shared_ptr<Score>score_;
 
 	// 攻撃が当たったか
 	bool isAttack_;
@@ -235,9 +235,6 @@ private:
 	//プレイヤー同士の当たり判定用
 	float flipSpeed_;
 	VECTOR flipDir_;
-
-	// スコア
-	std::shared_ptr<Score>score_;
 
 	//アニメーション
 	void InitAnimation(void);
@@ -255,6 +252,7 @@ private:
 
 	// 描画系
 	void DrawUI(void);
+	void DrawShadow(void);
 	void DrawDebug(void);
 
 	// 操作

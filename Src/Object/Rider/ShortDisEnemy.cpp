@@ -15,7 +15,7 @@
 #include "ShortDisEnemy.h"
 
 
-ShortDisEnemy::ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos,localPos)
+ShortDisEnemy::ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -140,10 +140,6 @@ void ShortDisEnemy::ProcessMove(void)
 			isBikeCol_ = true;
 			isAddScore_ = true;
 			AddScoreToPlayer(bike->GetPlayerID(), 10);
-
-			//ƒRƒCƒ“ûW‚Ì‰¹
-			isCoinSND_ = true;
-
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -156,7 +152,6 @@ void ShortDisEnemy::ProcessMove(void)
 		{
 			speed_ = SPEED_MOVE;
 			isAddScore_ = false;
-			isCoinSND_ = false;
 			if (!isJump_ && IsEndLanding())
 			{
 
@@ -169,11 +164,7 @@ void ShortDisEnemy::ProcessMove(void)
 	{
 		speed_ = SPEED_RUN;
 	}*/
-	if (isCoinSND_)
-	{
-		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, false);
-	}
+
 	////Œü‚¢‚Ä‚é•ûŒü‚ÉˆÚ“®
 	//moveDir_ = dir;
 	//movePow_ = VScale(dir, speed_);

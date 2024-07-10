@@ -28,12 +28,11 @@ void ResourceManager::Init(void)
 	static std::string PATH_IMG = Application::PATH_IMAGE;
 	static std::string PATH_MDL = Application::PATH_MODEL;
 	static std::string PATH_EFF = Application::PATH_EFFECT;
-	static std::string PATH_SND = Application::PATH_SOUND;
 
 	Resource* res;
 
 	// タイトル画像
-	res = new RES(RES_T::IMG, PATH_IMG + "Crazy_title2.png");
+	res = new RES(RES_T::IMG, PATH_IMG + "Game_title.png");
 	resourcesMap_.emplace(SRC::TITLE, res);
 
 	// PushSpace
@@ -43,6 +42,10 @@ void ResourceManager::Init(void)
 	// 吹き出し
 	res = new RES(RES_T::IMG, PATH_IMG + "SpeechBalloon.png");
 	resourcesMap_.emplace(SRC::SPEECH_BALLOON, res);
+
+	// 警告マーク
+	res = new RES(RES_T::IMG, PATH_IMG + "warning.png");
+	resourcesMap_.emplace(SRC::WARNING, res);
 
 	// プレイヤー
 	res = new RES(RES_T::MODEL, PATH_MDL + "Player/Great Sword Slash.mv1");
@@ -123,7 +126,7 @@ void ResourceManager::Init(void)
 	//カーブ
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Curve.mv1");
 	resourcesMap_.emplace(SRC::CURVE, res);
-	
+
 	// ジャンプ台
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/jampRanp/janpudai.mv1");
 	resourcesMap_.emplace(SRC::JUMP_RAMP, res);
@@ -181,6 +184,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/tyre.mv1");
 	resourcesMap_.emplace(SRC::TYRE, res);
 
+	// とげ球
+	res = new RES(RES_T::MODEL, PATH_MDL + "Throw/Spikeball.mv1");
+	resourcesMap_.emplace(SRC::SPIKE_BALL, res);
+
 	// 武器モデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Weapon/BusterSword/sword.mv1");
 	resourcesMap_.emplace(SRC::W_SWORD, res);
@@ -195,7 +202,20 @@ void ResourceManager::Init(void)
 
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
-	resourcesMap_.emplace(SRC::HITEFFECT, res);
+	resourcesMap_.emplace(SRC::HitEffect, res);
+
+	// 投げモノ発生のエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Throw/makeThrow.efkefc");
+	resourcesMap_.emplace(SRC::THROW_MAKE_EFFECT, res);
+
+	// 爆発エフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Bomb/bombEffect.efkefc");
+	resourcesMap_.emplace(SRC::BOMB_EFFECT, res);
+
+	// 爆弾場所のエフェクト
+	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BombPlace/bombPlace.efkefc");
+	resourcesMap_.emplace(SRC::BOMB_PLACE_EFFECT, res);
+
 
 	// ソニックエフェクト
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
@@ -206,19 +226,7 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
 	resourcesMap_.emplace(SRC::BOOST_EFFECT, res);
 
-	
 
-	// ゲームBGM
-	res = new RES(RES_T::SOUND, PATH_SND + "BURNING_MY_HEART.mp3");
-	resourcesMap_.emplace(SRC::SND_BGM, res);
-
-	//コイン収集時の音
-	res = new RES(RES_T::SOUND, PATH_SND + "collectcoin.mp3");
-	resourcesMap_.emplace(SRC::SND_COIN, res);
-
-	//モーター音
-	res = new RES(RES_T::SOUND, PATH_SND + "motor.mp3");
-	resourcesMap_.emplace(SRC::SND_MOTOR, res);
 }
 
 

@@ -14,11 +14,7 @@ class MagicEnemy;
 class EnemyBike;
 class Helicopter;
 class Score;
-<<<<<<< HEAD
-class SelectScene;
-=======
 class TyreThrow;
->>>>>>> main
 
 class GameScene : public SceneBase
 {
@@ -53,13 +49,20 @@ public:
 	//選択肢数
 	static constexpr int SELECT_MAX_NUM = 3;
 
+	//警告画像最大サイズ
+	static constexpr double WARNING_IMG_MAX_SCALE = 0.40;
+
+	//警告画像最小サイズ
+	static constexpr double WARNING_IMG_MIN_SCALE = 0.20;
+
+	//警告画像大きさ変化量
+	static constexpr double WARNING_IMG_CHANGE_SCALE = 0.005;
+
 	//ポーズキー入力からもう一度押せるようになるまでの時間
 	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
 
 	//エンカウント値
 	static constexpr int ENCOUNT = 350;
-
-	static constexpr int STAGE_COUNT = 35;
 
 	// コンストラクタ
 	GameScene(void);
@@ -77,14 +80,16 @@ public:
 
 	//敵が追加されたタイミングかどうか
 	bool GetIsCreateEnemy(void);
- 
+
 private:
 	int mainScreen_;
 
-	// ゲームスタート時のカウント
-	float startCount_;
-	// スタートフラグ
-	bool isStart_;
+	// 画像
+	int imgWarning_;
+	//大きさ
+	double warningImgScale_;
+	//最大サイズかどうか
+	bool isMaxWarningScale_;
 
 	// カメラ
 	std::vector<std::shared_ptr<Camera>> cameras_;
@@ -98,22 +103,17 @@ private:
 	// スカイドーム
 	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
-<<<<<<< HEAD
-	// プレイ人数
-	std::unique_ptr<SelectScene> selectScene_;
-
-	int playNumber = 1;
-=======
 	//タイヤ
 	TyreThrow* throwTyre_;
 
->>>>>>> main
 
 	// プレイヤー
 	//std::shared_ptr<Bike> bike_;
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
+	//プレイ人数
+	int playNumber = 4;
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;
@@ -126,7 +126,7 @@ private:
 	EnemyBike* enemyBike_;
 
 	//複数の敵
-	std::vector<EnemyBase*>enemys_;	
+	std::vector<EnemyBase*>enemys_;
 	std::vector<EnemyBike*>enemyBikes_;
 
 	//敵の発生頻度
@@ -135,13 +135,12 @@ private:
 	//敵が追加されたタイミングかどうか
 	bool isCreateEnemy_;
 
-	//デバッグ描画
 	void DrawDubg(void);
-	
+
 	//衝突判定
 	void Collision(void);
 
-	// バイク同士の当たり判定
+	// バイク同士の衝突判定
 	void BikeCollision(void);
 
 	float hitStopDuration;  // ヒットストップの持続時間（秒）
@@ -157,8 +156,6 @@ private:
 	// Hitエフェクトの位置
 	void HitEffect(void);
 
-	// ゲームBGM
-	bool isBGM_;
 
 	//左上の再開ポジション
 	Vector2 reStartFontBasePos_;

@@ -140,7 +140,7 @@ void Goal::CollisionGravity(void)
 			c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
 
 		// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
-		if (hit.HitFlag > 0 )
+		if (hit.HitFlag > 0)
 		{
 
 			// 衝突地点から、少し上に移動

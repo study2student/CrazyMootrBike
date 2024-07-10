@@ -18,7 +18,7 @@ public:
 	static constexpr float SPEED_ROT = 20.0f;
 
 	//速度
-	static constexpr float SPEED_MOVE = 20.0f;
+	static constexpr float SPEED_MOVE = 60.0f;
 
 	//場所表示時間
 	static constexpr float PLACE_DRAW_MAX_TIME = 3.0f;
@@ -30,16 +30,22 @@ public:
 	static constexpr float TYRE_REMAKE_MAX_TIME = 8.0f;
 
 	//タイヤの投げる位置(少し横に)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_SIDE = { -600.0f,0.0f,15000.0f };
+	static constexpr VECTOR THROW_LOCAL_POS_TO_SIDE = { -900.0f,100.0f,13500.0f };
 
 	//タイヤの投げる位置(少し斜めに)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -200.0f,0.0f,11000.0f };
+	static constexpr VECTOR THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -750.0f,100.0f,11000.0f };
 
 	//タイヤの投げる位置(大きく斜めに)
-	static constexpr VECTOR THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -50.0f,0.0f,6000.0f };
+	static constexpr VECTOR THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -600.0f,100.0f,7000.0f };
+
+	//タイヤが出現するX座標
+	static constexpr float TYRE_MAKE_POS_X = 2499.0f;
 
 	//タイヤローカル待機座標
-	static constexpr VECTOR TYRE_IDLE_ROCAL_POS = { 500.0f,300.0f,15000.0f };
+	static constexpr VECTOR TYRE_IDLE_ROCAL_POS = { 500.0f,100.0f,15000.0f };
+
+	//ダメージ
+	static constexpr int THROW_DAMAGE = 20;
 
 
 	// 状態
@@ -80,11 +86,15 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
-	//爆弾が何かに当たったか設定
+	//何かに当たったか設定
 	void SetIsCol(bool isCol);
 
-	//爆弾が当たったが取得
+	//当たったか取得
 	bool GetIsCol(void);
+
+	//待機状態かどうか
+	bool IsIdle(void);
+
 
 private:
 
@@ -101,6 +111,9 @@ private:
 
 	//ターゲットに向けた向き
 	VECTOR targetDir_;
+
+	//ターゲットに向けた向き保存用
+	VECTOR targetDirSave_;
 
 	// 移動量
 	VECTOR movePow_;
@@ -131,6 +144,21 @@ private:
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
 
+	// 発生エフェクト
+	int effectMakeResId_;
+	int effectMakePlayId_;
+
+	//爆発エフェクト
+	int bombEffectResId_;
+	int bombEffectPlayId_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+
+	// エフェクト
+	void MakeEffect(void);
+	void BombEffect(void);
+
 	// 状態遷移
 	void ChangeState(STATE state);
 	void ChangeStateIdle(void);
@@ -160,14 +188,3 @@ private:
 	void CalcGravityPow(void);
 
 };
-
-
-
-
-
-
-
-
-
-
-

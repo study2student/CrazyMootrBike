@@ -14,6 +14,7 @@ public:
 		TITLE,
 		PUSH_SPACE,
 		SPEECH_BALLOON,
+		WARNING,	//警告
 		PLAYER,
 		PLAYER_SHADOW,
 		SKY_DOME,
@@ -56,21 +57,14 @@ public:
 		COPPER_MEDAL,	//銅メダル
 
 		W_SWORD,//バスターソード
+		SPIKE_BALL, //とげ球
 
-<<<<<<< HEAD
-		//エフェクト関連
-		HITEFFECT,//ヒットした時のエフェクト
-		SONICEFFECT,//ソニックエフェクト
-
-		//サウンド関連
-		SND_BGM,//ゲームBGM
-		SND_COIN,//コイン収集時の音
-		SND_MOTOR//モーター音
-=======
 		HitEffect,//ヒットした時のエフェクト
 		SonicEffect,//ソニックエフェクト
-		BOOST_EFFECT //ブーストエフェクト
->>>>>>> main
+		BOOST_EFFECT, //ブーストエフェクト
+		THROW_MAKE_EFFECT,	//投げモノ発生エフェクト
+		BOMB_EFFECT,		//爆発エフェクト
+		BOMB_PLACE_EFFECT	//爆弾場所エフェクト
 	};
 
 	// 明示的にインステンスを生成する

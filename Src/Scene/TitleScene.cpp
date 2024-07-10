@@ -64,22 +64,6 @@ void TitleScene::Init(void)
 		0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f);
 	sity_.Update();
 
-	////2つ分ビル
-	//sity_[0]->SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
-	//sity_[0]->pos = {250.0f, -100.0f, 21100.0f};
-	//size = 1.0f;
-	//sity_[0]->scl = {size, size, size};
-	//sity_[0]->quaRotLocal = Quaternion::Euler(
-	//	0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f);
-	//sity_[0]->Update();
-	//
-	//sity_[1]->SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
-	//sity_[1]->pos = { 250.0f, -100.0f, 21100.0f };
-	//size =1.0f;
-	//sity_[1]->scl = { size, size, size };
-	//sity_[1]->quaRotLocal = Quaternion::Euler(
-	//	0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f);
-	//sity_[1]->Update();
 
 
 	//バイク
@@ -172,8 +156,9 @@ void TitleScene::Draw(void)
 	//ボタンが押されたら表示しない
 	if(state_==STATE::IDLE)
 	{
-		DrawGraph(Application::SCREEN_SIZE_X / 2 - 333, 250, imgTitle_, true);
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 1.5, 700, 1.0, 0.0, imgPush_, true);
+		//DrawGraph(Application::SCREEN_SIZE_X / 2 - 640, 250, imgTitle_, false);
+		DrawExtendGraph(160, 150, Application::SCREEN_SIZE_X - 160,Application::SCREEN_SIZE_Y, imgTitle_, true);
+		DrawGraph(Application::SCREEN_SIZE_X / 2-256, 700, imgPush_, true);
 	}
 
 }

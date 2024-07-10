@@ -40,14 +40,14 @@ void Bomb::Init(void)
 	transform_.Update();
 
 	//爆発エフェクト
-	bombEffectResId_ = LoadEffekseerEffect("Data/Effect/Bomb/bombEffect.efkefc",1.0f);
+	InitEffect();
 
 	// カプセルコライダ
 	//capsule_ = new Capsule(transform_);
 	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
-	capsule_->SetRadius(80.0f);
+	capsule_->SetRadius(90.0f);
 
 	ChangeState(STATE::IDLE);
 }
@@ -74,7 +74,7 @@ void Bomb::Update(void)
 
 void Bomb::Draw(void)
 {
-	
+
 	// 更新ステップ
 	switch (state_)
 	{
@@ -129,13 +129,49 @@ const Bomb::STATE& Bomb::GetState(void)
 	return state_;
 }
 
+void Bomb::InitEffect(void)
+{
+	bombEffectResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::BOMB_EFFECT).handleId_;
+
+	bombPlaceEffectResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::BOMB_PLACE_EFFECT).handleId_;
+}
+
+void Bomb::BombEffect(void)
+{
+	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
+
+	//何かに当たった時は前で爆発
+	VECTOR localPos = {};
+	if (isCol_)
+	{
+		localPos = { 0.0f,0.0f,2200.0f };
+	}
+	else
+	{
+		localPos = { 0.0f,0.0f,0.0f };
+	}
+	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
+	float scl = 10.0f;
+	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
+}
+
+void Bomb::BombPlaceEffect(void)
+{
+	float scale = 100.0f;
+	SetScalePlayingEffekseer3DEffect(bombPlaceEffectPlayId_, scale, scale, scale);
+	SetPosPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, bombTargetPos_.x, bombTargetPos_.y, bombTargetPos_.z);
+	SetRotationPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
+}
+
 void Bomb::ChangeState(STATE state)
 {
 	//状態変更
 	state_ = state;
 
 	// 更新ステップ
-	switch (state_)      
+	switch (state_)
 	{
 	case Bomb::STATE::NONE:
 		ChangeStateNone();
@@ -159,30 +195,20 @@ void Bomb::ChangeStateNone(void)
 void Bomb::ChangeStateIdle(void)
 {
 	isCol_ = false;
+
+	//爆発場所エフェクト
+	BombPlaceEffect();
 }
 
 void Bomb::ChangeStateReserve(void)
 {
+	StopEffekseer3DEffect(bombPlaceEffectPlayId_);
 }
 
 void Bomb::ChangeStateBlast(void)
 {
 	//爆発エフェクト
-	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
-
-	//何かに当たった時は前で爆発
-	VECTOR localPos = {};
-	if (isCol_)
-	{
-		localPos = { 0.0f,0.0f,2200.0f };
-	}
-	else
-	{
-		localPos = { 0.0f,0.0f,0.0f };
-	}
-	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
-	float scl = 10.0f;
-	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
+	BombEffect();
 }
 
 void Bomb::UpdateNone(void)
@@ -211,7 +237,7 @@ void Bomb::UpdateReserve(void)
 	VECTOR movePow;
 	VECTOR targetDir = VNorm(VSub(bombTargetPos_, transform_.pos));
 	movePow = VScale(targetDir, SPEED);
-	
+
 	// 移動処理
 	transform_.pos = VAdd(transform_.pos, movePow);
 
@@ -252,7 +278,7 @@ void Bomb::UpdateBlast(void)
 		ChangeState(STATE::IDLE);
 		stepBombBlast_ = 0.0f;
 	}
-	
+
 
 }
 
@@ -381,6 +407,6 @@ void Bomb::CalcGravityPow(void)
 
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
-	
+
 
 }

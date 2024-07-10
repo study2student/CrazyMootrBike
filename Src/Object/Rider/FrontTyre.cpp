@@ -122,7 +122,7 @@ void FrontTyre::UpdateRot(void)
 
 void FrontTyre::DrawDebug(void)
 {
-	DrawFormatString(840, 300, 0xffffff, "frontPos = {%f, %f, %f}", transform_.pos.x,transform_.pos.y,transform_.pos.z);
+	DrawFormatString(840, 300, 0xffffff, "frontPos = {%f, %f, %f}", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 }
 
 void FrontTyre::ProcessDebug(void)

@@ -13,6 +13,9 @@ public:
 
 	void Init(void);
 
+	//ÉXÉRÉAâ¡éZ
+	void AddScore(void);
+
 	void SetScore(int score);
 
 	const int GetScore(void) const;

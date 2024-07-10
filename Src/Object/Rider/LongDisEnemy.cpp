@@ -14,7 +14,7 @@
 #include "../../Object/Score.h"
 #include "LongDisEnemy.h"
 
-LongDisEnemy::LongDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos,localPos)
+LongDisEnemy::LongDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -34,7 +34,7 @@ void LongDisEnemy::SetParam(void)
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
-	
+
 
 	//// アニメーションの設定
 	//InitAnimation();
@@ -169,10 +169,6 @@ void LongDisEnemy::ProcessMove(void)
 			isBikeCol_ = true;
 			isAddScore_ = true;
 			AddScoreToPlayer(bike->GetPlayerID(), 10);
-
-			//コイン収集時の音
-			isCoinSND_ = true;
-
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -181,19 +177,13 @@ void LongDisEnemy::ProcessMove(void)
 		else
 		{
 			speed_ = SPEED_MOVE;
-			isCoinSND_ = false;
-			//isAddScore_ = false;
+			isAddScore_ = false;
 		}
 	}
 	/*if (ins.IsNew(KEY_INPUT_RSHIFT))
 	{
 		speed_ = SPEED_RUN;
 	}*/
-	if (isCoinSND_)
-	{
-		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, false);
-	}
 
 	//向いてる方向に移動
 	/*moveDir_ = dir;
@@ -239,6 +229,6 @@ void LongDisEnemy::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
-	
+
 
 }

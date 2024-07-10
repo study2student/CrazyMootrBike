@@ -37,11 +37,17 @@ public:
 	//町の初期位置
 	static constexpr VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
 
+	//左壁に当たった時の法線ベクトル
+	static constexpr VECTOR LEFT_NORMAL_VEC = { 1.0f,0.0f,0.0f };
+
+	//右壁に当たった時の法線ベクトル
+	static constexpr VECTOR RIGHT_NORMAL_VEC = { -1.0f,0.0f,0.0f };
+
 	//下のステージ左側の最大座標
 	static constexpr float STAGE_LEFT_POS_X_MAX = 910.0f;
 
 	//下のステージ右側の最大座標
-	static constexpr float STAGE_RIGHT_POS_X_MAX = 2400.0f;
+	static constexpr float STAGE_RIGHT_POS_X_MAX = 2500.0f;
 
 	// ステージ名
 	enum class NAME
