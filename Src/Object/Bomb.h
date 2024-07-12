@@ -115,11 +115,8 @@ private:
 	//爆発エフェクト
 	void InitEffect(void);
 	void BombEffect(void);
-<<<<<<< HEAD
 	void SyncBombPlaceEffect(void);
-=======
-	void BombPlaceEffect(void);
->>>>>>> origin/multiPlay
+
 
 	// 状態遷移
 	void ChangeState(STATE state);

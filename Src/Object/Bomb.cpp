@@ -157,19 +157,11 @@ void Bomb::BombEffect(void)
 	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
 }
 
-<<<<<<< HEAD
 void Bomb::SyncBombPlaceEffect(void)
 {
 	float scale = 10.0f;
 	SetScalePlayingEffekseer3DEffect(bombPlaceEffectPlayId_, scale, scale, scale);
 	SetPosPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, bombTargetPos_.x, 0.0f, bombTargetPos_.z);
-=======
-void Bomb::BombPlaceEffect(void)
-{
-	float scale = 100.0f;
-	SetScalePlayingEffekseer3DEffect(bombPlaceEffectPlayId_, scale, scale, scale);
-	SetPosPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, bombTargetPos_.x, bombTargetPos_.y, bombTargetPos_.z);
->>>>>>> origin/multiPlay
 	SetRotationPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 }
 
@@ -204,14 +196,9 @@ void Bomb::ChangeStateIdle(void)
 {
 	isCol_ = false;
 
-<<<<<<< HEAD
 	////爆発場所エフェクト
 	//bombPlaceEffectPlayId_ = PlayEffekseer3DEffect(bombPlaceEffectResId_);
 	//SyncBombPlaceEffect();
-=======
-	//爆発場所エフェクト
-	BombPlaceEffect();
->>>>>>> origin/multiPlay
 }
 
 void Bomb::ChangeStateReserve(void)

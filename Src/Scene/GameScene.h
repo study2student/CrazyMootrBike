@@ -102,13 +102,6 @@ private:
 	// カメラ
 	std::vector<std::shared_ptr<Camera>> cameras_;
 
-	// 画像
-	int imgWarning_;
-	//大きさ
-	double warningImgScale_;
-	//最大サイズかどうか
-	bool isMaxWarningScale_;
-
 	// ステージ
 	std::shared_ptr<Stage> stage_;
 
@@ -128,7 +121,7 @@ private:
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
 	//プレイ人数
-	int playNumber = 1;
+	int playNumber = 4;
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;

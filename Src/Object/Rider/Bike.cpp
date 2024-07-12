@@ -176,14 +176,11 @@ void Bike::Draw(void)
 	// 体力とかゲージとか
 	DrawUI();
 
-<<<<<<< HEAD
 	// 丸影描画
 	DrawShadow();
 
 	//player_->Draw();
 
-=======
->>>>>>> origin/multiPlay
 	//// デバッグ描画
 	//DrawDebug();
 }
@@ -764,11 +761,7 @@ void Bike::ProcessBoost(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-<<<<<<< HEAD
 	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
-=======
-	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ >= BOOST_USE_HP)
->>>>>>> origin/multiPlay
 	{
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;

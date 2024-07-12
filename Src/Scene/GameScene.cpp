@@ -166,13 +166,7 @@ void GameScene::Init(void)
 	stepPauseKeyHit_ = 0.0f;
 
 	//画像
-<<<<<<< HEAD
 	imgWarning_= resMng_.Load(ResourceManager::SRC::WARNING).handleId_;
-	
-=======
-	imgWarning_ = resMng_.Load(ResourceManager::SRC::WARNING).handleId_;
-
->>>>>>> origin/multiPlay
 	warningImgScale_ = WARNING_IMG_MIN_SCALE;
 
 	//スコアリセット
@@ -186,12 +180,6 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-<<<<<<< HEAD
-=======
-	throwTyre_->Update();
-	throwTyre_->SetTransform(bikes_[3]->GetTransform());
-
->>>>>>> origin/multiPlay
 	//ポーズメニュー
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
@@ -312,7 +300,7 @@ void GameScene::Update(void)
 			float shiftX_ = {};
 
 	throwTyre_->Update();
-	throwTyre_->SetTransform(bikes_[3]->GetTransform());
+	throwTyre_->SetTransform(bikes_[0]->GetTransform());
 
 			//道のランダムな場所に生成(3パターン)
 			int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
@@ -389,31 +377,7 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-<<<<<<< HEAD
-
-	// 背景
-	skyDome_->Draw();
-
-	stage_->Draw();
-
-	bike_->Draw();
-	helicopter_->Draw();
-	throwTyre_->Draw();
-	score_.Draw();
-
-	//enemy_->Draw();
-	//enemyBike_->Draw();
-	
-	for (auto& bike : bikes_) {
-		bike->Draw();
-	}
-
-
-	size_t sizeE = enemys_.size();
-	for (int i = 0; i < sizeE; i++)
-=======
 	if (playNumber == 1)
->>>>>>> origin/multiPlay
 	{
 		SetDrawScreen(mainScreen_);
 
@@ -430,6 +394,8 @@ void GameScene::Draw(void)
 
 		//bike_->Draw();
 		helicopter_->Draw();
+
+		throwTyre_->Draw();
 
 		//敵描画
 		size_t sizeE = enemys_.size();
@@ -492,6 +458,7 @@ void GameScene::Draw(void)
 
 			//bike_->Draw();
 			helicopter_->Draw();
+			throwTyre_->Draw();
 
 			//敵描画
 			size_t sizeE = enemys_.size();
@@ -554,35 +521,7 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	DrawDubg();
 
-	//投げモノが待機状態のときに描画
-	if (throwTyre_->IsIdle())
-	{
-		//拡大縮小
-		if (warningImgScale_ > WARNING_IMG_MAX_SCALE)
-		{
-			isMaxWarningScale_ = true;
-		}
-		else if (warningImgScale_ < WARNING_IMG_MIN_SCALE)
-		{
-			isMaxWarningScale_ = false;
-		}
-
-		if (isMaxWarningScale_)
-		{
-			warningImgScale_ -= WARNING_IMG_CHANGE_SCALE;
-		}
-		else
-		{
-			warningImgScale_ += WARNING_IMG_CHANGE_SCALE;
-		}
-
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
-	}
-	else
-	{
-		warningImgScale_ = WARNING_IMG_MIN_SCALE;
-	}
-
+	
 	//ポーズ中
 	if (isPause_)
 	{
@@ -668,12 +607,8 @@ void GameScene::Collision(void)
 
 	//爆弾とプレイヤーの当たり判定、投げモノとプレイヤーの判定
 	//HPが減り続けてしまうので当たった時は処理中断
-<<<<<<< HEAD
 	/*if (helicopter_->GetBomb()->GetIsCol() || throwTyre_->GetIsCol())
-=======
-	if (helicopter_->GetBomb()->GetIsCol() || throwTyre_->GetIsCol())
->>>>>>> origin/multiPlay
-	{
+	if (helicopter_->GetBomb()->GetIsCol() || throwTyre_->GetIsCol())	{
 		return;
 	}*/
 
@@ -693,18 +628,8 @@ void GameScene::Collision(void)
 
 	for (const auto& bike : bikes_)
 	{
-<<<<<<< HEAD
 		auto bikeCap = bike->GetCapsule();
 		if(!helicopter_->GetBomb()->GetIsCol())
-=======
-		//爆弾
-		auto bombCap = helicopter_->GetBomb()->GetCapsule();
-		auto bikeCap = bike->GetCapsule();
-
-		VECTOR diffB = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		float  disB = AsoUtility::SqrMagnitudeF(diffB);
-		if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
->>>>>>> origin/multiPlay
 		{
 			//爆弾
 			auto bombCap = helicopter_->GetBomb()->GetCapsule();

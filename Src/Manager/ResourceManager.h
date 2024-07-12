@@ -59,14 +59,6 @@ public:
 		W_SWORD,//バスターソード
 		SPIKE_BALL, //とげ球
 
-<<<<<<< HEAD
-		HitEffect,//ヒットした時のエフェクト
-		SonicEffect,//ソニックエフェクト
-		BOOST_EFFECT, //ブーストエフェクト
-		THROW_MAKE_EFFECT,	//投げモノ発生エフェクト
-		BOMB_EFFECT,		//爆発エフェクト
-		BOMB_PLACE_EFFECT	//爆弾場所エフェクト
-=======
 		HITEFFECT,//ヒットした時のエフェクト
 		SONICEFFECT,//ソニックエフェクト
 		BOOST_EFFECT, //ブーストエフェクト
@@ -78,7 +70,6 @@ public:
 		SND_BGM,//ゲームBGM
 		SND_COIN,//コイン収集時の音
 		SND_MOTOR//モーター音
->>>>>>> origin/multiPlay
 	};
 
 	// 明示的にインステンスを生成する

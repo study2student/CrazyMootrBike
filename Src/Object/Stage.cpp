@@ -503,13 +503,9 @@ void Stage::MakeLoopStage(void)
 			//lt.pop();
 
 			// ステージを削除する
-<<<<<<< HEAD
+
 			std::shared_ptr<LoopStage> tailLoop = loopStage_[size-11];
 			tailLoop->Destroy();
-=======
-		std::shared_ptr<LoopStage> tailLoop = loopStage_[size - 5];
-		tailLoop->Destroy();
->>>>>>> origin/multiPlay
 
 		//int size = static_cast<int>(loopStage_.size());
 		//if (size < 5) {
