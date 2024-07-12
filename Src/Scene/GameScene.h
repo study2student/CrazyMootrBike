@@ -60,6 +60,9 @@ public:
 	//ポーズキー入力からもう一度押せるようになるまでの時間
 	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
 
+	//ゴールしてから次のシーンになるまでの時間
+	static constexpr float GOAL_TO_NEXT_SCENE = 2.5f;
+
 	//エンカウント値
 	static constexpr int ENCOUNT = 350;
 
@@ -177,6 +180,12 @@ private:
 	//ポーズキー入力からの時間
 	float stepPauseKeyHit_;
 
+	//FINISH文字の位置
+	Vector2 finishFontPos_;
+
+	//ゴールしてからの経過時間
+	float stepGoalAfter_;
+
 	//状態
 	PAUSE_STATE pState_;
 
@@ -194,4 +203,13 @@ private:
 
 	//ポーズ
 	void Pause(void);
+
+	//警告
+	void WarningDraw(void);
+
+	//ポーズ文字描画
+	void PauseFontDraw(void);
+
+	//ゴールしたあとの処理
+	void GoalAfterDraw(void);
 };

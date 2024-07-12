@@ -61,6 +61,9 @@ public:
 	// バイクからブーストエフェクトまでの相対座標
 	static constexpr VECTOR RELATIVE_P2EB_POS = { 0.0f, 100.0f, -200.0f };
 
+	// バイクからプレイヤーまでの相対座標
+	static constexpr VECTOR RELATIVE_P2B_POS = { 0.0f,40.0f,-65.0f };
+
 	// 状態
 	enum class STATE
 	{

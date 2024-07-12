@@ -91,7 +91,8 @@ void Bike::Init(void)
 		ResourceManager::SRC::BIKE));
 	float scale = 1.3f;
 	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f + localPosX_, 0.0f, 0.0f };
+	VECTOR initPos = { 1270.0f,-260.0f,0.0f };
+	transform_.pos = { 1270.0f + localPosX_, -260.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -100,9 +101,10 @@ void Bike::Init(void)
 	// モデルの基本設定
 	transformPlayer_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::PLAYER));
-	float pScale = 1.0f;
+	float pScale = 1.3f;
 	transformPlayer_.scl = { pScale, pScale, pScale };
-	transformPlayer_.pos = { transform_.pos.x, transform_.pos.y , transform_.pos.z };
+	//transformPlayer_.pos = { transform_.pos.x, transform_.pos.y , transform_.pos.z };
+	transformPlayer_.pos = VAdd(transform_.pos, RELATIVE_P2B_POS);
 	//transformPlayer_.quaRot = Quaternion();
 	transformPlayer_.quaRot = transform_.quaRot;
 	transformPlayer_.quaRotLocal =
@@ -287,7 +289,7 @@ void Bike::InitAnimation(void)
 	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
 	animationController_->Add((int)ANIM_TYPE::SIT, path + "Sit.mv1", 1.0f);
 
-	animationController_->Play((int)ANIM_TYPE::SIT, true, 35.0f, 36.0f);
+	animationController_->Play((int)ANIM_TYPE::SIT, true, 33.0f, 36.0f);
 }
 
 void Bike::ChangeState(STATE state)
@@ -353,6 +355,9 @@ void Bike::UpdatePlay(void)
 	transform_.quaRot = playerRotY_;
 	transformPlayer_.quaRot = playerRotY_;
 
+	//アニメーションループ
+	animationController_->SetEndLoop(33.0f, 36.0f, 1.0f);
+
 	//HP下限値
 	if (hp_ <= MIN_HP)
 	{
@@ -411,6 +416,7 @@ void Bike::DrawDebug(void)
 
 void Bike::ProcessMove(void)
 {
+
 
 	auto& ins = InputManager::GetInstance();
 
@@ -765,20 +771,20 @@ void Bike::ProcessDebug(void)
 
 void Bike::NormalAttack(void)
 {
-	auto& ins = InputManager::GetInstance();
+	//auto& ins = InputManager::GetInstance();
 
-	if (ins.IsNew(KEY_INPUT_Z))
-	{
-		attackState_ = ATTACK_TYPE::NORMAL;
-		animationController_->Play((int)ANIM_TYPE::FALLING);
+	//if (ins.IsNew(KEY_INPUT_Z))
+	//{
+	//	attackState_ = ATTACK_TYPE::NORMAL;
+	//	animationController_->Play((int)ANIM_TYPE::FALLING);
 
-		isAttack_ = true;
-	}
-	else
-	{
-		attackState_ = ATTACK_TYPE::NONE;
-		isAttack_ = false;
-	}
+	//	isAttack_ = true;
+	//}
+	//else
+	//{
+	//	attackState_ = ATTACK_TYPE::NONE;
+	//	isAttack_ = false;
+	//}
 }
 
 void Bike::LongAttack(void)
@@ -863,7 +869,9 @@ void Bike::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
-	//movedPos_ = VAdd(transformPlayer_.pos, movePow_);
+
+	VECTOR movedPPos = VAdd(VAdd(transform_.pos, RELATIVE_P2B_POS), movePow_);
+	//movedPos_ = VAdd(transformPlayer_.pos, movmoePow_);
 
 	// 衝突(カプセル)
 	CollisionCapsule();
@@ -873,7 +881,7 @@ void Bike::Collision(void)
 
 	// 移動
 	transform_.pos = movedPos_;
-	transformPlayer_.pos = movedPos_;
+	transformPlayer_.pos = movedPPos;
 
 }
 

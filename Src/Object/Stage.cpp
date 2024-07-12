@@ -41,6 +41,7 @@ Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, 
 	isMakeLoopStage_ = false;
 
 	isJamp_ = false;
+	isGoal_ = false;
 
 	//activePlanet_ = nullptr;
 
@@ -178,7 +179,12 @@ void Stage::Update(void)
 	{
 		if (bike->GetTransform().pos.z >= goal_->GetTransform().pos.z)
 		{
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			isGoal_ = true;
+		}
+		else
+		{
+			isGoal_ = false;
 		}
 	}
 
@@ -354,6 +360,11 @@ void Stage::Jump(void)
 int Stage::GetLoopStageSize(void)
 {
 	return loopStage_.size();
+}
+
+bool Stage::GetIsGoal(void)
+{
+	return isGoal_;
 }
 
 void Stage::MakeMainStage(void)

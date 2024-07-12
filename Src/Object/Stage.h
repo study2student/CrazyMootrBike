@@ -96,6 +96,11 @@ public:
 
 	//ループステージのサイズ
 	int GetLoopStageSize(void);
+
+	//ゴールしたかどうか
+	bool GetIsGoal(void);
+
+
 private:
 
 	//ゲームシーンポインタ
@@ -144,6 +149,9 @@ private:
 	std::shared_ptr<Planet> nullPlanet = nullptr;
 
 	float step_;
+
+	//ゴールしたかどうか
+	bool isGoal_;
 
 	//ジャンプ台に当たったか
 	bool isJamp_;

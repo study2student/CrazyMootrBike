@@ -91,6 +91,9 @@ public:
 	//”š’eæ“¾
 	Bomb* GetBomb(void);
 
+	// ó‘Ô‘JˆÚ
+	void ChangeState(STATE state);
+
 private:
 
 	//‰H
@@ -152,7 +155,6 @@ private:
 	void InitAnimation(void);
 
 	// ó‘Ô‘JˆÚ
-	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStateMove(void);
 	void ChangeStateAttack(void);

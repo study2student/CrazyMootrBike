@@ -94,7 +94,9 @@ public:
 	//ブースト中かどうか設定
 	void SetIsBoost(bool isBoost);
 
+
 private:
+
 
 	// カメラが追従対象とするTransform
 	const Transform* followTransform_;
@@ -153,6 +155,7 @@ private:
 	void SetBeforeDrawFixedPoint(void);
 	void SetBeforeDrawFollow(void);
 	void SetBeforeDrawSelfShot(void);
+
 
 };
 

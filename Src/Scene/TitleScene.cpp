@@ -94,7 +94,8 @@ void TitleScene::Init(void)
 
 	// キャラ
 	charactor_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
-	charactor_.pos = { -150.0f, -42.0f, -105.0f };
+	//charactor_.pos = { -150.0f, -42.0f, -105.0f };
+	charactor_.pos = { -150.0f, -46.0f, -109.0f };
 	size = 1.0f;
 	charactor_.scl = { size, size, size };
 	charactor_.quaRot = Quaternion::Euler(
@@ -126,7 +127,7 @@ void TitleScene::Init(void)
 	animationController_ = new AnimationController(charactor_.modelId);
 	// 無理やりアニメーション
 	animationController_->Add(0, path + "Sit.mv1",1.0f);
-	animationController_->Play(0,true,35.0f,36.0f);
+	animationController_->Play(0,true,33.0f,36.0f);
 
 	// 定点カメラ
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
@@ -156,7 +157,7 @@ void TitleScene::Update(void)
 	}
 
 	//アニメーションループ
-	animationController_->SetEndLoop(35.0f, 36.0f, 1.0f);
+	animationController_->SetEndLoop(33.0f, 36.0f, 1.0f);
 
 }
 

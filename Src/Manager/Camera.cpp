@@ -250,7 +250,6 @@ void Camera::ProcessRot(void)
 	//	return;
 	//}
 
-
 	auto& ins = InputManager::GetInstance();
 
 	float movePow = 5.0f;
@@ -342,14 +341,17 @@ void Camera::SetBeforeDrawFixedPoint(void)
 void Camera::SetBeforeDrawFollow(void)
 {
 
+
 	// ƒJƒƒ‰‘€ì
 	ProcessRot();
 
 	// ’Ç]‘ÎÛ‚Æ‚Ì‘Š‘ÎˆÊ’u‚ğ“¯Šú
 	SyncFollow();
 
+
 }
 
 void Camera::SetBeforeDrawSelfShot(void)
 {
 }
+

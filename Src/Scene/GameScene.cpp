@@ -36,6 +36,7 @@ GameScene::GameScene(void)
 	//score_ = nullptr;
 
 	nowCursor_ = 0;
+	stepGoalAfter_ = 0.0f;
 }
 
 GameScene::~GameScene(void)
@@ -132,6 +133,10 @@ void GameScene::Init(void)
 	//左上の終わるポジション
 	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 260 };
 
+	//FINISH文字の初期位置
+	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2 - 220 ,-40 };
+	finishFontPos_ = finishStartPos;
+
 	isPause_ = false;
 	isCursorHit_ = false;
 	stepPauseKeyHit_ = 0.0f;
@@ -149,8 +154,6 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
-	throwTyre_->Update();
-	throwTyre_->SetTransform(bikes_[3]->GetTransform());
 	//ポーズメニュー
 	if (ins.IsTrgDown(KEY_INPUT_C))
 	{
@@ -165,6 +168,18 @@ void GameScene::Update(void)
 	{
 		Pause();
 		return;
+	}
+
+	//ゴール後
+	if (stage_->GetIsGoal())
+	{
+		//爆弾は出させない
+		helicopter_->ChangeState(Helicopter::STATE::MOVE);
+		stepGoalAfter_ += SceneManager::GetInstance().GetDeltaTime();
+		if (stepGoalAfter_ >= GOAL_TO_NEXT_SCENE)
+		{
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		}
 	}
 
 	// シーン遷移
@@ -310,6 +325,8 @@ void GameScene::Update(void)
 		isCreateEnemy_ = false;
 	}
 
+	throwTyre_->Update();
+	throwTyre_->SetTransform(bikes_[3]->GetTransform());
 
 	helicopter_->Update();
 	//throwTyre_->Update();
@@ -318,11 +335,10 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	
-	
 
 	// 背景
 	skyDome_->Draw();
+
 	stage_->Draw();
 
 	bike_->Draw();
@@ -355,43 +371,21 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	DrawDubg();
 
-	//投げモノが待機状態のときに描画
-	if (throwTyre_->IsIdle())
-	{
-		//拡大縮小
-		if(warningImgScale_ > WARNING_IMG_MAX_SCALE)
-		{
-			isMaxWarningScale_ = true;
-		}
-		else if(warningImgScale_ < WARNING_IMG_MIN_SCALE)
-		{
-			isMaxWarningScale_ = false;
-		}
-
-		if (isMaxWarningScale_)
-		{
-			warningImgScale_ -= WARNING_IMG_CHANGE_SCALE;
-		}
-		else
-		{
-			warningImgScale_ += WARNING_IMG_CHANGE_SCALE;
-		}
-		
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
-	}
-	else
-	{
-		warningImgScale_ = WARNING_IMG_MIN_SCALE;
-	}
-
 	//ポーズ中
 	if (isPause_)
 	{
-		//文字表示
-		DrawString(reStartFontBasePos_.x, reStartFontBasePos_.y, "再開", reStartFontColor_);
-		DrawString(reTryFontBasePos_.x, reTryFontBasePos_.y, "リトライ", reTryFontColor_);
-		DrawString(endFontBasePos_.x, endFontBasePos_.y, "終わる", endFontColor_);
+		PauseFontDraw();
+	}
 
+	//ゴールしたか判定
+	if (stage_->GetIsGoal())
+	{
+		GoalAfterDraw();
+	}
+	else
+	{
+		//警告
+		WarningDraw();
 	}
 }
 
@@ -493,8 +487,13 @@ void GameScene::Collision(void)
 			float  disB = AsoUtility::SqrMagnitudeF(diffB);
 			if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 			{
-				//プレイヤーにダメージ
-				bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+				//ゴールしてない場合
+				if(!stage_->GetIsGoal())
+				{
+					//プレイヤーにダメージ
+					bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+				}
 
 				//当たった
 				helicopter_->GetBomb()->SetIsCol(true);
@@ -511,8 +510,13 @@ void GameScene::Collision(void)
 			float  disT = AsoUtility::SqrMagnitudeF(diffT);
 			if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 			{
-				//プレイヤーにダメージ
-				bike->Damage(throwTyre_->THROW_DAMAGE);
+				//ゴールしてない場合
+				if (!stage_->GetIsGoal())
+				{
+					//プレイヤーにダメージ
+					bike->Damage(throwTyre_->THROW_DAMAGE);
+
+				}
 
 				//当たった
 				throwTyre_->SetIsCol(true);
@@ -720,4 +724,71 @@ void GameScene::Pause(void)
 	KeyProcess();
 
 	
+}
+
+void GameScene::WarningDraw(void)
+{
+	//投げモノが待機状態のときに描画
+	if (throwTyre_->IsIdle())
+	{
+		//ポーズの時は止める
+		if(!isPause_)
+		{
+			//拡大縮小
+			if (warningImgScale_ > WARNING_IMG_MAX_SCALE)
+			{
+				isMaxWarningScale_ = true;
+			}
+			else if (warningImgScale_ < WARNING_IMG_MIN_SCALE)
+			{
+				isMaxWarningScale_ = false;
+			}
+
+			if (isMaxWarningScale_)
+			{
+				warningImgScale_ -= WARNING_IMG_CHANGE_SCALE;
+			}
+			else
+			{
+				warningImgScale_ += WARNING_IMG_CHANGE_SCALE;
+			}
+		}
+
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
+	}
+	else
+	{
+		warningImgScale_ = WARNING_IMG_MIN_SCALE;
+	}
+}
+
+void GameScene::PauseFontDraw(void)
+{
+	//文字表示
+	DrawString(reStartFontBasePos_.x, reStartFontBasePos_.y, "再開", reStartFontColor_);
+	DrawString(reTryFontBasePos_.x, reTryFontBasePos_.y, "リトライ", reTryFontColor_);
+	DrawString(endFontBasePos_.x, endFontBasePos_.y, "終わる", endFontColor_);
+}
+
+void GameScene::GoalAfterDraw(void)
+{
+	//FINISH文字色
+	int finishFontColor_ = GetColor(255, 165, 0);
+
+	//座標
+	if(!isPause_)
+	{
+		float addPosY = 10;
+		finishFontPos_.y += addPosY;
+	}
+
+	int stopPosY = Application::SCREEN_SIZE_Y / 2 - 120;
+	if (finishFontPos_.y >= stopPosY)
+	{
+		finishFontPos_.y = stopPosY;
+	}
+
+	//スコア
+	DrawExtendFormatString(finishFontPos_.x, finishFontPos_.y, 9, 9, finishFontColor_, "FINISH");
+
 }
