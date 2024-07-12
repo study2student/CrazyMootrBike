@@ -47,7 +47,7 @@ public:
 		HELICOPTER,
 		HELICOPTER_ROTOR,
 		BOMB,		//爆弾
-		BIKE,		//バイク
+		MDL_BIKE,		//バイク
 		TYRE,		//タイヤ
 		BURNOUT_EFFECT, //バーンアウトエフェクト(バイク発車前)
 		START_EFFECT, //ゲーム開始エフェクト
@@ -59,15 +59,16 @@ public:
 		W_SWORD,//バスターソード
 		SPIKE_BALL, //とげ球
 
-		HITEFFECT,//ヒットした時のエフェクト
-		SONICEFFECT,//ソニックエフェクト
+		HIT_EFFECT,//ヒットした時のエフェクト
+		SONIC_EFFECT,//ソニックエフェクト
 		BOOST_EFFECT, //ブーストエフェクト
 		THROW_MAKE_EFFECT,	//投げモノ発生エフェクト
 		BOMB_EFFECT,		//爆発エフェクト
 		BOMB_PLACE_EFFECT,	//爆弾場所エフェクト
 
 		//サウンド関連
-		SND_BGM,//ゲームBGM
+		SND_TITLE_BGM,//タイトルBGM
+		SND_GAME_BGM,//ゲームBGM
 		SND_COIN,//コイン収集時の音
 		SND_MOTOR//モーター音
 	};

@@ -1,4 +1,5 @@
 #include <string>
+#include <EffekseerForDXLib.h>
 #include "../../Application.h"
 #include "../../Utility/AsoUtility.h"
 #include "../../Manager/InputManager.h"
@@ -219,7 +220,7 @@ void EnemyBase::AddScoreToPlayer(int playerId, int score)
 	{
 		bikes_[playerId]->AddScore(score);
 		// デバッグログ
-		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
+		//printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
 	}
 }
 
@@ -478,7 +479,7 @@ void EnemyBase::ProcessMove(void)
 	double rotRad = 0;
 
 	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	//VECTOR dir;// = AsoUtility::DIR_F;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
@@ -533,6 +534,13 @@ void EnemyBase::ProcessMove(void)
 			isAddScore_ = true;
 			//衝突判定
 			isBikeCol_ = true;
+
+			// ヒットエフェクト
+			float scale = 50.0f;
+			HitEffect(bikes_[0]->GetTransform().pos, bikes_[0]->GetTransform().rot);
+			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+
 			//コイン収集時の音を再生
 			PlaySoundMem(ResourceManager::GetInstance().Load(
 				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
@@ -839,7 +847,21 @@ bool EnemyBase::IsEndLanding(void)
 
 bool EnemyBase::IsAtkStart(void)
 {
-
-
 	return false;
+}
+
+void EnemyBase::InitEffect(void)
+{
+	// ヒットエフェクト
+	effectHitResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::HIT_EFFECT).handleId_;
+}
+
+void EnemyBase::HitEffect(VECTOR pos, VECTOR rot)
+{
+
+	//エフェクトの位置、角度
+	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pos.x, pos.y, pos.z + 500);
+	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, rot.x, rot.y, rot.z);
+	
 }

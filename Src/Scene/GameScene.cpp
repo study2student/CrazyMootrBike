@@ -44,8 +44,8 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
-
-	if (playNumber == 1)
+	// プレイ人数によってスクリーンサイズを変える
+	if (PLAYERNUM == 1)
 	{
 		mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y);
 	}
@@ -60,9 +60,9 @@ void GameScene::Init(void)
 
 	//player_ = new Player();
 	//player_->Init();
-
+	int playerWhile = 200.0f;
 	for (int i = 0; i < 4; ++i) {
-		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
+		bikes_.emplace_back(std::make_shared<Bike>(playerWhile * (i + 1), i));
 	}
 
 	for (auto& bike : bikes_) {
@@ -104,7 +104,7 @@ void GameScene::Init(void)
 		skyDomes_.emplace_back(std::move(sky));
 	}
 
-	if (playNumber == 1)
+	if (PLAYERNUM == 1)
 	{
 		cameras_.push_back(std::make_shared<Camera>());
 	}
@@ -214,7 +214,7 @@ void GameScene::Update(void)
 
 		// BGMを再生
 		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+			ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
 
 		for (auto& skyDome : skyDomes_)
 		{
@@ -223,7 +223,7 @@ void GameScene::Update(void)
 
 		if (!isHitStop)
 		{
-			if (playNumber == 1)
+			if (PLAYERNUM == 1)
 			{
 				bikes_[0]->Update();
 			}
@@ -244,10 +244,10 @@ void GameScene::Update(void)
 			}
 
 			// ヒットエフェクト
-			float scale = 50.0f;
-			HitEffect();
-			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
-			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+			//float scale = 50.0f;
+			//HitEffect();
+			//effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+			//SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 		}
 		for (auto& bike : bikes_)
 		{
@@ -335,8 +335,7 @@ void GameScene::Update(void)
 				eB = new EnemyBike(e);
 				eB->Init();
 				isCreateEnemy_ = true;
-
-
+				
 				////デバッグ
 				//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
 
@@ -362,15 +361,15 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	if (playNumber == 1)
+	if (PLAYERNUM == 1)
 	{
 		SetDrawScreen(mainScreen_);
 
 		// 画面を初期化
 		ClearDrawScreen();
 
-
-		cameras_[0]->SetBeforeDraw(); // 各プレイヤーの視点を設定
+		// 各プレイヤーの視点を設定
+		cameras_[0]->SetBeforeDraw();
 
 		// 背景
 		skyDomes_[0]->Draw();
@@ -407,7 +406,7 @@ void GameScene::Draw(void)
 		SetDrawScreen(DX_SCREEN_BACK);
 
 		DrawGraph(0, 0, mainScreen_, false);
-		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, score);
+		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - scoreSizeX, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, score);
 
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
@@ -425,14 +424,8 @@ void GameScene::Draw(void)
 			// 画面を初期化
 			ClearDrawScreen();
 
-
-			cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
-
-			// スタート時のカウントを減らす
-			if (startCount_ >= 0.0f)
-			{
-				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
-			}
+			// 各プレイヤーの視点を設定
+			cameras_[i]->SetBeforeDraw();
 
 			// 背景
 			skyDomes_[i]->Draw();
@@ -466,33 +459,41 @@ void GameScene::Draw(void)
 				bike->Draw();
 			}
 
-			for (int p = 0; p < bikes_.size(); p++) {
-				//int score = bikes_[p]->GetScore();
+			SetDrawScreen(DX_SCREEN_BACK);
 
-				SetDrawScreen(DX_SCREEN_BACK);
+			int sx = Application::SCREEN_SIZE_X;
+			int sy = Application::SCREEN_SIZE_Y;
 
-				int sx = Application::SCREEN_SIZE_X;
-				int sy = Application::SCREEN_SIZE_Y;
+			switch (i)
+			{
+			case 0:
+				DrawGraph(0, 0, mainScreen_, false);
+				DrawExtendFormatString(sx / 2 - scoreSizeX, 0, 2, 2, 0xff0000, "Player %d:Score:%d", 1, bikes_[0]->GetScore());//スコア描画
+				break;
+			case 1:
+				DrawGraph(sx / 2, 0, mainScreen_, false);
+				DrawExtendFormatString(sx - scoreSizeX, 0, 2, 2, 0xff0000, "Player %d:Score:%d", 2, bikes_[1]->GetScore());//スコア描画
+				break;
+			case 2:
+				DrawGraph(0, sy / 2, mainScreen_, false);
+				DrawExtendFormatString(sx / 2 - scoreSizeX, sy / 2, 2, 2, 0xff0000, "Player %d:Score:%d", 3, bikes_[2]->GetScore());//スコア描画
+				break;
+			case 3:
+				DrawGraph(sx / 2, sy / 2, mainScreen_, false);
+				DrawExtendFormatString(sx - scoreSizeX, sy / 2, 2, 2, 0xff0000, "Player %d:Score:%d", 4, bikes_[3]->GetScore());//スコア描画
+				break;
+			}
 
-				switch (i)
-				{
-				case 0:
-					DrawGraph(0, 0, mainScreen_, false);
-					DrawExtendFormatString(sx / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
-					break;
-				case 1:
-					DrawGraph(sx / 2, 0, mainScreen_, false);
-					DrawExtendFormatString(sx - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 2, bikes_[1]->GetScore());
-					break;
-				case 2:
-					DrawGraph(0, sy / 2, mainScreen_, false);
-					DrawExtendFormatString(sx / 2 - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 3, bikes_[2]->GetScore());
-					break;
-				case 3:
-					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
-					DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
-					break;
-				}
+			//分割線
+			int lineSize = 10;
+			DrawLine(0, sy / 2, sx, sy / 2, 0xffff00, lineSize);//横
+			DrawLine(sx / 2, 0, sx / 2, sy, 0xffff00, lineSize);//縦
+			DrawCircle(sx / 2, sy / 2, 50, 0xffff00, true);//中央円
+
+			// スタート時のカウントを減らす
+			if (startCount_ >= 0.0f)
+			{
+				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
 			}
 		}
 	}
@@ -713,16 +714,13 @@ void GameScene::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectHitResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::HITEFFECT).handleId_;
+		ResourceManager::SRC::HIT_EFFECT).handleId_;
 }
 
-void GameScene::HitEffect(void)
+void GameScene::HitEffect(VECTOR pos, VECTOR rot)
 {
-	for (auto& bike : bikes_) {
-		const auto pPos = bike->GetTransform();
-		SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
-		SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
-	}
+	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pos.x, pos.y, pos.z + 500);
+	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, rot.x, rot.y, rot.z);
 }
 
 void GameScene::MouseProcess(void)

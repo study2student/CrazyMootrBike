@@ -64,6 +64,9 @@ public:
 	//エンカウント値
 	static constexpr int ENCOUNT = 350;
 
+	//プレイ人数
+	static constexpr int PLAYERNUM = 4;
+
 	// コンストラクタ
 	GameScene(void);
 
@@ -112,13 +115,15 @@ private:
 	TyreThrow* throwTyre_;
 
 
+
 	// プレイヤー
 	//std::shared_ptr<Bike> bike_;
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
-	//プレイ人数
-	int playNumber = 1;
+
+	//スコア文字の横の大きさ
+	int scoreSizeX = 400;
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;
@@ -160,7 +165,7 @@ private:
 	// エフェクト初期化
 	void InitEffect(void);
 	// Hitエフェクトの位置
-	void HitEffect(void);
+	void HitEffect(VECTOR pos, VECTOR rot);
 
 
 	//左上の再開ポジション

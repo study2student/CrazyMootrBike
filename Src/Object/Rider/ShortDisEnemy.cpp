@@ -13,6 +13,7 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
 #include "ShortDisEnemy.h"
+#include <EffekseerForDXLib.h>
 
 
 ShortDisEnemy::ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos, localPos)
@@ -113,7 +114,7 @@ void ShortDisEnemy::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	VECTOR dir;
+	//VECTOR dir;
 
 	for (const auto& bike : bikes_) {
 		Transform bikeTrans_ = bike->GetTransform();
@@ -143,6 +144,12 @@ void ShortDisEnemy::ProcessMove(void)
 			// コイン収集時の音を再生
 			PlaySoundMem(ResourceManager::GetInstance().Load(
 				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+
+			// ヒットエフェクト
+			float scale = 50.0f;
+			HitEffect(bikes_[3]->GetTransform().pos, bikes_[3]->GetTransform().rot);
+			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 			
 			if (isBikeCol_)
 			{

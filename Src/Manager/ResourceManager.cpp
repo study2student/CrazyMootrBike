@@ -36,6 +36,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "Game_title.png");
 	resourcesMap_.emplace(SRC::TITLE, res);
 
+	// タイトルBGM
+	res = new RES(RES_T::SOUND, PATH_SND + "荒野の侍.mp3");
+	resourcesMap_.emplace(SRC::SND_TITLE_BGM, res);
+
 	// PushSpace
 	res = new RES(RES_T::IMG, PATH_IMG + "PushSpace.png");
 	resourcesMap_.emplace(SRC::PUSH_SPACE, res);
@@ -179,7 +183,7 @@ void ResourceManager::Init(void)
 
 	// バイクモデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/bike.mv1");
-	resourcesMap_.emplace(SRC::BIKE, res);
+	resourcesMap_.emplace(SRC::MDL_BIKE, res);
 
 	// タイヤモデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/tyre.mv1");
@@ -203,7 +207,7 @@ void ResourceManager::Init(void)
 
 	// ヒットした時のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
-	resourcesMap_.emplace(SRC::HITEFFECT, res);
+	resourcesMap_.emplace(SRC::HIT_EFFECT, res);
 
 	// 投げモノ発生のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Throw/makeThrow.efkefc");
@@ -219,9 +223,8 @@ void ResourceManager::Init(void)
 
 
 	// ソニックエフェクト
-	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
 	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "SonicBoom/SonicBoom.efkefc");
-	//resourcesMap_.emplace(SRC::SonicEffect, res);
+	//resourcesMap_.emplace(SRC::SONICEFFECT, res);
 
 	// ブーストエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
@@ -229,7 +232,7 @@ void ResourceManager::Init(void)
 
 	// ゲームBGM
 	res = new RES(RES_T::SOUND, PATH_SND + "BURNING_MY_HEART.mp3");
-	resourcesMap_.emplace(SRC::SND_BGM, res);
+	resourcesMap_.emplace(SRC::SND_GAME_BGM, res);
 
 	//コイン収集時の音
 	res = new RES(RES_T::SOUND, PATH_SND + "collectcoin.mp3");

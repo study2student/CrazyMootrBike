@@ -160,7 +160,7 @@ protected:
 	AnimationController* animationController_;
 
 	//バイク情報
-	std::shared_ptr<Bike> bike_;
+	//std::shared_ptr<Bike> bike_;
 
 	std::vector< std::shared_ptr<Bike>> bikes_;
 
@@ -277,6 +277,14 @@ protected:
 	//攻撃モーション入ってからどのくらいで攻撃判定になるか管理
 	bool IsAtkStart(void);
 
+	// ヒットエフェクト
+	int effectHitResId_;
+	int effectHitPlayId_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+	// Hitエフェクトの位置
+	void HitEffect(VECTOR pos, VECTOR rot);
 };
 
 

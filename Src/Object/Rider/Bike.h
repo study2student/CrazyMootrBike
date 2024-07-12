@@ -197,6 +197,9 @@ private:
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
 
+	// プレイヤーの傾き
+	float playerIncli;
+
 	// ジャンプ量
 	VECTOR jumpPow_;
 

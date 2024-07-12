@@ -82,10 +82,10 @@ void Bike::Init(void)
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::BIKE));
+		ResourceManager::SRC::MDL_BIKE));
 	float scale = 1.3f;
 	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f + localPosX_, 0.0f, 0.0f };
+	transform_.pos = { 1200.0f + localPosX_, 0.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -516,42 +516,6 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetBack();
 	}
 
-	/*if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = AsoUtility::Deg2RadD(0.0f);
-		dir = cameraRot.GetForward();
-	}
-
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = AsoUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetForward();
-	}
-
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = AsoUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
-	{
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetRight();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
-	{
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
-	{
-		rotRad = AsoUtility::Deg2RadD(180.0f);
-		dir = cameraRot.GetBack();
-	}*/
-
 	// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
 	//{
@@ -651,7 +615,7 @@ void Bike::ProcessMove(void)
 		speed_ = SPEED_MOVE;
 
 
-		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
+		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
 		{
 			speed_ = SPEED_MOVE_X;
 		}
@@ -707,11 +671,8 @@ void Bike::ProcessMove(void)
 	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
 
 	// ソニックブームエフェクト
-	float scale = 10.0f;
 	SonicBoomEffect();
 	effectSonicPlayId_ = PlayEffekseer3DEffect(effectSonicResId_);
-	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
-
 }
 
 void Bike::ProcessJump(void)
@@ -1052,7 +1013,7 @@ void Bike::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectSonicResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SONICEFFECT).handleId_;
+		ResourceManager::SRC::SONIC_EFFECT).handleId_;
 
 	//ブーストエフェクト
 	effectBoostResId_ = ResourceManager::GetInstance().Load(
@@ -1061,8 +1022,14 @@ void Bike::InitEffect(void)
 
 void Bike::SonicBoomEffect(void)
 {
-	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.pos.x, transform_.pos.y + 200.0f, transform_.pos.z + 1000);
-	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.rot.x, transform_.rot.y + 180.0f, transform_.rot.z);
+	float scale = 10.0f;
+	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
+
+	//エフェクトの位置、角度
+	VECTOR pos = transform_.pos;
+	VECTOR rot = transform_.rot;
+	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, pos.x,pos.y + 200.0f, pos.z + 1000);
+	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, rot.x, rot.y + 180.0f, rot.z);
 }
 
 void Bike::SyncBoostEffect(void)

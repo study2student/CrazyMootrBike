@@ -67,7 +67,7 @@ void EnemyBike::Init(void)
 
 	// ƒ‚ƒfƒ‹‚ÌŠî–{İ’è
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::BIKE));
+		ResourceManager::SRC::MDL_BIKE));
 	float scale = 1.3f;
 	transform_.scl = { scale, scale, scale };
 	transform_.pos = { 0.0f, 0.0f, 0.0f };

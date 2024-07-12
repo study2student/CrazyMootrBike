@@ -13,6 +13,7 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
 #include "LongDisEnemy.h"
+#include <EffekseerForDXLib.h>
 
 LongDisEnemy::LongDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos, localPos)
 {
@@ -115,7 +116,7 @@ void LongDisEnemy::ProcessMove(void)
 	double rotRad = 0;
 
 	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	//VECTOR dir;// = AsoUtility::DIR_F;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
@@ -173,6 +174,12 @@ void LongDisEnemy::ProcessMove(void)
 			//コイン収集時の音を再生
 			PlaySoundMem(ResourceManager::GetInstance().Load(
 				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+
+			// ヒットエフェクト
+			float scale = 50.0f;
+			HitEffect(bike->GetTransform().pos, bike->GetTransform().rot);
+			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 
 			if (isBikeCol_)
 			{

@@ -67,7 +67,7 @@ void TitleScene::Init(void)
 
 
 	//バイク
-	bike.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BIKE));
+	bike.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::MDL_BIKE));
 	bike.pos = { -150.0f, -100.0f, -100.0f };
 	size = 1.3f;
 	bike.scl = { size, size, size };
@@ -198,6 +198,10 @@ void TitleScene::ChangeStateStart(void)
 
 void TitleScene::UpdateIdle(void)
 {
+	// BGMを再生
+	PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_TITLE_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+
 	//タイヤ回転
 	BikeTyreRot();
 
