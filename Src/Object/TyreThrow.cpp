@@ -128,10 +128,17 @@ bool TyreThrow::IsIdle(void)
 
 void TyreThrow::InitEffect(void)
 {
+<<<<<<< HEAD
 	effectMakeResId_= ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::THROW_MAKE_EFFECT).handleId_;
 
 	bombEffectResId_= ResourceManager::GetInstance().Load(
+=======
+	effectMakeResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::THROW_MAKE_EFFECT).handleId_;
+
+	bombEffectResId_ = ResourceManager::GetInstance().Load(
+>>>>>>> origin/multiPlay
 		ResourceManager::SRC::BOMB_EFFECT).handleId_;
 }
 
@@ -192,8 +199,17 @@ void TyreThrow::ChangeStateThrow(void)
 {
 
 	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+<<<<<<< HEAD
 
 	//どこから投げるかランダムで決める
+=======
+	transform_.pos.x = TYRE_MAKE_POS_X;
+
+	//発生エフェクト
+	MakeEffect();
+
+	//ランダムな3パターンの動作
+>>>>>>> origin/multiPlay
 	int randDir = GetRand(static_cast<int>(TyreThrow::DIR::MAX) - 1);
 	TyreThrow::DIR dir = static_cast<TyreThrow::DIR>(randDir);
 
@@ -274,6 +290,7 @@ void TyreThrow::UpdateIdle(void)
 {
 	//プレイヤーの少し先で待機
 	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+	transform_.pos.x = TYRE_MAKE_POS_X;
 
 	//5秒後に投げる
 	stepPlaceDrawTime_ += SceneManager::GetInstance().GetDeltaTime();
@@ -305,7 +322,11 @@ void TyreThrow::UpdateThrowMove(void)
 
 	}
 
+<<<<<<< HEAD
 	// 移動させる
+=======
+	// タイヤを移動させる
+>>>>>>> origin/multiPlay
 	VECTOR movePow;
 	movePow = VScale(targetDir_, SPEED_MOVE);
 
@@ -450,7 +471,11 @@ void TyreThrow::CollisionCapsule(void)
 				if (pHit)
 				{
 					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
+<<<<<<< HEAD
 					
+=======
+
+>>>>>>> origin/multiPlay
 					// カプセルを移動させる
 					trans.pos = movedPos_;
 					trans.Update();

@@ -74,7 +74,7 @@ void Bomb::Update(void)
 
 void Bomb::Draw(void)
 {
-	
+
 	// 更新ステップ
 	switch (state_)
 	{
@@ -157,11 +157,19 @@ void Bomb::BombEffect(void)
 	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
 }
 
+<<<<<<< HEAD
 void Bomb::SyncBombPlaceEffect(void)
 {
 	float scale = 10.0f;
 	SetScalePlayingEffekseer3DEffect(bombPlaceEffectPlayId_, scale, scale, scale);
 	SetPosPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, bombTargetPos_.x, 0.0f, bombTargetPos_.z);
+=======
+void Bomb::BombPlaceEffect(void)
+{
+	float scale = 100.0f;
+	SetScalePlayingEffekseer3DEffect(bombPlaceEffectPlayId_, scale, scale, scale);
+	SetPosPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, bombTargetPos_.x, bombTargetPos_.y, bombTargetPos_.z);
+>>>>>>> origin/multiPlay
 	SetRotationPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 }
 
@@ -171,7 +179,7 @@ void Bomb::ChangeState(STATE state)
 	state_ = state;
 
 	// 更新ステップ
-	switch (state_)      
+	switch (state_)
 	{
 	case Bomb::STATE::NONE:
 		ChangeStateNone();
@@ -196,9 +204,14 @@ void Bomb::ChangeStateIdle(void)
 {
 	isCol_ = false;
 
+<<<<<<< HEAD
 	////爆発場所エフェクト
 	//bombPlaceEffectPlayId_ = PlayEffekseer3DEffect(bombPlaceEffectResId_);
 	//SyncBombPlaceEffect();
+=======
+	//爆発場所エフェクト
+	BombPlaceEffect();
+>>>>>>> origin/multiPlay
 }
 
 void Bomb::ChangeStateReserve(void)
@@ -241,7 +254,7 @@ void Bomb::UpdateReserve(void)
 	VECTOR movePow;
 	VECTOR targetDir = VNorm(VSub(bombTargetPos_, transform_.pos));
 	movePow = VScale(targetDir, SPEED);
-	
+
 	// 移動処理
 	transform_.pos = VAdd(transform_.pos, movePow);
 
@@ -282,7 +295,7 @@ void Bomb::UpdateBlast(void)
 		ChangeState(STATE::IDLE);
 		stepBombBlast_ = 0.0f;
 	}
-	
+
 
 }
 
@@ -411,6 +424,6 @@ void Bomb::CalcGravityPow(void)
 
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
-	
+
 
 }

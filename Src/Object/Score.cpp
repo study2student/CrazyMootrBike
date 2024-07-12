@@ -23,24 +23,18 @@ void Score::Init(void)
 {
 }
 
-void Score::Update(void)
-{
-}
-
-void Score::Draw(void)
-{
-	DrawFormatString(840, 140, 0x000000, "SCORE：%d", scoreNum_);
-	//スコア
-	DrawExtendFormatString(Application::SCREEN_SIZE_X - 300, 0, 3, 3, 0xff0000, "スコア:%.d", scoreNum_);
-}
-
 void Score::AddScore(void)
 {
 	//スコア加算
 	scoreNum_ += EnemyBase::SCORE_INCREMENT;
 }
 
-int Score::GetScore(void)
+void Score::SetScore(int score)
+{
+	scoreNum_ += score;
+}
+
+const int Score::GetScore(void) const
 {
 	return scoreNum_;
 }

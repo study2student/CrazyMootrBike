@@ -10,8 +10,8 @@
 #include "../Common/Capsule.h"
 #include "../Common/Collider.h"
 #include "../Planet.h"
+#include "../Score.h"
 #include "Player.h"
-#include "Weapon.h"
 #include "../Bomb.h"
 #include "FrontTyre.h"
 #include "RearTyre.h"
@@ -20,8 +20,6 @@
 Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playerID)
 {
 	//localPosX_ = localpos;
-
-	weapon_ = nullptr;
 
 	animationController_ = nullptr;
 
@@ -67,16 +65,12 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 
 Bike::~Bike(void)
 {
-	delete weapon_;
 
 	StopEffekseer3DEffect(effectBoostPlayId_);
 }
 
 void Bike::Init(void)
-{	
-	// 武器
-	weapon_ = new Weapon();
-	weapon_->Init();
+{
 
 	//タイヤ
 	frontTyre_ = std::make_shared<FrontTyre>();
@@ -112,7 +106,6 @@ void Bike::Init(void)
 	transform_.Update();
 	transformPlayer_.Update();
 
-	weapon_->SetTransForm(transform_);
 
 	// アニメーションの設定
 	InitAnimation();
@@ -122,15 +115,17 @@ void Bike::Init(void)
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
-	capsule_->SetRadius(135.0f);
+	capsule_->SetLocalPosTop({ 0.0f, 130.0f, -30.0f });
+	capsule_->SetLocalPosDown({ 0.0f, 130.0f, -120.0f });
+	capsule_->SetRadius(RADIUS);
 
 	// 体力
 	hp_ = MAX_HP;
 
-	// 丸影画像
-	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
+
+	// スコア
+	score_ = std::make_shared<Score>();
+	score_->Init();
 
 	// 初期状態
 	ChangeState(STATE::PLAY);
@@ -148,17 +143,19 @@ void Bike::Update(void)
 	case Bike::STATE::PLAY:
 		UpdatePlay();
 		break;
+	case Bike::STATE::FLIPED:
+		UpdateFliped();
+		break;
 	}
 
-	//player_->Update();
-
-	weapon_->Update();
-	weapon_->SetTransForm(transform_);
 	frontTyre_->Update();
 	frontTyre_->SetTransform(transform_);
 	rearTyre_->Update();
 	rearTyre_->SetTransform(transform_);
-	
+
+	PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false);
+
 	// モデル制御更新
 	transform_.Update();
 	transformPlayer_.Update();
@@ -172,9 +169,6 @@ void Bike::Draw(void)
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
 
-	// 武器
-	weapon_->Draw();
-
 	//タイヤ
 	/*frontTyre_->Draw();
 	rearTyre_->Draw();*/
@@ -182,11 +176,14 @@ void Bike::Draw(void)
 	// 体力とかゲージとか
 	DrawUI();
 
+<<<<<<< HEAD
 	// 丸影描画
 	DrawShadow();
 
 	//player_->Draw();
 
+=======
+>>>>>>> origin/multiPlay
 	//// デバッグ描画
 	//DrawDebug();
 }
@@ -247,17 +244,17 @@ void Bike::Jump(void)
 
 		// ジャンプの入力受付時間をヘラス
 		stepJump_ += scnMng_.GetDeltaTime();
-		jumpSpeed_ *=1.98f;
+		jumpSpeed_ *= 1.98f;
 		if (stepJump_ < TIME_JUMP_IN)
 		{
 			//jumpPow_ = VScale(AsoUtility::DIR_U, POW_JUMP);
 			//jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, SceneManager::GetInstance().GetCamera()->GetForward()),POW_JUMP);
-			jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, transform_.GetForward()),jumpSpeed_ * POW_JUMP);
+			jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, transform_.GetForward()), jumpSpeed_ * POW_JUMP);
 		}
-		
+
 
 	}
-	
+
 }
 
 void Bike::Damage(int damage)
@@ -273,6 +270,28 @@ const int& Bike::GetHP(void)
 const bool& Bike::GetIsOutSide(void)
 {
 	return isOutSide_;
+}
+
+void Bike::AddScore(int score)
+{
+	score_->SetScore(score);
+}
+
+const int Bike::GetScore() const
+{
+	return score_->GetScore();
+}
+
+const int Bike::GetPlayerID(void) const
+{
+	return playerID_;
+}
+
+void Bike::Flip(VECTOR dir)
+{
+	flipDir_ = dir;
+	flipSpeed_ = 5.0f;
+	ChangeState(STATE::FLIPED);
 }
 
 void Bike::InitAnimation(void)
@@ -306,6 +325,9 @@ void Bike::ChangeState(STATE state)
 	case Bike::STATE::PLAY:
 		ChangeStatePlay();
 		break;
+	case Bike::STATE::FLIPED:
+		ChangeStateFliped();
+		break;
 	}
 }
 
@@ -314,6 +336,10 @@ void Bike::ChangeStateNone(void)
 }
 
 void Bike::ChangeStatePlay(void)
+{
+}
+
+void Bike::ChangeStateFliped(void)
 {
 }
 
@@ -366,6 +392,36 @@ void Bike::UpdatePlay(void)
 	}
 }
 
+void Bike::UpdateFliped(void)
+{
+	// 移動処理
+	ProcessMove();
+
+	// 吹っ飛ばされる
+	flipSpeed_ -= 0.16f;
+	if (flipSpeed_ < 0.0f)
+	{
+		flipSpeed_ = 0.0f;
+		ChangeState(STATE::PLAY);
+	}
+	movePow_ = VAdd(movePow_, VScale(flipDir_, flipSpeed_));
+
+	// ジャンプ処理
+	ProcessJump();
+
+	// 移動方向に応じた回転
+	Rotate();
+
+	// 重力による移動量
+	CalcGravityPow();
+
+	// 衝突判定
+	Collision();
+
+	// 回転させる
+	transform_.quaRot = playerRotY_;
+}
+
 void Bike::DrawUI(void)
 {
 	using ap = Application;
@@ -397,7 +453,7 @@ void Bike::DrawDebug(void)
 {
 	capsule_->Draw();
 	DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
-	
+
 	// 攻撃が当たったか
 	if (isAttack_ == true)
 	{
@@ -406,9 +462,9 @@ void Bike::DrawDebug(void)
 
 	DrawFormatString(0, 40, 0x000000,
 		"バイクの回転：%f,%f,%f",
-		AsoUtility::Rad2DegD( transform_.rot.x),
+		AsoUtility::Rad2DegD(transform_.rot.x),
 		AsoUtility::Rad2DegD(transform_.quaRot.ToEuler().y),
-		AsoUtility::Deg2RadF( transform_.quaRotLocal.ToEuler().z));
+		AsoUtility::Deg2RadF(transform_.quaRotLocal.ToEuler().z));
 
 	DrawFormatString(0, 80, 0xffffff, "bikePos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 
@@ -430,24 +486,7 @@ void Bike::ProcessMove(void)
 	// 回転したい角度
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
-	
-	enum class JoypadButton {
-		UP = PAD_INPUT_UP,
-		DOWN = PAD_INPUT_DOWN,
-		LEFT = PAD_INPUT_LEFT,
-		RIGHT = PAD_INPUT_RIGHT,
-		ACTION = PAD_INPUT_1
-	};
 
-	// プレイヤーごとの入力マッピング
-	struct PlayerInput {
-		int padId;
-		JoypadButton up;
-		JoypadButton down;
-		JoypadButton left;
-		JoypadButton right;
-		JoypadButton action;
-	};
 
 	std::array<PlayerInput, 4> playerInputs = { {
 		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
@@ -459,7 +498,7 @@ void Bike::ProcessMove(void)
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
 	//前に進む
-	VECTOR movePowF_ = VScale(cameraRot.GetForward(),SPEED_MOVE + speedBoost_);
+	VECTOR movePowF_ = VScale(cameraRot.GetForward(), SPEED_MOVE + speedBoost_);
 
 	// プレイヤーごとの入力処理
 	const auto& input = playerInputs[playerID_];
@@ -498,13 +537,13 @@ void Bike::ProcessMove(void)
 		rotRad = AsoUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
 	}
-	
+
 	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
 		rotRad = AsoUtility::Deg2RadD(45.0f);
 		dir = cameraRot.GetForward();
 	}
-	
+
 	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
 		rotRad = AsoUtility::Deg2RadD(-45.0f);
@@ -628,7 +667,7 @@ void Bike::ProcessMove(void)
 		speed_ = SPEED_MOVE;
 
 
-		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
+		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
 		{
 			speed_ = SPEED_MOVE_X;
 		}
@@ -725,7 +764,11 @@ void Bike::ProcessBoost(void)
 {
 	auto& ins = InputManager::GetInstance();
 
+<<<<<<< HEAD
 	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
+=======
+	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ >= BOOST_USE_HP)
+>>>>>>> origin/multiPlay
 	{
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;
@@ -807,7 +850,7 @@ void Bike::SpecialAttack(void)
 		attackState_ = ATTACK_TYPE::SPECIAL;
 		animationController_->Play((int)ANIM_TYPE::FALLING);
 		rotRad = AsoUtility::Deg2RadD(180.0f);
-		
+
 		VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
 		Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
 
@@ -842,7 +885,7 @@ void Bike::SetGoalRotate(float rotRad)
 void Bike::SetGoalRotateZ(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis( -1.0f* (float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
+	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -1032,7 +1075,7 @@ void Bike::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectSonicResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SonicEffect).handleId_;
+		ResourceManager::SRC::SONICEFFECT).handleId_;
 
 	//ブーストエフェクト
 	effectBoostResId_ = ResourceManager::GetInstance().Load(

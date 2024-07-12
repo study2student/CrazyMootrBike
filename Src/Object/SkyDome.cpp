@@ -8,7 +8,7 @@ SkyDome::SkyDome(const Transform& syncTransform) : syncTransform_(syncTransform)
 {
 
 	state_ = STATE::NONE;
-	
+
 }
 
 SkyDome::~SkyDome(void)

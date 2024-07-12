@@ -30,7 +30,7 @@ public:
 	static constexpr VECTOR BOOST_LOCAL_F2C_MAX_POS = { 0.0f, 300.0f, -1000.0f };
 
 	// 追従位置から注視点までの相対座標
-	static constexpr VECTOR LOCAL_F2T_POS = { 0.0f, 0.0f, 500.0f }; 
+	static constexpr VECTOR LOCAL_F2T_POS = { 0.0f, 0.0f, 500.0f };
 
 	// 追従対象からカメラ位置までの相対座標(ブースト開始時)
 	static constexpr VECTOR RELATIVE_F2C_POS_BOOST_START = { 0.0f, 40.0f, 150.0f };
@@ -42,12 +42,12 @@ public:
 	static constexpr float CAMERA_SPEED_MAX = 3.0f;
 
 	// 回転完了までの時間
-	static constexpr float TIME_ROT = 0.6f; 
+	static constexpr float TIME_ROT = 0.6f;
 
 	// カメラのX回転上限度角
 	static constexpr float LIMIT_X_UP_RAD = 40.0f * (DX_PI_F / 180.0f);
 	static constexpr float LIMIT_X_DW_RAD = 15.0f * (DX_PI_F / 180.0f);
-	
+
 	// カメラモード
 	enum class MODE
 	{

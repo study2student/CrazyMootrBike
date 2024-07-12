@@ -80,14 +80,3 @@ private:
 	//à íuçáÇÌÇπ
 	void SyncParent(void);
 };
-
-
-
-
-
-
-
-
-
-;
-

@@ -45,7 +45,7 @@ EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loo
 	isEnemyCol_ = false;
 
 	isAtk_ = false;
-	isAddScore_=false;
+	isAddScore_ = false;
 	toAtkStep_ = 0.0f;
 
 	imgShadow_ = -1;
@@ -64,7 +64,7 @@ EnemyBase::~EnemyBase(void)
 
 void EnemyBase::Init(void)
 {
-	
+
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::COPPER_MEDAL));
@@ -205,12 +205,22 @@ EnemyBase::STATE EnemyBase::GetState(void)
 
 bool EnemyBase::IsDestroy(void)
 {
-	return state_==STATE::DEAD;
+	return state_ == STATE::DEAD;
 }
 
 void EnemyBase::Destroy(void)
 {
 	ChangeState(STATE::DEAD);
+}
+
+void EnemyBase::AddScoreToPlayer(int playerId, int score)
+{
+	if (playerId >= 0 && playerId < bikes_.size())
+	{
+		bikes_[playerId]->AddScore(score);
+		// デバッグログ
+		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
+	}
 }
 
 void EnemyBase::InitAnimation(void)
@@ -377,7 +387,7 @@ void EnemyBase::DrawShadow(void)
 
 		// 球の直下に存在するポリゴンの数だけ繰り返し
 		HitRes = HitResDim.Dim;
-		for (i = 0; i < HitResDim.HitNum; i++, HitRes++) 
+		for (i = 0; i < HitResDim.HitNum; i++, HitRes++)
 		{
 			// ポリゴンの座標は地面ポリゴンの座標
 			Vertex[0].pos = HitRes->Position[0];
@@ -513,14 +523,20 @@ void EnemyBase::ProcessMove(void)
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
 	for (const auto& bike : bikes_) {
-		VECTOR diff = VSub(bike_->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
+		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
 		float  dis = AsoUtility::SqrMagnitudeF(diff);
 		if (dis < RADIUS * RADIUS)
 		{
 			//範囲に入った
 			speed_ = 0;
+			//スコア加算
 			isAddScore_ = true;
+			//衝突判定
 			isBikeCol_ = true;
+			//コイン収集時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -557,7 +573,6 @@ void EnemyBase::ProcessMove(void)
 
 	}
 
-	//}
 	/*else
 	{
 		if (!isJump_ && IsEndLanding())
@@ -573,7 +588,6 @@ void EnemyBase::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
-
 }
 
 void EnemyBase::ProcessJump(void)

@@ -617,8 +617,8 @@ void Enemy::CollisionCapsule(void)
 	}*/
 
 
-	
-	
+
+
 
 }
 

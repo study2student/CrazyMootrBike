@@ -152,6 +152,8 @@ public:
 	//死亡状態へ
 	void Destroy(void);
 
+	// スコア加算メソッド
+	void AddScoreToPlayer(int playerId, int score);
 protected:
 
 	// アニメーション
@@ -274,7 +276,6 @@ protected:
 
 	//攻撃モーション入ってからどのくらいで攻撃判定になるか管理
 	bool IsAtkStart(void);
-
 
 };
 

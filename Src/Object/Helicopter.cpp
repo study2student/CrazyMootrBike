@@ -258,7 +258,7 @@ void Helicopter::UpdateMove(void)
 	// 回転させる
 	transform_.quaRot = rotY_;
 
-	
+
 }
 
 void Helicopter::UpdateAttack(void)
@@ -284,7 +284,7 @@ void Helicopter::UpdateAttack(void)
 
 	// 回転させる
 	transform_.quaRot = rotY_;
-	
+
 }
 
 void Helicopter::UpdateDead(void)
@@ -297,7 +297,7 @@ void Helicopter::DrawUI(void)
 
 void Helicopter::DrawShadow(void)
 {
-	
+
 }
 
 void Helicopter::DrawDebug(void)
@@ -326,7 +326,7 @@ void Helicopter::ProcessMove(void)
 	VECTOR dir = AsoUtility::VECTOR_ZERO;
 
 	//バイクプレイヤーに合わせる(ステージ内にいるときのみ)
-	if(!isTargetOutside_)
+	if (!isTargetOutside_)
 	{
 		transform_.pos.x = targetTrans_.pos.x;
 	}

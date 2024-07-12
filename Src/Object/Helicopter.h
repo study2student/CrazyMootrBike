@@ -98,7 +98,7 @@ private:
 
 	//‰H
 	Rotor* rotor_;
-	
+
 	//”š’e
 	//std::shared_ptr<Bomb> bomb_;
 	Bomb* bomb_;

@@ -2,6 +2,7 @@
 #include <map>
 #include "SceneBase.h"
 class Score;
+class Bike;
 
 class GameOverScene : public SceneBase
 {
@@ -17,6 +18,8 @@ public:
 	void Draw(void) override;
 
 private:
+	// •¡”ƒvƒŒƒCƒ„[
+	std::vector<std::shared_ptr<Bike>> bikes_;
 	//std::shared_ptr<Score> score_;
 };
 

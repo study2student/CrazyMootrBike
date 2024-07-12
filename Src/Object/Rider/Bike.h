@@ -8,7 +8,7 @@ class AnimationController;
 class Collider;
 class Capsule;
 class Player;
-class Weapon;
+class Score;
 class FrontTyre;
 class RearTyre;
 
@@ -18,6 +18,9 @@ public:
 	// スピード
 	static constexpr float SPEED_MOVE = 100.0f;
 	static constexpr float SPEED_RUN = 130.0f;
+
+	//半径
+	static constexpr float RADIUS = 50.0f;
 
 	//ブースト
 	static constexpr float DELEY_BOOST_MAX = 220.0f;
@@ -50,7 +53,7 @@ public:
 	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
 
 	//待機エフェクト初期高
-	static constexpr float IDLE_EFFECT_POS_Y = -510.0f; 
+	static constexpr float IDLE_EFFECT_POS_Y = -510.0f;
 
 	//バイクからフロントタイヤ相対座標
 	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS = { 0.0f,38.0f,170.0f };
@@ -69,6 +72,7 @@ public:
 	{
 		NONE,
 		PLAY,
+		FLIPED,
 		DEAD,
 		END
 	};
@@ -85,6 +89,24 @@ public:
 		FALLING,
 		VICTORY,
 		SIT
+	};
+
+	enum class JoypadButton {
+		UP = PAD_INPUT_UP,
+		DOWN = PAD_INPUT_DOWN,
+		LEFT = PAD_INPUT_LEFT,
+		RIGHT = PAD_INPUT_RIGHT,
+		ACTION = PAD_INPUT_1
+	};
+
+	// プレイヤーごとの入力マッピング
+	struct PlayerInput {
+		int padId;
+		JoypadButton up;
+		JoypadButton down;
+		JoypadButton left;
+		JoypadButton right;
+		JoypadButton action;
 	};
 
 	// 攻撃種別
@@ -126,16 +148,22 @@ public:
 	//バイクが場外に出たか取得
 	const bool& GetIsOutSide(void);
 
+	// スコア加算
+	void AddScore(int score);
+	// スコアゲッター
+	const int GetScore() const;
 
+	//プレイヤーIDのゲッター
+	const int GetPlayerID(void) const;
+
+	// プレイヤー同士の当たり判定
+	void Flip(VECTOR dir);
 private:
 
 	Transform transformPlayer_;
 
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
-
-	//武器
-	Weapon* weapon_;
 
 	//タイヤ
 	std::shared_ptr<FrontTyre> frontTyre_;
@@ -164,7 +192,7 @@ private:
 
 	// 移動後の座標
 	VECTOR movedPos_;
-	
+
 	// プレイヤー同士の横幅の調整
 	float localPosX_;
 
@@ -202,8 +230,15 @@ private:
 	// 体力
 	int hp_;
 
+	// スコア
+	std::shared_ptr<Score>score_;
+
 	// 攻撃が当たったか
 	bool isAttack_;
+
+	//プレイヤー同士の当たり判定用
+	float flipSpeed_;
+	VECTOR flipDir_;
 
 	//アニメーション
 	void InitAnimation(void);
@@ -212,10 +247,12 @@ private:
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
+	void ChangeStateFliped(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
 	void UpdatePlay(void);
+	void UpdateFliped(void);
 
 	// 描画系
 	void DrawUI(void);

@@ -15,7 +15,7 @@
 #include "MagicEnemy.h"
 
 
-MagicEnemy::MagicEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos,localPos)
+MagicEnemy::MagicEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -29,7 +29,7 @@ void MagicEnemy::SetParam(void)
 		ResourceManager::SRC::COPPER_MEDAL));
 	float SCL = 200.0f;
 	transform_.scl = { SCL,SCL,SCL };
-	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z};
+	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
@@ -169,6 +169,11 @@ void MagicEnemy::ProcessMove(void)
 			speed_ = 0;
 			isBikeCol_ = true;
 			isAddScore_ = true;
+			AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+			//ƒRƒCƒ“ûW‚Ì‰¹‚ğÄ¶
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
@@ -200,7 +205,7 @@ void MagicEnemy::ProcessMove(void)
 	//double subDeg = atan2(subVec.x, subVec.z);
 	//SetGoalRotate(subDeg);
 
-	
+
 
 	//}
 	/*else

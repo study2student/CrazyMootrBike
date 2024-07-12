@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include <vector>
 #include <list>
+class Camera;
 class Stage;
 class SkyDome;
 class Rider;
@@ -82,8 +83,24 @@ public:
 
 	//敵が追加されたタイミングかどうか
 	bool GetIsCreateEnemy(void);
- 
+
 private:
+	int mainScreen_;
+
+	// ゲームスタート時のカウント
+	float startCount_;
+	// スタートフラグ
+	bool isStart_;
+
+	// 画像
+	int imgWarning_;
+	//大きさ
+	double warningImgScale_;
+	//最大サイズかどうか
+	bool isMaxWarningScale_;
+
+	// カメラ
+	std::vector<std::shared_ptr<Camera>> cameras_;
 
 	// 画像
 	int imgWarning_;
@@ -99,17 +116,19 @@ private:
 	//std::shared_ptr<Score> score_;
 
 	// スカイドーム
-	std::unique_ptr<SkyDome> skyDome_;
+	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
 	//タイヤ
 	TyreThrow* throwTyre_;
 
 
 	// プレイヤー
-	std::shared_ptr<Bike> bike_;
+	//std::shared_ptr<Bike> bike_;
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
+	//プレイ人数
+	int playNumber = 1;
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;
@@ -122,7 +141,7 @@ private:
 	EnemyBike* enemyBike_;
 
 	//複数の敵
-	std::vector<EnemyBase*>enemys_;	
+	std::vector<EnemyBase*>enemys_;
 	std::vector<EnemyBike*>enemyBikes_;
 
 	//敵の発生頻度
@@ -131,10 +150,14 @@ private:
 	//敵が追加されたタイミングかどうか
 	bool isCreateEnemy_;
 
+	//デバッグ表示
 	void DrawDubg(void);
-	
+
 	//衝突判定
 	void Collision(void);
+
+	// バイク同士の衝突判定
+	void BikeCollision(void);
 
 	float hitStopDuration;  // ヒットストップの持続時間（秒）
 	float hitStopTimer;      // ヒットストップのタイマー

@@ -26,7 +26,7 @@
 #include "../Object/TyreThrow.h"
 #include "Stage.h"
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb,TyreThrow* throwTyre, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
@@ -193,7 +193,7 @@ void Stage::Update(void)
 	{
 		goal_->SetPosZ(5000.0f * (Goal::STAGE_NUM_MAX_FOR_GOAL + 1));
 	}
-	
+
 
 }
 
@@ -280,7 +280,7 @@ void Stage::ChangeStage(NAME type)
 		bomb_->AddCollider(ls->GetTransform().collider);
 		throwTyre_->AddCollider(ls->GetTransform().collider);
 	}
-	
+
 	//while (!loopStage_.empty())
 	//{
 	//	LoopStage* ls = loopStage_.front();
@@ -467,7 +467,7 @@ void Stage::MakeLoopStage(void)
 		}
 
 
-		stage = std::make_shared<LoopStage> (bikes_.front(), loopTrans);
+		stage = std::make_shared<LoopStage>(bikes_.front(), loopTrans);
 		stage->Init();
 		loopStage_.push_back(stage);
 		//loopStage_.emplace(stage);
@@ -480,7 +480,7 @@ void Stage::MakeLoopStage(void)
 		//}
 		//AddStage(stage);
 		isMakeLoopStage_ = true;
-		
+
 	}
 	else
 	{
@@ -503,39 +503,44 @@ void Stage::MakeLoopStage(void)
 			//lt.pop();
 
 			// ステージを削除する
+<<<<<<< HEAD
 			std::shared_ptr<LoopStage> tailLoop = loopStage_[size-11];
 			tailLoop->Destroy();
+=======
+		std::shared_ptr<LoopStage> tailLoop = loopStage_[size - 5];
+		tailLoop->Destroy();
+>>>>>>> origin/multiPlay
 
-			//int size = static_cast<int>(loopStage_.size());
-			//if (size < 5) {
-			//	throw std::runtime_error("Queue does not contain enough elements");
-			//}
+		//int size = static_cast<int>(loopStage_.size());
+		//if (size < 5) {
+		//	throw std::runtime_error("Queue does not contain enough elements");
+		//}
 
-			//// 最後から5番目の要素にアクセスするための準備
-			//std::queue<LoopStage*> tempQueue = loopStage_; // 元のキューをコピー
-			//LoopStage* tailLoop = nullptr;
+		//// 最後から5番目の要素にアクセスするための準備
+		//std::queue<LoopStage*> tempQueue = loopStage_; // 元のキューをコピー
+		//LoopStage* tailLoop = nullptr;
 
-			//// 後ろから5番目の要素までポップする
-			//for (int i = 0; i < size - 4; ++i) {
-			//	tailLoop = tempQueue.front();
-			//	tempQueue.pop();
-			//}
+		//// 後ろから5番目の要素までポップする
+		//for (int i = 0; i < size - 4; ++i) {
+		//	tailLoop = tempQueue.front();
+		//	tempQueue.pop();
+		//}
 
-			//// 目的の要素を操作
-			//if (tailLoop != nullptr) {
-			//	tailLoop->Destroy();
-			//}
+		//// 目的の要素を操作
+		//if (tailLoop != nullptr) {
+		//	tailLoop->Destroy();
+		//}
 
-			//// 条件に一致するイテレータを削除
-			//loopStage_.erase(
-			//	std::remove(
-			//		loopStage_.begin(),
-			//		loopStage_.end(),
-			//		tailLoop
-			//	),
-			//	loopStage_.end()
-			//);
-		
+		//// 条件に一致するイテレータを削除
+		//loopStage_.erase(
+		//	std::remove(
+		//		loopStage_.begin(),
+		//		loopStage_.end(),
+		//		tailLoop
+		//	),
+		//	loopStage_.end()
+		//);
+
 	}
 
 
@@ -568,12 +573,12 @@ void Stage::AddStage(std::shared_ptr<LoopStage> newStage)
 	loopStage_.push_back(newStage);
 	//stageQueue(newStage);
 	sizeS++;
-	
+
 	// 6以上のステージがある場合は古いステージを削除
 	if (loopStage_.size() > 5) {
 		std::shared_ptr<LoopStage> oldStage = loopStage_.front();
 		loopStage_.pop_front();
-		
+
 		oldStage->Destroy();
 
 		// 古いステージをloopStage_から削除
