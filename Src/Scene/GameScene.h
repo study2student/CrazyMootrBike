@@ -50,13 +50,13 @@ public:
 	static constexpr int SELECT_MAX_NUM = 3;
 
 	//警告画像最大サイズ
-	static constexpr double WARNING_IMG_MAX_SCALE = 0.40;
+	static constexpr float WARNING_IMG_MAX_SCALE = 0.40f;
 
 	//警告画像最小サイズ
-	static constexpr double WARNING_IMG_MIN_SCALE = 0.20;
+	static constexpr float WARNING_IMG_MIN_SCALE = 0.20f;
 
 	//警告画像大きさ変化量
-	static constexpr double WARNING_IMG_CHANGE_SCALE = 0.005;
+	static constexpr float WARNING_IMG_CHANGE_SCALE = 0.005f;
 
 	//ポーズキー入力からもう一度押せるようになるまでの時間
 	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
@@ -98,7 +98,7 @@ private:
 	// 画像
 	int imgWarning_;
 	//大きさ
-	double warningImgScale_;
+	float warningImgScale_;
 	//最大サイズかどうか
 	bool isMaxWarningScale_;
 
@@ -123,8 +123,13 @@ private:
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
+
 	////プレイ人数
 	//int playNumber = 4;
+
+	//プレイ人数
+	//int playNumber = 1;
+
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;

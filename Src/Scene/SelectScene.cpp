@@ -22,15 +22,18 @@ void SelectScene::Init(void)
 	fourPersonFontColor_ = GetColor(255, 255, 255);
 
 	//左上の始まるポジション
-	onePersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 - ONE_PERSON_FONT_LENGTH - ONE_PERSON_FONT_LENGTH / 2, Application::SCREEN_SIZE_Y / 2 - ONE_PERSON_FONT_HEIGHT / 2};
+	onePersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 - ONE_PERSON_FONT_LENGTH, Application::SCREEN_SIZE_Y / 2 };
 	
 	//左上のおわるポジション
-	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + FOUR_PERSON_FONT_LENGTH / 2 , Application::SCREEN_SIZE_Y / 2 - FOUR_PERSON_FONT_HEIGHT / 2 };
+	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + FOUR_PERSON_FONT_LENGTH, Application::SCREEN_SIZE_Y / 2 };
 
 	aloneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
 	everyoneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
 
 	isCursorHit_ = false;
+
+	selectAloneImgScale_ = 1.5f;
+	selectFourImgScale_ = 1.5f;
 }
 
 void SelectScene::Update(void)
@@ -44,14 +47,70 @@ void SelectScene::Update(void)
 
 void SelectScene::Draw(void)
 {
-	// 画像表示:ひとりで
-	DrawGraph(onePersonFontBasePos_.x, onePersonFontBasePos_.y, aloneImg_, true);
-	// 画像表示:みんなで
-	DrawGraph(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, everyoneImg_, true);
+	//ひとりプレイ選択時
+	if (state_ == STATE::ONE_PERSON)
+	{
+		//拡大縮小
+		if (selectAloneImgScale_ > SELECT_IMG_MAX_SCALE)
+		{
+			isMaxSelectScale_ = true;
+		}
+		else if (selectAloneImgScale_ < SELECT_IMG_MIN_SCALE)
+		{
+			isMaxSelectScale_ = false;
+		}
 
-	//文字表示
-	DrawString(onePersonFontBasePos_.x, onePersonFontBasePos_.y, "1人で", onePersonFontColor_);
-	DrawString(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, "4人で", fourPersonFontColor_);
+		if (isMaxSelectScale_)
+		{
+			selectAloneImgScale_ -= SELECT_IMG_CHANGE_SCALE;
+		}
+		else
+		{
+			selectAloneImgScale_ += SELECT_IMG_CHANGE_SCALE;
+		}
+
+		// 画像表示:ひとりで
+		DrawRotaGraphFastF(onePersonFontBasePos_.x, onePersonFontBasePos_.y,selectAloneImgScale_,0.0, aloneImg_, true);
+	}
+	else
+	{
+		selectAloneImgScale_ = SELECT_IMG_MIN_SCALE;
+		// 画像表示:ひとりで
+		DrawRotaGraphFastF(onePersonFontBasePos_.x, onePersonFontBasePos_.y, selectAloneImgScale_, 0.0, aloneImg_, true);
+	}
+
+	//四人プレイ選択時
+	if (state_ == STATE::FOUR_PERSON)
+	{
+		//拡大縮小
+		if (selectFourImgScale_ > SELECT_FOUR_IMG_MAX_SCALE)
+		{
+			isMaxSelectScale_ = true;
+		}
+		else if (selectFourImgScale_ < SELECT_FOUR_IMG_MIN_SCALE)
+		{
+			isMaxSelectScale_ = false;
+		}
+
+		if (isMaxSelectScale_)
+		{
+			selectFourImgScale_ -= SELECT_IMG_CHANGE_SCALE;
+		}
+		else
+		{
+			selectFourImgScale_ += SELECT_IMG_CHANGE_SCALE;
+		}
+
+		// 画像表示:みんなで
+		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, everyoneImg_, true);
+	}
+	else
+	{
+		selectFourImgScale_ = SELECT_FOUR_IMG_MIN_SCALE;
+		// 画像表示:みんなで
+		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, everyoneImg_, true);
+	}
+
 }
 
 
@@ -138,7 +197,7 @@ void SelectScene::KeyProcess(void)
 	auto& ins_ = InputManager::GetInstance();
 
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_UP))
+	if (ins_.IsTrgDown(KEY_INPUT_LEFT))
 	{
 		nowCursor_--;
 		if (nowCursor_ <= 0)
@@ -146,7 +205,7 @@ void SelectScene::KeyProcess(void)
 			nowCursor_ = 0;
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
+	if (ins_.IsTrgDown(KEY_INPUT_RIGHT))
 	{
 		nowCursor_++;
 		if (nowCursor_ >= SELECT_MAX_NUM - 1)
