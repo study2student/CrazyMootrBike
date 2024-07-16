@@ -29,6 +29,21 @@ public:
 	//4人でボタンの高さ
 	static constexpr int FOUR_PERSON_FONT_HEIGHT = 360;
 
+	//ひとりプレイ選択画像最大サイズ
+	static constexpr float SELECT_IMG_MAX_SCALE = 1.50f;
+
+	//ひとりプレイ選択画像最小サイズ
+	static constexpr float SELECT_IMG_MIN_SCALE = 1.30f;
+
+	//四人プレイ選択画像最大サイズ
+	static constexpr float SELECT_FOUR_IMG_MAX_SCALE = 1.50f;
+
+	//四人プレイ選択画像最小サイズ
+	static constexpr float SELECT_FOUR_IMG_MIN_SCALE = 1.30f;
+
+	//選択画像大きさ変化量
+	static constexpr float SELECT_IMG_CHANGE_SCALE = 0.006f;
+
 	//選択肢数
 	static constexpr int SELECT_MAX_NUM = 2;
 
@@ -61,6 +76,13 @@ private:
 
 	// みんなで選択画像
 	int everyoneImg_;
+
+	// ひとりプレイ選択画像の大きさ
+	float selectAloneImgScale_;
+	// 四人プレイ選択画像の大きさ
+	float selectFourImgScale_;
+	//最大サイズかどうか
+	bool isMaxSelectScale_;
 
 	//1人で文字色
 	int onePersonFontColor_;
