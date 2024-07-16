@@ -120,6 +120,14 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Tank/Barrel.mv1");
 	resourcesMap_.emplace(SRC::TANK_BARREL, res);
 
+	// セレクトひとりで
+	res = new RES(RES_T::IMG, PATH_IMG + "Alone.png");
+	resourcesMap_.emplace(SRC::IMG_SELECT_ALONE, res);
+	
+	// セレクトみんなで
+	res = new RES(RES_T::IMG, PATH_IMG + "Everyone.png");
+	resourcesMap_.emplace(SRC::IMG_SELECT_EVERYONE, res);
+
 	// 仮ステージ
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::DEMO_STAGE, res);

@@ -2,6 +2,7 @@
 #include "SelectScene.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
+#include "../Manager/ResourceManager.h"
 #include "../Application.h"
 #include "../Object/DataSave.h"
 #include "../Utility/AsoUtility.h"
@@ -21,10 +22,13 @@ void SelectScene::Init(void)
 	fourPersonFontColor_ = GetColor(255, 255, 255);
 
 	//左上の始まるポジション
-	onePersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 - 20 };
-
+	onePersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 - ONE_PERSON_FONT_LENGTH - ONE_PERSON_FONT_LENGTH / 2, Application::SCREEN_SIZE_Y / 2 - ONE_PERSON_FONT_HEIGHT / 2};
+	
 	//左上のおわるポジション
-	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
+	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + FOUR_PERSON_FONT_LENGTH / 2 , Application::SCREEN_SIZE_Y / 2 - FOUR_PERSON_FONT_HEIGHT / 2 };
+
+	aloneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
+	everyoneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
 
 	isCursorHit_ = false;
 }
@@ -40,6 +44,11 @@ void SelectScene::Update(void)
 
 void SelectScene::Draw(void)
 {
+	// 画像表示:ひとりで
+	DrawGraph(onePersonFontBasePos_.x, onePersonFontBasePos_.y, aloneImg_, true);
+	// 画像表示:みんなで
+	DrawGraph(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, everyoneImg_, true);
+
 	//文字表示
 	DrawString(onePersonFontBasePos_.x, onePersonFontBasePos_.y, "1人で", onePersonFontColor_);
 	DrawString(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, "4人で", fourPersonFontColor_);

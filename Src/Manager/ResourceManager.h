@@ -35,6 +35,9 @@ public:
 		TANK_BARREL,
 		TANK_WHEEL,
 
+		IMG_SELECT_ALONE,//ひとりで
+		IMG_SELECT_EVERYONE,//みんなで
+
 		DEMO_STAGE,//仮ステージ
 		JUMP_RAMP,//ジャンプ台
 		CURVE,	//カーブ

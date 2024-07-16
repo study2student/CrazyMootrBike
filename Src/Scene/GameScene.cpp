@@ -450,12 +450,6 @@ void GameScene::Draw(void)
 
 			cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
-			// スタート時のカウントを減らす
-			if (startCount_ >= 0.0f)
-			{
-				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
-			}
-
 			// 背景
 			skyDomes_[i]->Draw();
 
@@ -516,6 +510,12 @@ void GameScene::Draw(void)
 					DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
 					break;
 				}
+			}
+
+			// スタート時のカウントを減らす
+			if (startCount_ >= 0.0f)
+			{
+				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
 			}
 		}
 	}
@@ -970,7 +970,7 @@ void GameScene::WarningDraw(void)
 			}
 		}
 
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
+		DrawRotaGraphFastF(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
 	}
 	else
 	{

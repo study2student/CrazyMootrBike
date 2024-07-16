@@ -18,16 +18,16 @@ public:
 	};
 
 	//1人でボタンの横の長さ
-	static constexpr int ONE_PERSON_FONT_LENGTH = 60;
+	static constexpr int ONE_PERSON_FONT_LENGTH = 400;
 
 	//1人でボタンの高さ
-	static constexpr int ONE_PERSON_FONT_HEIGHT = 20;
+	static constexpr int ONE_PERSON_FONT_HEIGHT = 392;
 
 	//4人でボタンの横の長さ
-	static constexpr int FOUR_PERSON_FONT_LENGTH = 60;
+	static constexpr int FOUR_PERSON_FONT_LENGTH = 400;
 
 	//4人でボタンの高さ
-	static constexpr int FOUR_PERSON_FONT_HEIGHT = 20;
+	static constexpr int FOUR_PERSON_FONT_HEIGHT = 360;
 
 	//選択肢数
 	static constexpr int SELECT_MAX_NUM = 2;
@@ -55,6 +55,12 @@ private:
 
 	//左上の4人でポジション
 	Vector2 fourPersonFontBasePos_;
+
+	// ひとりで選択画像
+	int aloneImg_;
+
+	// みんなで選択画像
+	int everyoneImg_;
 
 	//1人で文字色
 	int onePersonFontColor_;
