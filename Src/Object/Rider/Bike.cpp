@@ -271,7 +271,7 @@ const bool& Bike::GetIsOutSide(void)
 
 void Bike::AddScore(int score)
 {
-	score_->SetScore(score);
+	score_->AddScore(score);
 }
 
 const int Bike::GetScore() const

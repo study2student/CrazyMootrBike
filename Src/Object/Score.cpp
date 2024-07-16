@@ -23,15 +23,20 @@ void Score::Init(void)
 {
 }
 
-void Score::AddScore(void)
+void Score::AddScore(int score)
 {
 	//スコア加算
-	scoreNum_ += EnemyBase::SCORE_INCREMENT;
+	scoreNum_ += score;
 }
 
-void Score::SetScore(int score)
+void Score::ScoreSet(int scoreSet)
 {
-	scoreNum_ += score;
+	scoreNum_ = scoreSet;
+}
+
+void Score::ScoreSetArray(int scoreSet)
+{
+	scoreArray_.emplace_back(scoreSet);
 }
 
 const int Score::GetScore(void) const
@@ -39,7 +44,16 @@ const int Score::GetScore(void) const
 	return scoreNum_;
 }
 
+ std::vector<int> Score::GetScoreArray(void)
+{
+	return scoreArray_;
+}
+
 void Score::ResetScore(void)
 {
 	scoreNum_ = 0;
+
+	//要素を削除する
+	scoreArray_.erase(scoreArray_.begin(), scoreArray_.end());
+	
 }

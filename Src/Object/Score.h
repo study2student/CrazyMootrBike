@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <list>
 
 class Score
 {
@@ -14,11 +16,17 @@ public:
 	void Init(void);
 
 	//スコア加算
-	void AddScore(void);
+	void AddScore(int score);
 
-	void SetScore(int score);
+	//1人用
+	void ScoreSet(int scoreSet);
+
+	//4人用
+	void ScoreSetArray(int scoreSet);
 
 	const int GetScore(void) const;
+
+	std::vector<int> GetScoreArray(void);
 
 	void ResetScore(void);
 
@@ -27,8 +35,11 @@ private:
 	// 静的インスタンス
 	static Score* instance_;
 
-	//スコア
+	//スコア1人用
 	int scoreNum_;
+
+	//スコア配列4人用
+	std::vector<int> scoreArray_;
 };
 
 

@@ -206,6 +206,18 @@ void GameScene::Update(void)
 		stepGoalAfter_ += SceneManager::GetInstance().GetDeltaTime();
 		if (stepGoalAfter_ >= GOAL_TO_NEXT_SCENE)
 		{
+			//ゲームオーバーシーンで描画するため保存しておく
+			if (playNumber_ == 1)
+			{
+				score_.ScoreSet(bikes_[0]->GetScore());
+			}
+			else
+			{
+				for (auto& bike : bikes_)
+				{
+					score_.ScoreSetArray(bike->GetScore());
+				}
+			}
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 		}
 	}
@@ -389,7 +401,6 @@ void GameScene::Draw(void)
 		// 画面を初期化
 		ClearDrawScreen();
 
-
 		cameras_[0]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
 		// 背景
@@ -446,7 +457,6 @@ void GameScene::Draw(void)
 
 			// 画面を初期化
 			ClearDrawScreen();
-
 
 			cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
