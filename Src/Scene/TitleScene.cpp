@@ -13,6 +13,7 @@
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Player.h"
 #include "../Object/Score.h"
+#include "../Object/DataSave.h"
 #include "TitleScene.h"
 
 TitleScene::TitleScene(void)
@@ -125,6 +126,9 @@ void TitleScene::Init(void)
 
 	//スコアリセット
 	score_.ResetScore();
+
+	//データリセット
+	data_.ResetData();
 
 }
 

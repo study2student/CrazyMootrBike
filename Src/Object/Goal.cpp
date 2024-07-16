@@ -42,7 +42,7 @@ void Goal::Init(void)
 	float scale = 7.0f;
 	transform_.scl = { scale / 1.1f, scale, scale };
 	//ç≈èâÇÕå©Ç¶Ç»Ç¢èÍèäÇ÷
-	transform_.pos = { GOAL_BASE_POS.x, GOAL_BASE_POS.y ,GOAL_BASE_POS.z + 200000.0f };
+	transform_.pos = { GOAL_BASE_POS.x, GOAL_BASE_POS.y ,GOAL_BASE_POS.z + 200000000.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });

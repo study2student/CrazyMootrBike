@@ -42,7 +42,6 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
-	const int GetPlayNumber(void)const;
 private:
 
 	// スカイドーム用
@@ -84,8 +83,6 @@ private:
 	//現カーソル番号から状態を変化させる
 	void CursorToState(int cursor);
 
-	//プレイ人数
-	int playNumber_;
 };
 
 

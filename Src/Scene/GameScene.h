@@ -84,6 +84,9 @@ public:
 	//敵が追加されたタイミングかどうか
 	bool GetIsCreateEnemy(void);
 
+	//プレイヤー人数取得
+	int GetPlayNum(void);
+
 private:
 	int mainScreen_;
 
@@ -120,8 +123,8 @@ private:
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
-	//プレイ人数
-	int playNumber = 4;
+	////プレイ人数
+	//int playNumber = 4;
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;
@@ -165,6 +168,8 @@ private:
 	// Hitエフェクトの位置
 	void HitEffect(void);
 
+	//プレイヤー人数
+	int playNumber_;
 
 	//左上の再開ポジション
 	Vector2 reStartFontBasePos_;

@@ -24,6 +24,7 @@
 #include "../Object/StageCurve.h"
 #include "../Object/Goal.h"
 #include "../Object/TyreThrow.h"
+#include "../Object/DataSave.h"
 #include "Stage.h"
 
 Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene)
@@ -175,9 +176,9 @@ void Stage::Update(void)
 	goal_->Update();
 
 	//誰かがゴールゾーンを超えたらクリア
-	for (const auto& bike : bikes_)
+	if (gameScene_->GetPlayNum() == 1)
 	{
-		if (bike->GetTransform().pos.z >= goal_->GetTransform().pos.z)
+		if (bikes_[0]->GetTransform().pos.z >= goal_->GetTransform().pos.z)
 		{
 			//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 			isGoal_ = true;
@@ -185,6 +186,21 @@ void Stage::Update(void)
 		else
 		{
 			isGoal_ = false;
+		}
+	}
+	else
+	{
+		for (const auto& bike : bikes_)
+		{
+			if (bike->GetTransform().pos.z >= goal_->GetTransform().pos.z)
+			{
+				//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+				isGoal_ = true;
+			}
+			else
+			{
+				isGoal_ = false;
+			}
 		}
 	}
 
@@ -610,96 +626,96 @@ void Stage::MakeWarpStar(void)
 
 void Stage::MakeCurveStage(void)
 {
-	if (gameScene_->GetIsCreateEnemy())
-	{
-		for (const auto& cs : curve_)
-		{
-			std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
-			for (int i = 0; i < enemys_.size(); i++)
-			{
-				enemys_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
-				enemys_[i]->AddCollider(cs->GetTransform().collider);
-			}
-		}
+	//if (gameScene_->GetIsCreateEnemy())
+	//{
+	//	for (const auto& cs : curve_)
+	//	{
+	//		std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+	//		for (int i = 0; i < enemys_.size(); i++)
+	//		{
+	//			enemys_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
+	//			enemys_[i]->AddCollider(cs->GetTransform().collider);
+	//		}
+	//	}
 
-	}
+	//}
 
-	Transform curveTrans;
-	std::shared_ptr<StageCurve> curve;
-
-
-	float z = bikes_.front()->GetTransform().pos.z;
-
-	int mapZ = (int)((z + 6000.0f) / 5000.0f);
-	int size = (int)curve_.size();
-
-	//���̋�����������
-	if (size <= mapZ)
-	{
-
-		curveTrans.SetModel(
-			resMng_.LoadModelDuplicate(ResourceManager::SRC::CURVE));
-
-		float scale = 1.0f;
-		curveTrans.scl = { scale * 2.5f,scale,scale * 2.5f };
-		curveTrans.quaRot = Quaternion();
-		curveTrans.pos = { CURVE_START_POS.x,  CURVE_START_POS.y,  CURVE_START_POS.z + 5000.0f * (size + 1) };
-
-		// �����蔻��(�R���C�_)�쐬
-		curveTrans.MakeCollider(Collider::TYPE::STAGE);
-		curveTrans.Update();
-
-		//���蔲���邽�߂����Ńv���C���[�̃R���C�_�[���ǉ����Ƃ�
-		for (const auto& cs : curve_)
-		{
-			for (const auto& bike : bikes_)
-			{
-				bike->AddCollider(cs->GetTransform().collider);
-			}
-			//bike_->AddCollider(cs->GetTransform().collider);
-			bomb_->AddCollider(cs->GetTransform().collider);
-		}
+	//Transform curveTrans;
+	//std::shared_ptr<StageCurve> curve;
 
 
-		curve = std::make_shared<StageCurve>(bikes_.front(), curveTrans);
-		curve->Init();
-		curve_.push_back(curve);
-		//loopStage_.emplace(curve);
-		//while (!loopStage_.empty())
-		//{
-		//	LoopStage* ls = loopStage_.front();
-		//	//loopStage_.pop();
-		//	bike_->AddCollider(ls->GetTransform().collider);
-		//	bomb_->AddCollider(ls->GetTransform().collider);
-		//}
-		//AddStage(stage);
-		isMakeLoopStage_ = true;
+	//float z = bikes_.front()->GetTransform().pos.z;
 
-	}
-	else
-	{
-		isMakeLoopStage_ = false;
-	}
+	//int mapZ = (int)((z + 6000.0f) / 5000.0f);
+	//int size = (int)curve_.size();
+
+	////���̋�����������
+	//if (size <= mapZ)
+	//{
+
+	//	curveTrans.SetModel(
+	//		resMng_.LoadModelDuplicate(ResourceManager::SRC::CURVE));
+
+	//	float scale = 1.0f;
+	//	curveTrans.scl = { scale * 2.5f,scale,scale * 2.5f };
+	//	curveTrans.quaRot = Quaternion();
+	//	curveTrans.pos = { CURVE_START_POS.x,  CURVE_START_POS.y,  CURVE_START_POS.z + 5000.0f * (size + 1) };
+
+	//	// �����蔻��(�R���C�_)�쐬
+	//	curveTrans.MakeCollider(Collider::TYPE::STAGE);
+	//	curveTrans.Update();
+
+	//	//���蔲���邽�߂����Ńv���C���[�̃R���C�_�[���ǉ����Ƃ�
+	//	for (const auto& cs : curve_)
+	//	{
+	//		for (const auto& bike : bikes_)
+	//		{
+	//			bike->AddCollider(cs->GetTransform().collider);
+	//		}
+	//		//bike_->AddCollider(cs->GetTransform().collider);
+	//		bomb_->AddCollider(cs->GetTransform().collider);
+	//	}
 
 
-	//���̃X�e�[�W���폜
-	if (curve_.size() >= 6)
-	{
-		//std::queue<int> lt;
+	//	curve = std::make_shared<StageCurve>(bikes_.front(), curveTrans);
+	//	curve->Init();
+	//	curve_.push_back(curve);
+	//	//loopStage_.emplace(curve);
+	//	//while (!loopStage_.empty())
+	//	//{
+	//	//	LoopStage* ls = loopStage_.front();
+	//	//	//loopStage_.pop();
+	//	//	bike_->AddCollider(ls->GetTransform().collider);
+	//	//	bomb_->AddCollider(ls->GetTransform().collider);
+	//	//}
+	//	//AddStage(stage);
+	//	isMakeLoopStage_ = true;
 
-		//for (size_t i = 0; i < loopStage_.size(); ++i) {
-		//	lt.push(i);
-		//}
+	//}
+	//else
+	//{
+	//	isMakeLoopStage_ = false;
+	//}
 
-		//while (!lt.empty() && loopStage_.size() >= 6)
-		//{
-			//int index = lt.front();
-			//lt.pop();
 
-			// �X�e�[�W���폜����
-		std::shared_ptr<StageCurve> tailLoop = curve_[size - 5];
-		tailLoop->Destroy();
-	}
+	////���̃X�e�[�W���폜
+	//if (curve_.size() >= 6)
+	//{
+	//	//std::queue<int> lt;
+
+	//	//for (size_t i = 0; i < loopStage_.size(); ++i) {
+	//	//	lt.push(i);
+	//	//}
+
+	//	//while (!lt.empty() && loopStage_.size() >= 6)
+	//	//{
+	//		//int index = lt.front();
+	//		//lt.pop();
+
+	//		// �X�e�[�W���폜����
+	//	std::shared_ptr<StageCurve> tailLoop = curve_[size - 5];
+	//	tailLoop->Destroy();
+	//}
 
 }
 
@@ -755,7 +771,7 @@ void Stage::MakeCity(void)
 
 
 	//後ろのステージを削除
-	if (city_.size() >= 6)
+	if (city_.size() >= 12)
 	{
 		//std::queue<int> lt;
 
@@ -771,7 +787,7 @@ void Stage::MakeCity(void)
 
 
 		// ステージを削除する
-		std::shared_ptr<City> tailLoop = city_[size - 5];
+		std::shared_ptr<City> tailLoop = city_[size - 11];
 		tailLoop->Destroy();
 
 

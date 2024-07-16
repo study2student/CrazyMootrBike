@@ -3,6 +3,7 @@
 #include "../Manager/InputManager.h"
 #include "../Manager/SceneManager.h"
 #include "../Application.h"
+#include "../Object/DataSave.h"
 #include "../Utility/AsoUtility.h"
 
 SelectScene::SelectScene(void)
@@ -26,8 +27,6 @@ void SelectScene::Init(void)
 	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
 
 	isCursorHit_ = false;
-
-	playNumber_ = 1;
 }
 
 void SelectScene::Update(void)
@@ -46,10 +45,6 @@ void SelectScene::Draw(void)
 	DrawString(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, "4人で", fourPersonFontColor_);
 }
 
-const int SelectScene::GetPlayNumber(void) const
-{
-	return playNumber_;
-}
 
 void SelectScene::MouseProcess(void)
 {
@@ -64,7 +59,6 @@ void SelectScene::MouseProcess(void)
 		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y)
 	{
 		nowCursor_ = (int)STATE::ONE_PERSON;
-		playNumber_ = 1;
 		isCursorHit_ = true;
 	}
 	else
@@ -78,6 +72,10 @@ void SelectScene::MouseProcess(void)
 		onePersonFontColor_ = GetColor(0, 0, 255);
 		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
+			//データ保存
+			int playNum = 1;
+			data_.SetData(DataSave::DataType::PLAYER_NUM, playNum);
+
 			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 
@@ -97,7 +95,6 @@ void SelectScene::MouseProcess(void)
 		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y )
 	{
 		nowCursor_ = (int)STATE::FOUR_PERSON;
-		playNumber_ = 4;
 		isCursorHit_ = true;
 	}
 	else
@@ -111,7 +108,10 @@ void SelectScene::MouseProcess(void)
 		fourPersonFontColor_ = GetColor(0, 0, 255);
 		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
 		{
-			//左クリックまたはスペースキーでゲームを終了する
+			//データ保存
+			int playNum = 4;
+			data_.SetData(DataSave::DataType::PLAYER_NUM, playNum);
+
 			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 

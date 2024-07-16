@@ -2,6 +2,7 @@
 #include <memory>
 class ResourceManager;
 class Score;
+class DataSave;
 
 class SceneBase
 {
@@ -30,6 +31,9 @@ protected:
 
 	//スコア
 	Score& score_;
+
+	//データ(セレクト時)
+	DataSave& data_;
 
 
 };

@@ -8,6 +8,7 @@ class SkyDome;
 class AnimationController;
 class Bike;
 class Score;
+class DataSave;
 
 class TitleScene : public SceneBase
 {

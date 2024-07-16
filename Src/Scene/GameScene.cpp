@@ -22,6 +22,7 @@
 #include "../Object/Score.h"
 #include "../Object/Helicopter.h"
 #include "../Object/TyreThrow.h"
+#include "../Object/DataSave.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -45,8 +46,9 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
-
-	if (playNumber == 1)
+	//プレイヤー人数
+	playNumber_ = data_.GetData().playerNum_;
+	if (playNumber_ == 1)
 	{
 		mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y);
 	}
@@ -105,7 +107,7 @@ void GameScene::Init(void)
 		skyDomes_.emplace_back(std::move(sky));
 	}
 
-	if (playNumber == 1)
+	if (playNumber_ == 1)
 	{
 		cameras_.push_back(std::make_shared<Camera>());
 	}
@@ -236,7 +238,7 @@ void GameScene::Update(void)
 
 		if (!isHitStop)
 		{
-			if (playNumber == 1)
+			if (playNumber_ == 1)
 			{
 				bikes_[0]->Update();
 			}
@@ -266,8 +268,14 @@ void GameScene::Update(void)
 		{
 			enemy_->SetBikeTrans(bike->GetTransform());
 		}
+
+		//ヘリ
 		helicopter_->SetBikeTrans(bikes_[0]->GetTransform());
 		helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
+
+		//投げモノ
+		throwTyre_->Update();
+		throwTyre_->SetTransform(bikes_[0]->GetTransform());
 
 		//throwTyre_->SetTransform(bikes_[3]->GetTransform());
 
@@ -298,9 +306,6 @@ void GameScene::Update(void)
 
 			//センター方向からの横の移動幅
 			float shiftX_ = {};
-
-	throwTyre_->Update();
-	throwTyre_->SetTransform(bikes_[0]->GetTransform());
 
 			//道のランダムな場所に生成(3パターン)
 			int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
@@ -377,7 +382,7 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	if (playNumber == 1)
+	if (playNumber_ == 1)
 	{
 		SetDrawScreen(mainScreen_);
 
@@ -553,6 +558,11 @@ std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
 bool GameScene::GetIsCreateEnemy(void)
 {
 	return isCreateEnemy_;
+}
+
+int GameScene::GetPlayNum(void)
+{
+	return playNumber_;
 }
 
 void GameScene::DrawDubg(void)
