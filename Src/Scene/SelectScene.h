@@ -71,6 +71,9 @@ private:
 	//左上の4人でポジション
 	Vector2 fourPersonFontBasePos_;
 
+	// 背景画像
+	int background_;
+
 	// ひとりで選択画像
 	int aloneImg_;
 

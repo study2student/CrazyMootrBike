@@ -27,6 +27,9 @@ void SelectScene::Init(void)
 	//左上のおわるポジション
 	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + FOUR_PERSON_FONT_LENGTH, Application::SCREEN_SIZE_Y / 2 };
 
+	// 背景画像
+	background_ = resMng_.Load(ResourceManager::SRC::IMG_BACKGROUND).handleId_;
+
 	aloneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
 	everyoneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
 
@@ -47,6 +50,8 @@ void SelectScene::Update(void)
 
 void SelectScene::Draw(void)
 {
+	//DrawGraph(0, 0, background_, true);
+	DrawExtendGraph(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, background_, true);
 	//ひとりプレイ選択時
 	if (state_ == STATE::ONE_PERSON)
 	{
@@ -144,6 +149,10 @@ void SelectScene::MouseProcess(void)
 			int playNum = 1;
 			data_.SetData(DataSave::DataType::PLAYER_NUM, playNum);
 
+			// 決定時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_NORMAL, false);
+
 			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 
@@ -180,6 +189,11 @@ void SelectScene::MouseProcess(void)
 			int playNum = 4;
 			data_.SetData(DataSave::DataType::PLAYER_NUM, playNum);
 
+			// 決定時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_NORMAL, false);
+
+
 			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 
@@ -199,6 +213,9 @@ void SelectScene::KeyProcess(void)
 	//カーソル番号による上下操作
 	if (ins_.IsTrgDown(KEY_INPUT_LEFT))
 	{
+		// 決定時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, false);
 		nowCursor_--;
 		if (nowCursor_ <= 0)
 		{
@@ -207,6 +224,9 @@ void SelectScene::KeyProcess(void)
 	}
 	if (ins_.IsTrgDown(KEY_INPUT_RIGHT))
 	{
+		// 決定時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, false);
 		nowCursor_++;
 		if (nowCursor_ >= SELECT_MAX_NUM - 1)
 		{

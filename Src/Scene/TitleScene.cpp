@@ -130,6 +130,9 @@ void TitleScene::Init(void)
 	//データリセット
 	data_.ResetData();
 
+	//// BGMを再生
+	//PlaySoundMem(ResourceManager::GetInstance().Load(
+	//	ResourceManager::SRC::SND_TITLE_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
 }
 
 void TitleScene::Update(void)
@@ -146,6 +149,7 @@ void TitleScene::Update(void)
 
 	//アニメーションループ
 	animationController_->SetEndLoop(33.0f, 36.0f, 1.0f);
+
 
 }
 

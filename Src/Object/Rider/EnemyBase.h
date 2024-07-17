@@ -242,6 +242,15 @@ protected:
 	float flipSpeed_;
 	VECTOR flipDir_;
 
+	// ヒットエフェクト
+	int effectHitResId_;
+	int effectHitPlayId_;
+
+	// エフェクト初期化
+	void InitEffect(void);
+	// Hitエフェクトの位置
+	void HitEffect();
+
 	void InitAnimation(void);
 
 	// 状態遷移

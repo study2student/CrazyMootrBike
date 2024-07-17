@@ -116,8 +116,8 @@ void Bike::Init(void)
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 130.0f, -30.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 130.0f, -120.0f });
+	capsule_->SetLocalPosTop({ 0.0f, 130.0f, 0.0f });
+	capsule_->SetLocalPosDown({ 0.0f, 130.0f, -150.0f });
 	capsule_->SetRadius(RADIUS);
 
 	// 体力
@@ -182,7 +182,11 @@ void Bike::Draw(void)
 
 	//player_->Draw();
 
+<<<<<<< Updated upstream
 	// デバッグ描画
+=======
+	//// デバッグ描画
+>>>>>>> Stashed changes
 	DrawDebug();
 }
 
@@ -468,10 +472,10 @@ void Bike::DrawDebug(void)
 		DrawString(0, 0, "Attack", 0x000000);
 	}
 
-	DrawFormatString(0, 40, 0x000000,
+	DrawFormatString(0, 40, 0xffffff,
 		"バイクの回転：%f,%f,%f",
 		AsoUtility::Rad2DegD(transform_.rot.x),
-		AsoUtility::Rad2DegD(transform_.quaRot.ToEuler().y),
+		AsoUtility::Rad2DegF(transform_.quaRot.ToEuler().y),
 		AsoUtility::Deg2RadF(transform_.quaRotLocal.ToEuler().z));
 
 	DrawFormatString(0, 80, 0xffffff, "bikePos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);

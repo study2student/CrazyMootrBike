@@ -36,6 +36,7 @@ public:
 		TANK_BARREL,
 		TANK_WHEEL,
 
+		IMG_BACKGROUND,// セレクトシーンの背景
 		IMG_SELECT_ALONE,//ひとりで
 		IMG_SELECT_EVERYONE,//みんなで
 
@@ -71,9 +72,14 @@ public:
 		BOMB_PLACE_EFFECT,	//爆弾場所エフェクト
 
 		//サウンド関連
-		SND_BGM,//ゲームBGM
+		SND_TITLE_BGM,//タイトルBGM
+		SND_GAME_BGM,//ゲームBGM
 		SND_COIN,//コイン収集時の音
-		SND_MOTOR//モーター音
+		SND_MOTOR,//モーター音
+		SND_SELECT,//セレクトシーンの選択時の音
+		SND_START,//セレクト決定時の音
+		SND_WARNING,//警告音
+		SND_EXPLOSION,//爆発音
 	};
 
 	// 明示的にインステンスを生成する

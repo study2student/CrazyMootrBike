@@ -1,4 +1,5 @@
 #include <string>
+#include<EffekseerForDXLib.h>
 #include "../../Application.h"
 #include "../../Utility/AsoUtility.h"
 #include "../../Manager/InputManager.h"
@@ -96,6 +97,9 @@ void EnemyBase::Init(void)
 
 	//敵キャラ個別のパラメータ設定
 	SetParam();
+
+	// エフェクト初期化
+	InitEffect();
 }
 
 void EnemyBase::SetParam(void)
@@ -223,6 +227,26 @@ void EnemyBase::AddScoreToPlayer(int playerId, int score)
 		// デバッグログ
 		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
 	}
+}
+
+void EnemyBase::InitEffect(void)
+{
+	// ヒットエフェクト
+	effectHitResId_ = ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::HITEFFECT).handleId_;
+
+}
+
+void EnemyBase::HitEffect()
+{
+	effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+
+	float scale = 50.0f;
+
+	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
+	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+	
 }
 
 void EnemyBase::InitAnimation(void)
@@ -535,6 +559,11 @@ void EnemyBase::ProcessMove(void)
 			isAddScore_ = true;
 			//衝突判定
 			isBikeCol_ = true;
+
+			// ヒットエフェクト
+			HitEffect();
+			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+
 			//コイン収集時の音を再生
 			PlaySoundMem(ResourceManager::GetInstance().Load(
 				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);

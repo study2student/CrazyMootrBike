@@ -1,5 +1,6 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
+#include <string.h>
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
@@ -291,7 +292,7 @@ void GameScene::Update(void)
 
 		// BGMを再生
 		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+			ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
 
 		for (auto& skyDome : skyDomes_)
 		{
@@ -320,11 +321,7 @@ void GameScene::Update(void)
 				isHitStop = false;
 			}
 
-			// ヒットエフェクト
-			float scale = 50.0f;
-			HitEffect();
-			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
-			SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+
 		}
 		for (auto& bike : bikes_)
 		{
@@ -349,6 +346,9 @@ void GameScene::Update(void)
 			if (enemys_[i]->GetIsAddScore())
 			{
 				isHitStop = true;
+				// ヒットエフェクト
+				HitEffect();
+
 				//スコア加算
 				//score_.AddScore();
 			}
@@ -500,6 +500,12 @@ void GameScene::Draw(void)
 	}
 	else
 	{
+<<<<<<< Updated upstream
+=======
+		int sx = Application::SCREEN_SIZE_X;
+		int sy = Application::SCREEN_SIZE_Y;
+
+>>>>>>> Stashed changes
 		for (int i = 0; i < cameras_.size(); i++)
 		{
 			SetDrawScreen(mainScreen_);
@@ -547,9 +553,6 @@ void GameScene::Draw(void)
 
 				SetDrawScreen(DX_SCREEN_BACK);
 
-				int sx = Application::SCREEN_SIZE_X;
-				int sy = Application::SCREEN_SIZE_Y;
-
 				switch (i)
 				{
 				case 0:
@@ -586,13 +589,19 @@ void GameScene::Draw(void)
 					break;
 				}
 			}
-
-			// スタート時のカウントを減らす
-			if (startCount_ >= 0.0f)
-			{
-				DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
-			}
 		}
+
+		// 横の線
+		DrawLine(0, sy / 2, sx, sy / 2, 0xffff00, 8);
+		// 縦の線
+		DrawLine(sx / 2, 0, sx / 2, sy, 0xffff00, 8);
+
+		// スタート時のカウントを減らす
+		if (startCount_ >= 0.0f)
+		{
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+		}
+		
 	}
 	// ヘルプ
 	//DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
@@ -765,6 +774,10 @@ void GameScene::Collision(void)
 
 				//当たった
 				helicopter_->GetBomb()->SetIsCol(true);
+
+				// 効果音再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(
+					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
 			}
 		}
 
@@ -800,6 +813,9 @@ void GameScene::Collision(void)
 
 				//当たった
 				throwTyre_->SetIsCol(true);
+				// 効果音再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(
+					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
 			}
 		}
 
@@ -815,6 +831,9 @@ void GameScene::Collision(void)
 
 			//当たった
 			throwTyre_->SetIsCol(true);
+			// 効果音再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
 		}
 
 		//ゲームオーバー処理
@@ -875,11 +894,14 @@ void GameScene::InitEffect(void)
 
 void GameScene::HitEffect(void)
 {
-	for (auto& bike : bikes_) {
-		const auto pPos = bike->GetTransform();
-		SetPosPlayingEffekseer3DEffect(effectHitPlayId_, pPos.pos.x, pPos.pos.y, pPos.pos.z + 500);
-		SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, pPos.rot.x, pPos.rot.y, pPos.rot.z);
-	}
+	//effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
+	//float scale = 50.0f;
+	//for (auto& enemy : enemys_) {
+	//	const auto ePos = enemy->GetTransform();
+	//	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, ePos.pos.x, ePos.pos.y, ePos.pos.z + 500);
+	//	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, ePos.rot.x, ePos.rot.y, ePos.rot.z);
+	//	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+	//}
 }
 
 void GameScene::MouseProcess(void)
@@ -1066,6 +1088,10 @@ void GameScene::WarningDraw(void)
 	//投げモノが待機状態のときに描画
 	if (throwTyre_->IsIdle())
 	{
+		//警告音
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_WARNING).handleId_, DX_PLAYTYPE_LOOP, false);
+
 		//ポーズの時は止める
 		if(!isPause_)
 		{
@@ -1094,6 +1120,8 @@ void GameScene::WarningDraw(void)
 	else
 	{
 		warningImgScale_ = WARNING_IMG_MIN_SCALE;
+		StopSoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_WARNING).handleId_);
 	}
 }
 

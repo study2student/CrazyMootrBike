@@ -124,6 +124,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::MODEL, PATH_MDL + "Tank/Barrel.mv1");
 	resourcesMap_.emplace(SRC::TANK_BARREL, res);
 
+	// セレクトシーンの背景
+	res = new RES(RES_T::IMG, PATH_IMG + "Background.png");
+	resourcesMap_.emplace(SRC::IMG_BACKGROUND, res);
+
 	// セレクトひとりで
 	res = new RES(RES_T::IMG, PATH_IMG + "Alone.png");
 	resourcesMap_.emplace(SRC::IMG_SELECT_ALONE, res);
@@ -252,9 +256,13 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
 	resourcesMap_.emplace(SRC::BOOST_EFFECT, res);
 
+	// タイトルBGM
+	res = new RES(RES_T::SOUND, PATH_SND + "荒野の侍.mp3");
+	resourcesMap_.emplace(SRC::SND_TITLE_BGM, res);
+
 	// ゲームBGM
 	res = new RES(RES_T::SOUND, PATH_SND + "BURNING_MY_HEART.mp3");
-	resourcesMap_.emplace(SRC::SND_BGM, res);
+	resourcesMap_.emplace(SRC::SND_GAME_BGM, res);
 
 	//コイン収集時の音
 	res = new RES(RES_T::SOUND, PATH_SND + "collectcoin.mp3");
@@ -263,6 +271,22 @@ void ResourceManager::Init(void)
 	//モーター音
 	res = new RES(RES_T::SOUND, PATH_SND + "motor.mp3");
 	resourcesMap_.emplace(SRC::SND_MOTOR, res);
+
+	//セレクトシーンの選択時の音
+	res = new RES(RES_T::SOUND, PATH_SND + "select.mp3");
+	resourcesMap_.emplace(SRC::SND_SELECT, res);
+
+	//セレクト決定時の音
+	res = new RES(RES_T::SOUND, PATH_SND + "gameStart.mp3");
+	resourcesMap_.emplace(SRC::SND_START, res);
+
+	//警告音
+	res = new RES(RES_T::SOUND, PATH_SND + "Warning.mp3");
+	resourcesMap_.emplace(SRC::SND_WARNING, res);
+
+	//爆発音
+	res = new RES(RES_T::SOUND, PATH_SND + "Explosion.mp3");
+	resourcesMap_.emplace(SRC::SND_EXPLOSION, res);
 }
 
 
