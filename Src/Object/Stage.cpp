@@ -196,10 +196,12 @@ void Stage::Update(void)
 			{
 				//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 				isGoal_ = true;
+				bike->SetIsGoal(true);
 			}
 			else
 			{
 				isGoal_ = false;
+				bike->SetIsGoal(false);
 			}
 		}
 	}

@@ -44,6 +44,7 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 
 	isAttack_ = false;
 	isOutSide_ = false;
+	isGoal_ = false;
 
 	// ブースト時の加算速度
 	speedBoost_ = 0.0f;
@@ -181,8 +182,8 @@ void Bike::Draw(void)
 
 	//player_->Draw();
 
-	//// デバッグ描画
-	//DrawDebug();
+	// デバッグ描画
+	DrawDebug();
 }
 
 void Bike::AddCollider(std::shared_ptr<Collider> collider)
@@ -267,6 +268,16 @@ const int& Bike::GetHP(void)
 const bool& Bike::GetIsOutSide(void)
 {
 	return isOutSide_;
+}
+
+void Bike::SetIsGoal(bool isGoal)
+{
+	isGoal_ = isGoal;
+}
+
+const bool& Bike::GetIsGoal(void)
+{
+	return isGoal_;
 }
 
 void Bike::AddScore(int score)
@@ -768,7 +779,7 @@ void Bike::ProcessBoost(void)
 
 		SceneManager::GetInstance().GetCamera()->SetIsBoost(true);
 		deleyBoost_ = DELEY_BOOST_MAX;
-		speedBoost_ = 80.0f;
+		speedBoost_ = ADD_SPEED_BOOST;
 		effectBoostPlayId_ = PlayEffekseer3DEffect(effectBoostResId_);
 
 		// 大きさ
@@ -878,7 +889,7 @@ void Bike::SetGoalRotate(float rotRad)
 void Bike::SetGoalRotateZ(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
+	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.z + rotRad, AsoUtility::AXIS_Z);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);

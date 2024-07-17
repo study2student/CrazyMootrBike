@@ -87,8 +87,14 @@ public:
 	//プレイヤー人数取得
 	int GetPlayNum(void);
 
+	//1人プレイ時ゴールしたかどうか
+	bool OnePersonIsGoal(void);
+
 private:
 	int mainScreen_;
+
+	//1人プレイ時ゴールしたかどうか
+	bool onePersonIsGoal_;
 
 	// ゲームスタート時のカウント
 	float startCount_;

@@ -12,9 +12,10 @@
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
+#include "../../Scene/GameScene.h"
 #include "LongDisEnemy.h"
 
-LongDisEnemy::LongDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, loopStagePos, localPos)
+LongDisEnemy::LongDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes,gameScene, loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -168,11 +169,31 @@ void LongDisEnemy::ProcessMove(void)
 			speed_ = 0;
 			isBikeCol_ = true;
 			isAddScore_ = true;
-			AddScoreToPlayer(bike->GetPlayerID(), 10);
 
-			//コイン収集時の音を再生
-			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+			int playNum = gameScene_->GetPlayNum();
+			if (playNum == 1)
+			{
+				if (!gameScene_->OnePersonIsGoal())
+				{
+					AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+					// コイン収集時の音を再生
+					PlaySoundMem(ResourceManager::GetInstance().Load(
+						ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+				}
+			}
+			else
+			{
+				//ゴールしてないプレイヤーにだけ
+				if (!bike->GetIsGoal())
+				{
+					AddScoreToPlayer(bike->GetPlayerID(), 10);
+
+					// コイン収集時の音を再生
+					PlaySoundMem(ResourceManager::GetInstance().Load(
+						ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+				}
+			}
 
 			if (isBikeCol_)
 			{

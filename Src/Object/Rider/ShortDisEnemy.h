@@ -4,7 +4,7 @@ class ShortDisEnemy : public EnemyBase
 {
 public:
 
-	ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos);
+	ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes, GameScene* gameScene,VECTOR loopStagePos, VECTOR localPos);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;

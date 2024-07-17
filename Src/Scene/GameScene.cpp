@@ -82,7 +82,7 @@ void GameScene::Init(void)
 
 	// 敵
 	for (auto& bike : bikes_) {
-		enemy_ = new EnemyBase(bikes_, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+		enemy_ = new EnemyBase(bikes_,this, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 	}
 
 	//ヘリコプター
@@ -167,6 +167,8 @@ void GameScene::Init(void)
 	isCursorHit_ = false;
 	stepPauseKeyHit_ = 0.0f;
 
+	onePersonIsGoal_ = false;
+
 	//画像
 	imgWarning_= resMng_.Load(ResourceManager::SRC::WARNING).handleId_;
 	warningImgScale_ = WARNING_IMG_MIN_SCALE;
@@ -198,11 +200,36 @@ void GameScene::Update(void)
 		return;
 	}
 
-	//ゴール後
+	//最初の人がゴールしたら
 	if (stage_->GetIsGoal())
 	{
-		//爆弾は出させない
-		helicopter_->ChangeState(Helicopter::STATE::MOVE);
+		//ゲームオーバーシーンで描画するため保存しておく
+		if (playNumber_ == 1)
+		{
+			//爆弾は出させない
+			helicopter_->ChangeState(Helicopter::STATE::MOVE);
+		}
+		else
+		{
+			bool allBikeGoal = true;
+			for (auto& bike : bikes_)
+			{
+				// もし一つでもゴールしていないバイクがあればフラグを更新
+				if (!bike->GetIsGoal())
+				{
+					allBikeGoal = false;
+					break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+				}
+			}
+
+			// 全員がゴールしたらヘリ停止
+			if (allBikeGoal)
+			{
+				//爆弾は出させない
+				helicopter_->ChangeState(Helicopter::STATE::MOVE);
+			}
+		}
+
 		stepGoalAfter_ += SceneManager::GetInstance().GetDeltaTime();
 		if (stepGoalAfter_ >= GOAL_TO_NEXT_SCENE)
 		{
@@ -210,17 +237,34 @@ void GameScene::Update(void)
 			if (playNumber_ == 1)
 			{
 				score_.ScoreSet(bikes_[0]->GetScore());
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 			}
 			else
 			{
+				bool allBikeGoal = true;
 				for (auto& bike : bikes_)
 				{
 					score_.ScoreSetArray(bike->GetScore());
+
+					// もし一つでもゴールしていないバイクがあればフラグを更新
+					if (!bike->GetIsGoal())
+					{
+						allBikeGoal = false;
+						break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+					}
+				}
+
+				// 全員がゴールした場合にシーンを切り替える
+				if (allBikeGoal)
+				{
+					SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 				}
 			}
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			
 		}
 	}
+	//1人プレイ時ゴールしたかどうかセット
+	onePersonIsGoal_ = stage_->GetIsGoal();
 
 	// シーン遷移
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
@@ -351,13 +395,13 @@ void GameScene::Update(void)
 					switch (type)
 					{
 					case EnemyBase::TYPE::SHORT_DIS:
-						e = new ShortDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						e = new ShortDisEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
 					case EnemyBase::TYPE::LONG_DIS:
-						e = new LongDisEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						e = new LongDisEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
 					case EnemyBase::TYPE::BOMB:
-						e = new MagicEnemy(bikes_, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+						e = new MagicEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
 					}
 				}
@@ -450,7 +494,6 @@ void GameScene::Draw(void)
 	}
 	else
 	{
-
 		for (int i = 0; i < cameras_.size(); i++)
 		{
 			SetDrawScreen(mainScreen_);
@@ -506,18 +549,34 @@ void GameScene::Draw(void)
 				case 0:
 					DrawGraph(0, 0, mainScreen_, false);
 					DrawExtendFormatString(sx / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
+					if (stage_->GetIsGoal())
+					{
+						GoalAfterDraw();
+					}
 					break;
 				case 1:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
 					DrawExtendFormatString(sx - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 2, bikes_[1]->GetScore());
+					if (stage_->GetIsGoal())
+					{
+						GoalAfterDraw();
+					}
 					break;
 				case 2:
 					DrawGraph(0, sy / 2, mainScreen_, false);
 					DrawExtendFormatString(sx / 2 - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 3, bikes_[2]->GetScore());
+					if (stage_->GetIsGoal())
+					{
+						GoalAfterDraw();
+					}
 					break;
 				case 3:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
 					DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
+					if (stage_->GetIsGoal())
+					{
+						GoalAfterDraw();
+					}
 					break;
 				}
 			}
@@ -536,19 +595,34 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	DrawDubg();
 
-	
+
+	////ゴールしたか判定
+	//if (stage_->GetIsGoal())
+	//{
+	//	GoalAfterDraw();
+	//}
+	//else
+	//{
+	//	//警告
+	//	WarningDraw();
+	//}
+
 	//ポーズ中
 	if (isPause_)
 	{
 		PauseFontDraw();
 	}
 
-	//ゴールしたか判定
-	if (stage_->GetIsGoal())
+	//ゴールしたら文字出現
+	if (playNumber_ == 1)
 	{
-		GoalAfterDraw();
+		if (stage_->GetIsGoal())
+		{
+			GoalAfterDraw();
+		}
 	}
-	else
+
+	if(!stage_->GetIsGoal())
 	{
 		//警告
 		WarningDraw();
@@ -573,6 +647,11 @@ bool GameScene::GetIsCreateEnemy(void)
 int GameScene::GetPlayNum(void)
 {
 	return playNumber_;
+}
+
+bool GameScene::OnePersonIsGoal(void)
+{
+	return onePersonIsGoal_;
 }
 
 void GameScene::DrawDubg(void)
@@ -658,12 +737,24 @@ void GameScene::Collision(void)
 			float  disB = AsoUtility::SqrMagnitudeF(diffB);
 			if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 			{
-				//ゴールしてない場合
-				if(!stage_->GetIsGoal())
+				if (playNumber_ == 1)
 				{
-					//プレイヤーにダメージ
-					bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+					//ゴールしてない場合
+					if (!stage_->GetIsGoal())
+					{
+						//プレイヤーにダメージ
+						bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
 
+					}
+				}
+				else
+				{
+					//ゴールしてないプレイヤーにだけダメージ
+					if (!bike->GetIsGoal())
+					{
+						//プレイヤーにダメージ
+						bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+					}
 				}
 
 				//当たった
@@ -681,12 +772,24 @@ void GameScene::Collision(void)
 			float  disT = AsoUtility::SqrMagnitudeF(diffT);
 			if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 			{
-				//ゴールしてない場合
-				if (!stage_->GetIsGoal())
+				if (playNumber_ == 1)
 				{
-					//プレイヤーにダメージ
-					bike->Damage(throwTyre_->THROW_DAMAGE);
+					//ゴールしてない場合
+					if (!stage_->GetIsGoal())
+					{
+						//プレイヤーにダメージ
+						bike->Damage(throwTyre_->THROW_DAMAGE);
 
+					}
+				}
+				else
+				{
+					//ゴールしてないプレイヤーにだけダメージ
+					if (!bike->GetIsGoal())
+					{
+						//プレイヤーにダメージ
+						bike->Damage(throwTyre_->THROW_DAMAGE);
+					}
 				}
 
 				//当たった

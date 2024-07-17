@@ -9,6 +9,7 @@ class Collider;
 class Capsule;
 class Bike;
 class Score;
+class GameScene;
 
 class EnemyBase : public ActorBase
 {
@@ -105,7 +106,7 @@ public:
 	};
 
 	// コンストラクタ
-	EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos);
+	EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);
 
 	// デストラクタ
 	virtual ~EnemyBase(void);
@@ -163,6 +164,9 @@ protected:
 	std::shared_ptr<Bike> bike_;
 
 	std::vector< std::shared_ptr<Bike>> bikes_;
+
+	//ゲームシーン
+	GameScene* gameScene_;
 
 	// 状態管理
 	STATE state_;

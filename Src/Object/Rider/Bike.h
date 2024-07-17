@@ -20,9 +20,12 @@ public:
 	static constexpr float SPEED_RUN = 130.0f;
 
 	//半径
-	static constexpr float RADIUS = 50.0f;
+	static constexpr float RADIUS = 80.0f;
 
-	//ブースト
+	//ブースト使用時の加速速度
+	static constexpr float ADD_SPEED_BOOST = 50.0f;
+
+	//次ブースト使えるようになるまでのカウント
 	static constexpr float DELEY_BOOST_MAX = 220.0f;
 
 	//ブースト発動させるためのHP消費量
@@ -147,6 +150,12 @@ public:
 
 	//バイクが場外に出たか取得
 	const bool& GetIsOutSide(void);
+
+	//バイクがゴールしたか設定
+	void SetIsGoal(bool isGoal);
+
+	//バイクがゴールしたか取得
+	const bool& GetIsGoal(void);
 
 	// スコア加算
 	void AddScore(int score);
@@ -297,6 +306,9 @@ private:
 
 	// ブースト使用間隔
 	float deleyBoost_;
+
+	//ゴールしたか
+	bool isGoal_;
 
 	//ブーストエフェクト位置
 	VECTOR boostEffectPos;

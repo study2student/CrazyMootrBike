@@ -11,11 +11,13 @@
 #include "../../Object/Planet.h"
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
+#include "../../Scene/GameScene.h"
 #include "EnemyBase.h"
 
-EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, VECTOR loopStagePos, VECTOR localPos)
+EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos)
 {
 	bikes_ = bikes;
+	gameScene_ = gameScene;
 
 	animationController_ = nullptr;
 	state_ = STATE::NONE;
