@@ -48,6 +48,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "warning.png");
 	resourcesMap_.emplace(SRC::WARNING, res);
 
+	// ポーズ背景
+	res = new RES(RES_T::IMG, PATH_IMG + "pause.png");
+	resourcesMap_.emplace(SRC::PAUSE, res);
+
 	// プレイヤー
 	res = new RES(RES_T::MODEL, PATH_MDL + "Player/Great Sword Slash.mv1");
 	resourcesMap_.emplace(SRC::PLAYER, res);

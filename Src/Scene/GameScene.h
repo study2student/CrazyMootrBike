@@ -29,22 +29,22 @@ public:
 	};
 
 	//再開ボタンの横の長さ
-	static constexpr int RESTART_FONT_LENGTH = 40;
+	static constexpr int RESTART_FONT_LENGTH = 100;
 
 	//再開ボタンの高さ
-	static constexpr int RESTART_FONT_HEIGHT = 20;
+	static constexpr int RESTART_FONT_HEIGHT = 48;
 
 	//リトライボタンの横の長さ
-	static constexpr int RETRY_FONT_LENGTH = 80;
+	static constexpr int RETRY_FONT_LENGTH = 200;
 
 	//リトライボタンの高さ
-	static constexpr int RETRY_FONT_HEIGHT = 20;
+	static constexpr int RETRY_FONT_HEIGHT = 48;
 
 	//終わるボタンの横の長さ
-	static constexpr int END_FONT_LENGTH = 60;
+	static constexpr int END_FONT_LENGTH = 150;
 
 	//終わるボタンの高さ
-	static constexpr int END_FONT_HEIGHT = 20;
+	static constexpr int END_FONT_HEIGHT = 48;
 
 	//選択肢数
 	static constexpr int SELECT_MAX_NUM = 3;
@@ -101,12 +101,15 @@ private:
 	// スタートフラグ
 	bool isStart_;
 
-	// 画像
+	// 警告画像
 	int imgWarning_;
 	//大きさ
 	float warningImgScale_;
 	//最大サイズかどうか
 	bool isMaxWarningScale_;
+
+	// ポーズ背景画像
+	int imgPause_;
 
 	// カメラ
 	std::vector<std::shared_ptr<Camera>> cameras_;
@@ -240,7 +243,7 @@ private:
 	void WarningDraw(void);
 
 	//ポーズ文字描画
-	void PauseFontDraw(void);
+	void PauseDraw(void);
 
 	//ゴールしたあとの処理
 	void GoalAfterDraw(void);

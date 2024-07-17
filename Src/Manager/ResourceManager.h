@@ -15,6 +15,7 @@ public:
 		PUSH_SPACE,
 		SPEECH_BALLOON,
 		WARNING,	//åxçê
+		PAUSE,		//É|Å[ÉYîwåi
 		PLAYER,
 		PLAYER_SHADOW,
 		SKY_DOME,

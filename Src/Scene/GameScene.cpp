@@ -151,13 +151,16 @@ void GameScene::Init(void)
 	endFontColor_ = GetColor(255, 255, 255);
 
 	//左上の再開ポジション
-	reStartFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 - 20 };
+	int addX = -55;
+	reStartFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + addX , Application::SCREEN_SIZE_Y / 2 - 130 };
 
 	//左上のリトライポジション
-	reTryFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 120 };
+	addX = -95;
+	reTryFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + addX , Application::SCREEN_SIZE_Y / 2 + 10 };
 
 	//左上の終わるポジション
-	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + 210 , Application::SCREEN_SIZE_Y / 2 + 260 };
+	addX = -70;
+	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + addX , Application::SCREEN_SIZE_Y / 2 + 150 };
 
 	//FINISH文字の初期位置
 	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2 - 220 ,-40 };
@@ -172,6 +175,9 @@ void GameScene::Init(void)
 	//画像
 	imgWarning_= resMng_.Load(ResourceManager::SRC::WARNING).handleId_;
 	warningImgScale_ = WARNING_IMG_MIN_SCALE;
+
+	imgPause_ = resMng_.Load(ResourceManager::SRC::PAUSE).handleId_;
+
 
 	//スコアリセット
 	score_.ResetScore();
@@ -610,7 +616,7 @@ void GameScene::Draw(void)
 	//ポーズ中
 	if (isPause_)
 	{
-		PauseFontDraw();
+		PauseDraw();
 	}
 
 	//ゴールしたら文字出現
@@ -1091,12 +1097,17 @@ void GameScene::WarningDraw(void)
 	}
 }
 
-void GameScene::PauseFontDraw(void)
+void GameScene::PauseDraw(void)
 {
+	//ポーズ背景画像
+	float imgScl = 3.0f;
+	DrawRotaGraphFastF(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, imgScl, 0.0f, imgPause_, true);
+
 	//文字表示
-	DrawString(reStartFontBasePos_.x, reStartFontBasePos_.y, "再開", reStartFontColor_);
-	DrawString(reTryFontBasePos_.x, reTryFontBasePos_.y, "リトライ", reTryFontColor_);
-	DrawString(endFontBasePos_.x, endFontBasePos_.y, "終わる", endFontColor_);
+	float fontScl = 3.0f;
+	DrawExtendFormatString(reStartFontBasePos_.x, reStartFontBasePos_.y, fontScl, fontScl, reStartFontColor_, "再開");
+	DrawExtendFormatString(reTryFontBasePos_.x, reTryFontBasePos_.y, fontScl, fontScl, reTryFontColor_, "リトライ");
+	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, fontScl, fontScl, endFontColor_, "終わる");
 }
 
 void GameScene::GoalAfterDraw(void)
