@@ -11,10 +11,13 @@
 #include "Planet.h"
 #include "Rotor.h"
 #include "Bomb.h"
+#include "../Scene/GameScene.h"
 #include "Helicopter.h"
 
-Helicopter::Helicopter(void)
+Helicopter::Helicopter(GameScene* gameScene)
 {
+
+	gameScene_ = gameScene;
 
 	//animationController_ = nullptr;
 
@@ -328,7 +331,17 @@ void Helicopter::ProcessMove(void)
 	//バイクプレイヤーに合わせる(ステージ内にいるときのみ)
 	if (!isTargetOutside_)
 	{
-		transform_.pos.x = targetTrans_.pos.x;
+		int playNum = gameScene_->GetPlayNum();
+		if (playNum == 1)
+		{
+			transform_.pos.x = targetTrans_.pos.x;
+		}
+		else
+		{
+			float  rate = 0.015f;
+			transform_.pos.x = AsoUtility::Lerp(transform_.pos.x, targetTrans_.pos.x, rate);
+		}
+		
 	}
 
 

@@ -140,13 +140,9 @@ void ShortDisEnemy::ProcessMove(void)
 			speed_ = 0;
 			isBikeCol_ = true;
 			isAddScore_ = true;
-<<<<<<< Updated upstream
-=======
-			AddScoreToPlayer(bike->GetPlayerID(), 10);
+
 			// ヒットエフェクト
 			HitEffect();
->>>>>>> Stashed changes
-
 
 			int playNum = gameScene_->GetPlayNum();
 			if (playNum == 1)

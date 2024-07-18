@@ -20,11 +20,7 @@ public:
 	static constexpr float SPEED_RUN = 130.0f;
 
 	//半径
-<<<<<<< Updated upstream
 	static constexpr float RADIUS = 80.0f;
-=======
-	static constexpr float RADIUS = 70.0f;
->>>>>>> Stashed changes
 
 	//ブースト使用時の加速速度
 	static constexpr float ADD_SPEED_BOOST = 50.0f;
@@ -36,13 +32,13 @@ public:
 	static constexpr int BOOST_USE_HP = 40;
 
 	//横移動のスピード
-	static constexpr float SPEED_MOVE_X = 10.0f;
+	static constexpr float SPEED_MOVE_X = 18.0f;
 
 	// 回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
 
 	// HPの最大値
-	static constexpr int MAX_HP = 100;
+	static constexpr int MAX_HP = 200;
 
 	//HPの最低値
 	static constexpr int MIN_HP = 0;

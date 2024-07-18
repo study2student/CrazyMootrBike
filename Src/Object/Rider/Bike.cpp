@@ -182,11 +182,8 @@ void Bike::Draw(void)
 
 	//player_->Draw();
 
-<<<<<<< Updated upstream
+
 	// デバッグ描画
-=======
-	//// デバッグ描画
->>>>>>> Stashed changes
 	DrawDebug();
 }
 
@@ -463,8 +460,8 @@ void Bike::DrawShadow(void)
 
 void Bike::DrawDebug(void)
 {
-	capsule_->Draw();
-	DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
+	//capsule_->Draw();
+	//DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
 
 	// 攻撃が当たったか
 	if (isAttack_ == true)

@@ -9,6 +9,7 @@ class Collider;
 class Capsule;
 class Rotor;
 class Bomb;
+class GameScene;
 
 class Helicopter : public ActorBase
 {
@@ -68,7 +69,7 @@ public:
 	};
 
 	// コンストラクタ
-	Helicopter(void);
+	Helicopter(GameScene* gameScene);
 
 	// デストラクタ
 	~Helicopter(void);
@@ -106,6 +107,9 @@ private:
 	//バイク情報
 	Transform targetTrans_;
 	bool isTargetOutside_;
+
+	//ゲームシーン
+	GameScene* gameScene_;
 
 	//// アニメーション
 	//AnimationController* animationController_;

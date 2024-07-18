@@ -114,11 +114,11 @@ void Stage::Update(void)
 	//	s->Update();
 	//}
 
-	//カーブ
-	for (const auto& cs : curve_)
-	{
-		cs->Update();
-	}
+	////カーブ
+	//for (const auto& cs : curve_)
+	//{
+	//	cs->Update();
+	//}
 
 	//町
 	for (const auto& ct : city_)
@@ -170,7 +170,7 @@ void Stage::Update(void)
 
 		}
 	}
-	jampRamp_->Update();
+	//jampRamp_->Update();
 
 	//ゴール
 	goal_->Update();
@@ -224,11 +224,11 @@ void Stage::Draw(void)
 	//	s->Draw();
 	//}
 
-	//カーブ
-	for (const auto& cs : curve_)
-	{
-		cs->Draw();
-	}
+	////カーブ
+	//for (const auto& cs : curve_)
+	//{
+	//	cs->Draw();
+	//}
 
 	//町
 	for (const auto& ct : city_)
@@ -256,7 +256,7 @@ void Stage::Draw(void)
 	//	ls->Draw();
 	//}
 
-	jampRamp_->Draw();
+	//jampRamp_->Draw();
 	goal_->Draw();
 
 	DrawFormatString(0, 200, 0xff0000, "IsJump:%d", isJamp_);
@@ -448,8 +448,11 @@ void Stage::MakeLoopStage(void)
 	std::shared_ptr<LoopStage> stage;
 
 
-	//float z = bike_->GetTransform().pos.z;
-	float z = bikes_.front()->GetTransform().pos.z;
+	//pos.z が最大の要素のインデックスを取得する
+	size_t posZMaxIndex = gameScene_->GetBikeMaxPosZIndex();
+
+	//先頭のバイクの座標
+	float z = bikes_[posZMaxIndex]->GetTransform().pos.z;
 
 	int mapZ = (int)((z + 6000.0f) / 5000.0f);
 	int size = (int)loopStage_.size();
@@ -727,7 +730,11 @@ void Stage::MakeCity(void)
 	std::shared_ptr<City> city;
 
 
-	float z = bikes_.front()->GetTransform().pos.z;
+	//pos.z が最大の要素のインデックスを取得する
+	size_t posZMaxIndex = gameScene_->GetBikeMaxPosZIndex();
+
+	//先頭のバイクに合わせる
+	float z = bikes_[posZMaxIndex]->GetTransform().pos.z;
 
 	int mapZ = (int)((z + 6000.0f) / 5000.0f);
 	int size = (int)city_.size();

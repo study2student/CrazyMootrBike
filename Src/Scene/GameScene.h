@@ -90,6 +90,10 @@ public:
 	//1人プレイ時ゴールしたかどうか
 	bool OnePersonIsGoal(void);
 
+	//先頭(座標)のバイクの要素番号を取得
+	size_t GetBikeMaxPosZIndex(void);
+	
+
 private:
 	int mainScreen_;
 

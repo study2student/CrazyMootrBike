@@ -87,7 +87,7 @@ void GameScene::Init(void)
 	}
 
 	//ヘリコプター
-	helicopter_ = std::make_shared<Helicopter>();
+	helicopter_ = std::make_shared<Helicopter>(this);
 	helicopter_->Init();
 
 	//投げタイヤ
@@ -221,11 +221,15 @@ void GameScene::Update(void)
 			bool allBikeGoal = true;
 			for (auto& bike : bikes_)
 			{
-				// もし一つでもゴールしていないバイクがあればフラグを更新
-				if (!bike->GetIsGoal())
+				// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
+				if (bike->GetHP() > 0)
 				{
-					allBikeGoal = false;
-					break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+					// もし一つでもゴールしていないバイクがあればフラグを更新
+					if (!bike->GetIsGoal())
+					{
+						allBikeGoal = false;
+						break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+					}
 				}
 			}
 
@@ -249,15 +253,21 @@ void GameScene::Update(void)
 			else
 			{
 				bool allBikeGoal = true;
+
 				for (auto& bike : bikes_)
 				{
+
 					score_.ScoreSetArray(bike->GetScore());
 
-					// もし一つでもゴールしていないバイクがあればフラグを更新
-					if (!bike->GetIsGoal())
+					// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
+					if (bike->GetHP() > 0)
 					{
-						allBikeGoal = false;
-						break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+						// もし一つでもゴールしていないバイクがあればフラグを更新
+						if (!bike->GetIsGoal())
+						{
+							allBikeGoal = false;
+							break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+						}
 					}
 				}
 
@@ -267,9 +277,11 @@ void GameScene::Update(void)
 					SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 				}
 			}
-			
+
 		}
 	}
+
+	
 	//1人プレイ時ゴールしたかどうかセット
 	onePersonIsGoal_ = stage_->GetIsGoal();
 
@@ -278,6 +290,7 @@ void GameScene::Update(void)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
+
 
 	// スタート時のカウントダウンを減らす
 	if (startCount_ > 0.0f)
@@ -329,14 +342,16 @@ void GameScene::Update(void)
 		}
 
 		//ヘリ
-		helicopter_->SetBikeTrans(bikes_[0]->GetTransform());
+		//先頭(座標)の要素番号取得
+		size_t posZMaxIndex = GetBikeMaxPosZIndex();
+
+		helicopter_->SetBikeTrans(bikes_[posZMaxIndex]->GetTransform());
 		helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
 
 		//投げモノ
 		throwTyre_->Update();
-		throwTyre_->SetTransform(bikes_[0]->GetTransform());
+		throwTyre_->SetTransform(bikes_[posZMaxIndex]->GetTransform());
 
-		//throwTyre_->SetTransform(bikes_[3]->GetTransform());
 
 		//敵
 		size_t sizeE = enemys_.size();
@@ -435,7 +450,6 @@ void GameScene::Update(void)
 			isCreateEnemy_ = false;
 		}
 
-
 		helicopter_->Update();
 		//throwTyre_->Update();
 
@@ -495,17 +509,14 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
 		}
 	}
 	else
 	{
-<<<<<<< Updated upstream
-=======
 		int sx = Application::SCREEN_SIZE_X;
 		int sy = Application::SCREEN_SIZE_Y;
 
->>>>>>> Stashed changes
 		for (int i = 0; i < cameras_.size(); i++)
 		{
 			SetDrawScreen(mainScreen_);
@@ -546,6 +557,7 @@ void GameScene::Draw(void)
 			// 各バイクを描画
 			for (auto& bike : bikes_) {
 				bike->Draw();
+				
 			}
 
 			for (int p = 0; p < bikes_.size(); p++) {
@@ -599,7 +611,7 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
 		}
 		
 	}
@@ -667,6 +679,18 @@ int GameScene::GetPlayNum(void)
 bool GameScene::OnePersonIsGoal(void)
 {
 	return onePersonIsGoal_;
+}
+
+size_t GameScene::GetBikeMaxPosZIndex(void)
+{
+	//pos.zが一番大きいBike要素を取得
+	auto posZMaxElementIt = std::max_element(bikes_.begin(), bikes_.end(), [](const std::shared_ptr<Bike>& a, const std::shared_ptr<Bike>& b) {
+		return a->GetTransform().pos.z < b->GetTransform().pos.z; });  // 比較の基準としてpos.zを使う
+
+	//pos.z が最大の要素のインデックスを取得する
+	size_t posZMaxIndex = std::distance(bikes_.begin(), posZMaxElementIt);
+
+	return posZMaxIndex;
 }
 
 void GameScene::DrawDubg(void)
@@ -813,6 +837,7 @@ void GameScene::Collision(void)
 
 				//当たった
 				throwTyre_->SetIsCol(true);
+
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
 					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
@@ -836,10 +861,43 @@ void GameScene::Collision(void)
 				ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
 		}
 
-		//ゲームオーバー処理
-		if (bike->GetHP() <= 0)
+		
+		//死亡処理
+		//ゲームオーバーシーンで描画するため保存しておく
+		if (playNumber_ == 1)
 		{
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			//ゲームオーバー処理
+			if (bikes_[0]->GetHP() <= 0)
+			{
+				//スコアを保持
+				score_.ScoreSet(bikes_[0]->GetScore());
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			}
+		}
+		else
+		{
+			bool allBikeDead = true;
+			for (auto& bike : bikes_)
+			{
+			
+				// もし一つでも死亡していないバイクがあればフラグを更新
+				if (!(bike->GetHP() <= 0))
+				{
+					allBikeDead = false;
+					break;  // 死亡していないバイクが見つかった時点でループを抜ける
+				}
+			}
+
+			// 全員が死亡した場合にシーンを切り替える
+			if (allBikeDead)
+			{
+				for (auto& bike : bikes_)
+				{
+					//スコアを保持
+					score_.ScoreSetArray(bike->GetScore());
+				}
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			}
 		}
 	}
 }

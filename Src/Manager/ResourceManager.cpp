@@ -53,7 +53,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::PAUSE, res);
 
 	// プレイヤー
-	res = new RES(RES_T::MODEL, PATH_MDL + "Player/Great Sword Slash.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Player/playerA.mv1");
 	resourcesMap_.emplace(SRC::PLAYER, res);
 
 	// プレイヤー影

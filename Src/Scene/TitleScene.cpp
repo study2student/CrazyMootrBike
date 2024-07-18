@@ -80,7 +80,7 @@ void TitleScene::Init(void)
 	// ƒLƒƒƒ‰
 	charactor_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
 	//charactor_.pos = { -150.0f, -42.0f, -105.0f };
-	charactor_.pos = { -150.0f, -46.0f, -109.0f };
+	charactor_.pos = { -150.0f, -50.0f, -109.0f };
 	size = 1.0f;
 	charactor_.scl = { size, size, size };
 	charactor_.quaRot = Quaternion::Euler(
