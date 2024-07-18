@@ -514,10 +514,6 @@ void GameScene::Draw(void)
 	}
 	else
 	{
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 		int sx = Application::SCREEN_SIZE_X;
 		int sy = Application::SCREEN_SIZE_Y;
 
@@ -617,11 +613,11 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-<<<<<<< Updated upstream
+
 			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
-=======
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
->>>>>>> Stashed changes
+
+			//DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+
 		}
 		
 	}

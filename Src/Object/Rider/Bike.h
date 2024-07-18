@@ -20,10 +20,6 @@ public:
 	static constexpr float SPEED_RUN = 130.0f;
 
 	//半径
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 	static constexpr float RADIUS = 80.0f;
 
 	//ブースト使用時の加速速度

@@ -173,14 +173,7 @@ void Bike::Draw(void)
 
 
 	// デバッグ描画
-<<<<<<< Updated upstream
-	DrawDebug();
-=======
-
-	//// デバッグ描画
-
 	//DrawDebug();
->>>>>>> Stashed changes
 }
 
 void Bike::AddCollider(std::shared_ptr<Collider> collider)
