@@ -167,6 +167,9 @@ private:
 	//デバッグ表示
 	void DrawDubg(void);
 
+	// UI表示
+	void DrawUI(int x, int y, int playerID);
+
 	//衝突判定
 	void Collision(void);
 

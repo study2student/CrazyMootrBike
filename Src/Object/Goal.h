@@ -17,7 +17,16 @@ public:
 
 	//ゴールを生成するための最大ステージ数
 	//static constexpr int STAGE_NUM_MAX_FOR_GOAL = 68;
+<<<<<<< Updated upstream
 	static constexpr int STAGE_NUM_MAX_FOR_GOAL = 58;
+=======
+
+	//static constexpr int STAGE_NUM_MAX_FOR_GOAL = 28;
+
+	static constexpr int STAGE_NUM_MAX_FOR_GOAL = 60;
+
+
+>>>>>>> Stashed changes
 	// コンストラクタ
 	Goal(void);
 

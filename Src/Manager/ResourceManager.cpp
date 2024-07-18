@@ -136,6 +136,13 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "Everyone.png");
 	resourcesMap_.emplace(SRC::IMG_SELECT_EVERYONE, res);
 
+	// スコア描画の背景
+	res = new RES(RES_T::IMG, PATH_IMG + "Score_BG.png");
+	resourcesMap_.emplace(SRC::IMG_SCORE, res);
+
+	res = new RES(RES_T::IMG, PATH_IMG + "Left_stick.png");
+	resourcesMap_.emplace(SRC::IMG_LEFT_STICK, res);
+
 	// 仮ステージ
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::DEMO_STAGE, res);
@@ -287,6 +294,10 @@ void ResourceManager::Init(void)
 	//爆発音
 	res = new RES(RES_T::SOUND, PATH_SND + "Explosion.mp3");
 	resourcesMap_.emplace(SRC::SND_EXPLOSION, res);
+
+	//ゴール音
+	res = new RES(RES_T::SOUND, PATH_SND + "Goal.mp3");
+	resourcesMap_.emplace(SRC::SND_GOAL, res);
 }
 
 

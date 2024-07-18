@@ -220,7 +220,7 @@ void TitleScene::UpdateIdle(void)
 
 	//演出スタート
 	InputManager& ins = InputManager::GetInstance();
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	if (ins.IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
 	{
 		ChangeState(STATE::START);
 	}

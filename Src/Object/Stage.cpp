@@ -182,6 +182,9 @@ void Stage::Update(void)
 		{
 			//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 			isGoal_ = true;
+			// ゴール音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(
+				ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, false);
 		}
 		else
 		{
@@ -197,6 +200,9 @@ void Stage::Update(void)
 				//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 				isGoal_ = true;
 				bike->SetIsGoal(true);
+				// ゴール音を再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(
+					ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, false);
 			}
 			else
 			{
@@ -259,8 +265,6 @@ void Stage::Draw(void)
 	//jampRamp_->Draw();
 	goal_->Draw();
 
-	DrawFormatString(0, 200, 0xff0000, "IsJump:%d", isJamp_);
-	//DrawFormatString(840, 520, 0xffffff, "loopstageNum : %d", loopStage_.size());
 }
 
 void Stage::ChangeStage(NAME type)

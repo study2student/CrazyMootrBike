@@ -5,6 +5,7 @@
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Transform.h"
 #include "../Manager/SceneManager.h"
+#include "../Object/Rider/Bike.h"
 #include "Camera.h"
 
 Camera::Camera(void)
@@ -30,11 +31,21 @@ void Camera::Init(void)
 {
 
 	ChangeMode(MODE::FIXED_POINT);
+	
+	for (int i = 0; i < 4; ++i) {
+		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
+	}
 
+	for (auto& bike : bikes_) {
+		bike->Init();
+	}
 }
 
 void Camera::Update(void)
 {
+	for (auto& bike : bikes_) {
+		bike->Update();
+	}
 }
 
 void Camera::SetBeforeDraw(void)
@@ -252,70 +263,84 @@ void Camera::ProcessRot(void)
 
 	auto& ins = InputManager::GetInstance();
 
-	float movePow = 5.0f;
+	std::array<PlayerInput, 4> playerInputs = { {
+	{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
+	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
+	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
+	{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
+} };
 
-	//É{É^ÉìÇ™âüÇ≥ÇÍÇΩÇ©
-	bool isHitKey = false;
-
-	if (!isCameraReset_)
+	// ÉvÉåÉCÉÑÅ[Ç≤Ç∆ÇÃì¸óÕèàóù
+	for (auto& bike : bikes_)
 	{
-		// ÉJÉÅÉââÒì]
-		if (ins.IsNew(KEY_INPUT_RIGHT))
-		{
-			// âEâÒì]
-			angles_.y += AsoUtility::Deg2RadF(1.0f);
-			isHitKey = true;
-		}
-		if (ins.IsNew(KEY_INPUT_LEFT))
-		{
-			// ç∂âÒì]
-			angles_.y += AsoUtility::Deg2RadF(-1.0f);
-			isHitKey = true;
-		}
+		const auto& input = playerInputs[bike->GetPlayerID()];
+		int padState = GetJoypadInputState(input.padId);
 
-		// è„âÒì]
-		if (ins.IsNew(KEY_INPUT_UP))
+
+		float movePow = 5.0f;
+
+		//É{É^ÉìÇ™âüÇ≥ÇÍÇΩÇ©
+		bool isHitKey = false;
+
+		if (!isCameraReset_)
 		{
-			angles_.x += AsoUtility::Deg2RadF(1.0f);
-			if (angles_.x > LIMIT_X_UP_RAD)
+			// ÉJÉÅÉââÒì]
+			if (ins.IsNew(KEY_INPUT_RIGHT) || padState & static_cast<int>(input.right))
 			{
-				angles_.x = LIMIT_X_UP_RAD;
+				// âEâÒì]
+				angles_.y += AsoUtility::Deg2RadF(1.0f);
+				isHitKey = true;
+			}
+			if (ins.IsNew(KEY_INPUT_LEFT) || padState & static_cast<int>(input.left))
+			{
+				// ç∂âÒì]
+				angles_.y += AsoUtility::Deg2RadF(-1.0f);
+				isHitKey = true;
+			}
+
+			// è„âÒì]
+			if (ins.IsNew(KEY_INPUT_UP) || padState & static_cast<int>(input.up))
+			{
+				angles_.x += AsoUtility::Deg2RadF(1.0f);
+				if (angles_.x > LIMIT_X_UP_RAD)
+				{
+					angles_.x = LIMIT_X_UP_RAD;
+				}
+			}
+
+			// â∫âÒì]
+			if (ins.IsNew(KEY_INPUT_DOWN) || padState & static_cast<int>(input.down))
+			{
+				angles_.x += AsoUtility::Deg2RadF(-1.0f);
+				if (angles_.x < -LIMIT_X_DW_RAD)
+				{
+					angles_.x = -LIMIT_X_DW_RAD;
+				}
 			}
 		}
 
-		// â∫âÒì]
-		if (ins.IsNew(KEY_INPUT_DOWN))
+		//âÒì]èàóùÇÇµÇƒÇ»Ç¢éûÉJÉÅÉâÇèôÅXÇ…ëOÇ…å¸Ç©ÇπÇÈ
+		if (!isHitKey || isCameraReset_)
 		{
-			angles_.x += AsoUtility::Deg2RadF(-1.0f);
-			if (angles_.x < -LIMIT_X_DW_RAD)
+			Quaternion goalQuaRot_ = Quaternion::Euler({ 0.0f,0.0f,0.0f });
+
+			// åªç›ê›íËÇ≥ÇÍÇƒÇ¢ÇÈâÒì]Ç∆ÇÃäpìxç∑ÇéÊÇÈ
+			float angleDiff = Quaternion::Angle(rot_, goalQuaRot_);
+
+			// ÇµÇ´Ç¢íl
+			if (angleDiff > 0.1)
 			{
-				angles_.x = -LIMIT_X_DW_RAD;
+				stepRotTime_ = TIME_ROT;
 			}
+
+			stepRotTime_ -= SceneManager::GetInstance().GetDeltaTime();
+			rot_ = Quaternion::Slerp(rot_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
+
+			VECTOR r = rot_.ToEuler();
+			angles_ = r;
+
 		}
 	}
-
-	//âÒì]èàóùÇÇµÇƒÇ»Ç¢éûÉJÉÅÉâÇèôÅXÇ…ëOÇ…å¸Ç©ÇπÇÈ
-	if (!isHitKey || isCameraReset_)
-	{
-		Quaternion goalQuaRot_ = Quaternion::Euler({ 0.0f,0.0f,0.0f });
-
-		// åªç›ê›íËÇ≥ÇÍÇƒÇ¢ÇÈâÒì]Ç∆ÇÃäpìxç∑ÇéÊÇÈ
-		float angleDiff = Quaternion::Angle(rot_, goalQuaRot_);
-
-		// ÇµÇ´Ç¢íl
-		if (angleDiff > 0.1)
-		{
-			stepRotTime_ = TIME_ROT;
-		}
-
-		stepRotTime_ -= SceneManager::GetInstance().GetDeltaTime();
-		rot_ = Quaternion::Slerp(rot_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
-
-		VECTOR r = rot_.ToEuler();
-		angles_ = r;
-
-	}
-
 
 }
 

@@ -143,6 +143,11 @@ void ShortDisEnemy::ProcessMove(void)
 
 			// ヒットエフェクト
 			HitEffect();
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 
 			int playNum = gameScene_->GetPlayNum();
 			if (playNum == 1)

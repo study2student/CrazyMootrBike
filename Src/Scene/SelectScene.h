@@ -80,6 +80,9 @@ private:
 	// みんなで選択画像
 	int everyoneImg_;
 
+	// 操作画像
+	int leftStickImg_;
+
 	// ひとりプレイ選択画像の大きさ
 	float selectAloneImgScale_;
 	// 四人プレイ選択画像の大きさ

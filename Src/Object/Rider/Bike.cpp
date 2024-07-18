@@ -73,13 +73,6 @@ Bike::~Bike(void)
 void Bike::Init(void)
 {
 
-	//タイヤ
-	frontTyre_ = std::make_shared<FrontTyre>();
-	frontTyre_->Init();
-	frontTyre_->SetTransform(transform_);
-	rearTyre_ = std::make_shared<RearTyre>();
-	rearTyre_->Init();
-	rearTyre_->SetTransform(transform_);
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -149,13 +142,9 @@ void Bike::Update(void)
 		break;
 	}
 
-	frontTyre_->Update();
-	frontTyre_->SetTransform(transform_);
-	rearTyre_->Update();
-	rearTyre_->SetTransform(transform_);
+	ChangeVolumeSoundMem(10, PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false));
 
-	PlaySoundMem(ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false);
 
 	// モデル制御更新
 	transform_.Update();
@@ -184,7 +173,14 @@ void Bike::Draw(void)
 
 
 	// デバッグ描画
+<<<<<<< Updated upstream
 	DrawDebug();
+=======
+
+	//// デバッグ描画
+
+	//DrawDebug();
+>>>>>>> Stashed changes
 }
 
 void Bike::AddCollider(std::shared_ptr<Collider> collider)
@@ -220,7 +216,7 @@ void Bike::Jump(void)
 
 	//// ベクトルの正規化
 	//jumpVec = VNorm(jumpVec);
-	//
+	
 
 
 	////jumpVec = Quaternion::PosAxis(q,transform_.pos);
@@ -449,9 +445,6 @@ void Bike::DrawUI(void)
 	DrawBoxAA(sc_x, sc_y,
 		ap::SCREEN_SIZE_X - 10, HP_BAR_HEIGHT,
 		0x000000, false, 13.0f);
-
-	// HP
-	DrawFormatString(0, 20, 0x00ff00, "HP : %d", hp_);
 }
 
 void Bike::DrawShadow(void)
@@ -495,7 +488,6 @@ void Bike::ProcessMove(void)
 	// 回転したい角度
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
-
 
 	std::array<PlayerInput, 4> playerInputs = { {
 		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
@@ -773,7 +765,18 @@ void Bike::ProcessBoost(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
+	std::array<PlayerInput, 4> playerInputs = { {
+		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
+		{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
+		{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
+		{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
+	} };
+
+	// プレイヤーごとの入力処理
+	const auto& input = playerInputs[playerID_];
+	int padState = GetJoypadInputState(input.padId);
+
+	if (ins.IsTrgDown(KEY_INPUT_E) || padState & static_cast<int>(input.action) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
 	{
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;

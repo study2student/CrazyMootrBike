@@ -21,5 +21,8 @@ private:
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
 	//std::shared_ptr<Score> score_;
+
+	//スコア描画の背景
+	int img_BG;
 };
 

@@ -224,8 +224,6 @@ void EnemyBase::AddScoreToPlayer(int playerId, int score)
 	if (playerId >= 0 && playerId < bikes_.size())
 	{
 		bikes_[playerId]->AddScore(score);
-		// デバッグログ
-		printfDx("Player %d Score: %d\n", playerId + 1, bikes_[playerId]->GetScore());
 	}
 }
 
@@ -243,7 +241,7 @@ void EnemyBase::HitEffect()
 
 	float scale = 50.0f;
 
-	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + EFF_POS_Z);
 	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
 	

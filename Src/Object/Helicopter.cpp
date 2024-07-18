@@ -145,7 +145,7 @@ void Helicopter::Draw(void)
 	//player_->Draw();
 
 	// デバッグ描画
-	DrawDebug();
+	//DrawDebug();
 }
 
 void Helicopter::AddCollider(std::shared_ptr<Collider> collider)

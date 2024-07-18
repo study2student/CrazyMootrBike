@@ -20,6 +20,10 @@ public:
 	static constexpr float SPEED_RUN = 130.0f;
 
 	//半径
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 	static constexpr float RADIUS = 80.0f;
 
 	//ブースト使用時の加速速度
@@ -99,7 +103,7 @@ public:
 		DOWN = PAD_INPUT_DOWN,
 		LEFT = PAD_INPUT_LEFT,
 		RIGHT = PAD_INPUT_RIGHT,
-		ACTION = PAD_INPUT_1
+		ACTION =PAD_INPUT_6
 	};
 
 	// プレイヤーごとの入力マッピング
@@ -174,9 +178,6 @@ private:
 	// アニメーション
 	std::unique_ptr<AnimationController> animationController_;
 
-	//タイヤ
-	std::shared_ptr<FrontTyre> frontTyre_;
-	std::shared_ptr<RearTyre> rearTyre_;
 
 	// 状態管理
 	STATE state_;

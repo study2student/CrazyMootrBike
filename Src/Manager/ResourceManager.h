@@ -36,9 +36,12 @@ public:
 		TANK_BARREL,
 		TANK_WHEEL,
 
+		//画像関連
 		IMG_BACKGROUND,// セレクトシーンの背景
 		IMG_SELECT_ALONE,//ひとりで
 		IMG_SELECT_EVERYONE,//みんなで
+		IMG_SCORE,//スコアの背景
+		IMG_LEFT_STICK,//操作説明画面
 
 		DEMO_STAGE,//仮ステージ
 		JUMP_RAMP,//ジャンプ台
@@ -80,6 +83,7 @@ public:
 		SND_START,//セレクト決定時の音
 		SND_WARNING,//警告音
 		SND_EXPLOSION,//爆発音
+		SND_GOAL,//ゴール音
 	};
 
 	// 明示的にインステンスを生成する

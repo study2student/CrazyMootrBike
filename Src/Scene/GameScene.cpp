@@ -499,21 +499,25 @@ void GameScene::Draw(void)
 		// 各バイクを描画
 		bikes_[0]->Draw();
 
-		int score = bikes_[0]->GetScore();
-
 		SetDrawScreen(DX_SCREEN_BACK);
 
 		DrawGraph(0, 0, mainScreen_, false);
-		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, score);
-
+		//DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, score);
+		DrawUI(Application::SCREEN_SIZE_X - 400, 0, 0);
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
 			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
 		}
+
+
 	}
 	else
 	{
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 		int sx = Application::SCREEN_SIZE_X;
 		int sy = Application::SCREEN_SIZE_Y;
 
@@ -565,11 +569,13 @@ void GameScene::Draw(void)
 
 				SetDrawScreen(DX_SCREEN_BACK);
 
+				int width = 400;
+
 				switch (i)
 				{
 				case 0:
 					DrawGraph(0, 0, mainScreen_, false);
-					DrawExtendFormatString(sx / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
+					DrawUI(sx / 2 - width, 0, 0);
 					if (stage_->GetIsGoal())
 					{
 						GoalAfterDraw();
@@ -577,7 +583,7 @@ void GameScene::Draw(void)
 					break;
 				case 1:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
-					DrawExtendFormatString(sx - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 2, bikes_[1]->GetScore());
+					DrawUI(sx - width, 0, 1);
 					if (stage_->GetIsGoal())
 					{
 						GoalAfterDraw();
@@ -585,7 +591,7 @@ void GameScene::Draw(void)
 					break;
 				case 2:
 					DrawGraph(0, sy / 2, mainScreen_, false);
-					DrawExtendFormatString(sx / 2 - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 3, bikes_[2]->GetScore());
+					DrawUI(sx / 2 - width, sy / 2, 2);
 					if (stage_->GetIsGoal())
 					{
 						GoalAfterDraw();
@@ -593,7 +599,7 @@ void GameScene::Draw(void)
 					break;
 				case 3:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
-					DrawExtendFormatString(sx - 400, sy / 2, 2, 2, 0xff0000, "Player %d Score:%d", 4, bikes_[3]->GetScore());
+					DrawUI(sx - width, sy / 2, 3);
 					if (stage_->GetIsGoal())
 					{
 						GoalAfterDraw();
@@ -611,7 +617,11 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
+<<<<<<< Updated upstream
 			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
+=======
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+>>>>>>> Stashed changes
 		}
 		
 	}
@@ -620,7 +630,7 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
 	//DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-	DrawDubg();
+	//DrawDubg();
 
 
 	////ゴールしたか判定
@@ -700,6 +710,30 @@ void GameScene::DrawDubg(void)
 	//DrawFormatString(840, 420, 0x000000,"カウンタ = %d", helicopter_.use_count());
 	//DrawFormatString(840, 420, 0x000000,"bombPosY = %f", helicopter_->GetBomb().lock()->GetTransform().pos.y);
 	DrawFormatString(0, 140, 0x000000, "IsHitStop:%d", isHitStop);
+}
+
+void GameScene::DrawUI(int x, int y, int playerID)
+{
+
+	using ap = Application;
+	int sc_x = x - 500;
+	int sc_y = y - 100;
+
+	// HPバーの幅
+	int HP_BAR_WIDTH = x - 10 - sc_x;
+	// HPバーの高さ
+	int HP_BAR_HEIGHT = y - 10;
+	// HPバーを描画
+	DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
+	DrawBox(sc_x, sc_y, sc_x + (bikes_[playerID]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
+
+	// HPの黒枠g
+	DrawBoxAA(sc_x, sc_y,
+		x - 10, HP_BAR_HEIGHT,
+		0x000000, false, 13.0f);
+
+	// スコア描画
+	DrawExtendFormatString(x, y, 2, 2, 0xff0000, "Player %d Score:%d", playerID + 1, bikes_[playerID]->GetScore());
 }
 
 void GameScene::Collision(void)
@@ -783,7 +817,7 @@ void GameScene::Collision(void)
 					{
 						//プレイヤーにダメージ
 						bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
-
+						
 					}
 				}
 				else
@@ -798,6 +832,8 @@ void GameScene::Collision(void)
 
 				//当たった
 				helicopter_->GetBomb()->SetIsCol(true);
+
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
 
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(

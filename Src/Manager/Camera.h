@@ -4,6 +4,7 @@
 #include "../Common/Quaternion.h"
 class Transform;
 class GameScene;
+class Bike;
 
 class Camera
 {
@@ -57,6 +58,24 @@ public:
 		SELF_SHOT
 	};
 
+	enum class JoypadButton {
+		UP = PAD_INPUT_UP,
+		DOWN = PAD_INPUT_DOWN,
+		LEFT = PAD_INPUT_LEFT,
+		RIGHT = PAD_INPUT_RIGHT,
+		ACTION = PAD_INPUT_6
+	};
+
+	// プレイヤーごとの入力マッピング
+	struct PlayerInput {
+		int padId;
+		JoypadButton up;
+		JoypadButton down;
+		JoypadButton left;
+		JoypadButton right;
+		JoypadButton action;
+	};
+
 	Camera(void);
 	~Camera(void);
 
@@ -96,7 +115,8 @@ public:
 
 
 private:
-
+	// バイク
+	std::vector<std::shared_ptr<Bike>> bikes_;
 
 	// カメラが追従対象とするTransform
 	const Transform* followTransform_;

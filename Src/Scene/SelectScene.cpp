@@ -33,6 +33,9 @@ void SelectScene::Init(void)
 	aloneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
 	everyoneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
 
+	// 操作画像
+	leftStickImg_ = resMng_.Load(ResourceManager::SRC::IMG_LEFT_STICK).handleId_;
+
 	isCursorHit_ = false;
 
 	selectAloneImgScale_ = 1.5f;
@@ -50,8 +53,12 @@ void SelectScene::Update(void)
 
 void SelectScene::Draw(void)
 {
-	//DrawGraph(0, 0, background_, true);
+
 	DrawExtendGraph(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, background_, true);
+
+	//操作説明画像描画
+	//DrawGraph(0, 0, leftStickImg_, true);
+
 	//ひとりプレイ選択時
 	if (state_ == STATE::ONE_PERSON)
 	{
@@ -143,7 +150,7 @@ void SelectScene::MouseProcess(void)
 	{
 		//ボタンにふれている場合
 		onePersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
 		{
 			//データ保存
 			int playNum = 1;
@@ -183,7 +190,7 @@ void SelectScene::MouseProcess(void)
 	{
 		//ボタンにふれている場合
 		fourPersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
 		{
 			//データ保存
 			int playNum = 4;
@@ -211,7 +218,7 @@ void SelectScene::KeyProcess(void)
 	auto& ins_ = InputManager::GetInstance();
 
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_LEFT))
+	if (ins_.IsTrgDown(KEY_INPUT_LEFT)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
 	{
 		// 決定時の音を再生
 		PlaySoundMem(ResourceManager::GetInstance().Load(
@@ -222,7 +229,7 @@ void SelectScene::KeyProcess(void)
 			nowCursor_ = 0;
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_RIGHT))
+	if (ins_.IsTrgDown(KEY_INPUT_RIGHT) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
 	{
 		// 決定時の音を再生
 		PlaySoundMem(ResourceManager::GetInstance().Load(

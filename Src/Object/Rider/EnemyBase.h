@@ -56,6 +56,9 @@ public:
 	//死亡状態になるまでの最大時間
 	static constexpr float TO_DEAD_TIME_MAX = 4.0f;
 
+	// エフェクト出現位置Z座標
+	static constexpr int EFF_POS_Z = 500;
+
 	// 状態
 	enum class STATE
 	{
