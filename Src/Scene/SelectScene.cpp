@@ -34,9 +34,6 @@ void SelectScene::Init(void)
 
 	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 
-	// ‘€ì‰æ‘œ
-	LoadDivGraph("Data/Image/Stick.png", 2, 2, 1, 92, 80, StickImg_, true);
-
 	Operation = resMng_.Load(ResourceManager::SRC::IMG_OPERATION).handleId_;
 	
 	isCursorHit_ = false;
@@ -127,11 +124,7 @@ void SelectScene::Draw(void)
 	//‘€ìà–¾‰æ‘œ•`‰æ
 	//DrawGraph(0, 0, StickImg_, true);
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 235, 0.5, 0, Operation, true);
-	for (int i = 0; i < 2; i++)
-	{
-		DrawGraph(Application::SCREEN_SIZE_X / 2 - 200, Application::SCREEN_SIZE_Y / 2, StickImg_[i], true);
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1.0, 0.0, StickImg_[i], true);
-	}
+
 	DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
 }
 

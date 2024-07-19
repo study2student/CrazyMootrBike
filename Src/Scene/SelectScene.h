@@ -81,7 +81,7 @@ private:
 	int everyoneImg_;
 
 	// ‘€ì‰æ‘œ
-	int StickImg_[2];
+
 	int Operation;
 
 	int imgPush_;
