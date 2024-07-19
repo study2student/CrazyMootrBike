@@ -172,7 +172,7 @@ void TitleScene::Draw(void)
 	{
 		//DrawGraph(Application::SCREEN_SIZE_X / 2 - 640, 250, imgTitle_, false);
 		DrawExtendGraph(160, 150, Application::SCREEN_SIZE_X - 160,Application::SCREEN_SIZE_Y, imgTitle_, true);
-		DrawGraph(Application::SCREEN_SIZE_X / 2-256, 700, imgPush_, true);
+		DrawGraph(Application::SCREEN_SIZE_X / 2-145, 700, imgPush_, true);
 	}
 
 }

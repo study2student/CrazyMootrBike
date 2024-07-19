@@ -37,7 +37,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::TITLE, res);
 
 	// PushSpace
-	res = new RES(RES_T::IMG, PATH_IMG + "PushSpace.png");
+	res = new RES(RES_T::IMG, PATH_IMG + "push.png");
 	resourcesMap_.emplace(SRC::PUSH_SPACE, res); 
 
 	// 吹き出し
@@ -140,8 +140,9 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "Score_BG.png");
 	resourcesMap_.emplace(SRC::IMG_SCORE, res);
 
-	res = new RES(RES_T::IMG, PATH_IMG + "Left_stick.png");
-	resourcesMap_.emplace(SRC::IMG_LEFT_STICK, res);
+	//操作画面スティック
+	res = new RES(RES_T::IMG, PATH_IMG + "Operation.png");
+	resourcesMap_.emplace(SRC::IMG_OPERATION, res);
 
 	// 仮ステージ
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");

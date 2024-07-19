@@ -81,7 +81,10 @@ private:
 	int everyoneImg_;
 
 	// ‘€ì‰æ‘œ
-	int leftStickImg_;
+	int StickImg_[2];
+	int Operation;
+
+	int imgPush_;
 
 	// ‚Ğ‚Æ‚èƒvƒŒƒC‘I‘ğ‰æ‘œ‚Ì‘å‚«‚³
 	float selectAloneImgScale_;

@@ -32,9 +32,13 @@ void SelectScene::Init(void)
 	aloneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
 	everyoneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
 
-	// ‘€ì‰æ‘œ
-	leftStickImg_ = resMng_.Load(ResourceManager::SRC::IMG_LEFT_STICK).handleId_;
+	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 
+	// ‘€ì‰æ‘œ
+	LoadDivGraph("Data/Image/Stick.png", 2, 2, 1, 92, 80, StickImg_, true);
+
+	Operation = resMng_.Load(ResourceManager::SRC::IMG_OPERATION).handleId_;
+	
 	isCursorHit_ = false;
 
 	selectAloneImgScale_ = 1.5f;
@@ -55,8 +59,6 @@ void SelectScene::Draw(void)
 
 	DrawExtendGraph(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, background_, true);
 
-	//‘€ìà–¾‰æ‘œ•`‰æ
-	//DrawGraph(0, 0, leftStickImg_, true);
 
 	//‚Ğ‚Æ‚èƒvƒŒƒC‘I‘ğ
 	if (state_ == STATE::ONE_PERSON)
@@ -122,6 +124,15 @@ void SelectScene::Draw(void)
 		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, everyoneImg_, true);
 	}
 
+	//‘€ìà–¾‰æ‘œ•`‰æ
+	//DrawGraph(0, 0, StickImg_, true);
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 235, 0.5, 0, Operation, true);
+	for (int i = 0; i < 2; i++)
+	{
+		DrawGraph(Application::SCREEN_SIZE_X / 2 - 200, Application::SCREEN_SIZE_Y / 2, StickImg_[i], true);
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, 1.0, 0.0, StickImg_[i], true);
+	}
+	DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
 }
 
 

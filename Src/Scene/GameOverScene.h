@@ -24,5 +24,6 @@ private:
 
 	//ƒXƒRƒA•`‰æ‚Ì”wŒi
 	int img_BG;
+	int imgPush_;
 };
 

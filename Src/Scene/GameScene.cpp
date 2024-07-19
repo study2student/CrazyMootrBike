@@ -502,8 +502,26 @@ void GameScene::Draw(void)
 		SetDrawScreen(DX_SCREEN_BACK);
 
 		DrawGraph(0, 0, mainScreen_, false);
-		//DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, score);
-		DrawUI(Application::SCREEN_SIZE_X - 400, 0, 0);
+		//スコア描画
+		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
+		//HP描画
+		using ap = Application;
+		int sc_x = ap::SCREEN_SIZE_X - 500;
+		int sc_y = ap::SCREEN_SIZE_Y - 100;
+
+		// HPバーの幅
+		int HP_BAR_WIDTH = ap::SCREEN_SIZE_X - 10 - sc_x;
+		// HPバーの高さ
+		int HP_BAR_HEIGHT = ap::SCREEN_SIZE_Y - 10;
+		// HPバーを描画
+		DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
+		DrawBox(sc_x, sc_y, sc_x + (bikes_[0]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
+
+		// HPの黒枠
+		DrawBoxAA(sc_x, sc_y,
+			ap::SCREEN_SIZE_X - 10, HP_BAR_HEIGHT,
+			0x000000, false, 13.0f);
+
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
@@ -713,20 +731,24 @@ void GameScene::DrawUI(int x, int y, int playerID)
 
 	using ap = Application;
 	int sc_x = x - 500;
-	int sc_y = y - 100;
+	int sc_y = y + 100;
 
 	// HPバーの幅
 	int HP_BAR_WIDTH = x - 10 - sc_x;
 	// HPバーの高さ
-	int HP_BAR_HEIGHT = y - 10;
+	int HP_BAR_HEIGHT = y + 10;
 	// HPバーを描画
 	DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
 	DrawBox(sc_x, sc_y, sc_x + (bikes_[playerID]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
 
 	// HPの黒枠g
-	DrawBoxAA(sc_x, sc_y,
+	DrawBox(sc_x, sc_y,
 		x - 10, HP_BAR_HEIGHT,
-		0x000000, false, 13.0f);
+		0x000000, false);
+
+	//DrawBoxAA(sc_x, sc_y,
+	//	x - 10, HP_BAR_HEIGHT,
+	//	0x000000, false, 13.0f);
 
 	// スコア描画
 	DrawExtendFormatString(x, y, 2, 2, 0xff0000, "Player %d Score:%d", playerID + 1, bikes_[playerID]->GetScore());

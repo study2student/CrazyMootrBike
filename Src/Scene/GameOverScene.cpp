@@ -24,7 +24,7 @@ void GameOverScene::Init(void)
 
 	//”wŒi‰æ‘œ
 	img_BG = resMng_.Load(ResourceManager::SRC::IMG_SCORE).handleId_;
-
+	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 	//ƒoƒCƒN‚Ì“Ç‚İ‚İ
 	for (int i = 0; i < 4; ++i) {
 		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
@@ -77,5 +77,5 @@ void GameOverScene::Draw(void)
 		}
 	}
 	
-
+	DrawGraph(200, 700, imgPush_, true);
 }
