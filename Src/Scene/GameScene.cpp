@@ -1,7 +1,7 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
 #include <string.h>
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "../Manager/Camera.h"
@@ -751,7 +751,7 @@ void GameScene::Collision(void)
 			auto b2Pos = enemyBikes_[b2]->GetCapsule().lock()->GetCenter();
 
 			VECTOR diff = VSub(b1Pos, b2Pos);
-			float  dis = AsoUtility::SqrMagnitudeF(diff);
+			float  dis = MyUtility::SqrMagnitudeF(diff);
 			if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
 			{
 
@@ -784,7 +784,7 @@ void GameScene::Collision(void)
 	//auto bikeCap = bikes_[3]->GetCapsule();
 
 	//VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-	//float  dis = AsoUtility::SqrMagnitudeF(diff);
+	//float  dis = MyUtility::SqrMagnitudeF(diff);
 	//if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 	//{
 	//	//プレイヤーにダメージ
@@ -803,7 +803,7 @@ void GameScene::Collision(void)
 			auto bombCap = helicopter_->GetBomb()->GetCapsule();
 
 			VECTOR diffB = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-			float  disB = AsoUtility::SqrMagnitudeF(diffB);
+			float  disB = MyUtility::SqrMagnitudeF(diffB);
 			if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 			{
 				if (playNumber_ == 1)
@@ -844,7 +844,7 @@ void GameScene::Collision(void)
 			auto throwCap = throwTyre_->GetCapsule();
 
 			VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-			float  disT = AsoUtility::SqrMagnitudeF(diffT);
+			float  disT = MyUtility::SqrMagnitudeF(diffT);
 			if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 			{
 				if (playNumber_ == 1)
@@ -880,7 +880,7 @@ void GameScene::Collision(void)
 		auto throwCap = throwTyre_->GetCapsule();
 
 		VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		float  disT = AsoUtility::SqrMagnitudeF(diffT);
+		float  disT = MyUtility::SqrMagnitudeF(diffT);
 		if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 		{
 			//プレイヤーにダメージ
@@ -953,7 +953,7 @@ void GameScene::BikeCollision(void)
 			auto b2Pos = bikes_[b2]->GetCapsule().lock()->GetCenter();
 
 			VECTOR diff = VSub(b1Pos, b2Pos);
-			float  dis = AsoUtility::SqrMagnitudeF(diff);
+			float  dis = MyUtility::SqrMagnitudeF(diff);
 			if (dis < Bike::RADIUS * Bike::RADIUS)
 			{
 

@@ -1,7 +1,7 @@
 #include <string>
 #include<EffekseerForDXLib.h>
 #include "../../Application.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -24,9 +24,9 @@ EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* 
 	state_ = STATE::NONE;
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -35,13 +35,13 @@ EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* 
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
-	jumpPow_ = AsoUtility::VECTOR_ZERO;
+	jumpPow_ = MyUtility::VECTOR_ZERO;
 	isJump_ = false;
 	stepJump_ = 0.0f;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	isBikeCol_ = false;
 
@@ -71,12 +71,12 @@ void EnemyBase::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::COPPER_MEDAL));
-	transform_.scl = AsoUtility::VECTOR_ONE;
+	transform_.scl = MyUtility::VECTOR_ONE;
 	//transform_.pos = { 700.0f, -800.0f, -2500.0f };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, -800.0f, makePos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
 
@@ -493,7 +493,7 @@ void EnemyBase::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	//// 移動量をゼロ
-	//movePow_ = AsoUtility::VECTOR_ZERO;
+	//movePow_ = MyUtility::VECTOR_ZERO;
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -501,34 +501,34 @@ void EnemyBase::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	//VECTOR dir = MyUtility::DIR_F;
+	VECTOR dir;// = MyUtility::DIR_F;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0);
+	//	rotRad = MyUtility::Deg2RadD(0.0);
 	//	dir = cameraRot.GetForward();
 	//}
 
 	//// カメラ方向から後退したい
 	//if (ins.IsNew(KEY_INPUT_S))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0);
+	//	rotRad = MyUtility::Deg2RadD(180.0);
 	//	dir = cameraRot.GetBack();
 	//}
 
 	//// カメラ方向から右側へ移動したい
 	//if (ins.IsNew(KEY_INPUT_D))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(90.0);
+	//	rotRad = MyUtility::Deg2RadD(90.0);
 	//	dir = cameraRot.GetRight();
 	//}
 
 	//// カメラ方向から左側へ移動したい
 	//if (ins.IsNew(KEY_INPUT_A))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(270.0);
+	//	rotRad = MyUtility::Deg2RadD(270.0);
 	//	dir = cameraRot.GetLeft();
 	//}
 
@@ -541,14 +541,14 @@ void EnemyBase::ProcessMove(void)
 	dir = VNorm(len);*/
 
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
+	/*if (!MyUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
 	// 移動処理
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
 	for (const auto& bike : bikes_) {
 		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		float  dis = MyUtility::SqrMagnitudeF(diff);
 		if (dis < RADIUS * RADIUS)
 		{
 			//範囲に入った
@@ -646,7 +646,7 @@ void EnemyBase::ProcessJump(void)
 		stepJump_ += scnMng_.GetDeltaTime();
 		if (stepJump_ < TIME_JUMP_IN)
 		{
-			jumpPow_ = VScale(AsoUtility::DIR_U, POW_JUMP);
+			jumpPow_ = VScale(MyUtility::DIR_U, POW_JUMP);
 		}
 
 	}
@@ -661,7 +661,7 @@ void EnemyBase::ProcessJump(void)
 void EnemyBase::SetGoalRotate(double rotRad)
 {
 	//VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis(rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis(rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -682,10 +682,10 @@ void EnemyBase::RotY(void)
 	{
 		//回転
 		// デグリーからラジアン(変換)
-		float rad = AsoUtility::Deg2RadF(SPEED_ROT);
+		float rad = MyUtility::Deg2RadF(SPEED_ROT);
 
 		// ラジアンからクォータニオン(指定軸を指定角分回転させる)
-		Quaternion rotPow = Quaternion::AngleAxis(rad, AsoUtility::AXIS_Y);
+		Quaternion rotPow = Quaternion::AngleAxis(rad, MyUtility::AXIS_Y);
 
 		//クォータニオン(回転)の合成
 		enemyRotY_ = enemyRotY_.Mult(rotPow);
@@ -720,10 +720,10 @@ void EnemyBase::CollisionGravity(void)
 	movedPos_ = VAdd(movedPos_, jumpPow_);
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -748,7 +748,7 @@ void EnemyBase::CollisionGravity(void)
 			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
 
 			// ジャンプリセット
-			jumpPow_ = AsoUtility::VECTOR_ZERO;
+			jumpPow_ = MyUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
 			if (isJump_)
@@ -828,7 +828,7 @@ void EnemyBase::CalcGravityPow(void)
 	}
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

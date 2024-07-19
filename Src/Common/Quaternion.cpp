@@ -1,6 +1,6 @@
 #include <math.h>
 #include <DxLib.h>
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "Quaternion.h"
 
 Quaternion::Quaternion(void)
@@ -40,9 +40,9 @@ Quaternion Quaternion::Euler(float radX, float radY, float radZ)
 
     Quaternion ret = Quaternion();
 
-    radX = AsoUtility::RadIn2PI(radX);
-    radY = AsoUtility::RadIn2PI(radY);
-    radZ = AsoUtility::RadIn2PI(radZ);
+    radX = MyUtility::RadIn2PI(radX);
+    radY = MyUtility::RadIn2PI(radY);
+    radZ = MyUtility::RadIn2PI(radZ);
 
     float cosZ = cos(radZ / 2.0f);
     float sinZ = sin(radZ / 2.0f);
@@ -258,8 +258,8 @@ Quaternion Quaternion::LookRotation(VECTOR dir)
 Quaternion Quaternion::LookRotation(VECTOR dir, VECTOR up)
 {
 
-    dir = AsoUtility::VNormalize(dir);
-    VECTOR right = AsoUtility::VNormalize(VCross(up, dir));
+    dir = MyUtility::VNormalize(dir);
+    VECTOR right = MyUtility::VNormalize(VCross(up, dir));
     up = VCross(dir, right);
     auto m00 = right.x;
     auto m01 = right.y;
@@ -441,32 +441,32 @@ VECTOR Quaternion::GetDir(VECTOR dir) const
 
 VECTOR Quaternion::GetForward(void) const
 {
-    return GetDir(AsoUtility::DIR_F);
+    return GetDir(MyUtility::DIR_F);
 }
 
 VECTOR Quaternion::GetBack(void) const
 {
-    return GetDir(AsoUtility::DIR_B);
+    return GetDir(MyUtility::DIR_B);
 }
 
 VECTOR Quaternion::GetRight(void) const
 {
-    return GetDir(AsoUtility::DIR_R);
+    return GetDir(MyUtility::DIR_R);
 }
 
 VECTOR Quaternion::GetLeft(void) const
 {
-    return GetDir(AsoUtility::DIR_L);
+    return GetDir(MyUtility::DIR_L);
 }
 
 VECTOR Quaternion::GetUp(void) const
 {
-    return GetDir(AsoUtility::DIR_U);
+    return GetDir(MyUtility::DIR_U);
 }
 
 VECTOR Quaternion::GetDown(void) const
 {
-    return GetDir(AsoUtility::DIR_D);
+    return GetDir(MyUtility::DIR_D);
 }
 
 float Quaternion::Dot(const Quaternion& q1, const Quaternion& q2)
@@ -536,21 +536,21 @@ Quaternion Quaternion::FromToRotation(VECTOR fromDir, VECTOR toDir)
 {
 
 	VECTOR axis = VCross(fromDir, toDir);
-	float angle = AsoUtility::AngleDeg(fromDir, toDir);
+	float angle = MyUtility::AngleDeg(fromDir, toDir);
 	if (angle >= 179.9196f)
 	{
-		auto r = VCross(fromDir, AsoUtility::DIR_R);
+		auto r = VCross(fromDir, MyUtility::DIR_R);
 		axis = VCross(r, fromDir);
 		//if (axis.sqrMagnitude < 0.000001f)
 		float len = axis.x * axis.x + axis.y * axis.y + axis.z * axis.z;
 		if (len < 0.000001f)
 		{
-			axis = AsoUtility::DIR_U;
+			axis = MyUtility::DIR_U;
 		}
 	}
 
-	axis = AsoUtility::VNormalize(axis);
-	return Quaternion::AngleAxis(AsoUtility::Deg2RadD(angle), axis);
+	axis = MyUtility::VNormalize(axis);
+	return Quaternion::AngleAxis(MyUtility::Deg2RadD(angle), axis);
 
 }
 

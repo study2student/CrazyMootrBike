@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <queue>
 #include <DxLib.h>
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "WarpStar.h"
@@ -158,7 +158,7 @@ void Stage::Update(void)
 		auto jumpRampCap = jampRamp_->GetCapsule();
 
 		VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		float  dis = MyUtility::SqrMagnitudeF(diff);
 		if (dis < bikeCap.lock()->GetRadius() * jumpRampCap.lock()->GetRadius())
 		{
 			isJamp_ = true;
@@ -621,9 +621,9 @@ void Stage::MakeWarpStar(void)
 	//trans.pos = { -910.0f, 200.0f, 894.0f };
 	//trans.scl = { 0.6f, 0.6f, 0.6f };
 	//trans.quaRot = Quaternion::Euler(
-	//	AsoUtility::Deg2RadF(-25.0f),
-	//	AsoUtility::Deg2RadF(-50.0f),
-	//	AsoUtility::Deg2RadF(0.0f)
+	//	MyUtility::Deg2RadF(-25.0f),
+	//	MyUtility::Deg2RadF(-50.0f),
+	//	MyUtility::Deg2RadF(0.0f)
 	//);
 
  // 	star = new WarpStar(bike_, trans);
@@ -756,7 +756,7 @@ void Stage::MakeCity(void)
 		cityTrans.scl = { scale,scale,scale };
 		cityTrans.quaRot = Quaternion();
 		cityTrans.quaRotLocal =
-			Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });
+			Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f });
 		cityTrans.pos = { CITY_START_POS.x,  CITY_START_POS.y,  CITY_START_POS.z + 5000.0f * (size + 1) };
 
 		cityTrans.Update();

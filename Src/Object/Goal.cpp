@@ -1,6 +1,6 @@
 #include <string>
 #include "../Application.h"
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/InputManager.h"
 #include "..//Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
@@ -14,17 +14,17 @@
 Goal::Goal(void)
 {
 
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	rotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	capsule_ = nullptr;
 }
@@ -45,7 +45,7 @@ void Goal::Init(void)
 	transform_.pos = { GOAL_BASE_POS.x, GOAL_BASE_POS.y ,GOAL_BASE_POS.z + 200000000.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f });
 	transform_.Update();
 
 
@@ -120,10 +120,10 @@ void Goal::Collision(void)
 void Goal::CollisionGravity(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -203,7 +203,7 @@ void Goal::CollisionCapsule(void)
 void Goal::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

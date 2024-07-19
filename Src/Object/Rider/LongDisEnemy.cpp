@@ -2,7 +2,7 @@
 #include <string>
 #include<EffekseerForDXLib.h>
 #include "../../Application.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -33,7 +33,7 @@ void LongDisEnemy::SetParam(void)
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
 
@@ -108,7 +108,7 @@ void LongDisEnemy::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	//// 移動量をゼロ
-	//movePow_ = AsoUtility::VECTOR_ZERO;
+	//movePow_ = MyUtility::VECTOR_ZERO;
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -116,34 +116,34 @@ void LongDisEnemy::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	//VECTOR dir = AsoUtility::DIR_F;
-	VECTOR dir;// = AsoUtility::DIR_F;
+	//VECTOR dir = MyUtility::DIR_F;
+	VECTOR dir;// = MyUtility::DIR_F;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0);
+	//	rotRad = MyUtility::Deg2RadD(0.0);
 	//	dir = cameraRot.GetForward();
 	//}
 
 	//// カメラ方向から後退したい
 	//if (ins.IsNew(KEY_INPUT_S))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0);
+	//	rotRad = MyUtility::Deg2RadD(180.0);
 	//	dir = cameraRot.GetBack();
 	//}
 
 	//// カメラ方向から右側へ移動したい
 	//if (ins.IsNew(KEY_INPUT_D))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(90.0);
+	//	rotRad = MyUtility::Deg2RadD(90.0);
 	//	dir = cameraRot.GetRight();
 	//}
 
 	//// カメラ方向から左側へ移動したい
 	//if (ins.IsNew(KEY_INPUT_A))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(270.0);
+	//	rotRad = MyUtility::Deg2RadD(270.0);
 	//	dir = cameraRot.GetLeft();
 	//}
 
@@ -156,14 +156,14 @@ void LongDisEnemy::ProcessMove(void)
 	//dir = VNorm(len);
 
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
+	/*if (!MyUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
 	// 移動処理
 	//speed_ = SPEED_MOVE;
 	//衝突判定(敵とプレイヤー)
 	for (const auto& bike : bikes_) {
 		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		float  dis = MyUtility::SqrMagnitudeF(diff);
 		if (dis < RADIUS * RADIUS)
 		{
 			//範囲に入った

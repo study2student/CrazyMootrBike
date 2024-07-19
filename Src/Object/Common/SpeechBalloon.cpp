@@ -3,7 +3,7 @@
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/Resource.h"
 #include "../../Manager/SceneManager.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "SpeechBalloon.h"
 
 SpeechBalloon::SpeechBalloon(TYPE type, const Transform& parent) : transformParent_(parent)
@@ -74,8 +74,8 @@ void SpeechBalloon::DrawSpeech(void)
 	// カメラのSetCameraNearFarから外れていた場合、表示しない
 	if (pos_.z > 0.0f && pos_.z < 1.0f)
 	{
-		int x = AsoUtility::Round(pos_.x);
-		int y = AsoUtility::Round(pos_.y);
+		int x = MyUtility::Round(pos_.x);
+		int y = MyUtility::Round(pos_.y);
 		DrawRotaGraph(x, y, 0.5f, 0.0f, image_, true);
 		int len = (int)strlen(text_.c_str());
 		int width = GetDrawStringWidth(text_.c_str(), len);

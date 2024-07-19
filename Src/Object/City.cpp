@@ -1,5 +1,4 @@
 #include <DxLib.h>
-#include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "JampRamp.h"

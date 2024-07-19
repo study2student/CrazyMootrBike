@@ -1,6 +1,6 @@
 #include <string>
 #include "..//Application.h"
-#include "..///Utility/AsoUtility.h"
+#include "..///Utility/MyUtility.h"
 #include "..///Manager/InputManager.h"
 #include "..//Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
@@ -19,9 +19,9 @@ Rotor::Rotor()
 	attackState_ = ATTACK_TYPE::NONE;
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	rotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
@@ -30,8 +30,8 @@ Rotor::Rotor()
 	isAttack_ = false;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	imgShadow_ = -1;
 
@@ -58,7 +58,7 @@ void Rotor::Init(void)
 	transform_.pos = { 1670.0f, 500.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	//transform_.Update();
 
 	// アニメーションの設定
@@ -215,10 +215,10 @@ void Rotor::ProcessMove(void)
 
 	//羽の回転
 	// デグリーからラジアン(変換)
-	float rad = AsoUtility::Deg2RadF(SPEED_ROT);
+	float rad = MyUtility::Deg2RadF(SPEED_ROT);
 
 	// ラジアンからクォータニオン(指定軸を指定角分回転させる)
-	Quaternion rotPow = Quaternion::AngleAxis(rad, AsoUtility::AXIS_Y);
+	Quaternion rotPow = Quaternion::AngleAxis(rad, MyUtility::AXIS_Y);
 
 	//クォータニオン(回転)の合成
 	rotY_ = rotY_.Mult(rotPow);
@@ -258,7 +258,7 @@ void Rotor::SpecialAttack(void)
 void Rotor::SetGoalRotate(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis(rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis(rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -275,7 +275,7 @@ void Rotor::SetGoalRotate(float rotRad)
 void Rotor::SetGoalRotateZ(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis(rotRad, AsoUtility::AXIS_Z);
+	Quaternion axis = Quaternion::AngleAxis(rotRad, MyUtility::AXIS_Z);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -317,10 +317,10 @@ void Rotor::CollisionGravity(void)
 {
 
 	//// 重力方向
-	//VECTOR dirGravity = AsoUtility::DIR_D;
+	//VECTOR dirGravity = MyUtility::DIR_D;
 
 	//// 重力方向の反対
-	//VECTOR dirUpGravity = AsoUtility::DIR_U;
+	//VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	//// 重力の強さ
 	//float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -413,7 +413,7 @@ void Rotor::CollisionCapsule(void)
 void Rotor::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

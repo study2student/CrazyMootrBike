@@ -3,7 +3,7 @@
 #include "../Manager/ResourceManager.h"
 #include "Common/Transform.h"
 #include "../Object/Rider/Player.h"
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Object/Planet.h"
 #include "Common/Capsule.h"
@@ -36,7 +36,7 @@ void Bomb::Init(void)
 	//transform_.pos = { 1670.0f, 0.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
 	//爆発エフェクト
@@ -319,10 +319,10 @@ void Bomb::CollisionGravity(void)
 {
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -404,7 +404,7 @@ void Bomb::CollisionCapsule(void)
 void Bomb::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

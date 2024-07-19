@@ -1,6 +1,6 @@
 #include <string>
 #include "../../Application.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -19,21 +19,21 @@ Player::Player(void)
 	state_ = STATE::NONE;
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	playerRotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
-	jumpPow_ = AsoUtility::VECTOR_ZERO;
+	jumpPow_ = MyUtility::VECTOR_ZERO;
 	isJump_ = false;
 	stepJump_ = 0.0f;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	imgShadow_ = -1;
 
@@ -53,11 +53,11 @@ void Player::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::PLAYER));
-	transform_.scl = AsoUtility::VECTOR_ONE;
+	transform_.scl = MyUtility::VECTOR_ONE;
 	transform_.pos = { 0.0f, -30.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
 	// アニメーションの設定
@@ -305,7 +305,7 @@ void Player::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	// 移動量をゼロ
-	movePow_ = AsoUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -313,37 +313,37 @@ void Player::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	VECTOR dir = AsoUtility::VECTOR_ZERO;
+	VECTOR dir = MyUtility::VECTOR_ZERO;
 
 	//// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0);
+	//	rotRad = MyUtility::Deg2RadD(0.0);
 	//	dir = cameraRot.GetForward();
 	//}
 
 	//// カメラ方向から後退したい
 	//if (ins.IsNew(KEY_INPUT_S))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(180.0);
+	//	rotRad = MyUtility::Deg2RadD(180.0);
 	//	dir = cameraRot.GetBack();
 	//}
 
 	//// カメラ方向から右側へ移動したい
 	//if (ins.IsNew(KEY_INPUT_D))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(90.0);
+	//	rotRad = MyUtility::Deg2RadD(90.0);
 	//	dir = cameraRot.GetRight();
 	//}
 
 	//// カメラ方向から左側へ移動したい
 	//if (ins.IsNew(KEY_INPUT_A))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(270.0);
+	//	rotRad = MyUtility::Deg2RadD(270.0);
 	//	dir = cameraRot.GetLeft();
 	//}
 
-	if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {
+	if (!MyUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {
 
 		// 移動処理
 		speed_ = SPEED_MOVE;
@@ -411,7 +411,7 @@ void Player::ProcessJump(void)
 		stepJump_ += scnMng_.GetDeltaTime();
 		if (stepJump_ < TIME_JUMP_IN)
 		{
-			jumpPow_ = VScale(AsoUtility::DIR_U, POW_JUMP);
+			jumpPow_ = VScale(MyUtility::DIR_U, POW_JUMP);
 		}
 
 	}
@@ -428,7 +428,7 @@ void Player::SetGoalRotate(double rotRad)
 {
 
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -478,10 +478,10 @@ void Player::CollisionGravity(void)
 	movedPos_ = VAdd(movedPos_, jumpPow_);
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -506,7 +506,7 @@ void Player::CollisionGravity(void)
 			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
 
 			// ジャンプリセット
-			jumpPow_ = AsoUtility::VECTOR_ZERO;
+			jumpPow_ = MyUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
 			//if (isJump_)
@@ -578,7 +578,7 @@ void Player::CalcGravityPow(void)
 {
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

@@ -2,7 +2,7 @@
 #include <string>
 #include<EffekseerForDXLib.h>
 #include "../../Application.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -33,7 +33,7 @@ void ShortDisEnemy::SetParam(void)
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 
 
@@ -107,7 +107,7 @@ void ShortDisEnemy::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	//// ˆÚ“®—Ê‚ðƒ[ƒ
-	//movePow_ = AsoUtility::VECTOR_ZERO;
+	//movePow_ = MyUtility::VECTOR_ZERO;
 
 	// XŽ²‰ñ“]‚ðœ‚¢‚½Ad—Í•ûŒü‚É‚’¼‚ÈƒJƒƒ‰Šp“x(XZ•½–Ê)‚ðŽæ“¾
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -126,14 +126,14 @@ void ShortDisEnemy::ProcessMove(void)
 	dir = VNorm(len);*/
 
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
+	/*if (!MyUtility::EqualsVZero(dir) && (isJump_ || IsEndLanding())) {*/
 
 	// ˆÚ“®ˆ—
 	//speed_ = SPEED_MOVE;
 	//Õ“Ë”»’è(“G‚ÆƒvƒŒƒCƒ„[)
 	for (const auto& bike : bikes_) {
 		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-		float  dis = AsoUtility::SqrMagnitudeF(diff);
+		float  dis = MyUtility::SqrMagnitudeF(diff);
 		if (dis < RADIUS * RADIUS)
 		{
 			//”ÍˆÍ‚É“ü‚Á‚½

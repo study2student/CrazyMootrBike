@@ -1,6 +1,6 @@
 #include <string>
 #include "../../Application.h"
-#include "../..//Utility/AsoUtility.h"
+#include "../..//Utility/MyUtility.h"
 #include "../..//Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -27,23 +27,23 @@ EnemyBike::EnemyBike(EnemyBase* enemy)
 	attackState_ = ATTACK_TYPE::NONE;
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	playerRotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
-	jumpPow_ = AsoUtility::VECTOR_ZERO;
+	jumpPow_ = MyUtility::VECTOR_ZERO;
 	isJump_ = false;
 	stepJump_ = 0.0f;
 
 	isAttack_ = false;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	imgShadow_ = -1;
 
@@ -73,7 +73,7 @@ void EnemyBike::Init(void)
 	transform_.pos = { 0.0f, 0.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	//transform_.Update();
 
 	// モデルの基本設定
@@ -295,7 +295,7 @@ void EnemyBike::ProcessDebug(void)
 void EnemyBike::SetGoalRotate(double rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -341,10 +341,10 @@ void EnemyBike::CollisionGravity(void)
 	//movedPos_ = VAdd(movedPos_, jumpPow_);
 
 	//// 重力方向
-	//VECTOR dirGravity = AsoUtility::DIR_D;
+	//VECTOR dirGravity = MyUtility::DIR_D;
 
 	//// 重力方向の反対
-	//VECTOR dirUpGravity = AsoUtility::DIR_U;
+	//VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	//// 重力の強さ
 	//float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -368,7 +368,7 @@ void EnemyBike::CollisionGravity(void)
 	//		movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
 
 	//		// ジャンプリセット
-	//		jumpPow_ = AsoUtility::VECTOR_ZERO;
+	//		jumpPow_ = MyUtility::VECTOR_ZERO;
 	//		stepJump_ = 0.0f;
 
 	//		if (isJump_)
@@ -437,7 +437,7 @@ void EnemyBike::CollisionCapsule(void)
 void EnemyBike::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

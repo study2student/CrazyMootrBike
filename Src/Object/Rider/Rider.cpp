@@ -1,6 +1,6 @@
 #include <string>
 #include "../../Application.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -23,21 +23,21 @@ Rider::Rider(void)
 	state_ = STATE::NONE;
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	playerRotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
-	jumpPow_ = AsoUtility::VECTOR_ZERO;
+	jumpPow_ = MyUtility::VECTOR_ZERO;
 	isJump_ = false;
 	stepJump_ = 0.0f;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 }
 
 Rider::~Rider(void)
@@ -193,7 +193,7 @@ void Rider::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	// 移動量をゼロ
-	movePow_ = AsoUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -201,37 +201,37 @@ void Rider::ProcessMove(void)
 	// 回転したい角度
 	double rotRad = 0;
 
-	VECTOR dir = AsoUtility::VECTOR_ZERO;
+	VECTOR dir = MyUtility::VECTOR_ZERO;
 
 	// カメラ方向に前進したい
 	if (ins.IsNew(KEY_INPUT_W))
 	{
-		rotRad = AsoUtility::Deg2RadD(0.0);
+		rotRad = MyUtility::Deg2RadD(0.0);
 		dir = cameraRot.GetForward();
 	}
 
 	// カメラ方向から後退したい
 	if (ins.IsNew(KEY_INPUT_S))
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0);
+		rotRad = MyUtility::Deg2RadD(180.0);
 		dir = cameraRot.GetBack();
 	}
 
 	// カメラ方向から右側へ移動したい
 	if (ins.IsNew(KEY_INPUT_D))
 	{
-		rotRad = AsoUtility::Deg2RadD(90.0);
+		rotRad = MyUtility::Deg2RadD(90.0);
 		dir = cameraRot.GetRight();
 	}
 
 	// カメラ方向から左側へ移動したい
 	if (ins.IsNew(KEY_INPUT_A))
 	{
-		rotRad = AsoUtility::Deg2RadD(270.0);
+		rotRad = MyUtility::Deg2RadD(270.0);
 		dir = cameraRot.GetLeft();
 	}
 
-	/*if (!AsoUtility::EqualsVZero(dir) && (isJump_))*/ {
+	/*if (!MyUtility::EqualsVZero(dir) && (isJump_))*/ {
 
 		// 移動処理
 		speed_ = SPEED_MOVE;
@@ -271,7 +271,7 @@ void Rider::ProcessMove(void)
 void Rider::SetGoalRotate(double rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis((double)cameraRot.y + rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -315,10 +315,10 @@ void Rider::CollisionGravity(void)
 	movedPos_ = VAdd(movedPos_, jumpPow_);
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -342,7 +342,7 @@ void Rider::CollisionGravity(void)
 			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
 
 			// ジャンプリセット
-			jumpPow_ = AsoUtility::VECTOR_ZERO;
+			jumpPow_ = MyUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
 			if (isJump_)
@@ -411,7 +411,7 @@ void Rider::CollisionCapsule(void)
 void Rider::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

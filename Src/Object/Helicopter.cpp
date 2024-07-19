@@ -1,6 +1,6 @@
 #include <string>
 #include "..//Application.h"
-#include "..///Utility/AsoUtility.h"
+#include "..///Utility/MyUtility.h"
 #include "..///Manager/InputManager.h"
 #include "..//Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
@@ -26,9 +26,9 @@ Helicopter::Helicopter(GameScene* gameScene)
 	attackState_ = ATTACK_TYPE::NONE;
 
 	speed_ = SPEED_MOVE;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	rotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
@@ -37,8 +37,8 @@ Helicopter::Helicopter(GameScene* gameScene)
 	isAttack_ = false;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	imgShadow_ = -1;
 
@@ -76,7 +76,7 @@ void Helicopter::Init(void)
 	transform_.pos = { 1670.0f, 500.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	//transform_.Update();
 
 	// アニメーションの設定
@@ -317,7 +317,7 @@ void Helicopter::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	// 移動量をゼロ
-	movePow_ = AsoUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -326,7 +326,7 @@ void Helicopter::ProcessMove(void)
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
 
-	VECTOR dir = AsoUtility::VECTOR_ZERO;
+	VECTOR dir = MyUtility::VECTOR_ZERO;
 
 	//バイクプレイヤーに合わせる(ステージ内にいるときのみ)
 	if (!isTargetOutside_)
@@ -339,7 +339,7 @@ void Helicopter::ProcessMove(void)
 		else
 		{
 			float  rate = 0.015f;
-			transform_.pos.x = AsoUtility::Lerp(transform_.pos.x, targetTrans_.pos.x, rate);
+			transform_.pos.x = MyUtility::Lerp(transform_.pos.x, targetTrans_.pos.x, rate);
 		}
 		
 	}
@@ -349,7 +349,7 @@ void Helicopter::ProcessMove(void)
 	VECTOR movePowF_ = VScale(transform_.GetForward(), speed_);
 
 
-	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
+	if (!MyUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
 		// 移動処理
 		speed_ = SPEED_MOVE;
@@ -368,7 +368,7 @@ void Helicopter::ProcessMove(void)
 	//{
 
 	//	//傾きっぱになるので角度リセットしておく
-	//	rotRad = AsoUtility::Deg2RadD(0.0f);
+	//	rotRad = MyUtility::Deg2RadD(0.0f);
 	//	dir = cameraRot.GetForward();
 
 	//	//// 回転処理
@@ -441,7 +441,7 @@ void Helicopter::LongAttack(void)
 void Helicopter::SetGoalRotate(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -458,7 +458,7 @@ void Helicopter::SetGoalRotate(float rotRad)
 void Helicopter::SetGoalRotateZ(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.y + rotRad, AsoUtility::AXIS_Z);
+	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.y + rotRad, MyUtility::AXIS_Z);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -552,7 +552,7 @@ void Helicopter::CollisionCapsule(void)
 void Helicopter::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

@@ -1,15 +1,15 @@
 #include <DxLib.h>
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "Transform.h"
 
 Transform::Transform(void)
 {
 	modelId = -1;
 
-	scl = AsoUtility::VECTOR_ONE;
-	rot = AsoUtility::VECTOR_ZERO;
-	pos = AsoUtility::VECTOR_ZERO;
-	localPos = AsoUtility::VECTOR_ZERO;
+	scl = MyUtility::VECTOR_ONE;
+	rot = MyUtility::VECTOR_ZERO;
+	pos = MyUtility::VECTOR_ZERO;
+	localPos = MyUtility::VECTOR_ZERO;
 
 	matScl = MGetIdent();
 	matRot = MGetIdent();
@@ -24,10 +24,10 @@ Transform::Transform(int model)
 {
 	modelId = model;
 
-	scl = AsoUtility::VECTOR_ONE;
-	rot = AsoUtility::VECTOR_ZERO;
-	pos = AsoUtility::VECTOR_ZERO;
-	localPos = AsoUtility::VECTOR_ZERO;
+	scl = MyUtility::VECTOR_ONE;
+	rot = MyUtility::VECTOR_ZERO;
+	pos = MyUtility::VECTOR_ZERO;
+	localPos = MyUtility::VECTOR_ZERO;
 
 	matScl = MGetIdent();
 	matRot = MGetIdent();
@@ -100,32 +100,32 @@ void Transform::MakeCollider(Collider::TYPE type)
 
 VECTOR Transform::GetForward(void) const
 {
-	return GetDir(AsoUtility::DIR_F);
+	return GetDir(MyUtility::DIR_F);
 }
 
 VECTOR Transform::GetBack(void) const
 {
-	return GetDir(AsoUtility::DIR_B);
+	return GetDir(MyUtility::DIR_B);
 }
 
 VECTOR Transform::GetRight(void) const
 {
-	return GetDir(AsoUtility::DIR_R);
+	return GetDir(MyUtility::DIR_R);
 }
 
 VECTOR Transform::GetLeft(void) const
 {
-	return GetDir(AsoUtility::DIR_L);
+	return GetDir(MyUtility::DIR_L);
 }
 
 VECTOR Transform::GetUp(void) const
 {
-	return GetDir(AsoUtility::DIR_U);
+	return GetDir(MyUtility::DIR_U);
 }
 
 VECTOR Transform::GetDown(void) const
 {
-	return GetDir(AsoUtility::DIR_D);
+	return GetDir(MyUtility::DIR_D);
 }
 
 VECTOR Transform::GetDir(const VECTOR& vec) const

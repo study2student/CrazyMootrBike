@@ -1,6 +1,6 @@
 #include "../Manager/ResourceManager.h"
 #include "../Manager/SceneManager.h"
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "Common/Transform.h"
 #include "SkyDome.h"
 
@@ -23,10 +23,10 @@ void SkyDome::Init(void)
 		resMng_.LoadModelDuplicate(
 			ResourceManager::SRC::SKY_DOME));
 	transform_.scl = SCALES;
-	transform_.pos = AsoUtility::VECTOR_ZERO;
+	transform_.pos = MyUtility::VECTOR_ZERO;
 	transform_.quaRot = Quaternion::Euler(
 		0.0f, 
-		AsoUtility::Deg2RadF(180.0f),
+		MyUtility::Deg2RadF(180.0f),
 		0.0f
 	);
 	transform_.quaRotLocal = Quaternion();

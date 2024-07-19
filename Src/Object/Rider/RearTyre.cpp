@@ -1,6 +1,6 @@
 #include <string>
 #include "../../Application.h"
-#include "../../Utility/AsoUtility.h"
+#include "../../Utility/MyUtility.h"
 #include "../../Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -18,9 +18,9 @@ RearTyre::RearTyre()
 
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	rotX_ = Quaternion();
 }
@@ -41,7 +41,7 @@ void RearTyre::Init(void)
 		transformParent_.pos.z + Bike::BIKE_TO_REAR_TYRE_LOCALPOS.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f });
 	transform_.Update();
 
 	// 初期状態
@@ -134,10 +134,10 @@ void RearTyre::Rotate(void)
 
 	//リアタイヤの回転
 	// デグリーからラジアン(変換)
-	float rad = AsoUtility::Deg2RadF(SPEED_ROT);
+	float rad = MyUtility::Deg2RadF(SPEED_ROT);
 
 	// ラジアンからクォータニオン(指定軸を指定角分回転させる)
-	Quaternion rotPow = Quaternion::AngleAxis(rad, AsoUtility::AXIS_X);
+	Quaternion rotPow = Quaternion::AngleAxis(rad, MyUtility::AXIS_X);
 
 	//クォータニオン(回転)の合成
 	rotX_ = rotX_.Mult(rotPow);

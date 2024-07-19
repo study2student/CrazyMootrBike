@@ -1,7 +1,7 @@
 #include <string>
 #include <EffekseerForDXLib.h>
 #include "../../Application.h"
-#include "../..//Utility/AsoUtility.h"
+#include "../..//Utility/MyUtility.h"
 #include "../..//Manager/InputManager.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
@@ -28,15 +28,15 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	attackState_ = ATTACK_TYPE::NONE;
 
 	speed_ = 0.0f;
-	moveDir_ = AsoUtility::VECTOR_ZERO;
-	movePow_ = AsoUtility::VECTOR_ZERO;
-	movedPos_ = AsoUtility::VECTOR_ZERO;
+	moveDir_ = MyUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
+	movedPos_ = MyUtility::VECTOR_ZERO;
 
 	playerRotY_ = Quaternion();
 	goalQuaRot_ = Quaternion();
 	stepRotTime_ = 0.0f;
 
-	jumpPow_ = AsoUtility::VECTOR_ZERO;
+	jumpPow_ = MyUtility::VECTOR_ZERO;
 	isJump_ = false;
 	stepJump_ = 0.0f;
 	stepJumpSecond_ = 0.0f;
@@ -53,8 +53,8 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	deleyBoost_ = 0;
 
 	// 衝突チェック
-	gravHitPosDown_ = AsoUtility::VECTOR_ZERO;
-	gravHitPosUp_ = AsoUtility::VECTOR_ZERO;
+	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
+	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
 
 	imgShadow_ = -1;
 
@@ -83,7 +83,7 @@ void Bike::Init(void)
 	transform_.pos = { 1270.0f + localPosX_, -260.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	//transform_.Update();
 
 	// モデルの基本設定
@@ -96,7 +96,7 @@ void Bike::Init(void)
 	//transformPlayer_.quaRot = Quaternion();
 	transformPlayer_.quaRot = transform_.quaRot;
 	transformPlayer_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 	transform_.Update();
 	transformPlayer_.Update();
 
@@ -193,7 +193,7 @@ const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 
 void Bike::Jump(void)
 {
-	///*Quaternion q = Quaternion::AngleAxis(AsoUtility::Deg2RadD(-120.0), AsoUtility::AXIS_X);
+	///*Quaternion q = Quaternion::AngleAxis(MyUtility::Deg2RadD(-120.0), MyUtility::AXIS_X);
 	//Quaternion e= Quaternion::Normalize(q);*/
 
 	//// 角度（ラジアン）を設定
@@ -235,9 +235,9 @@ void Bike::Jump(void)
 		jumpSpeed_ *= 1.98f;
 		if (stepJump_ < TIME_JUMP_IN)
 		{
-			//jumpPow_ = VScale(AsoUtility::DIR_U, POW_JUMP);
-			//jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, SceneManager::GetInstance().GetCamera()->GetForward()),POW_JUMP);
-			jumpPow_ = VScale(VAdd(AsoUtility::DIR_U, transform_.GetForward()), jumpSpeed_ * POW_JUMP);
+			//jumpPow_ = VScale(MyUtility::DIR_U, POW_JUMP);
+			//jumpPow_ = VScale(VAdd(MyUtility::DIR_U, SceneManager::GetInstance().GetCamera()->GetForward()),POW_JUMP);
+			jumpPow_ = VScale(VAdd(MyUtility::DIR_U, transform_.GetForward()), jumpSpeed_ * POW_JUMP);
 		}
 
 
@@ -457,9 +457,9 @@ void Bike::DrawDebug(void)
 
 	DrawFormatString(0, 40, 0xffffff,
 		"バイクの回転：%f,%f,%f",
-		AsoUtility::Rad2DegD(transform_.rot.x),
-		AsoUtility::Rad2DegF(transform_.quaRot.ToEuler().y),
-		AsoUtility::Deg2RadF(transform_.quaRotLocal.ToEuler().z));
+		MyUtility::Rad2DegD(transform_.rot.x),
+		MyUtility::Rad2DegF(transform_.quaRot.ToEuler().y),
+		MyUtility::Deg2RadF(transform_.quaRotLocal.ToEuler().z));
 
 	DrawFormatString(0, 80, 0xffffff, "bikePos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
 
@@ -472,7 +472,7 @@ void Bike::ProcessMove(void)
 	auto& ins = InputManager::GetInstance();
 
 	// 移動量をゼロ
-	movePow_ = AsoUtility::VECTOR_ZERO;
+	movePow_ = MyUtility::VECTOR_ZERO;
 
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
@@ -489,7 +489,7 @@ void Bike::ProcessMove(void)
 		{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
 	} };
 
-	VECTOR dir = AsoUtility::VECTOR_ZERO;
+	VECTOR dir = MyUtility::VECTOR_ZERO;
 
 	//前に進む
 	VECTOR movePowF_ = VScale(cameraRot.GetForward(), SPEED_MOVE + speedBoost_);
@@ -499,73 +499,73 @@ void Bike::ProcessMove(void)
 	int padState = GetJoypadInputState(input.padId);
 
 	if (padState & static_cast<int>(input.right)) {
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+		rotRadZ = MyUtility::Deg2RadD(-45.0f);
 		dir = cameraRot.GetRight();
 	}
 
 	if (padState & static_cast<int>(input.left)) {
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
+		rotRadZ = MyUtility::Deg2RadD(45.0f);
 		dir = cameraRot.GetLeft();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
 	{
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+		rotRadZ = MyUtility::Deg2RadD(-45.0f);
 		dir = cameraRot.GetRight();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
 	{
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
+		rotRadZ = MyUtility::Deg2RadD(45.0f);
 		dir = cameraRot.GetLeft();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0f);
+		rotRad = MyUtility::Deg2RadD(180.0f);
 		dir = cameraRot.GetBack();
 	}
 
 	/*if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
-		rotRad = AsoUtility::Deg2RadD(0.0f);
+		rotRad = MyUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
 	}
 
 	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
-		rotRad = AsoUtility::Deg2RadD(45.0f);
+		rotRad = MyUtility::Deg2RadD(45.0f);
 		dir = cameraRot.GetForward();
 	}
 
 	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
 	{
-		rotRad = AsoUtility::Deg2RadD(-45.0f);
+		rotRad = MyUtility::Deg2RadD(-45.0f);
 		dir = cameraRot.GetLeft();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
 	{
-		rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+		rotRadZ = MyUtility::Deg2RadD(-45.0f);
 		dir = cameraRot.GetRight();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
 	{
-		rotRadZ = AsoUtility::Deg2RadD(45.0f);
+		rotRadZ = MyUtility::Deg2RadD(45.0f);
 		dir = cameraRot.GetLeft();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
 	{
-		rotRad = AsoUtility::Deg2RadD(180.0f);
+		rotRad = MyUtility::Deg2RadD(180.0f);
 		dir = cameraRot.GetBack();
 	}*/
 
 	// カメラ方向に前進したい
 	//if (ins.IsNew(KEY_INPUT_W))
 	//{
-	//	rotRad = AsoUtility::Deg2RadD(0.0f);
+	//	rotRad = MyUtility::Deg2RadD(0.0f);
 	//	dir = cameraRot.GetForward();
 	//}
 
@@ -574,7 +574,7 @@ void Bike::ProcessMove(void)
 	//右側
 	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
 	{
-		dir = AsoUtility::DIR_L;
+		dir = MyUtility::DIR_L;
 		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
 
 		//場外にでている
@@ -588,21 +588,21 @@ void Bike::ProcessMove(void)
 			// カメラ方向から後退したい
 			if (ins.IsNew(KEY_INPUT_S))
 			{
-				rotRad = AsoUtility::Deg2RadD(180.0f);
+				rotRad = MyUtility::Deg2RadD(180.0f);
 				dir = cameraRot.GetBack();
 			}
 
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+				rotRadZ = MyUtility::Deg2RadD(-45.0f);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = AsoUtility::Deg2RadD(45.0f);
+				rotRadZ = MyUtility::Deg2RadD(45.0f);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -612,7 +612,7 @@ void Bike::ProcessMove(void)
 	//左側
 	if (transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX)
 	{
-		dir = AsoUtility::DIR_R;
+		dir = MyUtility::DIR_R;
 		SceneManager::GetInstance().GetCamera()->SetIsCameraReset(true);
 
 		//場外にでている
@@ -627,21 +627,21 @@ void Bike::ProcessMove(void)
 			// カメラ方向から後退したい
 			if (ins.IsNew(KEY_INPUT_S))
 			{
-				rotRad = AsoUtility::Deg2RadD(180.0f);
+				rotRad = MyUtility::Deg2RadD(180.0f);
 				dir = cameraRot.GetBack();
 			}
 
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = AsoUtility::Deg2RadD(-45.0f);
+				rotRadZ = MyUtility::Deg2RadD(-45.0f);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = AsoUtility::Deg2RadD(45.0f);
+				rotRadZ = MyUtility::Deg2RadD(45.0f);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -655,7 +655,7 @@ void Bike::ProcessMove(void)
 	}
 
 
-	if (!AsoUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
+	if (!MyUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
 		// 移動処理
 		speed_ = SPEED_MOVE;
@@ -704,7 +704,7 @@ void Bike::ProcessMove(void)
 		}
 
 		//傾きっぱになるので角度リセットしておく
-		rotRad = AsoUtility::Deg2RadD(0.0f);
+		rotRad = MyUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
 
 		// 回転処理
@@ -844,16 +844,16 @@ void Bike::SpecialAttack(void)
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
 	float rotRad = 0.0f;
-	VECTOR dir = AsoUtility::VECTOR_ZERO;
+	VECTOR dir = MyUtility::VECTOR_ZERO;
 
 	/*if (ins.IsNew(KEY_INPUT_Z))
 	{
 		attackState_ = ATTACK_TYPE::SPECIAL;
 		animationController_->Play((int)ANIM_TYPE::FALLING);
-		rotRad = AsoUtility::Deg2RadD(180.0f);
+		rotRad = MyUtility::Deg2RadD(180.0f);
 
 		VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-		Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+		Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, MyUtility::AXIS_Y);
 
 		goalQuaRot_ = axis;
 
@@ -869,7 +869,7 @@ void Bike::SpecialAttack(void)
 void Bike::SetGoalRotate(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, AsoUtility::AXIS_Y);
+	Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -886,7 +886,7 @@ void Bike::SetGoalRotate(float rotRad)
 void Bike::SetGoalRotateZ(float rotRad)
 {
 	VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.z + rotRad, AsoUtility::AXIS_Z);
+	Quaternion axis = Quaternion::AngleAxis(-1.0f * (float)cameraRot.z + rotRad, MyUtility::AXIS_Z);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
@@ -935,10 +935,10 @@ void Bike::CollisionGravity(void)
 	movedPos_ = VAdd(movedPos_, jumpPow_);
 
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力方向の反対
-	VECTOR dirUpGravity = AsoUtility::DIR_U;
+	VECTOR dirUpGravity = MyUtility::DIR_U;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
@@ -962,7 +962,7 @@ void Bike::CollisionGravity(void)
 			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
 
 			// ジャンプリセット
-			jumpPow_ = AsoUtility::VECTOR_ZERO;
+			jumpPow_ = MyUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
 			//if (isJump_)
@@ -1032,7 +1032,7 @@ void Bike::CollisionCapsule(void)
 void Bike::CalcGravityPow(void)
 {
 	// 重力方向
-	VECTOR dirGravity = AsoUtility::DIR_D;
+	VECTOR dirGravity = MyUtility::DIR_D;
 
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;

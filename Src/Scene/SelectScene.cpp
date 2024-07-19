@@ -5,7 +5,6 @@
 #include "../Manager/ResourceManager.h"
 #include "../Application.h"
 #include "../Object/DataSave.h"
-#include "../Utility/AsoUtility.h"
 
 SelectScene::SelectScene(void)
 {

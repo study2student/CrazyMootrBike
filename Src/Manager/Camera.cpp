@@ -1,7 +1,7 @@
 #include <math.h>
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Transform.h"
 #include "../Manager/SceneManager.h"
@@ -13,8 +13,8 @@ Camera::Camera(void)
 	angles_ = VECTOR();
 	cameraUp_ = VECTOR();
 	mode_ = MODE::NONE;
-	pos_ = AsoUtility::VECTOR_ZERO;
-	targetPos_ = AsoUtility::VECTOR_ZERO;
+	pos_ = MyUtility::VECTOR_ZERO;
+	targetPos_ = MyUtility::VECTOR_ZERO;
 	followTransform_ = nullptr;
 	stepRotTime_ = 0.0f;
 	stepMoveFront_ = 0.0f;
@@ -161,12 +161,12 @@ void Camera::SetDefault(void)
 	pos_ = DEFAULT_CAMERA_POS;
 
 	// 注視点
-	targetPos_ = AsoUtility::VECTOR_ZERO;
+	targetPos_ = MyUtility::VECTOR_ZERO;
 
 	// カメラの上方向
-	cameraUp_ = AsoUtility::DIR_U;
+	cameraUp_ = MyUtility::DIR_U;
 
-	angles_.x = AsoUtility::Deg2RadF(30.0f);
+	angles_.x = MyUtility::Deg2RadF(30.0f);
 	angles_.y = 0.0f;
 	angles_.z = 0.0f;
 
@@ -182,10 +182,10 @@ void Camera::SyncFollow(void)
 
 	//// 重力の方向制御に従う
 	//// 正面から設定されたY軸分、回転させる
-	//rotOutX_ = Quaternion::AngleAxis(angles_.y, AsoUtility::AXIS_Y);
+	//rotOutX_ = Quaternion::AngleAxis(angles_.y, MyUtility::AXIS_Y);
 
 	//// 正面から設定されたX軸分、回転させる
-	//rot_ = rotOutX_.Mult(Quaternion::AngleAxis(angles_.x, AsoUtility::AXIS_X));
+	//rot_ = rotOutX_.Mult(Quaternion::AngleAxis(angles_.x, MyUtility::AXIS_X));
 
 	//VECTOR localPos;
 
@@ -197,7 +197,7 @@ void Camera::SyncFollow(void)
 	//pos_ = VAdd(pos, localPos);
 
 	//// カメラの上方向
-	//cameraUp_ = AsoUtility::DIR_U;
+	//cameraUp_ = MyUtility::DIR_U;
 
 
 
@@ -208,10 +208,10 @@ void Camera::SyncFollow(void)
 
 	// 重力の方向制御に従う
 	// 正面から設定されたY軸分、回転させる
-	rotOutX_ = Quaternion::AngleAxis(angles_.y, AsoUtility::AXIS_Y);
+	rotOutX_ = Quaternion::AngleAxis(angles_.y, MyUtility::AXIS_Y);
 
 	// 正面から設定されたX軸分、回転させる
-	rot_ = rotOutX_.Mult(Quaternion::AngleAxis(angles_.x, AsoUtility::AXIS_X));
+	rot_ = rotOutX_.Mult(Quaternion::AngleAxis(angles_.x, MyUtility::AXIS_X));
 
 	VECTOR localPos;
 
@@ -249,7 +249,7 @@ void Camera::SyncFollow(void)
 	pos_ = VAdd(pos, localPos);
 
 	// カメラの上方向
-	cameraUp_ = AsoUtility::DIR_U;
+	cameraUp_ = MyUtility::DIR_U;
 
 }
 
@@ -288,20 +288,20 @@ void Camera::ProcessRot(void)
 			if (ins.IsNew(KEY_INPUT_RIGHT) || padState & static_cast<int>(input.right))
 			{
 				// 右回転
-				angles_.y += AsoUtility::Deg2RadF(1.0f);
+				angles_.y += MyUtility::Deg2RadF(1.0f);
 				isHitKey = true;
 			}
 			if (ins.IsNew(KEY_INPUT_LEFT) || padState & static_cast<int>(input.left))
 			{
 				// 左回転
-				angles_.y += AsoUtility::Deg2RadF(-1.0f);
+				angles_.y += MyUtility::Deg2RadF(-1.0f);
 				isHitKey = true;
 			}
 
 			// 上回転
 			if (ins.IsNew(KEY_INPUT_UP) || padState & static_cast<int>(input.up))
 			{
-				angles_.x += AsoUtility::Deg2RadF(1.0f);
+				angles_.x += MyUtility::Deg2RadF(1.0f);
 				if (angles_.x > LIMIT_X_UP_RAD)
 				{
 					angles_.x = LIMIT_X_UP_RAD;
@@ -311,7 +311,7 @@ void Camera::ProcessRot(void)
 			// 下回転
 			if (ins.IsNew(KEY_INPUT_DOWN) || padState & static_cast<int>(input.down))
 			{
-				angles_.x += AsoUtility::Deg2RadF(-1.0f);
+				angles_.x += MyUtility::Deg2RadF(-1.0f);
 				if (angles_.x < -LIMIT_X_DW_RAD)
 				{
 					angles_.x = -LIMIT_X_DW_RAD;
@@ -351,7 +351,7 @@ void Camera::SetBeforeDrawFixedPoint(void)
 	static constexpr VECTOR pPos_ = { -80.0f, -10.0f, -380.0f };
 
 	pos_ = pPos_;
-	angles_ = { AsoUtility::Deg2RadF(0.0f),  AsoUtility::Deg2RadF(-10.0f), 0.0f };
+	angles_ = { MyUtility::Deg2RadF(0.0f),  MyUtility::Deg2RadF(-10.0f), 0.0f };
 
 	//カメラの設定(位置と角度による制御)
 	SetCameraPositionAndAngle(

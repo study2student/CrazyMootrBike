@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
 #include "../Application.h"
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "../Manager/InputManager.h"
@@ -43,7 +43,7 @@ void TitleScene::Init(void)
 	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 
 	// 背景
-	spaceDomeTran_.pos = AsoUtility::VECTOR_ZERO;
+	spaceDomeTran_.pos = MyUtility::VECTOR_ZERO;
 	skyDome_ = new SkyDome(spaceDomeTran_);
 	skyDome_->Init();
 
@@ -63,7 +63,7 @@ void TitleScene::Init(void)
 	size = 1.0f;
 	sity_.scl = { size, size, size };
 	sity_.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f);
+		0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f);
 	sity_.Update();
 
 
@@ -74,7 +74,7 @@ void TitleScene::Init(void)
 	size = 1.3f;
 	bike.scl = { size, size, size };
 	bike.quaRotLocal = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f);
+		0.0f, MyUtility::Deg2RadF(180.0f), 0.0f);
 	bike.Update();
 
 	// キャラ
@@ -84,7 +84,7 @@ void TitleScene::Init(void)
 	size = 1.0f;
 	charactor_.scl = { size, size, size };
 	charactor_.quaRot = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(180.0f), 0.0f);
+		0.0f, MyUtility::Deg2RadF(180.0f), 0.0f);
 	charactor_.Update();
 
 	// フロントタイヤ
@@ -94,7 +94,7 @@ void TitleScene::Init(void)
 	size = 1.3f;
 	frontTyre_.scl = { size, size, size };
 	frontTyre_.quaRot = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
+		0.0f, MyUtility::Deg2RadF(0.0f), 0.0f);
 	frontTyre_.Update();
 
 	// リアタイヤ
@@ -104,7 +104,7 @@ void TitleScene::Init(void)
 	size = 1.7f;
 	rearTyre_.scl = { size, size, size };
 	rearTyre_.quaRot = Quaternion::Euler(
-		0.0f, AsoUtility::Deg2RadF(0.0f), 0.0f);
+		0.0f, MyUtility::Deg2RadF(0.0f), 0.0f);
 	rearTyre_.Update();
 
 	// アニメーションの設定
@@ -298,10 +298,10 @@ void TitleScene::BikeTyreRot(void)
 		break;
 	}
 	// デグリーからラジアン(変換)
-	float rad = AsoUtility::Deg2RadF(speedRot);
+	float rad = MyUtility::Deg2RadF(speedRot);
 
 	// ラジアンからクォータニオン(指定軸を指定角分回転させる)
-	Quaternion rotPow = Quaternion::AngleAxis(rad, AsoUtility::AXIS_X);
+	Quaternion rotPow = Quaternion::AngleAxis(rad, MyUtility::AXIS_X);
 
 	//クォータニオン(回転)の合成
 	tyreRotX_ = tyreRotX_.Mult(rotPow);

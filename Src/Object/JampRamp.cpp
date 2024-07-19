@@ -1,5 +1,5 @@
 #include <DxLib.h>
-#include "../Utility/AsoUtility.h"
+#include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "JampRamp.h"
@@ -22,7 +22,7 @@ void JampRamp::Init(void)
 	transform_.scl = { scale*3,scale,scale*1.5f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal = 
-		Quaternion::Euler({ 0.0f, AsoUtility::Deg2RadF(-90.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f });
 	transform_.pos = { 1590.0f, -260.0f, 14000.0f };
 
 	transform_.Update();
