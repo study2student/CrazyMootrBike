@@ -585,38 +585,96 @@ void GameScene::Draw(void)
 
 				int width = 400;
 
+				//FINISH文字色
+				int finishFontColor_ = GetColor(255, 165, 0);
+
+				//死亡文字色
+				int deadFontColor_ = GetColor(255, 0, 0);
+
 				switch (i)
 				{
 				case 0:
 					DrawGraph(0, 0, mainScreen_, false);
 					DrawUI(sx / 2 - width, 0, 0);
-					if (stage_->GetIsGoal())
+
+					//ゴール文字
+					if (bikes_[0]->GetIsGoal())
 					{
-						GoalAfterDraw();
+						//GoalAfterDraw();
+						//FINISH文字描画
+						Vector2 finishFontPos = { 300,200 };
+						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+					}
+
+					//死亡文字
+					if (bikes_[0]->GetHP() <= 0)
+					{
+						//死亡文字描画
+						Vector2 deadFontPos = { 350,200 };
+						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
 					}
 					break;
 				case 1:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
 					DrawUI(sx - width, 0, 1);
-					if (stage_->GetIsGoal())
+
+					//ゴール文字
+					if (bikes_[1]->GetIsGoal())
 					{
-						GoalAfterDraw();
+						//GoalAfterDraw();
+						//FINISH文字描画
+						Vector2 finishFontPos = { 1250,200 };
+						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+					}
+
+					//死亡文字
+					if (bikes_[1]->GetHP() <= 0)
+					{
+						//死亡文字描画
+						Vector2 deadFontPos = { 1300,200 };
+						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
 					}
 					break;
 				case 2:
 					DrawGraph(0, sy / 2, mainScreen_, false);
 					DrawUI(sx / 2 - width, sy / 2, 2);
-					if (stage_->GetIsGoal())
+
+					//ゴール文字
+					if (bikes_[2]->GetIsGoal())
 					{
-						GoalAfterDraw();
+						//GoalAfterDraw();
+						//FINISH文字描画
+						Vector2 finishFontPos = { 300,700 };
+						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+					}
+
+					//死亡文字
+					if (bikes_[2]->GetHP() <= 0)
+					{
+						//死亡文字描画
+						Vector2 deadFontPos = { 350,700 };
+						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
 					}
 					break;
 				case 3:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
 					DrawUI(sx - width, sy / 2, 3);
-					if (stage_->GetIsGoal())
+
+					//ゴール文字
+					if (bikes_[3]->GetIsGoal())
 					{
-						GoalAfterDraw();
+						//GoalAfterDraw();
+						//FINISH文字描画
+						Vector2 finishFontPos = { 1250,700 };
+						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+					}
+
+					//死亡文字
+					if (bikes_[3]->GetHP() <= 0)
+					{
+						//死亡文字描画
+						Vector2 deadFontPos = { 1300,700 };
+						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
 					}
 					break;
 				}
@@ -671,13 +729,39 @@ void GameScene::Draw(void)
 		{
 			GoalAfterDraw();
 		}
+		else
+		{
+			//警告
+			WarningDraw();
+		}
+	}
+	else
+	{
+		bool allBikeGoal = true;
+		for (auto& bike : bikes_)
+		{
+			// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
+			if (bike->GetHP() > 0)
+			{
+				// もし一つでもゴールしていないバイクがあればフラグを更新
+				if (!bike->GetIsGoal())
+				{
+					allBikeGoal = false;
+					break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+				}
+			}
+		}
+
+		// 全員がゴールしたら警告停止
+		if (!allBikeGoal)
+		{
+			//警告
+			WarningDraw();
+		}
+		
 	}
 
-	if(!stage_->GetIsGoal())
-	{
-		//警告
-		WarningDraw();
-	}
+	
 }
 
 std::vector<EnemyBase*> GameScene::GetEnemys(void)
@@ -898,22 +982,31 @@ void GameScene::Collision(void)
 			}
 		}
 
-		//投げモノ
-		auto throwCap = throwTyre_->GetCapsule();
+		////投げモノ
+		//auto throwCap = throwTyre_->GetCapsule();
 
+<<<<<<< Updated upstream
 		VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
 		float  disT = MyUtility::SqrMagnitudeF(diffT);
 		if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 		{
 			//プレイヤーにダメージ
 			bike->Damage(throwTyre_->THROW_DAMAGE);
+=======
+		//VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+		//float  disT = AsoUtility::SqrMagnitudeF(diffT);
+		//if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+		//{
+		//	//プレイヤーにダメージ
+		//	bike->Damage(throwTyre_->THROW_DAMAGE);
+>>>>>>> Stashed changes
 
-			//当たった
-			throwTyre_->SetIsCol(true);
-			// 効果音再生
-			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
-		}
+		//	//当たった
+		//	throwTyre_->SetIsCol(true);
+		//	// 効果音再生
+		//	PlaySoundMem(ResourceManager::GetInstance().Load(
+		//		ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
+		//}
 
 		
 		//死亡処理
@@ -1268,7 +1361,7 @@ void GameScene::GoalAfterDraw(void)
 		finishFontPos_.y = stopPosY;
 	}
 
-	//スコア
+	//FINISH文字描画
 	DrawExtendFormatString(finishFontPos_.x, finishFontPos_.y, 9, 9, finishFontColor_, "FINISH");
 
 }

@@ -47,7 +47,7 @@ void Bomb::Init(void)
 	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
-	capsule_->SetRadius(90.0f);
+	capsule_->SetRadius(100.0f);
 
 	ChangeState(STATE::IDLE);
 }
@@ -288,8 +288,8 @@ void Bomb::UpdateBlast(void)
 
 void Bomb::DrawBombPlace(void)
 {
-	VECTOR localPos1 = { 100.0f,-600.0f,-390.0f };
-	VECTOR localPos2 = { 100.0f,-590.0f,-390.0f };
+	VECTOR localPos1 = { 0.0f,-600.0f,-390.0f };
+	VECTOR localPos2 = { 0.0f,-590.0f,-390.0f };
 	VECTOR pos1 = VAdd(heliTrans_.pos, localPos1);
 	VECTOR pos2 = VAdd(heliTrans_.pos, localPos2);
 	DrawCapsule3D(pos1, pos2, 100.0f, 1, 0xff0000, 0xffffff, 0);

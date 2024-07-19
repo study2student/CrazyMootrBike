@@ -597,7 +597,7 @@ void Helicopter::BikeDisFunc(void)
 		if (transform_.pos.z >= atkLineMaxPos.z)
 		{
 			//スピードを下げる
-			speed_ -= SceneManager::GetInstance().GetDeltaTime();
+			speed_ -= SceneManager::GetInstance().GetDeltaTime() * 2.0f;
 		}
 		else if (transform_.pos.z <= atkLinePos.z)
 		{

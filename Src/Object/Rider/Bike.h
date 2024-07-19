@@ -38,7 +38,7 @@ public:
 	static constexpr float TIME_ROT = 1.0f;
 
 	// HPÇÃç≈ëÂíl
-	static constexpr int MAX_HP = 200;
+	static constexpr int MAX_HP = 100;
 
 	//HPÇÃç≈í·íl
 	static constexpr int MIN_HP = 0;

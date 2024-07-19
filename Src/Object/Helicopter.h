@@ -16,7 +16,7 @@ class Helicopter : public ActorBase
 public:
 
 	// 通常スピード
-	static constexpr float SPEED_MOVE = 110.0f;
+	static constexpr float SPEED_MOVE = 120.0f;
 
 	// 追いつくためのスピード
 	static constexpr float SPEED_FAST = 160.0f;

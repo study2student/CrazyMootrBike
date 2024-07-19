@@ -769,7 +769,7 @@ void Bike::ProcessBoost(void)
 	const auto& input = playerInputs[playerID_];
 	int padState = GetJoypadInputState(input.padId);
 
-	if (ins.IsTrgDown(KEY_INPUT_E) || padState & static_cast<int>(input.action) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
+	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP || padState & static_cast<int>(input.action) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
 	{
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;
@@ -807,10 +807,10 @@ void Bike::ProcessDebug(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	if (ins.IsNew(KEY_INPUT_C))
+	/*if (ins.IsNew(KEY_INPUT_C))
 	{
 		hp_ -= 1;
-	}
+	}*/
 }
 
 void Bike::NormalAttack(void)

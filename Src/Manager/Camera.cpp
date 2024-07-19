@@ -255,11 +255,11 @@ void Camera::SyncFollow(void)
 
 void Camera::ProcessRot(void)
 {
-	////ポーズ中は回転させない
-	//if (isPause_)
-	//{
-	//	return;
-	//}
+	//ポーズ中は回転させない
+	if (isPause_)
+	{
+		return;
+	}
 
 	auto& ins = InputManager::GetInstance();
 

@@ -141,8 +141,8 @@ void SelectScene::MouseProcess(void)
 	if (mousePos_.x >= onePersonFontBasePos_.x && mousePos_.x <= startFontLenPos_.x
 		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y)
 	{
-		nowCursor_ = (int)STATE::ONE_PERSON;
-		isCursorHit_ = true;
+		/*nowCursor_ = (int)STATE::ONE_PERSON;
+		isCursorHit_ = true;*/
 	}
 	else
 	{
@@ -181,8 +181,8 @@ void SelectScene::MouseProcess(void)
 	if (mousePos_.x >= fourPersonFontBasePos_.x && mousePos_.x <= exitFontLenPos_.x
 		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y )
 	{
-		nowCursor_ = (int)STATE::FOUR_PERSON;
-		isCursorHit_ = true;
+		/*nowCursor_ = (int)STATE::FOUR_PERSON;
+		isCursorHit_ = true;*/
 	}
 	else
 	{

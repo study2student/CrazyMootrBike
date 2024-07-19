@@ -48,7 +48,7 @@ void TyreThrow::Init(void)
 	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
 	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
-	capsule_->SetRadius(120.0f);
+	capsule_->SetRadius(130.0f);
 
 	//エフェクト
 	InitEffect();
