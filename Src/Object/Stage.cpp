@@ -157,18 +157,6 @@ void Stage::Update(void)
 	//	auto bikeCap = bike->GetCapsule();
 	//	auto jumpRampCap = jampRamp_->GetCapsule();
 
-<<<<<<< Updated upstream
-		VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		float  dis = MyUtility::SqrMagnitudeF(diff);
-		if (dis < bikeCap.lock()->GetRadius() * jumpRampCap.lock()->GetRadius())
-		{
-			isJamp_ = true;
-			Jump();
-		}
-		else
-		{
-			isJamp_ = false;
-=======
 	//	VECTOR diff = VSub(jumpRampCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
 	//	float  dis = AsoUtility::SqrMagnitudeF(diff);
 	//	if (dis < bikeCap.lock()->GetRadius() * jumpRampCap.lock()->GetRadius())
@@ -179,7 +167,6 @@ void Stage::Update(void)
 	//	else
 	//	{
 	//		isJamp_ = false;
->>>>>>> Stashed changes
 
 	//	}
 	//}

@@ -985,21 +985,13 @@ void GameScene::Collision(void)
 		////投げモノ
 		//auto throwCap = throwTyre_->GetCapsule();
 
-<<<<<<< Updated upstream
-		VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		float  disT = MyUtility::SqrMagnitudeF(diffT);
-		if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
-		{
-			//プレイヤーにダメージ
-			bike->Damage(throwTyre_->THROW_DAMAGE);
-=======
+
 		//VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
 		//float  disT = AsoUtility::SqrMagnitudeF(diffT);
 		//if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 		//{
 		//	//プレイヤーにダメージ
 		//	bike->Damage(throwTyre_->THROW_DAMAGE);
->>>>>>> Stashed changes
 
 		//	//当たった
 		//	throwTyre_->SetIsCol(true);
