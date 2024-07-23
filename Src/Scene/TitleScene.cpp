@@ -133,8 +133,8 @@ void TitleScene::Init(void)
 	data_.ResetData();
 
 	//// BGMÇçƒê∂
-	//PlaySoundMem(ResourceManager::GetInstance().Load(
-	//	ResourceManager::SRC::SND_TITLE_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+	PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_TITLE_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
 }
 
 void TitleScene::Update(void)

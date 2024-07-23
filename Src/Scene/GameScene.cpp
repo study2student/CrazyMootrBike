@@ -583,7 +583,7 @@ void GameScene::Draw(void)
 
 				SetDrawScreen(DX_SCREEN_BACK);
 
-				int width = 400;
+				int width = 600;
 
 				//FINISHï∂éöêF
 				int finishFontColor_ = GetColor(255, 165, 0);
@@ -814,8 +814,8 @@ void GameScene::DrawUI(int x, int y, int playerID)
 {
 
 	using ap = Application;
-	int sc_x = x - 500;
-	int sc_y = y + 100;
+	int sc_x = x - 300;
+	int sc_y = y + 50;
 
 	// HPÉoÅ[ÇÃïù
 	int HP_BAR_WIDTH = x - 10 - sc_x;
