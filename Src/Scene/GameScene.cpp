@@ -591,6 +591,9 @@ void GameScene::Draw(void)
 				//Ž€–S•¶ŽšF
 				int deadFontColor_ = GetColor(255, 0, 0);
 
+				//˜gü‚Ì”¼•ª‚Ì‘¾‚³
+				int halfBorderSize = 5;
+
 				switch (i)
 				{
 				case 0:
@@ -609,6 +612,9 @@ void GameScene::Draw(void)
 					//Ž€–S•¶Žš
 					if (bikes_[0]->GetHP() <= 0)
 					{
+						//•‚¢”wŒi
+						DrawBox(0, 0, sx / 2 - halfBorderSize, sy / 2 - halfBorderSize, 0x000000, true);
+
 						//Ž€–S•¶Žš•`‰æ
 						Vector2 deadFontPos = { 350,200 };
 						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
@@ -630,6 +636,9 @@ void GameScene::Draw(void)
 					//Ž€–S•¶Žš
 					if (bikes_[1]->GetHP() <= 0)
 					{
+						//•‚¢”wŒi
+						DrawBox(sx / 2 + halfBorderSize, 0, sx, sy / 2 - halfBorderSize, 0x000000, true);
+
 						//Ž€–S•¶Žš•`‰æ
 						Vector2 deadFontPos = { 1300,200 };
 						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
@@ -651,6 +660,9 @@ void GameScene::Draw(void)
 					//Ž€–S•¶Žš
 					if (bikes_[2]->GetHP() <= 0)
 					{
+						//•‚¢”wŒi
+						DrawBox(0, sy / 2 + halfBorderSize, sx / 2 - halfBorderSize, sy, 0x000000, true);
+
 						//Ž€–S•¶Žš•`‰æ
 						Vector2 deadFontPos = { 350,700 };
 						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
@@ -672,6 +684,9 @@ void GameScene::Draw(void)
 					//Ž€–S•¶Žš
 					if (bikes_[3]->GetHP() <= 0)
 					{
+						//•‚¢”wŒi
+						DrawBox(sx / 2 + halfBorderSize, sy / 2 + halfBorderSize, sx, sy , 0x000000, true);
+
 						//Ž€–S•¶Žš•`‰æ
 						Vector2 deadFontPos = { 1300,700 };
 						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
