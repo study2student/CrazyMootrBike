@@ -1101,7 +1101,7 @@ void GameScene::HitEffect(void)
 	//}
 }
 
-void GameScene::MouseProcess(void)
+void GameScene::DecideProcess(void)
 {
 
 	auto& ins_ = InputManager::GetInstance();
@@ -1221,7 +1221,7 @@ void GameScene::MouseProcess(void)
 
 }
 
-void GameScene::KeyProcess(void)
+void GameScene::SelectProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
 
@@ -1272,10 +1272,10 @@ void GameScene::Pause(void)
 {
 
 	//マウス操作
-	MouseProcess();
+	DecideProcess();
 
 	//キー操作
-	KeyProcess();
+	SelectProcess();
 
 
 }

@@ -42,6 +42,7 @@ public:
 		IMG_SELECT_EVERYONE,//みんなで
 		IMG_SCORE,//スコアの背景
 		IMG_OPERATION,//操作説明画面
+		IMG_GAMEOVER_SELECT_BG,	//ゲームオーバーシーンセレクト背景
 
 		DEMO_STAGE,//仮ステージ
 		JUMP_RAMP,//ジャンプ台

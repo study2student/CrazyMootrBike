@@ -48,6 +48,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "warning.png");
 	resourcesMap_.emplace(SRC::WARNING, res);
 
+	// ゲームオーバーシーンセレクト背景
+	res = new RES(RES_T::IMG, PATH_IMG + "selectBG.png");
+	resourcesMap_.emplace(SRC::IMG_GAMEOVER_SELECT_BG, res);
+
 	// ポーズ背景
 	res = new RES(RES_T::IMG, PATH_IMG + "pause.png");
 	resourcesMap_.emplace(SRC::PAUSE, res);

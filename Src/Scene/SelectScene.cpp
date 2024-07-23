@@ -9,6 +9,9 @@
 SelectScene::SelectScene(void)
 {
 	nowCursor_ = 0;
+
+	stepFlash_ = 0.0f;
+	isInvisible_ = false;
 }
 
 SelectScene::~SelectScene(void)
@@ -44,11 +47,11 @@ void SelectScene::Init(void)
 
 void SelectScene::Update(void)
 {
-	//マウス操作
-	MouseProcess();
+	//操作
+	DecideProcess();
 
 	//キー操作
-	KeyProcess();
+	SelectProcess();
 }
 
 void SelectScene::Draw(void)
@@ -125,11 +128,34 @@ void SelectScene::Draw(void)
 	//DrawGraph(0, 0, StickImg_, true);
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 235, 0.5, 0, Operation, true);
 
-	DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
+	//点滅表示
+	float maxStepFlash = 0.80f;
+	float minStepFlash = 0.0f;
+	if (!isInvisible_)
+	{
+		stepFlash_ += SceneManager::GetInstance().GetDeltaTime();
+		if (stepFlash_ >= maxStepFlash)
+		{
+			isInvisible_ = true;
+		}
+	}
+	else
+	{
+		stepFlash_ -= SceneManager::GetInstance().GetDeltaTime();
+		if (stepFlash_ <= minStepFlash)
+		{
+			isInvisible_ = false;
+		}
+	}
+
+	if (!isInvisible_)
+	{
+		DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
+	}
 }
 
 
-void SelectScene::MouseProcess(void)
+void SelectScene::DecideProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
 
@@ -216,7 +242,7 @@ void SelectScene::MouseProcess(void)
 	}
 }
 
-void SelectScene::KeyProcess(void)
+void SelectScene::SelectProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
 

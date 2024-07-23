@@ -108,11 +108,18 @@ private:
 	//状態
 	STATE state_;
 
+	//画像点滅
+	//点滅時間
+	float stepFlash_;
+
+	//消えているかどうか
+	bool isInvisible_;
+
 	//マウス操作
-	void MouseProcess(void);
+	void DecideProcess(void);
 
 	//キー操作
-	void KeyProcess(void);
+	void SelectProcess(void);
 
 	//状態遷移
 	void ChangeState(STATE state);

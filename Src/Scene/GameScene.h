@@ -232,10 +232,10 @@ private:
 	PAUSE_STATE pState_;
 
 	//マウス操作
-	void MouseProcess(void);
+	void DecideProcess(void);
 
 	//キー操作
-	void KeyProcess(void);
+	void SelectProcess(void);
 
 	//状態遷移
 	void ChangePState(PAUSE_STATE pState);

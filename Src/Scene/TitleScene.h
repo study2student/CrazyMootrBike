@@ -99,6 +99,13 @@ private:
 	//バイクの発車経過時間
 	float stepBikeDeparture_;
 
+	//画像点滅
+	//点滅時間
+	float stepFlash_;
+
+	//消えているかどうか
+	bool isInvisible_;
+
 	//状態
 	STATE state_;
 

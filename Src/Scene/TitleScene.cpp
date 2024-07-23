@@ -23,6 +23,8 @@ TitleScene::TitleScene(void)
 	skyDome_ = nullptr;
 	animationController_ = nullptr;
 	stepBikeDeparture_ = 0.0f;
+	stepFlash_ = 0.0f;
+	isInvisible_ = false;
 	effectBurnoutPosY_ = Bike::BURNOUT_EFFECT_FIRST_POS_Y;
 }
 
@@ -172,7 +174,31 @@ void TitleScene::Draw(void)
 	{
 		//DrawGraph(Application::SCREEN_SIZE_X / 2 - 640, 250, imgTitle_, false);
 		DrawExtendGraph(160, 150, Application::SCREEN_SIZE_X - 160,Application::SCREEN_SIZE_Y, imgTitle_, true);
-		DrawGraph(Application::SCREEN_SIZE_X / 2-145, 700, imgPush_, true);
+
+		//“_–Å•\Ž¦
+		float maxStepFlash = 0.80f;
+		float minStepFlash = 0.0f;
+		if (!isInvisible_)
+		{
+			stepFlash_ += SceneManager::GetInstance().GetDeltaTime();
+			if (stepFlash_ >= maxStepFlash)
+			{
+				isInvisible_ = true;
+			}
+		}
+		else
+		{
+			stepFlash_ -= SceneManager::GetInstance().GetDeltaTime();
+			if (stepFlash_ <= minStepFlash)
+			{
+				isInvisible_ = false;
+			}
+		}
+
+		if(!isInvisible_)
+		{
+			DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
+		}
 	}
 
 }
