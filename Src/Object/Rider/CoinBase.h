@@ -7,7 +7,7 @@ class Bike;
 class Score;
 class GameScene;
 
-class EnemyBase : public ActorBase
+class CoinBase : public ActorBase
 {
 
 public:
@@ -74,10 +74,10 @@ public:
 	};
 
 	// コンストラクタ
-	EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes, GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);
+	CoinBase(const std::vector<std::shared_ptr<Bike>>& bikes, GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);
 
 	// デストラクタ
-	virtual ~EnemyBase(void);
+	virtual ~CoinBase(void);
 
 	virtual void Init(void) override;
 	virtual void SetParam(void);

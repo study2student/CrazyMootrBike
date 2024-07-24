@@ -13,20 +13,20 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
 #include "../../Scene/GameScene.h"
-#include "ShortDisEnemy.h"
+#include "SilverCoin.h"
 
-
-ShortDisEnemy::ShortDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene ,VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes,gameScene, loopStagePos, localPos)
+SilverCoin::SilverCoin(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) : CoinBase(bikes,gameScene, loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
 }
 
-void ShortDisEnemy::SetParam(void)
+void SilverCoin::SetParam(void)
 {
+
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::GOLD_MEDAL));
+		ResourceManager::SRC::SILVER_COIN));
 	float SCL = 200.0f;
 	transform_.scl = { SCL,SCL,SCL };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
@@ -39,21 +39,21 @@ void ShortDisEnemy::SetParam(void)
 	ChangeState(STATE::PLAY);
 }
 
-void ShortDisEnemy::Update(void)
+void SilverCoin::Update(void)
 {
 	// 更新ステップ
 	switch (state_)
 	{
-	case EnemyBase::STATE::NONE:
+	case CoinBase::STATE::NONE:
 		UpdateNone();
 		break;
-	case EnemyBase::STATE::PLAY:
+	case CoinBase::STATE::PLAY:
 		UpdatePlay();
 		break;
-	case EnemyBase::STATE::FLIPED:
+	case CoinBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
-	case EnemyBase::STATE::DEAD:
+	case CoinBase::STATE::DEAD:
 		UpdateDead();
 		break;
 	}
@@ -64,10 +64,11 @@ void ShortDisEnemy::Update(void)
 
 }
 
-void ShortDisEnemy::UpdatePlay(void)
+void SilverCoin::UpdatePlay(void)
 {
 	// 移動処理
 	ProcessMove();
+
 
 	//回転
 	RotY();
@@ -82,7 +83,7 @@ void ShortDisEnemy::UpdatePlay(void)
 	transform_.quaRot = enemyRotY_;
 }
 
-void ShortDisEnemy::ProcessMove(void)
+void SilverCoin::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 
@@ -130,17 +131,15 @@ void ShortDisEnemy::ProcessMove(void)
 						ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
 				}
 			}
-			
+
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
 			}
-
 		}
 		else
 		{
 			isAddScore_ = false;
-
 		}
 	}
 
@@ -151,6 +150,4 @@ void ShortDisEnemy::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
-
-
 }

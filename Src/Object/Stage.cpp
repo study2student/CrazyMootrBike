@@ -2,7 +2,6 @@
 #include <map>
 #include <stdexcept>
 #include <algorithm>
-#include <queue>
 #include <DxLib.h>
 #include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
@@ -13,7 +12,7 @@
 #include "../Object/Rider/Player.h"
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/Enemy.h"
-#include "../Object/Rider/EnemyBase.h"
+#include "../Object/Rider/CoinBase.h"
 #include "../Object/Bomb.h"
 #include "Planet.h"
 #include "LoopStage.h"
@@ -27,13 +26,13 @@
 #include "../Object/DataSave.h"
 #include "Stage.h"
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
 
 	//bike_ = bike;
-	enemy_ = enemy;
+	coin_ = enemy;
 	bomb_ = bomb;
 	throwTyre_ = throwTyre;
 	activeName_ = NAME::MAIN_PLANET;
@@ -311,16 +310,16 @@ void Stage::ChangeStage(NAME type)
 	//	bomb_->AddCollider(ls->GetTransform().collider);
 	//}
 
-	enemy_->ClearCollider();
-	enemy_->AddCollider(activePlanet_.lock()->GetTransform().collider);
+	coin_->ClearCollider();
+	coin_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
 		//enemy_->AddCollider(ls->GetTransform().collider);
-		std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
-		for (int i = 0; i < enemys_.size(); i++)
+		std::vector<CoinBase*>coins_ = gameScene_->GetEnemys();
+		for (int i = 0; i < coins_.size(); i++)
 		{
-			enemys_[i]->AddCollider(ls->GetTransform().collider);
+			coins_[i]->AddCollider(ls->GetTransform().collider);
 		}
 	}
 
@@ -330,7 +329,7 @@ void Stage::ChangeStage(NAME type)
 	//	LoopStage* ls = loopStage_.front();
 	//	loopStage_.pop();
 	//	
-	//	std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+	//	std::vector<CoinBase*>enemys_ = gameScene_->GetEnemys();
 	//	for (int i = 0; i < enemys_.size(); i++)
 	//	{
 	//		enemys_[i]->AddCollider(ls->GetTransform().collider);
@@ -424,11 +423,11 @@ void Stage::MakeLoopStage(void)
 	{
 		for (const auto& ls : loopStage_)
 		{
-			std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
-			for (int i = 0; i < enemys_.size(); i++)
+			std::vector<CoinBase*>coins_ = gameScene_->GetEnemys();
+			for (int i = 0; i < coins_.size(); i++)
 			{
-				enemys_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
-				enemys_[i]->AddCollider(ls->GetTransform().collider);
+				coins_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
+				coins_[i]->AddCollider(ls->GetTransform().collider);
 			}
 		}
 
@@ -437,7 +436,7 @@ void Stage::MakeLoopStage(void)
 		//	LoopStage* ls = loopStage_.front();
 		//	loopStage_.pop();
 
-		//	std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+		//	std::vector<CoinBase*>enemys_ = gameScene_->GetEnemys();
 		//	for (int i = 0; i < enemys_.size(); i++)
 		//	{
 		//		enemys_[i]->AddCollider(activePlanet_->GetTransform().collider);
@@ -638,7 +637,7 @@ void Stage::MakeCurveStage(void)
 	//{
 	//	for (const auto& cs : curve_)
 	//	{
-	//		std::vector<EnemyBase*>enemys_ = gameScene_->GetEnemys();
+	//		std::vector<CoinBase*>enemys_ = gameScene_->GetEnemys();
 	//		for (int i = 0; i < enemys_.size(); i++)
 	//		{
 	//			enemys_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);

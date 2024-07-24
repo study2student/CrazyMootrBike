@@ -12,9 +12,9 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
 #include "../../Scene/GameScene.h"
-#include "EnemyBase.h"
+#include "CoinBase.h"
 
-EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos)
+CoinBase::CoinBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos)
 {
 	bikes_ = bikes;
 	gameScene_ = gameScene;
@@ -49,16 +49,16 @@ EnemyBase::EnemyBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* 
 	stepMade_ = 0.0f;
 }
 
-EnemyBase::~EnemyBase(void)
+CoinBase::~CoinBase(void)
 {
 }
 
-void EnemyBase::Init(void)
+void CoinBase::Init(void)
 {
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::COPPER_MEDAL));
+		ResourceManager::SRC::COPPER_COIN));
 	transform_.scl = MyUtility::VECTOR_ONE;
 	//transform_.pos = { 700.0f, -800.0f, -2500.0f };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, -800.0f, makePos_.z };
@@ -83,26 +83,26 @@ void EnemyBase::Init(void)
 	InitEffect();
 }
 
-void EnemyBase::SetParam(void)
+void CoinBase::SetParam(void)
 {
 
 }
 
-void EnemyBase::Update(void)
+void CoinBase::Update(void)
 {
 	// 更新ステップ
 	switch (state_)
 	{
-	case EnemyBase::STATE::NONE:
+	case CoinBase::STATE::NONE:
 		UpdateNone();
 		break;
-	case EnemyBase::STATE::PLAY:
+	case CoinBase::STATE::PLAY:
 		UpdatePlay();
 		break;
-	case EnemyBase::STATE::FLIPED:
+	case CoinBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
-	case EnemyBase::STATE::DEAD:
+	case CoinBase::STATE::DEAD:
 		UpdateDead();
 		break;
 	}
@@ -112,7 +112,7 @@ void EnemyBase::Update(void)
 	transform_.Update();
 }
 
-void EnemyBase::Draw(void)
+void CoinBase::Draw(void)
 {
 	//死亡状態は描画しない
 	if (state_ == STATE::DEAD)
@@ -127,54 +127,54 @@ void EnemyBase::Draw(void)
 
 }
 
-void EnemyBase::AddCollider(std::shared_ptr<Collider> collider)
+void CoinBase::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
 
-void EnemyBase::ClearCollider(void)
+void CoinBase::ClearCollider(void)
 {
 	colliders_.clear();
 }
 
-const std::weak_ptr<Capsule> EnemyBase::GetCapsule(void) const
+const std::weak_ptr<Capsule> CoinBase::GetCapsule(void) const
 {
 	return capsule_;
 }
 
-void EnemyBase::Flip(VECTOR dir)
+void CoinBase::Flip(VECTOR dir)
 {
 	flipDir_ = dir;
 	flipSpeed_ = 10.0f;
 	ChangeState(STATE::FLIPED);
 }
 
-bool EnemyBase::GetIsBikeCol(void)
+bool CoinBase::GetIsBikeCol(void)
 {
 	return isBikeCol_;
 }
 
-bool EnemyBase::GetIsAddScore(void)
+bool CoinBase::GetIsAddScore(void)
 {
 	return isAddScore_;
 }
 
-EnemyBase::STATE EnemyBase::GetState(void)
+CoinBase::STATE CoinBase::GetState(void)
 {
 	return state_;
 }
 
-bool EnemyBase::IsDestroy(void)
+bool CoinBase::IsDestroy(void)
 {
 	return state_ == STATE::DEAD;
 }
 
-void EnemyBase::Destroy(void)
+void CoinBase::Destroy(void)
 {
 	ChangeState(STATE::DEAD);
 }
 
-void EnemyBase::AddScoreToPlayer(int playerId, int score)
+void CoinBase::AddScoreToPlayer(int playerId, int score)
 {
 	if (playerId >= 0 && playerId < bikes_.size())
 	{
@@ -182,7 +182,7 @@ void EnemyBase::AddScoreToPlayer(int playerId, int score)
 	}
 }
 
-void EnemyBase::InitEffect(void)
+void CoinBase::InitEffect(void)
 {
 	// ヒットエフェクト
 	effectHitResId_ = ResourceManager::GetInstance().Load(
@@ -190,7 +190,7 @@ void EnemyBase::InitEffect(void)
 
 }
 
-void EnemyBase::HitEffect()
+void CoinBase::HitEffect()
 {
 	effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
 
@@ -202,7 +202,7 @@ void EnemyBase::HitEffect()
 	
 }
 
-void EnemyBase::ChangeState(STATE state)
+void CoinBase::ChangeState(STATE state)
 {
 	// 状態変更
 	state_ = state;
@@ -210,42 +210,42 @@ void EnemyBase::ChangeState(STATE state)
 	// 各状態遷移の初期処理
 	switch (state_)
 	{
-	case EnemyBase::STATE::NONE:
+	case CoinBase::STATE::NONE:
 		ChangeStateNone();
 		break;
-	case EnemyBase::STATE::PLAY:
+	case CoinBase::STATE::PLAY:
 		ChangeStatePlay();
 		break;
-	case EnemyBase::STATE::FLIPED:
+	case CoinBase::STATE::FLIPED:
 		ChangeStateFliped();
 		break;
-	case EnemyBase::STATE::DEAD:
+	case CoinBase::STATE::DEAD:
 		ChangeStateDead();
 		break;
 	}
 }
 
-void EnemyBase::ChangeStateNone(void)
+void CoinBase::ChangeStateNone(void)
 {
 }
 
-void EnemyBase::ChangeStatePlay(void)
+void CoinBase::ChangeStatePlay(void)
 {
 }
 
-void EnemyBase::ChangeStateFliped(void)
+void CoinBase::ChangeStateFliped(void)
 {
 }
 
-void EnemyBase::ChangeStateDead(void)
+void CoinBase::ChangeStateDead(void)
 {
 }
 
-void EnemyBase::UpdateNone(void)
+void CoinBase::UpdateNone(void)
 {
 }
 
-void EnemyBase::UpdateFliped(void)
+void CoinBase::UpdateFliped(void)
 {
 
 	// 移動処理
@@ -271,12 +271,12 @@ void EnemyBase::UpdateFliped(void)
 
 }
 
-void EnemyBase::UpdateDead(void)
+void CoinBase::UpdateDead(void)
 {
 	isAddScore_ = false;
 }
 
-void EnemyBase::UpdatePlay(void)
+void CoinBase::UpdatePlay(void)
 {
 	// 移動処理
 	ProcessMove();
@@ -294,7 +294,7 @@ void EnemyBase::UpdatePlay(void)
 	transform_.quaRot = enemyRotY_;
 }
 
-void EnemyBase::ProcessMove(void)
+void CoinBase::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 
@@ -346,7 +346,7 @@ void EnemyBase::ProcessMove(void)
 	}
 }
 
-void EnemyBase::SetGoalRotate(double rotRad)
+void CoinBase::SetGoalRotate(double rotRad)
 {
 	//VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
 	Quaternion axis = Quaternion::AngleAxis(rotRad, MyUtility::AXIS_Y);
@@ -363,7 +363,7 @@ void EnemyBase::SetGoalRotate(double rotRad)
 	goalQuaRot_ = axis;
 }
 
-void EnemyBase::RotY(void)
+void CoinBase::RotY(void)
 {
 	//地面と衝突したら回転
 	if (isCollGround_)
@@ -380,7 +380,7 @@ void EnemyBase::RotY(void)
 	}
 }
 
-void EnemyBase::Collision(void)
+void CoinBase::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
@@ -401,7 +401,7 @@ void EnemyBase::Collision(void)
 	transform_.pos = movedPos_;
 }
 
-void EnemyBase::CollisionGravity(void)
+void CoinBase::CollisionGravity(void)
 {
 
 	// ジャンプ量を加算
@@ -444,7 +444,7 @@ void EnemyBase::CollisionGravity(void)
 	}
 }
 
-void EnemyBase::CollisionCapsule(void)
+void CoinBase::CollisionCapsule(void)
 {
 	// カプセルを移動させる
 	Transform trans = Transform(transform_);
@@ -493,7 +493,7 @@ void EnemyBase::CollisionCapsule(void)
 
 }
 
-void EnemyBase::CalcGravityPow(void)
+void CoinBase::CalcGravityPow(void)
 {
 	//1回当たったら中断
 	if (isCollGround_)

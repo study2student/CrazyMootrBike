@@ -9,7 +9,7 @@ class Player;
 class Bike;
 class Enemy;
 class JampRamp;
-class EnemyBase;
+class CoinBase;
 class LoopStage;
 class GameScene;
 class StageCurve;
@@ -69,7 +69,7 @@ public:
 
 	// コンストラクタ
 	//Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy,std::shared_ptr<Bomb> bomb, GameScene* gameScene);
-	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, EnemyBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene);
+	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* enemy, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -114,7 +114,7 @@ private:
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
 
-	EnemyBase* enemy_;
+	CoinBase* coin_;
 	//std::shared_ptr<Bomb> bomb_;
 	Bomb* bomb_;
 	TyreThrow* throwTyre_;

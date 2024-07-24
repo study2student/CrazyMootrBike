@@ -1,10 +1,10 @@
-#include "EnemyBase.h"
+#include "CoinBase.h"
 
-class MagicEnemy : public EnemyBase
+class SilverCoin : public CoinBase
 {
 public:
 
-	MagicEnemy(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);
+	SilverCoin(const std::vector<std::shared_ptr<Bike>>& bikes, GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);
 
 	//ƒpƒ‰ƒ[ƒ^İ’è		//overrideã‘‚«
 	void SetParam(void) override;
@@ -12,6 +12,7 @@ public:
 
 	void UpdatePlay(void) override;
 	void ProcessMove(void) override;
+
 
 
 };

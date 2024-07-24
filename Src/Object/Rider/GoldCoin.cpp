@@ -13,21 +13,20 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
 #include "../../Scene/GameScene.h"
-#include "MagicEnemy.h"
+#include "GoldCoin.h"
 
 
-MagicEnemy::MagicEnemy(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes, gameScene,loopStagePos, localPos)
+GoldCoin::GoldCoin(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene ,VECTOR loopStagePos, VECTOR localPos) : CoinBase(bikes,gameScene, loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
 }
 
-void MagicEnemy::SetParam(void)
+void GoldCoin::SetParam(void)
 {
-
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::COPPER_MEDAL));
+		ResourceManager::SRC::GOLD_COIN));
 	float SCL = 200.0f;
 	transform_.scl = { SCL,SCL,SCL };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
@@ -40,21 +39,21 @@ void MagicEnemy::SetParam(void)
 	ChangeState(STATE::PLAY);
 }
 
-void MagicEnemy::Update(void)
+void GoldCoin::Update(void)
 {
 	// 更新ステップ
 	switch (state_)
 	{
-	case EnemyBase::STATE::NONE:
+	case CoinBase::STATE::NONE:
 		UpdateNone();
 		break;
-	case EnemyBase::STATE::PLAY:
+	case CoinBase::STATE::PLAY:
 		UpdatePlay();
 		break;
-	case EnemyBase::STATE::FLIPED:
+	case CoinBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
-	case EnemyBase::STATE::DEAD:
+	case CoinBase::STATE::DEAD:
 		UpdateDead();
 		break;
 	}
@@ -62,9 +61,10 @@ void MagicEnemy::Update(void)
 
 	// モデル制御更新
 	transform_.Update();
+
 }
 
-void MagicEnemy::UpdatePlay(void)
+void GoldCoin::UpdatePlay(void)
 {
 	// 移動処理
 	ProcessMove();
@@ -82,7 +82,7 @@ void MagicEnemy::UpdatePlay(void)
 	transform_.quaRot = enemyRotY_;
 }
 
-void MagicEnemy::ProcessMove(void)
+void GoldCoin::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 
@@ -130,15 +130,17 @@ void MagicEnemy::ProcessMove(void)
 						ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
 				}
 			}
-
+			
 			if (isBikeCol_)
 			{
 				ChangeState(STATE::DEAD);
 			}
+
 		}
 		else
 		{
 			isAddScore_ = false;
+
 		}
 	}
 
@@ -149,4 +151,6 @@ void MagicEnemy::ProcessMove(void)
 		stepMade_ = TO_DEAD_TIME_MAX;
 		ChangeState(STATE::DEAD);
 	}
+
+
 }

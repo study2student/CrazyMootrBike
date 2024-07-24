@@ -61,9 +61,9 @@ public:
 		BURNOUT_EFFECT, //バーンアウトエフェクト(バイク発車前)
 		START_EFFECT, //ゲーム開始エフェクト
 
-		GOLD_MEDAL,		//金メダル
-		SILVER_MEDAL,	//銀メダル
-		COPPER_MEDAL,	//銅メダル
+		GOLD_COIN,		//金メダル
+		SILVER_COIN,	//銀メダル
+		COPPER_COIN,	//銅メダル
 
 		W_SWORD,//バスターソード
 		SPIKE_BALL, //とげ球

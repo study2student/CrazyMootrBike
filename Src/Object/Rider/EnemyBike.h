@@ -7,7 +7,7 @@ class AnimationController;
 class Collider;
 class Capsule;
 class Weapon;
-class EnemyBase;
+class CoinBase;
 
 class EnemyBike : public ActorBase
 {
@@ -55,7 +55,7 @@ public:
 	};
 
 	// コンストラクタ
-	EnemyBike(EnemyBase* enemy);
+	EnemyBike(CoinBase* enemy);
 
 	// デストラクタ
 	~EnemyBike(void);
@@ -79,7 +79,7 @@ private:
 
 	Weapon* weapon_;
 
-	EnemyBase* enemy_;
+	CoinBase* coin_;
 
 	// 状態管理
 	STATE state_;

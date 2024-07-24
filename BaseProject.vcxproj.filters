@@ -102,9 +102,6 @@
     <ClCompile Include="Src\Scene\TitleScene.cpp">
       <Filter>ソース ファイル\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Utility\AsoUtility.cpp">
-      <Filter>ソース ファイル\Utility</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Manager\Camera.cpp">
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
@@ -180,7 +177,7 @@
     <ClCompile Include="Src\Object\TyreThrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\EnemyBase.cpp">
+    <ClCompile Include="Src\Object\Rider\CoinBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Rider\EnemyBike.cpp">
@@ -189,10 +186,10 @@
     <ClCompile Include="Src\Object\Rider\FrontTyre.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\LongDisEnemy.cpp">
+    <ClCompile Include="Src\Object\Rider\SilverCoin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\MagicEnemy.cpp">
+    <ClCompile Include="Src\Object\Rider\CopperCoin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Rider\RearTyre.cpp">
@@ -201,7 +198,7 @@
     <ClCompile Include="Src\Object\Rider\Rider.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\ShortDisEnemy.cpp">
+    <ClCompile Include="Src\Object\Rider\GoldCoin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Rider\Weapon.cpp">
@@ -247,9 +244,6 @@
     </ClInclude>
     <ClInclude Include="Src\Scene\TitleScene.h">
       <Filter>ヘッダー ファイル\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Utility\AsoUtility.h">
-      <Filter>ヘッダー ファイル\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Src\Manager\Camera.h">
       <Filter>ヘッダー ファイル\Manager</Filter>
@@ -332,7 +326,7 @@
     <ClInclude Include="Src\Object\TyreThrow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\EnemyBase.h">
+    <ClInclude Include="Src\Object\Rider\CoinBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Rider\EnemyBike.h">
@@ -341,10 +335,10 @@
     <ClInclude Include="Src\Object\Rider\FrontTyre.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\LongDisEnemy.h">
+    <ClInclude Include="Src\Object\Rider\SilverCoin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\MagicEnemy.h">
+    <ClInclude Include="Src\Object\Rider\CopperCoin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Rider\RearTyre.h">
@@ -353,7 +347,7 @@
     <ClInclude Include="Src\Object\Rider\Rider.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\ShortDisEnemy.h">
+    <ClInclude Include="Src\Object\Rider\GoldCoin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Rider\Weapon.h">

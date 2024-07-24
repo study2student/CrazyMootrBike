@@ -194,15 +194,15 @@ void ResourceManager::Init(void)
 
 	//金メダル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/GoldCoin.mv1");
-	resourcesMap_.emplace(SRC::GOLD_MEDAL, res);
+	resourcesMap_.emplace(SRC::GOLD_COIN, res);
 
 	//銀メダル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/SilverCoin.mv1");
-	resourcesMap_.emplace(SRC::SILVER_MEDAL, res);
+	resourcesMap_.emplace(SRC::SILVER_COIN, res);
 
 	// 銅メダル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/CopperCoin.mv1");
-	resourcesMap_.emplace(SRC::COPPER_MEDAL, res);
+	resourcesMap_.emplace(SRC::COPPER_COIN, res);
 
 
 	// バイクモデル

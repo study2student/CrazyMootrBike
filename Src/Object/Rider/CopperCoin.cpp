@@ -13,20 +13,21 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Score.h"
 #include "../../Scene/GameScene.h"
-#include "LongDisEnemy.h"
+#include "CopperCoin.h"
 
-LongDisEnemy::LongDisEnemy(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) : EnemyBase(bikes,gameScene, loopStagePos, localPos)
+
+CopperCoin::CopperCoin(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) : CoinBase(bikes, gameScene,loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
 }
 
-void LongDisEnemy::SetParam(void)
+void CopperCoin::SetParam(void)
 {
 
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::SILVER_MEDAL));
+		ResourceManager::SRC::COPPER_COIN));
 	float SCL = 200.0f;
 	transform_.scl = { SCL,SCL,SCL };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
@@ -39,21 +40,21 @@ void LongDisEnemy::SetParam(void)
 	ChangeState(STATE::PLAY);
 }
 
-void LongDisEnemy::Update(void)
+void CopperCoin::Update(void)
 {
 	// 更新ステップ
 	switch (state_)
 	{
-	case EnemyBase::STATE::NONE:
+	case CoinBase::STATE::NONE:
 		UpdateNone();
 		break;
-	case EnemyBase::STATE::PLAY:
+	case CoinBase::STATE::PLAY:
 		UpdatePlay();
 		break;
-	case EnemyBase::STATE::FLIPED:
+	case CoinBase::STATE::FLIPED:
 		UpdateFliped();
 		break;
-	case EnemyBase::STATE::DEAD:
+	case CoinBase::STATE::DEAD:
 		UpdateDead();
 		break;
 	}
@@ -61,14 +62,12 @@ void LongDisEnemy::Update(void)
 
 	// モデル制御更新
 	transform_.Update();
-
 }
 
-void LongDisEnemy::UpdatePlay(void)
+void CopperCoin::UpdatePlay(void)
 {
 	// 移動処理
 	ProcessMove();
-
 
 	//回転
 	RotY();
@@ -83,7 +82,7 @@ void LongDisEnemy::UpdatePlay(void)
 	transform_.quaRot = enemyRotY_;
 }
 
-void LongDisEnemy::ProcessMove(void)
+void CopperCoin::ProcessMove(void)
 {
 	auto& ins = InputManager::GetInstance();
 

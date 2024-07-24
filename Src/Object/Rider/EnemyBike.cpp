@@ -10,13 +10,13 @@
 #include "../Common/Collider.h"
 #include "../Planet.h"
 #include "Weapon.h"
-#include "EnemyBase.h"
+#include "CoinBase.h"
 #include "EnemyBike.h"
 
-EnemyBike::EnemyBike(EnemyBase* enemy)
+EnemyBike::EnemyBike(CoinBase* enemy)
 {
 
-	enemy_ = enemy;
+	coin_ = enemy;
 
 	weapon_ = nullptr;
 
@@ -252,8 +252,8 @@ void EnemyBike::DrawDebug(void)
 
 void EnemyBike::ProcessMove(void)
 {
-	transform_.pos = enemy_->GetTransform().pos;
-	transform_.quaRot = enemy_->GetTransform().quaRot;
+	transform_.pos = coin_->GetTransform().pos;
+	transform_.quaRot = coin_->GetTransform().quaRot;
 	transform_.Update();
 
 

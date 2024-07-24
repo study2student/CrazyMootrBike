@@ -7,10 +7,10 @@ class Stage;
 class SkyDome;
 class Rider;
 class Bike;
-class EnemyBase;
-class ShortDisEnemy;
-class LongDisEnemy;
-class MagicEnemy;
+class CoinBase;
+class GoldCoin;
+class SilverCoin;
+class CopperCoin;
 class EnemyBike;
 class Helicopter;
 class Score;
@@ -78,7 +78,7 @@ public:
 	void Draw(void) override;
 
 	//“Gî•ñ
-	std::vector<EnemyBase*> GetEnemys(void);
+	std::vector<CoinBase*> GetEnemys(void);
 	std::vector<EnemyBike*> GetEnemyBikes(void);
 
 	//“G‚ª’Ç‰Á‚³‚ê‚½ƒ^ƒCƒ~ƒ“ƒO‚©‚Ç‚¤‚©
@@ -151,11 +151,11 @@ private:
 	//Enemy* enemy_;
 
 	//“G
-	EnemyBase* enemy_;
+	CoinBase* coin_;
 	EnemyBike* enemyBike_;
 
 	//•¡”‚Ì“G
-	std::vector<EnemyBase*>enemys_;
+	std::vector<CoinBase*>coins_;
 	std::vector<EnemyBike*>enemyBikes_;
 
 	//“G‚Ì”­¶•p“x

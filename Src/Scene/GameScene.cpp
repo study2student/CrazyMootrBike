@@ -14,10 +14,10 @@
 #include "../Object/Rider/Bike.h"
 #include "../Object/Rider/EnemyBike.h"
 #include "../Object/Rider/Rider.h"
-#include "../Object/Rider/EnemyBase.h"
-#include "../Object/Rider/ShortDisEnemy.h"
-#include "../Object/Rider/LongDisEnemy.h"
-#include "../Object/Rider/MagicEnemy.h"
+#include "../Object/Rider/CoinBase.h"
+#include "../Object/Rider/GoldCoin.h"
+#include "../Object/Rider/SilverCoin.h"
+#include "../Object/Rider/CopperCoin.h"
 #include "../Object/Planet.h"
 #include "../Object/Bomb.h"
 #include "../Object/Score.h"
@@ -28,7 +28,7 @@
 
 GameScene::GameScene(void)
 {
-	enemy_ = nullptr;
+	coin_ = nullptr;
 	stage_ = nullptr;
 	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
@@ -41,7 +41,7 @@ GameScene::GameScene(void)
 
 GameScene::~GameScene(void)
 {
-	delete enemy_;
+	delete coin_;
 	delete throwTyre_;
 }
 
@@ -83,7 +83,7 @@ void GameScene::Init(void)
 
 	// 敵
 	for (auto& bike : bikes_) {
-		enemy_ = new EnemyBase(bikes_,this, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+		coin_ = new CoinBase(bikes_,this, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 	}
 
 	//ヘリコプター
@@ -95,7 +95,7 @@ void GameScene::Init(void)
 	throwTyre_->Init();
 
 	// ステージ
-	stage_ = std::make_shared<Stage>(bikes_, enemy_, helicopter_->GetBomb(), throwTyre_, this);
+	stage_ = std::make_shared<Stage>(bikes_, coin_, helicopter_->GetBomb(), throwTyre_, this);
 	stage_->Init();
 
 	// ステージの初期設定
@@ -350,11 +350,11 @@ void GameScene::Update(void)
 
 
 		//敵
-		size_t sizeE = enemys_.size();
+		size_t sizeE = coins_.size();
 		for (int i = 0; i < sizeE; i++)
 		{
-			enemys_[i]->Update();
-			if (enemys_[i]->GetIsAddScore())
+			coins_[i]->Update();
+			if (coins_[i]->GetIsAddScore())
 			{
 				isHitStop = true;
 				// ヒットエフェクト
@@ -381,51 +381,51 @@ void GameScene::Update(void)
 			float shiftX_ = {};
 
 			//道のランダムな場所に生成(3パターン)
-			int randDir = GetRand(static_cast<int>(EnemyBase::DIR::MAX) - 1);
-			EnemyBase::DIR dir = static_cast<EnemyBase::DIR>(randDir);
+			int randDir = GetRand(static_cast<int>(CoinBase::DIR::MAX) - 1);
+			CoinBase::DIR dir = static_cast<CoinBase::DIR>(randDir);
 
 			Vector2 randPos;
 			switch (dir)
 			{
-			case EnemyBase::DIR::LEFT:
-				shiftX_ = -EnemyBase::DIR_LEN;
+			case CoinBase::DIR::LEFT:
+				shiftX_ = -CoinBase::DIR_LEN;
 				break;
-			case EnemyBase::DIR::CENTER:
+			case CoinBase::DIR::CENTER:
 				shiftX_ = 0.0f;
 				break;
-			case EnemyBase::DIR::RIGHT:
-				shiftX_ = EnemyBase::DIR_LEN;
+			case CoinBase::DIR::RIGHT:
+				shiftX_ = CoinBase::DIR_LEN;
 				break;
 			}
 
 			//縦に敵を生成する
-			for (int i = 0; i < EnemyBase::MAX_MAKE_NUM; i++)
+			for (int i = 0; i < CoinBase::MAX_MAKE_NUM; i++)
 			{
 				//縦に並ぶ敵と敵の距離
-				float len = EnemyBase::X_LEN;
+				float len = CoinBase::X_LEN;
 
 				//敵の生成
-				EnemyBase* e = nullptr;
-				int eType = GetRand(static_cast<int>(EnemyBase::TYPE::MAX) - 1);
-				EnemyBase::TYPE type = static_cast<EnemyBase::TYPE>(eType);
+				CoinBase* c = nullptr;
+				int eType = GetRand(static_cast<int>(CoinBase::TYPE::MAX) - 1);
+				CoinBase::TYPE type = static_cast<CoinBase::TYPE>(eType);
 				for (auto& bike : bikes_) {
 					switch (type)
 					{
-					case EnemyBase::TYPE::GOLD:
-						e = new ShortDisEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					case CoinBase::TYPE::GOLD:
+						c = new GoldCoin(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
-					case EnemyBase::TYPE::SILVER:
-						e = new LongDisEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					case CoinBase::TYPE::SILVER:
+						c = new SilverCoin(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
-					case EnemyBase::TYPE::COPPER:
-						e = new MagicEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+					case CoinBase::TYPE::COPPER:
+						c = new CopperCoin(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
 					}
 				}
-				e->Init();
+				c->Init();
 
 				EnemyBike* eB = nullptr;
-				eB = new EnemyBike(e);
+				eB = new EnemyBike(c);
 				eB->Init();
 				isCreateEnemy_ = true;
 
@@ -437,7 +437,7 @@ void GameScene::Update(void)
 				//e->setPos(randPos.ToVector2F());
 
 				//可変長配列に要素を追加
-				enemys_.push_back(e);
+				coins_.push_back(c);
 			}
 		}
 		else
@@ -474,19 +474,19 @@ void GameScene::Draw(void)
 		throwTyre_->Draw();
 
 		//敵描画
-		size_t sizeE = enemys_.size();
+		size_t sizeE = coins_.size();
 		for (int i = 0; i < sizeE; i++)
 		{
-			if (!enemys_[i]->IsDestroy())
+			if (!coins_[i]->IsDestroy())
 			{
-				enemys_[i]->Draw();
+				coins_[i]->Draw();
 			}
 		}
 
 		size_t sizeEb = enemyBikes_.size();
 		for (int i = 0; i < sizeEb; i++)
 		{
-			if (!enemys_[i]->IsDestroy())
+			if (!coins_[i]->IsDestroy())
 			{
 				enemyBikes_[i]->Draw();
 			}
@@ -550,19 +550,19 @@ void GameScene::Draw(void)
 			throwTyre_->Draw();
 
 			//敵描画
-			size_t sizeE = enemys_.size();
+			size_t sizeE = coins_.size();
 			for (int i = 0; i < sizeE; i++)
 			{
-				if (!enemys_[i]->IsDestroy())
+				if (!coins_[i]->IsDestroy())
 				{
-					enemys_[i]->Draw();
+					coins_[i]->Draw();
 				}
 			}
 
 			size_t sizeEb = enemyBikes_.size();
 			for (int i = 0; i < sizeEb; i++)
 			{
-				if (!enemys_[i]->IsDestroy())
+				if (!coins_[i]->IsDestroy())
 				{
 					enemyBikes_[i]->Draw();
 				}
@@ -799,9 +799,9 @@ void GameScene::Draw(void)
 	
 }
 
-std::vector<EnemyBase*> GameScene::GetEnemys(void)
+std::vector<CoinBase*> GameScene::GetEnemys(void)
 {
-	return enemys_;
+	return coins_;
 }
 
 std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
@@ -893,7 +893,7 @@ void GameScene::Collision(void)
 
 			VECTOR diff = VSub(b1Pos, b2Pos);
 			float  dis = MyUtility::SqrMagnitudeF(diff);
-			if (dis < EnemyBase::RADIUS * EnemyBase::RADIUS)
+			if (dis < CoinBase::RADIUS * CoinBase::RADIUS)
 			{
 
 				// 範囲に入ったら、お互いを弾く
@@ -904,8 +904,8 @@ void GameScene::Collision(void)
 				flipDirB2.y = 0.0f;
 				flipDirB2 = VNorm(flipDirB2);
 
-				enemys_[b1]->Flip(flipDirB1);
-				enemys_[b2]->Flip(flipDirB2);
+				coins_[b1]->Flip(flipDirB1);
+				coins_[b2]->Flip(flipDirB2);
 			}
 
 
