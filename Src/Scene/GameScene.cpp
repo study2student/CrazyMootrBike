@@ -336,10 +336,6 @@ void GameScene::Update(void)
 
 
 		}
-		for (auto& bike : bikes_)
-		{
-			enemy_->SetBikeTrans(bike->GetTransform());
-		}
 
 		//ƒwƒŠ
 		//æ“ª(À•W)‚Ì—v‘f”Ô†Žæ“¾
@@ -415,13 +411,13 @@ void GameScene::Update(void)
 				for (auto& bike : bikes_) {
 					switch (type)
 					{
-					case EnemyBase::TYPE::SHORT_DIS:
+					case EnemyBase::TYPE::GOLD:
 						e = new ShortDisEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
-					case EnemyBase::TYPE::LONG_DIS:
+					case EnemyBase::TYPE::SILVER:
 						e = new LongDisEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
-					case EnemyBase::TYPE::BOMB:
+					case EnemyBase::TYPE::COPPER:
 						e = new MagicEnemy(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 						break;
 					}
