@@ -600,6 +600,12 @@ void GameScene::Draw(void)
 					DrawGraph(0, 0, mainScreen_, false);
 					DrawUI(sx / 2 - width, 0, 0);
 
+					//エフェクトの再生
+					if (bikes_[0]->IsBoost())
+					{
+						bikes_[0]->SyncBoostEffect(bikes_[0]->GetTransform());
+					}
+
 					//ゴール文字
 					if (bikes_[0]->GetIsGoal())
 					{
@@ -623,6 +629,12 @@ void GameScene::Draw(void)
 				case 1:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
 					DrawUI(sx - width, 0, 1);
+
+					//エフェクトの再生
+					if (bikes_[1]->IsBoost())
+					{
+						bikes_[1]->SyncBoostEffect(bikes_[1]->GetTransform());
+					}
 
 					//ゴール文字
 					if (bikes_[1]->GetIsGoal())
@@ -648,6 +660,12 @@ void GameScene::Draw(void)
 					DrawGraph(0, sy / 2, mainScreen_, false);
 					DrawUI(sx / 2 - width, sy / 2, 2);
 
+					//エフェクトの再生
+					if (bikes_[2]->IsBoost())
+					{
+						bikes_[2]->SyncBoostEffect(bikes_[2]->GetTransform());
+					}
+
 					//ゴール文字
 					if (bikes_[2]->GetIsGoal())
 					{
@@ -671,6 +689,12 @@ void GameScene::Draw(void)
 				case 3:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
 					DrawUI(sx - width, sy / 2, 3);
+
+					//エフェクトの再生
+					if (bikes_[3]->IsBoost())
+					{
+						bikes_[3]->SyncBoostEffect(bikes_[3]->GetTransform());
+					}
 
 					//ゴール文字
 					if (bikes_[3]->GetIsGoal())

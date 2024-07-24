@@ -11,10 +11,6 @@
 #include "../Common/Collider.h"
 #include "../Planet.h"
 #include "../Score.h"
-#include "Player.h"
-#include "../Bomb.h"
-#include "FrontTyre.h"
-#include "RearTyre.h"
 #include "Bike.h"
 
 Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playerID)
@@ -24,8 +20,6 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 	animationController_ = nullptr;
 
 	state_ = STATE::NONE;
-
-	attackState_ = ATTACK_TYPE::NONE;
 
 	speed_ = 0.0f;
 	moveDir_ = MyUtility::VECTOR_ZERO;
@@ -51,6 +45,9 @@ Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playe
 
 	// ブースト使用間隔
 	deleyBoost_ = 0;
+
+	// ブーストを使用したか
+	isBoost_ = false;
 
 	// 衝突チェック
 	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
@@ -159,17 +156,12 @@ void Bike::Draw(void)
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
 
-	//タイヤ
-	/*frontTyre_->Draw();
-	rearTyre_->Draw();*/
 
 	// 体力とかゲージとか
 	DrawUI();
 
 	// 丸影描画
 	DrawShadow();
-
-	//player_->Draw();
 
 
 	// デバッグ描画
@@ -189,60 +181,6 @@ void Bike::ClearCollider(void)
 const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 {
 	return capsule_;
-}
-
-void Bike::Jump(void)
-{
-	///*Quaternion q = Quaternion::AngleAxis(MyUtility::Deg2RadD(-120.0), MyUtility::AXIS_X);
-	//Quaternion e= Quaternion::Normalize(q);*/
-
-	//// 角度（ラジアン）を設定
-	//float angle = DX_PI_F / 4.0f; // 45度
-
-	//
-
-	//// XZ平面内での斜め上のベクトルを作成
-	//VECTOR jumpVec;
-	//jumpVec.x = std::cos(angle);
-	//jumpVec.y = std::sin(angle);
-	//jumpVec.z = 0.0f;
-
-	//// ベクトルの正規化
-	//jumpVec = VNorm(jumpVec);
-	
-
-
-	////jumpVec = Quaternion::PosAxis(q,transform_.pos);
-	//transform_.pos = VAdd(transform_.pos, VScale(jumpVec,400.0f));
-	//transform_.Update();
-
-
-
-
-	// ジャンプ
-	if ((isJump_ || IsEndLanding()))
-	{
-
-		if (!isJump_)
-		{
-			jumpSpeed_ = 1.0f;
-		}
-
-		isJump_ = true;
-
-		// ジャンプの入力受付時間をヘラス
-		stepJump_ += scnMng_.GetDeltaTime();
-		jumpSpeed_ *= 1.98f;
-		if (stepJump_ < TIME_JUMP_IN)
-		{
-			//jumpPow_ = VScale(MyUtility::DIR_U, POW_JUMP);
-			//jumpPow_ = VScale(VAdd(MyUtility::DIR_U, SceneManager::GetInstance().GetCamera()->GetForward()),POW_JUMP);
-			jumpPow_ = VScale(VAdd(MyUtility::DIR_U, transform_.GetForward()), jumpSpeed_ * POW_JUMP);
-		}
-
-
-	}
-
 }
 
 void Bike::Damage(int damage)
@@ -290,6 +228,11 @@ void Bike::Flip(VECTOR dir)
 	flipDir_ = dir;
 	flipSpeed_ = 5.0f;
 	ChangeState(STATE::FLIPED);
+}
+
+const bool Bike::IsBoost(void)
+{
+	return isBoost_;
 }
 
 void Bike::InitAnimation(void)
@@ -357,12 +300,6 @@ void Bike::UpdatePlay(void)
 	//ブースト
 	ProcessBoost();
 
-	// ジャンプ処理
-	ProcessJump();
-
-	// 攻撃処理
-	ProcessAttack();
-
 	// デバッグ用
 	ProcessDebug();
 
@@ -403,9 +340,6 @@ void Bike::UpdateFliped(void)
 		ChangeState(STATE::PLAY);
 	}
 	movePow_ = VAdd(movePow_, VScale(flipDir_, flipSpeed_));
-
-	// ジャンプ処理
-	ProcessJump();
 
 	// 移動方向に応じた回転
 	Rotate();
@@ -526,50 +460,6 @@ void Bike::ProcessMove(void)
 		dir = cameraRot.GetBack();
 	}
 
-	/*if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = MyUtility::Deg2RadD(0.0f);
-		dir = cameraRot.GetForward();
-	}
-
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = MyUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetForward();
-	}
-
-	if (ins.IsPadBtnNew(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::R_TRIGGER))
-	{
-		rotRad = MyUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
-	{
-		rotRadZ = MyUtility::Deg2RadD(-45.0f);
-		dir = cameraRot.GetRight();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
-	{
-		rotRadZ = MyUtility::Deg2RadD(45.0f);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
-	{
-		rotRad = MyUtility::Deg2RadD(180.0f);
-		dir = cameraRot.GetBack();
-	}*/
-
-	// カメラ方向に前進したい
-	//if (ins.IsNew(KEY_INPUT_W))
-	//{
-	//	rotRad = MyUtility::Deg2RadD(0.0f);
-	//	dir = cameraRot.GetForward();
-	//}
-
-
 	//もし上ってしまったら戻す
 	//右側
 	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
@@ -674,35 +564,14 @@ void Bike::ProcessMove(void)
 			}
 		}
 
-		/*moveDir_ = dir;
-		movePow_ = VAdd(VScale(dir, speed_), movePowF_);*/
-
 
 		// 回転処理
 		SetGoalRotate(rotRad);
 		SetGoalRotateZ(rotRadZ);
 
-		if (!isJump_ && IsEndLanding())
-		{
-			////アニメーション
-			//if (ins.IsNew(KEY_INPUT_RSHIFT))
-			//{
-			//	animationController_->Play((int)ANIM_TYPE::FAST_RUN);
-			//}
-			//else
-			//{
-			//	animationController_->Play((int)ANIM_TYPE::RUN);
-			//}
-		}
-
 	}
 	else
 	{
-		if (!isJump_ && IsEndLanding())
-		{
-		/*	animationController_->Play((int)ANIM_TYPE::IDLE);*/
-		}
-
 		//傾きっぱになるので角度リセットしておく
 		rotRad = MyUtility::Deg2RadD(0.0f);
 		dir = cameraRot.GetForward();
@@ -724,35 +593,6 @@ void Bike::ProcessMove(void)
 
 }
 
-void Bike::ProcessJump(void)
-{
-}
-
-void Bike::ProcessAttack(void)
-{
-
-	//// 攻撃更新
-	//switch (attackState_)
-	//{
-	//case Bike::ATTACK_TYPE::NONE:
-	//	break;
-	//case Bike::ATTACK_TYPE::NORMAL:
-	//	NormalAttack();
-	//	break;
-	//case Bike::ATTACK_TYPE::SPECIAL:
-	//	SpecialAttack();
-	//	break;
-	//case Bike::ATTACK_TYPE::LONG:
-	//	LongAttack();
-	//	break;
-	//default:
-	//	break;
-	//}
-
-	NormalAttack();
-	SpecialAttack();
-	LongAttack();
-}
 
 void Bike::ProcessBoost(void)
 {
@@ -771,6 +611,9 @@ void Bike::ProcessBoost(void)
 
 	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP || padState & static_cast<int>(input.action) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
 	{
+		// ブースト判定をtrueに
+		isBoost_ = true;
+
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;
 
@@ -782,11 +625,12 @@ void Bike::ProcessBoost(void)
 		// 大きさ
 		float boostSCALE = 30.0f;
 		SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, boostSCALE, boostSCALE, boostSCALE);
-
-		SyncBoostEffect();
+		SyncBoostEffect(transform_);
 	}
 	else
 	{
+		isBoost_ = false;
+
 		deleyBoost_--;
 		if (deleyBoost_ <= 0)
 		{
@@ -799,7 +643,7 @@ void Bike::ProcessBoost(void)
 			SceneManager::GetInstance().GetCamera()->SetIsBoost(false);
 		}
 
-		SyncBoostEffect();
+		SyncBoostEffect(transform_);
 	}
 }
 
@@ -810,59 +654,6 @@ void Bike::ProcessDebug(void)
 	/*if (ins.IsNew(KEY_INPUT_C))
 	{
 		hp_ -= 1;
-	}*/
-}
-
-void Bike::NormalAttack(void)
-{
-	//auto& ins = InputManager::GetInstance();
-
-	//if (ins.IsNew(KEY_INPUT_Z))
-	//{
-	//	attackState_ = ATTACK_TYPE::NORMAL;
-	//	animationController_->Play((int)ANIM_TYPE::FALLING);
-
-	//	isAttack_ = true;
-	//}
-	//else
-	//{
-	//	attackState_ = ATTACK_TYPE::NONE;
-	//	isAttack_ = false;
-	//}
-}
-
-void Bike::LongAttack(void)
-{
-
-}
-
-void Bike::SpecialAttack(void)
-{
-	auto& ins = InputManager::GetInstance();
-
-	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
-	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
-
-	float rotRad = 0.0f;
-	VECTOR dir = MyUtility::VECTOR_ZERO;
-
-	/*if (ins.IsNew(KEY_INPUT_Z))
-	{
-		attackState_ = ATTACK_TYPE::SPECIAL;
-		animationController_->Play((int)ANIM_TYPE::FALLING);
-		rotRad = MyUtility::Deg2RadD(180.0f);
-
-		VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
-		Quaternion axis = Quaternion::AngleAxis((float)cameraRot.y + rotRad, MyUtility::AXIS_Y);
-
-		goalQuaRot_ = axis;
-
-		isAttack_ = true;
-	}
-	else
-	{
-		attackState_ = ATTACK_TYPE::NONE;
-		isAttack_ = false;
 	}*/
 }
 
@@ -965,13 +756,6 @@ void Bike::CollisionGravity(void)
 			jumpPow_ = MyUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
-			//if (isJump_)
-			//{
-			//	// 着地モーション
-			//	animationController_->Play(
-			//		(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
-			//}
-
 			isJump_ = false;
 
 		}
@@ -1053,25 +837,6 @@ void Bike::CalcGravityPow(void)
 
 }
 
-bool Bike::IsEndLanding(void)
-{
-	bool ret = true;
-
-	// アニメーションがジャンプではない
-	if (animationController_->GetPlayType() != (int)ANIM_TYPE::JUMP)
-	{
-		return ret;
-	}
-
-	// アニメーションが終了しているか
-	if (animationController_->IsEnd())
-	{
-		return ret;
-	}
-
-	return false;
-}
-
 void Bike::InitEffect(void)
 {
 	// ヒットエフェクト
@@ -1086,18 +851,28 @@ void Bike::InitEffect(void)
 void Bike::SonicBoomEffect(void)
 {
 	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.pos.x, transform_.pos.y + 200.0f, transform_.pos.z + 1000);
-	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.rot.x, transform_.rot.y + 180.0f, transform_.rot.z);
+	//角度の同期
+	VECTOR angles = transform_.quaRot.ToEuler();
+	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, angles.x, angles.y, angles.z);
+	// 大きさ
+	float scale = 10.0f;
+	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
 }
 
-void Bike::SyncBoostEffect(void)
+void Bike::SyncBoostEffect(Transform player)
 {
-	VECTOR pos = transform_.pos;
+	VECTOR pos = player.pos;
 
 	pos = Quaternion::PosAxis(transform_.quaRot, RELATIVE_P2EB_POS);
-	pos = VAdd(transform_.pos, pos);
+	pos = VAdd(player.pos, pos);
 	SetPosPlayingEffekseer3DEffect(effectBoostPlayId_, pos.x, pos.y, pos.z);
 
 	//角度の同期
-	VECTOR angles = transform_.quaRot.ToEuler();
+	//VECTOR angles = transform_.quaRot.ToEuler();
+	VECTOR angles = player.quaRot.ToEuler();
 	SetRotationPlayingEffekseer3DEffect(effectBoostPlayId_, angles.x, angles.y, angles.z);
+
+	// 大きさ
+	float boostSCALE = 30.0f;
+	SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, boostSCALE, boostSCALE, boostSCALE);
 }

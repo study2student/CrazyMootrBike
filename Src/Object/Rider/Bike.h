@@ -1,6 +1,4 @@
 #pragma once
-#include <map>
-#include <DxLib.h>
 #include <memory>
 #include "../ActorBase.h"
 #include <vector>
@@ -9,8 +7,6 @@ class Collider;
 class Capsule;
 class Player;
 class Score;
-class FrontTyre;
-class RearTyre;
 
 class Bike : public ActorBase
 {
@@ -112,15 +108,6 @@ public:
 		JoypadButton action;
 	};
 
-	// 攻撃種別
-	enum class ATTACK_TYPE
-	{
-		NONE,
-		NORMAL,
-		SPECIAL,
-		LONG,
-	};
-
 	// コンストラクタ
 	Bike(float localpos, int playerID);
 
@@ -138,9 +125,9 @@ public:
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
+	// エフェクト制御
+	void SyncBoostEffect(Transform player);
 
-	//ジャンプ台用のジャンプ
-	void Jump(void);
 
 	//ダメージ
 	void Damage(int damage);
@@ -167,6 +154,9 @@ public:
 
 	// プレイヤー同士の当たり判定
 	void Flip(VECTOR dir);
+
+	// ブーストを使ったかどうか
+	const bool IsBoost(void);
 private:
 
 	Transform transformPlayer_;
@@ -183,9 +173,6 @@ private:
 
 	// プレイヤーIDを保持
 	int playerID_;
-
-	// 攻撃状態管理
-	ATTACK_TYPE attackState_;
 
 	// 移動スピード
 	float speed_;
@@ -267,15 +254,8 @@ private:
 
 	// 操作
 	void ProcessMove(void);//移動
-	void ProcessJump(void);//ジャンプ
-	void ProcessAttack(void);//攻撃
 	void ProcessBoost(void); //ブースト
 	void ProcessDebug(void);//デバッグ用
-
-	// 攻撃種別
-	void NormalAttack(void);//通常攻撃
-	void LongAttack(void);//遠距離攻撃
-	void SpecialAttack(void);//必殺技
 
 	// 回転
 	void SetGoalRotate(float rotRad);
@@ -290,9 +270,6 @@ private:
 	// 移動量の計算
 	void CalcGravityPow(void);
 
-	// 着地モーション終了
-	bool IsEndLanding(void);
-
 	//エフェクト系
 	// ヒットエフェクト
 	int effectSonicResId_;
@@ -303,6 +280,9 @@ private:
 
 	// ブースト使用間隔
 	float deleyBoost_;
+
+	// ブーストを使用したか
+	bool isBoost_;
 
 	//ゴールしたか
 	bool isGoal_;
@@ -316,10 +296,8 @@ private:
 
 	// エフェクト初期化
 	void InitEffect(void);
-	// Hitエフェクトの位置
+	// ソニックブームエフェクトの位置
 	void SonicBoomEffect(void);
 
-	// エフェクト制御
-	void SyncBoostEffect(void);
 };
 
