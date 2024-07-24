@@ -78,19 +78,13 @@
     <ClCompile Include="Src\Manager\SceneManager.cpp">
       <Filter>ソース ファイル\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Planet.cpp">
+    <ClCompile Include="Src\Object\Stage\Planet.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\Player.cpp">
+    <ClCompile Include="Src\Object\Stage\SkyDome.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\SkyDome.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Stage.cpp">
-      <Filter>ソース ファイル\Object</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\WarpStar.cpp">
+    <ClCompile Include="Src\Object\Stage\Stage.cpp">
       <Filter>ソース ファイル\Object</Filter>
     </ClCompile>
     <ClCompile Include="Src\Scene\GameScene.cpp">
@@ -129,9 +123,6 @@
     <ClCompile Include="Src\Object\ActorBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\Enemy.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
     <ClCompile Include="Src\Object\Rider\Bike.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
@@ -144,64 +135,43 @@
     <ClCompile Include="Src\Scene\GameOverScene.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Bomb.cpp">
+    <ClCompile Include="Src\Object\Gimmick\Bomb.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\City.cpp">
+    <ClCompile Include="Src\Object\Stage\City.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\DataSave.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Goal.cpp">
+    <ClCompile Include="Src\Object\Stage\Goal.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Helicopter.cpp">
+    <ClCompile Include="Src\Object\Gimmick\Helicopter.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\JampRamp.cpp">
+    <ClCompile Include="Src\Object\Stage\LoopStage.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\LoopStage.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rotor.cpp">
+    <ClCompile Include="Src\Object\Gimmick\Rotor.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Score.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\StageCurve.cpp">
+    <ClCompile Include="Src\Object\Gimmick\TyreThrow.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\TyreThrow.cpp">
+    <ClCompile Include="Src\Object\Coin\CoinBase.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\CoinBase.cpp">
+    <ClCompile Include="Src\Object\Coin\SilverCoin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\EnemyBike.cpp">
+    <ClCompile Include="Src\Object\Coin\CopperCoin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Rider\FrontTyre.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rider\SilverCoin.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rider\CopperCoin.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rider\RearTyre.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rider\Rider.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rider\GoldCoin.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Src\Object\Rider\Weapon.cpp">
+    <ClCompile Include="Src\Object\Coin\GoldCoin.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -221,19 +191,13 @@
     <ClInclude Include="Src\Manager\SceneManager.h">
       <Filter>ヘッダー ファイル\Manager</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Planet.h">
+    <ClInclude Include="Src\Object\Stage\Planet.h">
       <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\Player.h">
+    <ClInclude Include="Src\Object\Stage\SkyDome.h">
       <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\SkyDome.h">
-      <Filter>ヘッダー ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Stage.h">
-      <Filter>ヘッダー ファイル\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\WarpStar.h">
+    <ClInclude Include="Src\Object\Stage\Stage.h">
       <Filter>ヘッダー ファイル\Object</Filter>
     </ClInclude>
     <ClInclude Include="Src\Scene\GameScene.h">
@@ -278,9 +242,6 @@
     <ClInclude Include="Src\Object\ActorBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\Enemy.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
     <ClInclude Include="Src\Object\Rider\Bike.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -293,64 +254,43 @@
     <ClInclude Include="Src\Scene\GameOverScene.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Bomb.h">
+    <ClInclude Include="Src\Object\Gimmick\Bomb.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\City.h">
+    <ClInclude Include="Src\Object\Stage\City.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\DataSave.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Goal.h">
+    <ClInclude Include="Src\Object\Stage\Goal.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Helicopter.h">
+    <ClInclude Include="Src\Object\Gimmick\Helicopter.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\JampRamp.h">
+    <ClInclude Include="Src\Object\Stage\LoopStage.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\LoopStage.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rotor.h">
+    <ClInclude Include="Src\Object\Gimmick\Rotor.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Score.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\StageCurve.h">
+    <ClInclude Include="Src\Object\Gimmick\TyreThrow.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\TyreThrow.h">
+    <ClInclude Include="Src\Object\Coin\CoinBase.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\CoinBase.h">
+    <ClInclude Include="Src\Object\Coin\SilverCoin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\EnemyBike.h">
+    <ClInclude Include="Src\Object\Coin\CopperCoin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Rider\FrontTyre.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rider\SilverCoin.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rider\CopperCoin.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rider\RearTyre.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rider\Rider.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rider\GoldCoin.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Src\Object\Rider\Weapon.h">
+    <ClInclude Include="Src\Object\Coin\GoldCoin.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

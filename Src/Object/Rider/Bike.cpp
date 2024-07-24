@@ -9,7 +9,7 @@
 #include "../Common/AnimationController.h"
 #include "../Common/Capsule.h"
 #include "../Common/Collider.h"
-#include "../Planet.h"
+#include "../Stage/Planet.h"
 #include "../Score.h"
 #include "Bike.h"
 

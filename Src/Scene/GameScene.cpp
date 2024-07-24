@@ -9,20 +9,18 @@
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Capsule.h"
 #include "../Object/Common/Collider.h"
-#include "../Object/SkyDome.h"
-#include "../Object/Stage.h"
+#include "../Object/Stage/SkyDome.h"
+#include "../Object/Stage/Stage.h"
 #include "../Object/Rider/Bike.h"
-#include "../Object/Rider/EnemyBike.h"
-#include "../Object/Rider/Rider.h"
-#include "../Object/Rider/CoinBase.h"
-#include "../Object/Rider/GoldCoin.h"
-#include "../Object/Rider/SilverCoin.h"
-#include "../Object/Rider/CopperCoin.h"
-#include "../Object/Planet.h"
-#include "../Object/Bomb.h"
+#include "../Object/Coin/CoinBase.h"
+#include "../Object/Coin/GoldCoin.h"
+#include "../Object/Coin/SilverCoin.h"
+#include "../Object/Coin/CopperCoin.h"
+#include "../Object/Stage/Planet.h"
+#include "../Object/Gimmick/Bomb.h"
 #include "../Object/Score.h"
-#include "../Object/Helicopter.h"
-#include "../Object/TyreThrow.h"
+#include "../Object/Gimmick/Helicopter.h"
+#include "../Object/Gimmick/TyreThrow.h"
 #include "../Object/DataSave.h"
 #include "GameScene.h"
 
@@ -30,7 +28,6 @@ GameScene::GameScene(void)
 {
 	coin_ = nullptr;
 	stage_ = nullptr;
-	enemyBike_ = nullptr;
 	helicopter_ = nullptr;
 	throwTyre_ = nullptr;
 	//score_ = nullptr;
@@ -424,9 +421,9 @@ void GameScene::Update(void)
 				}
 				c->Init();
 
-				EnemyBike* eB = nullptr;
-				eB = new EnemyBike(c);
-				eB->Init();
+				//EnemyBike* eB = nullptr;
+				//eB = new EnemyBike(c);
+				//eB->Init();
 				isCreateEnemy_ = true;
 
 
@@ -483,14 +480,7 @@ void GameScene::Draw(void)
 			}
 		}
 
-		size_t sizeEb = enemyBikes_.size();
-		for (int i = 0; i < sizeEb; i++)
-		{
-			if (!coins_[i]->IsDestroy())
-			{
-				enemyBikes_[i]->Draw();
-			}
-		}
+
 
 		// ŠeƒoƒCƒN‚ğ•`‰æ
 		bikes_[0]->Draw();
@@ -559,14 +549,6 @@ void GameScene::Draw(void)
 				}
 			}
 
-			size_t sizeEb = enemyBikes_.size();
-			for (int i = 0; i < sizeEb; i++)
-			{
-				if (!coins_[i]->IsDestroy())
-				{
-					enemyBikes_[i]->Draw();
-				}
-			}
 
 			// ŠeƒoƒCƒN‚ğ•`‰æ
 			for (auto& bike : bikes_) {
@@ -804,10 +786,6 @@ std::vector<CoinBase*> GameScene::GetEnemys(void)
 	return coins_;
 }
 
-std::vector<EnemyBike*> GameScene::GetEnemyBikes(void)
-{
-	return enemyBikes_;
-}
 
 bool GameScene::GetIsCreateEnemy(void)
 {
@@ -875,43 +853,43 @@ void GameScene::DrawUI(int x, int y, int playerID)
 
 void GameScene::Collision(void)
 {
-	//“G“¯m‚Ì“–‚½‚è”»’è(’e‚­)
-	size_t sizeEb = enemyBikes_.size();
-	for (int b1 = 0; b1 < sizeEb; b1++)
-	{
+	////“G“¯m‚Ì“–‚½‚è”»’è(’e‚­)
+	//size_t sizeEb = enemyBikes_.size();
+	//for (int b1 = 0; b1 < sizeEb; b1++)
+	//{
 
-		for (int b2 = 0; b2 < sizeEb; b2++)
-		{
+	//	for (int b2 = 0; b2 < sizeEb; b2++)
+	//	{
 
-			if (enemyBikes_[b1] == enemyBikes_[b2])
-			{
-				continue;
-			}
+	//		if (enemyBikes_[b1] == enemyBikes_[b2])
+	//		{
+	//			continue;
+	//		}
 
-			auto b1Pos = enemyBikes_[b1]->GetCapsule().lock()->GetCenter();
-			auto b2Pos = enemyBikes_[b2]->GetCapsule().lock()->GetCenter();
+	//		auto b1Pos = enemyBikes_[b1]->GetCapsule().lock()->GetCenter();
+	//		auto b2Pos = enemyBikes_[b2]->GetCapsule().lock()->GetCenter();
 
-			VECTOR diff = VSub(b1Pos, b2Pos);
-			float  dis = MyUtility::SqrMagnitudeF(diff);
-			if (dis < CoinBase::RADIUS * CoinBase::RADIUS)
-			{
+	//		VECTOR diff = VSub(b1Pos, b2Pos);
+	//		float  dis = MyUtility::SqrMagnitudeF(diff);
+	//		if (dis < CoinBase::RADIUS * CoinBase::RADIUS)
+	//		{
 
-				// ”ÍˆÍ‚É“ü‚Á‚½‚çA‚¨Œİ‚¢‚ğ’e‚­
-				auto flipDirB1 = VNorm(VSub(b1Pos, b2Pos));
-				flipDirB1.y = 0.0f;
-				flipDirB1 = VNorm(flipDirB1);
-				auto flipDirB2 = VNorm(VSub(b2Pos, b1Pos));
-				flipDirB2.y = 0.0f;
-				flipDirB2 = VNorm(flipDirB2);
+	//			// ”ÍˆÍ‚É“ü‚Á‚½‚çA‚¨Œİ‚¢‚ğ’e‚­
+	//			auto flipDirB1 = VNorm(VSub(b1Pos, b2Pos));
+	//			flipDirB1.y = 0.0f;
+	//			flipDirB1 = VNorm(flipDirB1);
+	//			auto flipDirB2 = VNorm(VSub(b2Pos, b1Pos));
+	//			flipDirB2.y = 0.0f;
+	//			flipDirB2 = VNorm(flipDirB2);
 
-				coins_[b1]->Flip(flipDirB1);
-				coins_[b2]->Flip(flipDirB2);
-			}
+	//			coins_[b1]->Flip(flipDirB1);
+	//			coins_[b2]->Flip(flipDirB2);
+	//		}
 
 
-		}
+	//	}
 
-	}
+	//}
 
 
 	//”š’e‚ÆƒvƒŒƒCƒ„[‚Ì“–‚½‚è”»’èA“Š‚°ƒ‚ƒm‚ÆƒvƒŒƒCƒ„[‚Ì”»’è

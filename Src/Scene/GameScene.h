@@ -11,7 +11,6 @@ class CoinBase;
 class GoldCoin;
 class SilverCoin;
 class CopperCoin;
-class EnemyBike;
 class Helicopter;
 class Score;
 class TyreThrow;
@@ -79,7 +78,6 @@ public:
 
 	//“Gî•ñ
 	std::vector<CoinBase*> GetEnemys(void);
-	std::vector<EnemyBike*> GetEnemyBikes(void);
 
 	//“G‚ª’Ç‰Á‚³‚ê‚½ƒ^ƒCƒ~ƒ“ƒO‚©‚Ç‚¤‚©
 	bool GetIsCreateEnemy(void);
@@ -152,11 +150,9 @@ private:
 
 	//“G
 	CoinBase* coin_;
-	EnemyBike* enemyBike_;
 
 	//•¡”‚Ì“G
 	std::vector<CoinBase*>coins_;
-	std::vector<EnemyBike*>enemyBikes_;
 
 	//“G‚Ì”­¶•p“x
 	int enCounter;
