@@ -6,7 +6,7 @@ class AnimationController;
 class Collider;
 class Capsule;
 
-class TyreThrow : public ActorBase
+class Spike : public ActorBase
 {
 public:
 
@@ -89,10 +89,10 @@ public:
 
 
 	// コンストラクタ
-	TyreThrow();
+	Spike();
 
 	// デストラクタ
-	~TyreThrow(void);
+	~Spike(void);
 
 	void Init(void) override;
 	void Update(void) override;

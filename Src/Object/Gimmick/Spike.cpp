@@ -11,9 +11,9 @@
 #include "../Common/Collider.h"
 #include "../Stage/Planet.h"
 #include "../Rider/Bike.h"
-#include "TyreThrow.h"
+#include "Spike.h"
 
-TyreThrow::TyreThrow()
+Spike::Spike()
 {
 	state_ = STATE::IDLE;
 
@@ -26,11 +26,11 @@ TyreThrow::TyreThrow()
 	rotX_ = Quaternion();
 }
 
-TyreThrow::~TyreThrow(void)
+Spike::~Spike(void)
 {
 }
 
-void TyreThrow::Init(void)
+void Spike::Init(void)
 {
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
@@ -57,17 +57,17 @@ void TyreThrow::Init(void)
 	ChangeState(STATE::DESTROY);
 }
 
-void TyreThrow::Update(void)
+void Spike::Update(void)
 {
 	switch (state_)
 	{
-	case TyreThrow::STATE::IDLE:
+	case Spike::STATE::IDLE:
 		UpdateIdle();
 		break;
-	case TyreThrow::STATE::THROW_MOVE:
+	case Spike::STATE::THROW_MOVE:
 		UpdateThrowMove();
 		break;
-	case TyreThrow::STATE::DESTROY:
+	case Spike::STATE::DESTROY:
 		UpdateDestroy();
 		break;
 	}
@@ -76,7 +76,7 @@ void TyreThrow::Update(void)
 	transform_.Update();
 }
 
-void TyreThrow::Draw(void)
+void Spike::Draw(void)
 {
 	// デバッグ描画
 	DrawDebug();
@@ -91,42 +91,42 @@ void TyreThrow::Draw(void)
 	MV1DrawModel(transform_.modelId);
 }
 
-void TyreThrow::SetTransform(Transform transformTarget)
+void Spike::SetTransform(Transform transformTarget)
 {
 	transformTarget_ = transformTarget;
 }
 
-void TyreThrow::AddCollider(std::shared_ptr<Collider> collider)
+void Spike::AddCollider(std::shared_ptr<Collider> collider)
 {
 	colliders_.push_back(collider);
 }
 
-void TyreThrow::ClearCollider(void)
+void Spike::ClearCollider(void)
 {
 	colliders_.clear();
 }
 
-const std::weak_ptr<Capsule> TyreThrow::GetCapsule(void) const
+const std::weak_ptr<Capsule> Spike::GetCapsule(void) const
 {
 	return capsule_;
 }
 
-void TyreThrow::SetIsCol(bool isCol)
+void Spike::SetIsCol(bool isCol)
 {
 	isCol_ = isCol;
 }
 
-bool TyreThrow::GetIsCol(void)
+bool Spike::GetIsCol(void)
 {
 	return isCol_;
 }
 
-bool TyreThrow::IsIdle(void)
+bool Spike::IsIdle(void)
 {
 	return state_ == STATE::IDLE;
 }
 
-void TyreThrow::InitEffect(void)
+void Spike::InitEffect(void)
 {
 	effectMakeResId_= ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::THROW_MAKE_EFFECT).handleId_;
@@ -135,7 +135,7 @@ void TyreThrow::InitEffect(void)
 		ResourceManager::SRC::BOMB_EFFECT).handleId_;
 }
 
-void TyreThrow::MakeEffect(void)
+void Spike::MakeEffect(void)
 {
 	effectMakePlayId_ = PlayEffekseer3DEffect(effectMakeResId_);
 	float scale = 130.0f;
@@ -145,7 +145,7 @@ void TyreThrow::MakeEffect(void)
 	SetRotationPlayingEffekseer3DEffect(effectMakePlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 }
 
-void TyreThrow::BombEffect(void)
+void Spike::BombEffect(void)
 {
 	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
 
@@ -164,48 +164,48 @@ void TyreThrow::BombEffect(void)
 	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
 }
 
-void TyreThrow::ChangeState(STATE state)
+void Spike::ChangeState(STATE state)
 {
 	state_ = state;
 
 	switch (state_)
 	{
-	case TyreThrow::STATE::IDLE:
+	case Spike::STATE::IDLE:
 		ChangeStateIdle();
 		break;
-	case TyreThrow::STATE::THROW_MOVE:
+	case Spike::STATE::THROW_MOVE:
 		ChangeStateThrow();
 		break;
-	case TyreThrow::STATE::DESTROY:
+	case Spike::STATE::DESTROY:
 		ChangeStateDestroy();
 		break;
 	}
 }
 
-void TyreThrow::ChangeStateIdle(void)
+void Spike::ChangeStateIdle(void)
 {
 	isCol_ = false;
 }
 
 
-void TyreThrow::ChangeStateThrow(void)
+void Spike::ChangeStateThrow(void)
 {
 
 	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
 
 	//どこから投げるかランダムで決める
-	int randDir = GetRand(static_cast<int>(TyreThrow::DIR::MAX) - 1);
-	TyreThrow::DIR dir = static_cast<TyreThrow::DIR>(randDir);
+	int randDir = GetRand(static_cast<int>(Spike::DIR::MAX) - 1);
+	Spike::DIR dir = static_cast<Spike::DIR>(randDir);
 
 	switch (dir)
 	{
-	case TyreThrow::DIR::LEFT:
+	case Spike::DIR::LEFT:
 		transform_.pos.x = MAKE_LEFT_POS_X;
 		break;
-	case TyreThrow::DIR::RIGHT:
+	case Spike::DIR::RIGHT:
 		transform_.pos.x = MAKE_RIGHT_POS_X;
 		break;
-	case TyreThrow::DIR::MAX:
+	case Spike::DIR::MAX:
 		break;
 	}
 
@@ -213,14 +213,14 @@ void TyreThrow::ChangeStateThrow(void)
 	MakeEffect();
 
 	//ランダムな3パターンの動作
-	int randAngle = GetRand(static_cast<int>(TyreThrow::ANGLE::MAX) - 1);
-	TyreThrow::ANGLE angle = static_cast<TyreThrow::ANGLE>(randAngle);
+	int randAngle = GetRand(static_cast<int>(Spike::ANGLE::MAX) - 1);
+	Spike::ANGLE angle = static_cast<Spike::ANGLE>(randAngle);
 	VECTOR targetPos;
 	VECTOR throwLocalPos;
 
 	switch (angle)
 	{
-	case TyreThrow::ANGLE::SIDE:
+	case Spike::ANGLE::SIDE:
 		if (dir == DIR::LEFT)
 		{
 			throwLocalPos = LEFT_THROW_LOCAL_POS_TO_SIDE;
@@ -232,7 +232,7 @@ void TyreThrow::ChangeStateThrow(void)
 
 		targetPos = VAdd(transformTarget_.pos, throwLocalPos);
 		break;
-	case TyreThrow::ANGLE::SLIGHTLY_OBLIPUE:
+	case Spike::ANGLE::SLIGHTLY_OBLIPUE:
 		if (dir == DIR::LEFT)
 		{
 			throwLocalPos = LEFT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE;
@@ -244,7 +244,7 @@ void TyreThrow::ChangeStateThrow(void)
 
 		targetPos = VAdd(transformTarget_.pos, throwLocalPos);
 		break;
-	case TyreThrow::ANGLE::LARGE_OBLIPUE:
+	case Spike::ANGLE::LARGE_OBLIPUE:
 		if (dir == DIR::LEFT)
 		{
 			throwLocalPos = LEFT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE;
@@ -264,13 +264,13 @@ void TyreThrow::ChangeStateThrow(void)
 }
 
 
-void TyreThrow::ChangeStateDestroy(void)
+void Spike::ChangeStateDestroy(void)
 {
 	//爆発エフェクト
 	BombEffect();
 }
 
-void TyreThrow::UpdateIdle(void)
+void Spike::UpdateIdle(void)
 {
 	//プレイヤーの少し先で待機
 	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
@@ -286,7 +286,7 @@ void TyreThrow::UpdateIdle(void)
 	}
 }
 
-void TyreThrow::UpdateThrowMove(void)
+void Spike::UpdateThrowMove(void)
 {
 	//// デバッグ用
 	//ProcessDebug();
@@ -330,7 +330,7 @@ void TyreThrow::UpdateThrowMove(void)
 	}
 }
 
-void TyreThrow::UpdateDestroy(void)
+void Spike::UpdateDestroy(void)
 {
 	//8秒後に復活
 	stepTyreDestroy_ += SceneManager::GetInstance().GetDeltaTime();
@@ -343,15 +343,15 @@ void TyreThrow::UpdateDestroy(void)
 	}
 }
 
-void TyreThrow::DrawDebug(void)
+void Spike::DrawDebug(void)
 {
 }
 
-void TyreThrow::ProcessDebug(void)
+void Spike::ProcessDebug(void)
 {
 }
 
-void TyreThrow::Rotate(void)
+void Spike::Rotate(void)
 {
 	auto& ins = InputManager::GetInstance();
 
@@ -370,7 +370,7 @@ void TyreThrow::Rotate(void)
 	transform_.Update();
 }
 
-void TyreThrow::Collision(void)
+void Spike::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
@@ -385,7 +385,7 @@ void TyreThrow::Collision(void)
 	transform_.pos = movedPos_;
 }
 
-void TyreThrow::CollisionGravity(void)
+void Spike::CollisionGravity(void)
 {
 	// 重力方向
 	VECTOR dirGravity = MyUtility::DIR_D;
@@ -419,7 +419,7 @@ void TyreThrow::CollisionGravity(void)
 	}
 }
 
-void TyreThrow::CollisionCapsule(void)
+void Spike::CollisionCapsule(void)
 {
 	// カプセルを移動させる
 	Transform trans = Transform(transform_);
@@ -470,6 +470,6 @@ void TyreThrow::CollisionCapsule(void)
 	}
 }
 
-void TyreThrow::CalcGravityPow(void)
+void Spike::CalcGravityPow(void)
 {
 }

@@ -159,7 +159,7 @@
     <ClCompile Include="Src\Object\Score.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Object\Gimmick\TyreThrow.cpp">
+    <ClCompile Include="Src\Object\Gimmick\Spike.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="Src\Object\Coin\CoinBase.cpp">
@@ -278,7 +278,7 @@
     <ClInclude Include="Src\Object\Score.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Object\Gimmick\TyreThrow.h">
+    <ClInclude Include="Src\Object\Gimmick\Spike.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Src\Object\Coin\CoinBase.h">

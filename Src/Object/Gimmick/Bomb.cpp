@@ -32,7 +32,6 @@ void Bomb::Init(void)
 	transform_.scl = { scale, scale, scale };
 	//ÉwÉäÇ…èÊÇπÇ∆Ç≠
 	transform_.pos = heliTrans_.pos;
-	//transform_.pos = { 1670.0f, 0.0f, 0.0f };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });

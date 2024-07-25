@@ -12,7 +12,7 @@ class SilverCoin;
 class CopperCoin;
 class Helicopter;
 class Score;
-class TyreThrow;
+class Spike;
 
 class GameScene : public SceneBase
 {
@@ -25,6 +25,8 @@ public:
 		RETRY,	//リトライ
 		END		//終わる
 	};
+	// プレイヤー同士の初期幅
+	static constexpr float PLAYER_WIDTH = 200.0f;
 
 	//再開ボタンの横の長さ
 	static constexpr int RESTART_FONT_LENGTH = 100;
@@ -56,11 +58,23 @@ public:
 	//警告画像大きさ変化量
 	static constexpr float WARNING_IMG_CHANGE_SCALE = 0.005f;
 
+	//警告画像Y座標
+	static constexpr float WARNING_POS_Y = 120.0f;
+
 	//ポーズキー入力からもう一度押せるようになるまでの時間
 	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
 
 	//ゴールしてから次のシーンになるまでの時間
 	static constexpr float GOAL_TO_NEXT_SCENE = 2.5f;
+
+	// HPバーの幅と高さ
+	static constexpr int HP_BER = 10;
+
+	// コントローラーの揺れ値
+	static constexpr int CE_SWING_VALUE = 1000;
+
+	// コントローラーの揺れ時間
+	static constexpr int CE_SWING_TIME = 700;
 
 	//エンカウント値
 	static constexpr int ENCOUNT = 350;
@@ -122,7 +136,7 @@ private:
 	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
 	//タイヤ
-	TyreThrow* throwTyre_;
+	Spike* spike_;
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;

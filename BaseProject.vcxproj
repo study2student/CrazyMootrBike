@@ -51,7 +51,7 @@
     <ClCompile Include="Src\Object\Score.cpp" />
     <ClCompile Include="Src\Object\Stage\SkyDome.cpp" />
     <ClCompile Include="Src\Object\Stage\Stage.cpp" />
-    <ClCompile Include="Src\Object\Gimmick\TyreThrow.cpp" />
+    <ClCompile Include="Src\Object\Gimmick\Spike.cpp" />
     <ClCompile Include="Src\Scene\GameOverScene.cpp" />
     <ClCompile Include="Src\Scene\GameScene.cpp" />
     <ClCompile Include="Src\Scene\SceneBase.cpp" />
@@ -92,7 +92,7 @@
     <ClInclude Include="Src\Object\Score.h" />
     <ClInclude Include="Src\Object\Stage\SkyDome.h" />
     <ClInclude Include="Src\Object\Stage\Stage.h" />
-    <ClInclude Include="Src\Object\Gimmick\TyreThrow.h" />
+    <ClInclude Include="Src\Object\Gimmick\Spike.h" />
     <ClInclude Include="Src\Scene\GameOverScene.h" />
     <ClInclude Include="Src\Scene\GameScene.h" />
     <ClInclude Include="Src\Scene\SceneBase.h" />

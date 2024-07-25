@@ -76,8 +76,7 @@ void Bike::Init(void)
 		ResourceManager::SRC::BIKE));
 	float scale = 1.3f;
 	transform_.scl = { scale, scale, scale };
-	VECTOR initPos = { 1270.0f,-260.0f,0.0f };
-	transform_.pos = { 1270.0f + localPosX_, -260.0f, 0.0f };
+	transform_.pos = { INIT_POS.x + localPosX_, INIT_POS.y, INIT_POS.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
@@ -106,8 +105,8 @@ void Bike::Init(void)
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 130.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 130.0f, -150.0f });
+	capsule_->SetLocalPosTop({ COLLIDER_POS_TOP });
+	capsule_->SetLocalPosDown({ COLLIDER_POS_DOWN });
 	capsule_->SetRadius(RADIUS);
 
 	// 体力
@@ -155,14 +154,6 @@ void Bike::Draw(void)
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
-
-
-	// 体力とかゲージとか
-	DrawUI();
-
-	// 丸影描画
-	DrawShadow();
-
 
 	// デバッグ描画
 	//DrawDebug();
@@ -278,12 +269,9 @@ void Bike::ChangeStateFliped(void)
 {
 }
 
-
 void Bike::UpdateNone(void)
 {
 }
-
-
 
 void Bike::UpdatePlay(void)
 {
@@ -348,33 +336,9 @@ void Bike::UpdateFliped(void)
 	transform_.quaRot = playerRotY_;
 }
 
-void Bike::DrawUI(void)
-{
-	using ap = Application;
-	int sc_x = ap::SCREEN_SIZE_X - 500;
-	int sc_y = ap::SCREEN_SIZE_Y - 100;
-
-	// HPバーの幅
-	int HP_BAR_WIDTH = ap::SCREEN_SIZE_X - 10 - sc_x;
-	// HPバーの高さ
-	int HP_BAR_HEIGHT = ap::SCREEN_SIZE_Y - 10;
-	// HPバーを描画
-	DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
-	DrawBox(sc_x, sc_y, sc_x + (hp_ * HP_BAR_WIDTH) / MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
-
-	// HPの黒枠
-	DrawBoxAA(sc_x, sc_y,
-		ap::SCREEN_SIZE_X - 10, HP_BAR_HEIGHT,
-		0x000000, false, 13.0f);
-}
-
-void Bike::DrawShadow(void)
-{
-}
-
 void Bike::DrawDebug(void)
 {
-	//capsule_->Draw();
+	capsule_->Draw();
 	//DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
 
 	// 攻撃が当たったか
@@ -385,7 +349,7 @@ void Bike::DrawDebug(void)
 
 	DrawFormatString(0, 40, 0xffffff,
 		"バイクの回転：%f,%f,%f",
-		MyUtility::Rad2DegD(transform_.rot.x),
+		MyUtility::Rad2DegF(transform_.rot.x),
 		MyUtility::Rad2DegF(transform_.quaRot.ToEuler().y),
 		MyUtility::Deg2RadF(transform_.quaRotLocal.ToEuler().z));
 
@@ -427,30 +391,30 @@ void Bike::ProcessMove(void)
 	int padState = GetJoypadInputState(input.padId);
 
 	if (padState & static_cast<int>(input.right)) {
-		rotRadZ = MyUtility::Deg2RadD(-45.0f);
+		rotRadZ = MyUtility::Deg2RadF(-SLOPE);
 		dir = cameraRot.GetRight();
 	}
 
 	if (padState & static_cast<int>(input.left)) {
-		rotRadZ = MyUtility::Deg2RadD(45.0f);
+		rotRadZ = MyUtility::Deg2RadF(SLOPE);
 		dir = cameraRot.GetLeft();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
 	{
-		rotRadZ = MyUtility::Deg2RadD(-45.0f);
+		rotRadZ = MyUtility::Deg2RadF(-SLOPE);
 		dir = cameraRot.GetRight();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
 	{
-		rotRadZ = MyUtility::Deg2RadD(45.0f);
+		rotRadZ = MyUtility::Deg2RadF(SLOPE);
 		dir = cameraRot.GetLeft();
 	}
 
 	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
 	{
-		rotRad = MyUtility::Deg2RadD(180.0f);
+		rotRad = MyUtility::Deg2RadF(180.0f);
 		dir = cameraRot.GetBack();
 	}
 
@@ -472,21 +436,21 @@ void Bike::ProcessMove(void)
 			// カメラ方向から後退したい
 			if (ins.IsNew(KEY_INPUT_S))
 			{
-				rotRad = MyUtility::Deg2RadD(180.0f);
+				rotRad = MyUtility::Deg2RadF(180.0f);
 				dir = cameraRot.GetBack();
 			}
 
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = MyUtility::Deg2RadD(-45.0f);
+				rotRadZ = MyUtility::Deg2RadF(SLOPE);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = MyUtility::Deg2RadD(45.0f);
+				rotRadZ = MyUtility::Deg2RadF(SLOPE);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -511,21 +475,21 @@ void Bike::ProcessMove(void)
 			// カメラ方向から後退したい
 			if (ins.IsNew(KEY_INPUT_S))
 			{
-				rotRad = MyUtility::Deg2RadD(180.0f);
+				rotRad = MyUtility::Deg2RadF(180.0f);
 				dir = cameraRot.GetBack();
 			}
 
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = MyUtility::Deg2RadD(-45.0f);
+				rotRadZ = MyUtility::Deg2RadF(-SLOPE);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = MyUtility::Deg2RadD(45.0f);
+				rotRadZ = MyUtility::Deg2RadF(SLOPE);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -567,7 +531,7 @@ void Bike::ProcessMove(void)
 	else
 	{
 		//傾きっぱになるので角度リセットしておく
-		rotRad = MyUtility::Deg2RadD(0.0f);
+		rotRad = MyUtility::Deg2RadF(0.0f);
 		dir = cameraRot.GetForward();
 
 		// 回転処理

@@ -11,7 +11,7 @@ class GameScene;
 class Bomb;
 class City;
 class Goal;
-class TyreThrow;
+class Spike;
 
 class Stage
 {
@@ -26,6 +26,15 @@ public:
 
 	//カーブの初期位置
 	static constexpr VECTOR CURVE_START_POS = { 4000.0f,-100.0f, 4000.0f };
+
+	//モデルのサイズ
+	static constexpr float STAGE_SIZE = 1.0f;
+
+	//モデルの拡大率
+	static constexpr float STAGE_SCALE = 2.5f;
+
+	// ステージの生成距離(Z方向)
+	static constexpr float STAGE_WIDTH = 5000.0f;
 
 	//町の初期位置
 	static constexpr VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
@@ -42,6 +51,9 @@ public:
 	//下のステージ右側の最大座標
 	static constexpr float STAGE_RIGHT_POS_X_MAX = 2500.0f;
 
+	// 削除するステージ数
+	static constexpr int DELETION_NUM = 12;
+
 	// ステージ名
 	enum class NAME
 	{
@@ -52,7 +64,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene);
+	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, Spike* throwTyre, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -95,7 +107,7 @@ private:
 	CoinBase* coin_;
 	//std::shared_ptr<Bomb> bomb_;
 	Bomb* bomb_;
-	TyreThrow* throwTyre_;
+	Spike* spike_;
 	std::deque<std::shared_ptr<City>> city_;
 
 	//ゴール

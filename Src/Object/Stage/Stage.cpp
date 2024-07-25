@@ -9,7 +9,7 @@
 #include "../../Object/Rider/Bike.h"
 #include "../../Object/Coin/CoinBase.h"
 #include "../../Object/Gimmick/Bomb.h"
-#include "../../Object//Gimmick/TyreThrow.h"
+#include "../../Object//Gimmick/Spike.h"
 #include "../../Object/DataSave.h"
 #include "../../Scene/GameScene.h"
 #include "../Stage/Goal.h"
@@ -18,7 +18,7 @@
 #include "LoopStage.h"
 #include "Stage.h"
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, TyreThrow* throwTyre, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, Spike* throwTyre, GameScene* gameScene)
 	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
 {
 	gameScene_ = gameScene;
@@ -26,7 +26,7 @@ Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bo
 	//bike_ = bike;
 	coin_ = coin;
 	bomb_ = bomb;
-	throwTyre_ = throwTyre;
+	spike_ = throwTyre;
 	activeName_ = NAME::MAIN_PLANET;
 	step_ = 0.0f;
 
@@ -246,8 +246,7 @@ void Stage::MakeMainStage(void)
 	Transform planetTrans;
 	planetTrans.SetModel(
 		resMng_.LoadModelDuplicate(ResourceManager::SRC::MAIN_PLANET));
-	float scale = 1.0f;
-	planetTrans.scl = { scale * 2.5f,scale,scale };
+	planetTrans.scl = { STAGE_SIZE * STAGE_SCALE,STAGE_SIZE,STAGE_SIZE };
 	planetTrans.quaRot = Quaternion();
 	planetTrans.pos = { STAGE_START_POS };
 
@@ -294,7 +293,7 @@ void Stage::MakeLoopStage(void)
 	//先頭のバイクの座標
 	float z = bikes_[posZMaxIndex]->GetTransform().pos.z;
 
-	int mapZ = (int)((z + 6000.0f) / 5000.0f);
+	int mapZ = (int)((z + 6000.0f) / STAGE_WIDTH);
 	int size = (int)loopStage_.size();
 
 	//一定の距離超えたら
@@ -306,10 +305,9 @@ void Stage::MakeLoopStage(void)
 
 
 
-		float scale = 1.0f;
-		loopTrans.scl = { scale * 2.5f,scale ,scale };
+		loopTrans.scl = { STAGE_SIZE * STAGE_SCALE,STAGE_SIZE ,STAGE_SIZE };
 		loopTrans.quaRot = Quaternion();
-		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + 5000.0f * (size + 1) };
+		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + STAGE_WIDTH * (size + 1) };
 
 		// 当たり判定(コライダ)作成
 		loopTrans.MakeCollider(Collider::TYPE::STAGE);
@@ -339,11 +337,10 @@ void Stage::MakeLoopStage(void)
 
 
 	//後ろのステージを削除
-	if (loopStage_.size() >= 12)
+	if (loopStage_.size() >= DELETION_NUM)
 	{
 
 		// ステージを削除する
-
 		std::shared_ptr<LoopStage> tailLoop = loopStage_[size-11];
 		tailLoop->Destroy();
 
@@ -386,7 +383,7 @@ void Stage::MakeCity(void)
 	//先頭のバイクに合わせる
 	float z = bikes_[posZMaxIndex]->GetTransform().pos.z;
 
-	int mapZ = (int)((z + 6000.0f) / 5000.0f);
+	int mapZ = (int)((z + 6000.0f) / STAGE_WIDTH);
 	int size = (int)city_.size();
 
 	//一定の距離超えたら
@@ -403,7 +400,7 @@ void Stage::MakeCity(void)
 		cityTrans.quaRot = Quaternion();
 		cityTrans.quaRotLocal =
 			Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f });
-		cityTrans.pos = { CITY_START_POS.x,  CITY_START_POS.y,  CITY_START_POS.z + 5000.0f * (size + 1) };
+		cityTrans.pos = { CITY_START_POS.x,  CITY_START_POS.y,  CITY_START_POS.z + STAGE_WIDTH * (size + 1) };
 
 		cityTrans.Update();
 
@@ -422,7 +419,7 @@ void Stage::MakeCity(void)
 
 
 	//後ろのステージを削除
-	if (city_.size() >= 12)
+	if (city_.size() >= DELETION_NUM)
 	{
 		// ステージを削除する
 		std::shared_ptr<City> tailLoop = city_[size - 11];

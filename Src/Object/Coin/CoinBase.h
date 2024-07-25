@@ -15,7 +15,13 @@ public:
 	//半径
 	static constexpr float RADIUS = 200.0f;
 
-	// 回転完了までの時間
+	//当たり判定用コライダーの上座標
+	static constexpr VECTOR COLLIDER_POS_TOP = { 0.0f, 110.0f, 0.0f };
+
+	//当たり判定用コライダーの下座標
+	static constexpr VECTOR COLLIDER_POS_DOWN = { 0.0f, 30.0f, 0.0f };
+
+	//回転完了までの時間
 	static constexpr float TIME_ROT = 1.0f;
 
 	//1ループステージあたりの敵の生成数
@@ -41,6 +47,9 @@ public:
 
 	//死亡状態になるまでの最大時間
 	static constexpr float TO_DEAD_TIME_MAX = 4.0f;
+
+	// 志望状態になるY座標
+	static constexpr float DEAD_POS_Y = -500.0f;
 
 	// エフェクト出現位置Z座標
 	static constexpr int EFF_POS_Z = 500;
@@ -197,7 +206,7 @@ protected:
 	void UpdateDead(void);
 
 	// 回転
-	void SetGoalRotate(double rotRad);
+	void SetGoalRotate(float rotRad);
 	void RotY(void);
 
 	// 衝突判定

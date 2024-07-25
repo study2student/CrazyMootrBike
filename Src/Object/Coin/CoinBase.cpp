@@ -60,8 +60,7 @@ void CoinBase::Init(void)
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::COPPER_COIN));
 	transform_.scl = MyUtility::VECTOR_ONE;
-	//transform_.pos = { 700.0f, -800.0f, -2500.0f };
-	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, -800.0f, makePos_.z };
+	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, makePos_.y, makePos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
@@ -69,8 +68,8 @@ void CoinBase::Init(void)
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 110.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 30.0f, 0.0f });
+	capsule_->SetLocalPosTop({ COLLIDER_POS_TOP });
+	capsule_->SetLocalPosDown({ COLLIDER_POS_DOWN });
 	capsule_->SetRadius(20.0f);
 
 	// 初期状態
@@ -346,16 +345,16 @@ void CoinBase::ProcessMove(void)
 	}
 }
 
-void CoinBase::SetGoalRotate(double rotRad)
+void CoinBase::SetGoalRotate(float rotRad)
 {
 	//VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
 	Quaternion axis = Quaternion::AngleAxis(rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
-	double angleDiff = Quaternion::Angle(axis, goalQuaRot_);
+	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// しきい値
-	if (angleDiff > 0.1)
+	if (angleDiff > 0.1f)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -386,7 +385,7 @@ void CoinBase::Collision(void)
 	movedPos_ = VAdd(transform_.pos, movePow_);
 
 	//y座標での死亡判定
-	if (transform_.pos.y <= -500.0f)
+	if (transform_.pos.y <= DEAD_POS_Y)
 	{
 		ChangeState(STATE::DEAD);
 	}

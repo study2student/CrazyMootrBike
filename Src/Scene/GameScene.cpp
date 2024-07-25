@@ -18,7 +18,7 @@
 #include "../Object/Coin/CopperCoin.h"
 #include "../Object/Gimmick/Bomb.h"
 #include "../Object/Gimmick/Helicopter.h"
-#include "../Object/Gimmick/TyreThrow.h"
+#include "../Object/Gimmick/Spike.h"
 #include "../Object/DataSave.h"
 #include "../Object/Score.h"
 #include "../Application.h"
@@ -29,7 +29,7 @@ GameScene::GameScene(void)
 	coin_ = nullptr;
 	stage_ = nullptr;
 	helicopter_ = nullptr;
-	throwTyre_ = nullptr;
+	spike_ = nullptr;
 	//score_ = nullptr;
 
 	nowCursor_ = 0;
@@ -39,7 +39,7 @@ GameScene::GameScene(void)
 GameScene::~GameScene(void)
 {
 	delete coin_;
-	delete throwTyre_;
+	delete spike_;
 }
 
 void GameScene::Init(void)
@@ -57,7 +57,7 @@ void GameScene::Init(void)
 
 	// プレイヤー
 	for (int i = 0; i < 4; ++i) {
-		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
+		bikes_.emplace_back(std::make_shared<Bike>(PLAYER_WIDTH * (i + 1), i));
 	}
 
 	for (auto& bike : bikes_) {
@@ -66,19 +66,19 @@ void GameScene::Init(void)
 
 	// コイン
 	for (auto& bike : bikes_) {
-		coin_ = new CoinBase(bikes_,this, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
+		coin_ = new CoinBase(bikes_,this, { 0.0f,800.0f,0.0f }, { 0.0f,0.0f,0.0f });
 	}
 
 	//ヘリコプター
 	helicopter_ = std::make_shared<Helicopter>(this);
 	helicopter_->Init();
 
-	//投げタイヤ
-	throwTyre_ = new TyreThrow();
-	throwTyre_->Init();
+	//投げトゲ
+	spike_ = new Spike();
+	spike_->Init();
 
 	// ステージ
-	stage_ = std::make_shared<Stage>(bikes_, coin_, helicopter_->GetBomb(), throwTyre_, this);
+	stage_ = std::make_shared<Stage>(bikes_, coin_, helicopter_->GetBomb(), spike_, this);
 	stage_->Init();
 
 	// ステージの初期設定
@@ -252,8 +252,8 @@ void GameScene::Update(void)
 		helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
 
 		//投げモノ
-		throwTyre_->Update();
-		throwTyre_->SetTransform(bikes_[posZMaxIndex]->GetTransform());
+		spike_->Update();
+		spike_->SetTransform(bikes_[posZMaxIndex]->GetTransform());
 
 
 		//コイン
@@ -312,16 +312,16 @@ void GameScene::Draw(void)
 		int sc_y = ap::SCREEN_SIZE_Y - 100;
 
 		// HPバーの幅
-		int HP_BAR_WIDTH = ap::SCREEN_SIZE_X - 10 - sc_x;
+		int HP_BAR_WIDTH = ap::SCREEN_SIZE_X - HP_BER - sc_x;
 		// HPバーの高さ
-		int HP_BAR_HEIGHT = ap::SCREEN_SIZE_Y - 10;
+		int HP_BAR_HEIGHT = ap::SCREEN_SIZE_Y - HP_BER;
 		// HPバーを描画
 		DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
 		DrawBox(sc_x, sc_y, sc_x + (bikes_[0]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
 
 		// HPの黒枠
-		DrawBoxAA(sc_x, sc_y,
-			ap::SCREEN_SIZE_X - 10, HP_BAR_HEIGHT,
+		DrawBoxAA((float)sc_x, (float)sc_y,
+			(float)ap::SCREEN_SIZE_X - HP_BER, (float)HP_BAR_HEIGHT,
 			0x000000, false, 13.0f);
 
 		// スタート時のカウントを減らす
@@ -576,7 +576,7 @@ void GameScene::DrawObject(int playerID)
 	stage_->Draw();
 
 	helicopter_->Draw();
-	throwTyre_->Draw();
+	spike_->Draw();
 
 	//コイン描画
 	size_t sizeC = coins_.size();
@@ -604,16 +604,16 @@ void GameScene::DrawUI(int x, int y, int playerID)
 	int sc_y = y + 50;
 
 	// HPバーの幅
-	int HP_BAR_WIDTH = x - 10 - sc_x;
+	int HP_BAR_WIDTH = x - HP_BER - sc_x;
 	// HPバーの高さ
-	int HP_BAR_HEIGHT = y + 10;
+	int HP_BAR_HEIGHT = y + HP_BER;
 	// HPバーを描画
 	DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
 	DrawBox(sc_x, sc_y, sc_x + (bikes_[playerID]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
 
 	// HPの黒枠g
 	DrawBox(sc_x, sc_y,
-		x - 10, HP_BAR_HEIGHT,
+		x - HP_BER, HP_BAR_HEIGHT,
 		0x000000, false);
 
 	//DrawBoxAA(sc_x, sc_y,
@@ -830,7 +830,7 @@ void GameScene::Collision(void)
 				helicopter_->GetBomb()->SetIsCol(true);
 
 				//コントローラーを振動
-				StartJoypadVibration(DX_INPUT_PAD1, 1000, 700, -1);
+				StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
 
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
@@ -838,11 +838,11 @@ void GameScene::Collision(void)
 			}
 		}
 
-		if (!throwTyre_->GetIsCol())
+		if (!spike_->GetIsCol())
 		{
 
 			//投げモノ
-			auto throwCap = throwTyre_->GetCapsule();
+			auto throwCap = spike_->GetCapsule();
 
 			VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
 			float  disT = MyUtility::SqrMagnitudeF(diffT);
@@ -854,7 +854,7 @@ void GameScene::Collision(void)
 					if (!stage_->GetIsGoal())
 					{
 						//プレイヤーにダメージ
-						bike->Damage(throwTyre_->THROW_DAMAGE);
+						bike->Damage(spike_->THROW_DAMAGE);
 
 					}
 				}
@@ -864,15 +864,15 @@ void GameScene::Collision(void)
 					if (!bike->GetIsGoal())
 					{
 						//プレイヤーにダメージ
-						bike->Damage(throwTyre_->THROW_DAMAGE);
+						bike->Damage(spike_->THROW_DAMAGE);
 					}
 				}
 
 				//当たった
-				throwTyre_->SetIsCol(true);
+				spike_->SetIsCol(true);
 
 				//コントローラーを振動
-				StartJoypadVibration(DX_INPUT_PAD1, 1000, 700, -1);
+				StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
 
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
@@ -1163,7 +1163,7 @@ void GameScene::Pause(void)
 void GameScene::WarningDraw(void)
 {
 	//投げモノが待機状態のときに描画
-	if (throwTyre_->IsIdle())
+	if (spike_->IsIdle())
 	{
 		//警告音
 		PlaySoundMem(ResourceManager::GetInstance().Load(
@@ -1192,7 +1192,7 @@ void GameScene::WarningDraw(void)
 			}
 		}
 
-		DrawRotaGraphFastF(Application::SCREEN_SIZE_X / 2, 100, warningImgScale_, 0.0, imgWarning_, true);
+		DrawRotaGraphFastF((float)Application::SCREEN_SIZE_X / 2, WARNING_POS_Y, warningImgScale_, 0.0, imgWarning_, true);
 	}
 	else
 	{
@@ -1223,11 +1223,11 @@ void GameScene::GoalAfterDraw(void)
 	//座標
 	if(!isPause_)
 	{
-		float addPosY = 10;
+		int addPosY = 10;
 		finishFontPos_.y += addPosY;
 	}
 
-	int stopPosY = Application::SCREEN_SIZE_Y / 2 - 120;
+	float stopPosY = Application::SCREEN_SIZE_Y / 2 - WARNING_POS_Y;
 	if (finishFontPos_.y >= stopPosY)
 	{
 		finishFontPos_.y = stopPosY;

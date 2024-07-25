@@ -11,9 +11,21 @@ class Score;
 class Bike : public ActorBase
 {
 public:
+	//プレイヤーの初期座標
+	static constexpr VECTOR INIT_POS = { 1270.0f , -260.0f ,0.0f };
+
 	// スピード
 	static constexpr float SPEED_MOVE = 100.0f;
 	static constexpr float SPEED_RUN = 130.0f;
+
+	// プレイヤーの傾き
+	static constexpr float SLOPE = 45.0f;
+
+	// 当たり判定用コライダーの上座標
+	static constexpr VECTOR COLLIDER_POS_TOP = { 0.0f, 130.0f, 0.0f };
+
+	// 当たり判定用コライダーの上座標
+	static constexpr VECTOR COLLIDER_POS_DOWN = { 0.0f, 130.0f, -150.0f };
 
 	//半径
 	static constexpr float RADIUS = 80.0f;
@@ -242,8 +254,6 @@ private:
 	void UpdateFliped(void);
 
 	// 描画系
-	void DrawUI(void);
-	void DrawShadow(void);
 	void DrawDebug(void);
 
 	// 操作

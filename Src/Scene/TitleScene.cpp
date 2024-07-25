@@ -164,13 +164,9 @@ void TitleScene::Draw(void)
 	MV1DrawModel(sity_.modelId);
 	MV1DrawModel(frontTyre_.modelId);
 	MV1DrawModel(rearTyre_.modelId);
-	/*MV1DrawModel(sity_[0]->modelId);
-	MV1DrawModel(sity_[1]->modelId);*/
-	int GSizeX, GSizeY;
 	//ボタンが押されたら表示しない
 	if(state_==STATE::IDLE)
 	{
-		//DrawGraph(Application::SCREEN_SIZE_X / 2 - 640, 250, imgTitle_, false);
 		DrawExtendGraph(160, 150, Application::SCREEN_SIZE_X - 160,Application::SCREEN_SIZE_Y, imgTitle_, true);
 
 		//点滅表示
