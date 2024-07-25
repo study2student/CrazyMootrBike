@@ -28,6 +28,9 @@ public:
 	// プレイヤー同士の初期幅
 	static constexpr float PLAYER_WIDTH = 200.0f;
 
+	//パッド最大数
+	static constexpr int PAD_MAX = 4;
+
 	//再開ボタンの横の長さ
 	static constexpr int RESTART_FONT_LENGTH = 100;
 
@@ -62,7 +65,7 @@ public:
 	static constexpr float WARNING_POS_Y = 120.0f;
 
 	//ポーズキー入力からもう一度押せるようになるまでの時間
-	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 0.25f;
+	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 2.25f;
 
 	//ゴールしてから次のシーンになるまでの時間
 	static constexpr float GOAL_TO_NEXT_SCENE = 2.5f;

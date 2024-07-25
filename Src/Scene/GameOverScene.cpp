@@ -130,7 +130,7 @@ void GameOverScene::DecideProcess(void)
 	{
 		//ボタンにふれている場合
 		reTryFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
 		{
 			//左クリックまたはスペースキーでリトライ
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
@@ -162,7 +162,7 @@ void GameOverScene::DecideProcess(void)
 	{
 		//ボタンにふれている場合
 		endFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
 		{
 			//左クリックまたはスペースキーでタイトルへ
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
@@ -180,7 +180,7 @@ void GameOverScene::SelectProcess(void)
 	auto& ins_ = InputManager::GetInstance();
 
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_UP))
+	if (ins_.IsTrgDown(KEY_INPUT_UP) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_UP))
 	{
 		nowCursor_--;
 		if (nowCursor_ <= 0)
@@ -188,7 +188,7 @@ void GameOverScene::SelectProcess(void)
 			nowCursor_ = 0;
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
+	if (ins_.IsTrgDown(KEY_INPUT_DOWN) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
 	{
 		nowCursor_++;
 		if (nowCursor_ >= SELECT_MAX_NUM - 1)

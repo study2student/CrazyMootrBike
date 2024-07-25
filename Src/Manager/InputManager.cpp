@@ -278,6 +278,7 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		// X   B
 		//   A
 
+		//ボタン
 		idx = static_cast<int>(JOYPAD_BTN::TOP);
 		ret.ButtonsNew[idx] = d.Buttons[3];// Y
 
@@ -295,6 +296,38 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 
 		idx = static_cast<int>(JOYPAD_BTN::L_TRIGGER);
 		ret.ButtonsNew[idx] = x.LeftTrigger; // L_TRIGGER
+
+		idx = static_cast<int>(JOYPAD_BTN::START);
+		ret.ButtonsNew[idx] = x.Buttons[XINPUT_BUTTON_START]; // START
+
+
+		//左スティック
+		//スティック上限値
+		int stickMax = 1000;
+		idx = static_cast<int>(JOYPAD_BTN::L_STICK_LEFT);
+		if (d.X >= -stickMax && d.X < 0)
+		{
+			ret.ButtonsNew[idx] = d.X; // L_STICK_LEFT
+		}
+
+		idx = static_cast<int>(JOYPAD_BTN::L_STICK_RIGHT);
+		if (d.X <= stickMax && d.X > 0)
+		{
+			ret.ButtonsNew[idx] = d.X; // L_STICK_RIGHT
+		}
+
+		idx = static_cast<int>(JOYPAD_BTN::L_STICK_UP);
+		if (d.Y >= -stickMax && d.Y < 0)
+		{
+			ret.ButtonsNew[idx] = d.Y; // L_STICK_UP
+		}
+
+		idx = static_cast<int>(JOYPAD_BTN::L_STICK_DOWN);
+		if (d.Y <= stickMax && d.Y > 0)
+		{
+			ret.ButtonsNew[idx] = d.Y; // L_STICK_DOWN
+		}
+
 
 		// 左スティック
 		ret.AKeyLX = d.X;

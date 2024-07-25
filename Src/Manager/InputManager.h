@@ -44,6 +44,11 @@ public:
 		DOWN,
 		R_TRIGGER,
 		L_TRIGGER,
+		START,
+		L_STICK_LEFT,
+		L_STICK_RIGHT,
+		L_STICK_UP,
+		L_STICK_DOWN,
 		MAX
 	};
 

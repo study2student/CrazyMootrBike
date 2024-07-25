@@ -4,6 +4,7 @@
 #include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
+#include "../Manager/InputManager.h"
 #include "../Manager/Camera.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Capsule.h"
@@ -169,12 +170,37 @@ void GameScene::Init(void)
 void GameScene::Update(void)
 {
 	InputManager& ins = InputManager::GetInstance();
+
+
 	//ポーズメニュー
-	if (ins.IsTrgDown(KEY_INPUT_C))
+	InputManager::JOYPAD_NO padNum[PAD_MAX];
+	for (int i = 0; i < PAD_MAX; i++)
 	{
-		//ポーズ状態
-		isPause_ = true;
+		switch (i)
+		{
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) -1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1] = InputManager::JOYPAD_NO::PAD1;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1] = InputManager::JOYPAD_NO::PAD2;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1] = InputManager::JOYPAD_NO::PAD3;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1] = InputManager::JOYPAD_NO::PAD4;
+			break;
+		}
+
+		if (ins.IsTrgDown(KEY_INPUT_C) || ins.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::START))
+		{
+			//ポーズ状態
+			isPause_ = true;
+		}
 	}
+	
+	
+
 	//ポーズ中はカメラの回転をさせないために情報を渡しておく
 	SceneManager::GetInstance().GetCamera()->SetIsPause(isPause_);
 
@@ -989,112 +1015,142 @@ void GameScene::DecideProcess(void)
 	//マウス座標
 	Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
 
-	//再開ボタン
-	//カーソルが当たっている
-	Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
-	if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
-		&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y)
-	{
-		nowCursor_ = (int)PAUSE_STATE::RESTART;
-		isCursorHit_ = true;
-	}
-	else
-	{
-		isCursorHit_ = false;
-	}
 
-	if (pState_ == PAUSE_STATE::RESTART)
+	
+	InputManager::JOYPAD_NO padNum[PAD_MAX];
+	for (int i = 0; i < PAD_MAX; i++)
 	{
-		//ボタンにふれている場合
-		reStartFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		switch (i)
 		{
-			//ポーズ解除
-			stepPauseKeyHit_ = 0.0f;
-			isPause_ = false;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1] = InputManager::JOYPAD_NO::PAD1;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1] = InputManager::JOYPAD_NO::PAD2;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1] = InputManager::JOYPAD_NO::PAD3;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1] = InputManager::JOYPAD_NO::PAD4;
+			break;
 		}
-	}
-	else
-	{
-		//ボタンにふれいない場合
-		reStartFontColor_ = GetColor(255, 255, 255);
-	}
 
 
-
-	//リトライボタン
-	//カーソルが当たっている
-	Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
-	if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
-		&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y)
-	{
-		nowCursor_ = (int)PAUSE_STATE::RETRY;
-		isCursorHit_ = true;
-	}
-	else
-	{
-		isCursorHit_ = false;
-	}
-
-	if (pState_ == PAUSE_STATE::RETRY)
-	{
-		//ボタンにふれている場合
-		reTryFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		//再開ボタン
+		//カーソルが当たっている
+		Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
+		if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
+			&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y)
 		{
-			//左クリックまたはスペースキーでリトライ
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			nowCursor_ = (int)PAUSE_STATE::RESTART;
+			isCursorHit_ = true;
 		}
-	}
-	else
-	{
-		//ボタンにふれいない場合
-		reTryFontColor_ = GetColor(255, 255, 255);
-	}
-
-
-
-	//終わるボタン
-	//カーソルが当たっている
-	Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
-	if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
-		&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y)
-	{
-		nowCursor_ = (int)PAUSE_STATE::END;
-		isCursorHit_ = true;
-	}
-	else
-	{
-		isCursorHit_ = false;
-	}
-
-	if (pState_ == PAUSE_STATE::END)
-	{
-		//ボタンにふれている場合
-		endFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE))
+		else
 		{
-			//左クリックまたはスペースキーでタイトルへ
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+			isCursorHit_ = false;
+
 		}
-	}
-	else
-	{
-		//ボタンにふれいない場合
-		endFontColor_ = GetColor(255, 255, 255);
-	}
 
-
-	//ポーズキーがもう一度押せるようになるまで
-	stepPauseKeyHit_ += SceneManager::GetInstance().GetDeltaTime();
-	if (stepPauseKeyHit_ >= PAUSE_KEY_HIT_MAX_TIME)
-	{
-		//もう一度ポーズキー押下でポーズメニュー解除
-		if (ins_.IsTrgDown(KEY_INPUT_C) && isPause_)
+		if (pState_ == PAUSE_STATE::RESTART)
 		{
-			//ポーズ解除
-			stepPauseKeyHit_ = 0.0f;
-			isPause_ = false;
+			//ボタンにふれている場合
+			reStartFontColor_ = GetColor(0, 0, 255);
+			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
+				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
+			{
+				//ポーズ解除
+				stepPauseKeyHit_ = 0.0f;
+				isPause_ = false;
+			}
+		}
+		else
+		{
+			//ボタンにふれいない場合
+			reStartFontColor_ = GetColor(255, 255, 255);
+		}
+
+
+
+		//リトライボタン
+		//カーソルが当たっている
+		Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
+		if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
+			&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y)
+		{
+			nowCursor_ = (int)PAUSE_STATE::RETRY;
+			isCursorHit_ = true;
+		}
+		else
+		{
+			isCursorHit_ = false;
+		}
+
+		if (pState_ == PAUSE_STATE::RETRY)
+		{
+			//ボタンにふれている場合
+			reTryFontColor_ = GetColor(0, 0, 255);
+			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
+				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
+			{
+				//左クリックまたはスペースキーでリトライ
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			}
+		}
+		else
+		{
+			//ボタンにふれいない場合
+			reTryFontColor_ = GetColor(255, 255, 255);
+		}
+
+
+
+		//終わるボタン
+		//カーソルが当たっている
+		Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
+		if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
+			&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y)
+		{
+			nowCursor_ = (int)PAUSE_STATE::END;
+			isCursorHit_ = true;
+		}
+		else
+		{
+			isCursorHit_ = false;
+
+		}
+
+		if (pState_ == PAUSE_STATE::END)
+		{
+			//ボタンにふれている場合
+			endFontColor_ = GetColor(0, 0, 255);
+			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) 
+				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
+			{
+				//左クリックまたはスペースキーでタイトルへ
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+			}
+		}
+		else
+		{
+			//ボタンにふれいない場合
+			endFontColor_ = GetColor(255, 255, 255);
+		}
+
+
+		//ポーズキーがもう一度押せるようになるまで
+		stepPauseKeyHit_ += SceneManager::GetInstance().GetDeltaTime();
+		if (stepPauseKeyHit_ >= PAUSE_KEY_HIT_MAX_TIME)
+		{
+
+			//もう一度ポーズキー押下でポーズメニュー解除
+			if (ins_.IsTrgDown(KEY_INPUT_C) || ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::START) && isPause_)
+			{
+				//ポーズ解除
+				stepPauseKeyHit_ = 0.0f;
+				isPause_ = false;
+			}
+
 		}
 	}
 
@@ -1105,23 +1161,46 @@ void GameScene::SelectProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
 
-	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_UP))
+
+
+	InputManager::JOYPAD_NO padNum[PAD_MAX];
+	for (int i = 0; i < PAD_MAX; i++)
 	{
-		nowCursor_--;
-		if (nowCursor_ <= 0)
+		switch (i)
 		{
-			nowCursor_ = 0;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1] = InputManager::JOYPAD_NO::PAD1;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1] = InputManager::JOYPAD_NO::PAD2;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1] = InputManager::JOYPAD_NO::PAD3;
+			break;
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:
+			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1] = InputManager::JOYPAD_NO::PAD4;
+			break;
+		}
+
+		//カーソル番号による上下操作
+		if (ins_.IsTrgDown(KEY_INPUT_UP) || ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_UP))
+		{
+			nowCursor_--;
+			if (nowCursor_ <= 0)
+			{
+				nowCursor_ = 0;
+			}
+		}
+		if (ins_.IsTrgDown(KEY_INPUT_DOWN) || ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_DOWN))
+		{
+			nowCursor_++;
+			if (nowCursor_ >= SELECT_MAX_NUM - 1)
+			{
+				nowCursor_ = SELECT_MAX_NUM - 1;
+			}
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
-	{
-		nowCursor_++;
-		if (nowCursor_ >= SELECT_MAX_NUM - 1)
-		{
-			nowCursor_ = SELECT_MAX_NUM - 1;
-		}
-	}
+	
 
 	//現カーソルから状態を変化
 	CursorToPState(nowCursor_);
