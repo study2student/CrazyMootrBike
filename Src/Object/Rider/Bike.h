@@ -81,12 +81,6 @@ public:
 	{
 		IDLE,
 		RUN,
-		FAST_RUN,
-		JUMP,
-		WARP_PAUSE,
-		FLY,
-		FALLING,
-		VICTORY,
 		SIT
 	};
 

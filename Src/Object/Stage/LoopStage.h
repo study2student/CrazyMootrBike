@@ -1,6 +1,4 @@
 #pragma once
-#include <map>
-#include <memory>
 #include "../Common/Transform.h"
 #include "../ActorBase.h"
 class Player;

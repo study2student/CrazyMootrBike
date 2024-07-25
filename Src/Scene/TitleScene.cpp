@@ -29,7 +29,6 @@ TitleScene::TitleScene(void)
 
 TitleScene::~TitleScene(void)
 {
-	delete skyDome_;
 	delete animationController_;
 
 	StopEffekseer3DEffect(effectBurnoutPlayId_);
@@ -45,7 +44,7 @@ void TitleScene::Init(void)
 
 	// 背景
 	spaceDomeTran_.pos = MyUtility::VECTOR_ZERO;
-	skyDome_ = new SkyDome(spaceDomeTran_);
+	skyDome_ = std::make_unique<SkyDome>(spaceDomeTran_);
 	skyDome_->Init();
 
 	float size;
@@ -131,7 +130,7 @@ void TitleScene::Init(void)
 	//データリセット
 	data_.ResetData();
 
-	//// BGMを再生
+	// BGMを再生
 	PlaySoundMem(ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::SND_TITLE_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
 }

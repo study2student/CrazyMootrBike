@@ -1,5 +1,4 @@
 #include "../Application.h"
-#include "Rider/EnemyBase.h"
 #include "../Manager/SceneManager.h"
 #include "Score.h"
 

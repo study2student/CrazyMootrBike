@@ -1,9 +1,6 @@
 #pragma once
-#include <map>
-#include <memory>
 #include "../ActorBase.h"
 #include <vector>
-class AnimationController;
 class Collider;
 class Capsule;
 

@@ -1,27 +1,27 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
-#include <string.h>
+#include <string>
 #include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
 #include "../Manager/Camera.h"
-#include "../Application.h"
 #include "../Manager/InputManager.h"
 #include "../Object/Common/Capsule.h"
 #include "../Object/Common/Collider.h"
 #include "../Object/Stage/SkyDome.h"
 #include "../Object/Stage/Stage.h"
+#include "../Object/Stage/Planet.h"
 #include "../Object/Rider/Bike.h"
 #include "../Object/Coin/CoinBase.h"
 #include "../Object/Coin/GoldCoin.h"
 #include "../Object/Coin/SilverCoin.h"
 #include "../Object/Coin/CopperCoin.h"
-#include "../Object/Stage/Planet.h"
 #include "../Object/Gimmick/Bomb.h"
-#include "../Object/Score.h"
 #include "../Object/Gimmick/Helicopter.h"
 #include "../Object/Gimmick/TyreThrow.h"
 #include "../Object/DataSave.h"
+#include "../Object/Score.h"
+#include "../Application.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -56,12 +56,6 @@ void GameScene::Init(void)
 	}
 
 	// プレイヤー
-	//rider_ = new Rider();
-	//rider_->Init();
-
-	//player_ = new Player();
-	//player_->Init();
-
 	for (int i = 0; i < 4; ++i) {
 		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
 	}
@@ -70,15 +64,7 @@ void GameScene::Init(void)
 		bike->Init();
 	}
 
-	//enemy_->Init();
-	/*enemyBike_ = new EnemyBike(enemy_);
-	enemyBike_->Init();*/
-
-	////スコア
-	//score_ = std::make_shared<Score>();
-	//score_->Init();
-
-	// 敵
+	// コイン
 	for (auto& bike : bikes_) {
 		coin_ = new CoinBase(bikes_,this, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,0.0f });
 	}
@@ -124,19 +110,14 @@ void GameScene::Init(void)
 		cameras_[i]->SetFollow(&bikes_[i]->GetTransform()); // 各プレイヤーのバイクを追従
 	}
 
-	//for (auto& bike : bikes_) {
-	//	SceneManager::GetInstance().GetCamera()->SetFollow(&bike->GetTransform());
-	//}
-	//SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FOLLOW);
-
 	// エフェクト初期化
 	InitEffect();
 
 	//エンカウントリセット
 	enCounter = 0;
 
-	//敵が生成されたか
-	isCreateEnemy_ = false;
+	//コインが生成されたか
+	isCreateCoin_ = false;
 
 	hitStopDuration = 6000.0f;
 	hitStopTimer = 0.0f;
@@ -207,75 +188,7 @@ void GameScene::Update(void)
 	//最初の人がゴールしたら
 	if (stage_->GetIsGoal())
 	{
-		//ゲームオーバーシーンで描画するため保存しておく
-		if (playNumber_ == 1)
-		{
-			//爆弾は出させない
-			helicopter_->ChangeState(Helicopter::STATE::MOVE);
-		}
-		else
-		{
-			bool allBikeGoal = true;
-			for (auto& bike : bikes_)
-			{
-				// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
-				if (bike->GetHP() > 0)
-				{
-					// もし一つでもゴールしていないバイクがあればフラグを更新
-					if (!bike->GetIsGoal())
-					{
-						allBikeGoal = false;
-						break;  // ゴールしていないバイクが見つかった時点でループを抜ける
-					}
-				}
-			}
-
-			// 全員がゴールしたらヘリ停止
-			if (allBikeGoal)
-			{
-				//爆弾は出させない
-				helicopter_->ChangeState(Helicopter::STATE::MOVE);
-			}
-		}
-
-		stepGoalAfter_ += SceneManager::GetInstance().GetDeltaTime();
-		if (stepGoalAfter_ >= GOAL_TO_NEXT_SCENE)
-		{
-			//ゲームオーバーシーンで描画するため保存しておく
-			if (playNumber_ == 1)
-			{
-				score_.ScoreSet(bikes_[0]->GetScore());
-				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
-			}
-			else
-			{
-				bool allBikeGoal = true;
-
-				for (auto& bike : bikes_)
-				{
-
-					score_.ScoreSetArray(bike->GetScore());
-
-					// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
-					if (bike->GetHP() > 0)
-					{
-						// もし一つでもゴールしていないバイクがあればフラグを更新
-						if (!bike->GetIsGoal())
-						{
-							allBikeGoal = false;
-							break;  // ゴールしていないバイクが見つかった時点でループを抜ける
-						}
-					}
-				}
-
-				// 全員がゴールした場合にシーンを切り替える
-				if (allBikeGoal)
-				{
-					SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
-				}
-			}
-
-		}
+		FirstPersonGoal();
 	}
 
 	
@@ -330,14 +243,11 @@ void GameScene::Update(void)
 			if (hitStopTimer <= 0.f) {
 				isHitStop = false;
 			}
-
-
 		}
 
 		//ヘリ
 		//先頭(座標)の要素番号取得
 		size_t posZMaxIndex = GetBikeMaxPosZIndex();
-
 		helicopter_->SetBikeTrans(bikes_[posZMaxIndex]->GetTransform());
 		helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
 
@@ -346,7 +256,7 @@ void GameScene::Update(void)
 		throwTyre_->SetTransform(bikes_[posZMaxIndex]->GetTransform());
 
 
-		//敵
+		//コイン
 		size_t sizeE = coins_.size();
 		for (int i = 0; i < sizeE; i++)
 		{
@@ -356,9 +266,6 @@ void GameScene::Update(void)
 				isHitStop = true;
 				// ヒットエフェクト
 				HitEffect();
-
-				//スコア加算
-				//score_.AddScore();
 			}
 		}
 
@@ -368,83 +275,18 @@ void GameScene::Update(void)
 		// バイク同士の衝突判定
 		BikeCollision();
 
-		//ステージが生成されたら敵を配置する
+		//ステージが生成されたらコインを配置する
 		if (stage_->GetIsMakeLoopStage())
 		{
-
-			stage_->SetMakeLoopStage(false);
-
-			//センター方向からの横の移動幅
-			float shiftX_ = {};
-
-			//道のランダムな場所に生成(3パターン)
-			int randDir = GetRand(static_cast<int>(CoinBase::DIR::MAX) - 1);
-			CoinBase::DIR dir = static_cast<CoinBase::DIR>(randDir);
-
-			Vector2 randPos;
-			switch (dir)
-			{
-			case CoinBase::DIR::LEFT:
-				shiftX_ = -CoinBase::DIR_LEN;
-				break;
-			case CoinBase::DIR::CENTER:
-				shiftX_ = 0.0f;
-				break;
-			case CoinBase::DIR::RIGHT:
-				shiftX_ = CoinBase::DIR_LEN;
-				break;
-			}
-
-			//縦に敵を生成する
-			for (int i = 0; i < CoinBase::MAX_MAKE_NUM; i++)
-			{
-				//縦に並ぶ敵と敵の距離
-				float len = CoinBase::X_LEN;
-
-				//敵の生成
-				CoinBase* c = nullptr;
-				int eType = GetRand(static_cast<int>(CoinBase::TYPE::MAX) - 1);
-				CoinBase::TYPE type = static_cast<CoinBase::TYPE>(eType);
-				for (auto& bike : bikes_) {
-					switch (type)
-					{
-					case CoinBase::TYPE::GOLD:
-						c = new GoldCoin(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-						break;
-					case CoinBase::TYPE::SILVER:
-						c = new SilverCoin(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-						break;
-					case CoinBase::TYPE::COPPER:
-						c = new CopperCoin(bikes_,this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
-						break;
-					}
-				}
-				c->Init();
-
-				//EnemyBike* eB = nullptr;
-				//eB = new EnemyBike(c);
-				//eB->Init();
-				isCreateEnemy_ = true;
-
-
-				////デバッグ
-				//TRACE("%d:(%d,%d)\n", randDir, randPos.x, randPos.y);
-
-				////座標の設定
-				//e->setPos(randPos.ToVector2F());
-
-				//可変長配列に要素を追加
-				coins_.push_back(c);
-			}
+			CoinPlace();
 		}
 		else
 		{
 			stage_->Update();
-			isCreateEnemy_ = false;
+			isCreateCoin_ = false;
 		}
 
 		helicopter_->Update();
-		//throwTyre_->Update();
 
 	}
 }
@@ -453,34 +295,8 @@ void GameScene::Draw(void)
 {
 	if (playNumber_ == 1)
 	{
-		SetDrawScreen(mainScreen_);
 
-		// 画面を初期化
-		ClearDrawScreen();
-
-		cameras_[0]->SetBeforeDraw(); // 各プレイヤーの視点を設定
-
-		// 背景
-		skyDomes_[0]->Draw();
-
-		stage_->Draw();
-
-		//bike_->Draw();
-		helicopter_->Draw();
-
-		throwTyre_->Draw();
-
-		//敵描画
-		size_t sizeE = coins_.size();
-		for (int i = 0; i < sizeE; i++)
-		{
-			if (!coins_[i]->IsDestroy())
-			{
-				coins_[i]->Draw();
-			}
-		}
-
-
+		DrawObject(0);
 
 		// 各バイクを描画
 		bikes_[0]->Draw();
@@ -523,32 +339,8 @@ void GameScene::Draw(void)
 
 		for (int i = 0; i < cameras_.size(); i++)
 		{
-			SetDrawScreen(mainScreen_);
 
-			// 画面を初期化
-			ClearDrawScreen();
-
-			cameras_[i]->SetBeforeDraw(); // 各プレイヤーの視点を設定
-
-			// 背景
-			skyDomes_[i]->Draw();
-
-			stage_->Draw();
-
-			//bike_->Draw();
-			helicopter_->Draw();
-			throwTyre_->Draw();
-
-			//敵描画
-			size_t sizeE = coins_.size();
-			for (int i = 0; i < sizeE; i++)
-			{
-				if (!coins_[i]->IsDestroy())
-				{
-					coins_[i]->Draw();
-				}
-			}
-
+			DrawObject(i);
 
 			// 各バイクを描画
 			for (auto& bike : bikes_) {
@@ -721,18 +513,6 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	//DrawDubg();
 
-
-	////ゴールしたか判定
-	//if (stage_->GetIsGoal())
-	//{
-	//	GoalAfterDraw();
-	//}
-	//else
-	//{
-	//	//警告
-	//	WarningDraw();
-	//}
-
 	//ポーズ中
 	if (isPause_)
 	{
@@ -781,45 +561,38 @@ void GameScene::Draw(void)
 	
 }
 
-std::vector<CoinBase*> GameScene::GetEnemys(void)
+void GameScene::DrawObject(int playerID)
 {
-	return coins_;
-}
+	SetDrawScreen(mainScreen_);
 
+	// 画面を初期化
+	ClearDrawScreen();
 
-bool GameScene::GetIsCreateEnemy(void)
-{
-	return isCreateEnemy_;
-}
+	cameras_[playerID]->SetBeforeDraw(); // 各プレイヤーの視点を設定
 
-int GameScene::GetPlayNum(void)
-{
-	return playNumber_;
-}
+	// 背景
+	skyDomes_[playerID]->Draw();
 
-bool GameScene::OnePersonIsGoal(void)
-{
-	return onePersonIsGoal_;
-}
+	stage_->Draw();
 
-size_t GameScene::GetBikeMaxPosZIndex(void)
-{
-	//pos.zが一番大きいBike要素を取得
-	auto posZMaxElementIt = std::max_element(bikes_.begin(), bikes_.end(), [](const std::shared_ptr<Bike>& a, const std::shared_ptr<Bike>& b) {
-		return a->GetTransform().pos.z < b->GetTransform().pos.z; });  // 比較の基準としてpos.zを使う
+	helicopter_->Draw();
+	throwTyre_->Draw();
 
-	//pos.z が最大の要素のインデックスを取得する
-	size_t posZMaxIndex = std::distance(bikes_.begin(), posZMaxElementIt);
-
-	return posZMaxIndex;
+	//コイン描画
+	size_t sizeC = coins_.size();
+	for (int i = 0; i < sizeC; i++)
+	{
+		if (!coins_[i]->IsDestroy())
+		{
+			coins_[i]->Draw();
+		}
+	}
 }
 
 void GameScene::DrawDubg(void)
 {
 	DrawFormatString(840, 100, 0x000000, "DrawCall:%d", GetDrawCallCount());
 	DrawFormatString(840, 120, 0x000000, "FPS:%f", GetFPS());
-	//DrawFormatString(840, 420, 0x000000,"カウンタ = %d", helicopter_.use_count());
-	//DrawFormatString(840, 420, 0x000000,"bombPosY = %f", helicopter_->GetBomb().lock()->GetTransform().pos.y);
 	DrawFormatString(0, 140, 0x000000, "IsHitStop:%d", isHitStop);
 }
 
@@ -848,70 +621,178 @@ void GameScene::DrawUI(int x, int y, int playerID)
 	//	0x000000, false, 13.0f);
 
 	// スコア描画
-	DrawExtendFormatString(x, y, 2, 2, 0xff0000, "Player %d Score:%d", playerID + 1, bikes_[playerID]->GetScore());
+	DrawExtendFormatString(x, y + 20, 2, 2, 0xff0000, "Player %d Score:%d", playerID + 1, bikes_[playerID]->GetScore());
+}
+
+void GameScene::FirstPersonGoal(void)
+{
+	//ゲームオーバーシーンで描画するため保存しておく
+	if (playNumber_ == 1)
+	{
+		//爆弾は出させない
+		helicopter_->ChangeState(Helicopter::STATE::MOVE);
+	}
+	else
+	{
+		bool allBikeGoal = true;
+		for (auto& bike : bikes_)
+		{
+			// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
+			if (bike->GetHP() > 0)
+			{
+				// もし一つでもゴールしていないバイクがあればフラグを更新
+				if (!bike->GetIsGoal())
+				{
+					allBikeGoal = false;
+					break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+				}
+			}
+		}
+
+		// 全員がゴールしたらヘリ停止
+		if (allBikeGoal)
+		{
+			//爆弾は出させない
+			helicopter_->ChangeState(Helicopter::STATE::MOVE);
+		}
+	}
+
+	stepGoalAfter_ += SceneManager::GetInstance().GetDeltaTime();
+	if (stepGoalAfter_ >= GOAL_TO_NEXT_SCENE)
+	{
+		//ゲームオーバーシーンで描画するため保存しておく
+		if (playNumber_ == 1)
+		{
+			score_.ScoreSet(bikes_[0]->GetScore());
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+		}
+		else
+		{
+			bool allBikeGoal = true;
+
+			for (auto& bike : bikes_)
+			{
+
+				score_.ScoreSetArray(bike->GetScore());
+
+				// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
+				if (bike->GetHP() > 0)
+				{
+					// もし一つでもゴールしていないバイクがあればフラグを更新
+					if (!bike->GetIsGoal())
+					{
+						allBikeGoal = false;
+						break;  // ゴールしていないバイクが見つかった時点でループを抜ける
+					}
+				}
+			}
+
+			// 全員がゴールした場合にシーンを切り替える
+			if (allBikeGoal)
+			{
+				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
+			}
+		}
+
+	}
+}
+
+void GameScene::CoinPlace(void)
+{
+	stage_->SetMakeLoopStage(false);
+
+	//センター方向からの横の移動幅
+	float shiftX_ = {};
+
+	//道のランダムな場所に生成(3パターン)
+	int randDir = GetRand(static_cast<int>(CoinBase::DIR::MAX) - 1);
+	CoinBase::DIR dir = static_cast<CoinBase::DIR>(randDir);
+
+	Vector2 randPos;
+	switch (dir)
+	{
+	case CoinBase::DIR::LEFT:
+		shiftX_ = -CoinBase::DIR_LEN;
+		break;
+	case CoinBase::DIR::CENTER:
+		shiftX_ = 0.0f;
+		break;
+	case CoinBase::DIR::RIGHT:
+		shiftX_ = CoinBase::DIR_LEN;
+		break;
+	}
+
+	//縦にコインを生成する
+	for (int i = 0; i < CoinBase::MAX_MAKE_NUM; i++)
+	{
+		//縦に並ぶコインとコインの距離
+		float len = CoinBase::X_LEN;
+
+		//コインの生成
+		CoinBase* c = nullptr;
+		int eType = GetRand(static_cast<int>(CoinBase::TYPE::MAX) - 1);
+		CoinBase::TYPE type = static_cast<CoinBase::TYPE>(eType);
+		for (auto& bike : bikes_) {
+			switch (type)
+			{
+			case CoinBase::TYPE::GOLD:
+				c = new GoldCoin(bikes_, this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				break;
+			case CoinBase::TYPE::SILVER:
+				c = new SilverCoin(bikes_, this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				break;
+			case CoinBase::TYPE::COPPER:
+				c = new CopperCoin(bikes_, this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
+				break;
+			}
+		}
+		c->Init();
+
+		isCreateCoin_ = true;
+
+		//可変長配列に要素を追加
+		coins_.push_back(c);
+	}
+}
+
+std::vector<CoinBase*> GameScene::GetEnemys(void)
+{
+	return coins_;
+}
+
+
+bool GameScene::GetIsCreateEnemy(void)
+{
+	return isCreateCoin_;
+}
+
+int GameScene::GetPlayNum(void)
+{
+	return playNumber_;
+}
+
+bool GameScene::OnePersonIsGoal(void)
+{
+	return onePersonIsGoal_;
+}
+
+size_t GameScene::GetBikeMaxPosZIndex(void)
+{
+	//pos.zが一番大きいBike要素を取得
+	auto posZMaxElementIt = std::max_element(bikes_.begin(), bikes_.end(), [](const std::shared_ptr<Bike>& a, const std::shared_ptr<Bike>& b) {
+		return a->GetTransform().pos.z < b->GetTransform().pos.z; });  // 比較の基準としてpos.zを使う
+
+	//pos.z が最大の要素のインデックスを取得する
+	size_t posZMaxIndex = std::distance(bikes_.begin(), posZMaxElementIt);
+
+	return posZMaxIndex;
 }
 
 void GameScene::Collision(void)
 {
-	////敵同士の当たり判定(弾く)
-	//size_t sizeEb = enemyBikes_.size();
-	//for (int b1 = 0; b1 < sizeEb; b1++)
-	//{
-
-	//	for (int b2 = 0; b2 < sizeEb; b2++)
-	//	{
-
-	//		if (enemyBikes_[b1] == enemyBikes_[b2])
-	//		{
-	//			continue;
-	//		}
-
-	//		auto b1Pos = enemyBikes_[b1]->GetCapsule().lock()->GetCenter();
-	//		auto b2Pos = enemyBikes_[b2]->GetCapsule().lock()->GetCenter();
-
-	//		VECTOR diff = VSub(b1Pos, b2Pos);
-	//		float  dis = MyUtility::SqrMagnitudeF(diff);
-	//		if (dis < CoinBase::RADIUS * CoinBase::RADIUS)
-	//		{
-
-	//			// 範囲に入ったら、お互いを弾く
-	//			auto flipDirB1 = VNorm(VSub(b1Pos, b2Pos));
-	//			flipDirB1.y = 0.0f;
-	//			flipDirB1 = VNorm(flipDirB1);
-	//			auto flipDirB2 = VNorm(VSub(b2Pos, b1Pos));
-	//			flipDirB2.y = 0.0f;
-	//			flipDirB2 = VNorm(flipDirB2);
-
-	//			coins_[b1]->Flip(flipDirB1);
-	//			coins_[b2]->Flip(flipDirB2);
-	//		}
-
-
-	//	}
-
-	//}
-
 
 	//爆弾とプレイヤーの当たり判定、投げモノとプレイヤーの判定
 	//HPが減り続けてしまうので当たった時は処理中断
-	/*if (helicopter_->GetBomb()->GetIsCol() || throwTyre_->GetIsCol())
-	if (helicopter_->GetBomb()->GetIsCol() || throwTyre_->GetIsCol())	{
-		return;
-	}*/
-
-	//auto bombCap = helicopter_->GetBomb()->GetCapsule();
-	//auto bikeCap = bikes_[3]->GetCapsule();
-
-	//VECTOR diff = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-	//float  dis = MyUtility::SqrMagnitudeF(diff);
-	//if (dis < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
-	//{
-	//	//プレイヤーにダメージ
-	//	bikes_[3]->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
-
-	//	//当たった
-	//	helicopter_->GetBomb()->SetIsCol(true);
-	//}
 
 	for (const auto& bike : bikes_)
 	{
@@ -948,7 +829,8 @@ void GameScene::Collision(void)
 				//当たった
 				helicopter_->GetBomb()->SetIsCol(true);
 
-				StartJoypadVibration(DX_INPUT_PAD1, 1000, 1000, -1);
+				//コントローラーを振動
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 700, -1);
 
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
@@ -989,29 +871,14 @@ void GameScene::Collision(void)
 				//当たった
 				throwTyre_->SetIsCol(true);
 
+				//コントローラーを振動
+				StartJoypadVibration(DX_INPUT_PAD1, 1000, 700, -1);
+
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
 					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
 			}
 		}
-
-		////投げモノ
-		//auto throwCap = throwTyre_->GetCapsule();
-
-
-		//VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-		//float  disT = AsoUtility::SqrMagnitudeF(diffT);
-		//if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
-		//{
-		//	//プレイヤーにダメージ
-		//	bike->Damage(throwTyre_->THROW_DAMAGE);
-
-		//	//当たった
-		//	throwTyre_->SetIsCol(true);
-		//	// 効果音再生
-		//	PlaySoundMem(ResourceManager::GetInstance().Load(
-		//		ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
-		//}
 
 		
 		//死亡処理
@@ -1056,7 +923,7 @@ void GameScene::Collision(void)
 
 void GameScene::BikeCollision(void)
 {
-	//敵同士の当たり判定(弾く)
+	//バイク同士の当たり判定(弾く)
 	size_t sizeBb = bikes_.size();
 	for (int b1 = 0; b1 < sizeBb; b1++)
 	{

@@ -53,7 +53,7 @@ private:
 	Transform spaceDomeTran_;
 
 	// スカイドーム(背景)
-	SkyDome* skyDome_;
+	std::unique_ptr<SkyDome> skyDome_;
 
 	//道路
 	Transform mainStage_;

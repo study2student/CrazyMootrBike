@@ -5,7 +5,6 @@
 class Camera;
 class Stage;
 class SkyDome;
-class Rider;
 class Bike;
 class CoinBase;
 class GoldCoin;
@@ -76,10 +75,10 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
-	//敵情報
+	//コイン情報
 	std::vector<CoinBase*> GetEnemys(void);
 
-	//敵が追加されたタイミングかどうか
+	//コインが追加されたタイミングかどうか
 	bool GetIsCreateEnemy(void);
 
 	//プレイヤー人数取得
@@ -119,52 +118,42 @@ private:
 	// ステージ
 	std::shared_ptr<Stage> stage_;
 
-	////スコア
-	//std::shared_ptr<Score> score_;
-
 	// スカイドーム
 	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
 	//タイヤ
 	TyreThrow* throwTyre_;
 
-
-	// プレイヤー
-	//std::shared_ptr<Bike> bike_;
-
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
-
-	////プレイ人数
-	//int playNumber = 4;
-
-	//プレイ人数
-	//int playNumber = 1;
-
 
 	//ヘリコプター
 	std::shared_ptr<Helicopter> helicopter_;
 
-	////	敵
-	//Enemy* enemy_;
-
-	//敵
+	//コイン
 	CoinBase* coin_;
 
-	//複数の敵
+	//複数のコイン
 	std::vector<CoinBase*>coins_;
 
-	//敵の発生頻度
+	//コインの発生頻度
 	int enCounter;
 
-	//敵が追加されたタイミングかどうか
-	bool isCreateEnemy_;
+	//コインが追加されたタイミングかどうか
+	bool isCreateCoin_;
 
+	// カメラやスクリーンの表示の関数化
+	void DrawObject(int playerID);
 	//デバッグ表示
 	void DrawDubg(void);
-
 	// UI表示
 	void DrawUI(int x, int y, int playerID);
+
+	// 最初の人がゴールした時の処理
+	void FirstPersonGoal(void);
+
+	// コインの配置
+	void CoinPlace(void);
 
 	//衝突判定
 	void Collision(void);

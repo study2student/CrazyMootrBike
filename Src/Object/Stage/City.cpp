@@ -1,7 +1,6 @@
 #include <DxLib.h>
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
-#include "../Common/Capsule.h"
 #include "City.h"
 
 City::City(std::shared_ptr<Bike> bike, const Transform& transform)

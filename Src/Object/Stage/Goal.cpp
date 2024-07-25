@@ -1,11 +1,7 @@
-#include <string>
 #include "../../Application.h"
 #include "../../Utility/MyUtility.h"
-#include "../../Manager/InputManager.h"
-#include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
 #include "../../Manager/Camera.h"
-#include "../Common/AnimationController.h"
 #include "../Common/Capsule.h"
 #include "../Common/Collider.h"
 #include "Planet.h"

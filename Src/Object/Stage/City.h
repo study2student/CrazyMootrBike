@@ -1,8 +1,6 @@
 #pragma once
 #include "../Common/Transform.h"
 #include "../ActorBase.h"
-#include <vector>
-class Capsule;
 class Bike;
 
 class City : public ActorBase
