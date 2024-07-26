@@ -25,6 +25,7 @@ public:
 		RETRY,	//リトライ
 		END		//終わる
 	};
+
 	// プレイヤー同士の初期幅
 	static constexpr float PLAYER_WIDTH = 200.0f;
 
@@ -65,7 +66,7 @@ public:
 	static constexpr float WARNING_POS_Y = 120.0f;
 
 	//ポーズキー入力からもう一度押せるようになるまでの時間
-	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 2.25f;
+	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 1.25f;
 
 	//ゴールしてから次のシーンになるまでの時間
 	static constexpr float GOAL_TO_NEXT_SCENE = 2.5f;
@@ -128,6 +129,9 @@ private:
 
 	// ポーズ背景画像
 	int imgPause_;
+
+	//FINISH画像
+	int imgFinish_;
 
 	// カメラ
 	std::vector<std::shared_ptr<Camera>> cameras_;

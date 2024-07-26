@@ -80,15 +80,15 @@ void GameOverScene::Draw(void)
 	else
 	{
 		//DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawStringWidth("スコア", strlen("スコア")), 100, 3, 3, "スコア", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - 350, Application::SCREEN_SIZE_Y / 2 - 285 - GetDrawFormatStringWidth("%.d") + (0 * 200), 10, 10, "P1", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - 350, Application::SCREEN_SIZE_Y / 2 - 300 - GetDrawFormatStringWidth("%.d") + (1 * 200), 10, 10, "P2", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - 350, Application::SCREEN_SIZE_Y / 2 - 300 - GetDrawFormatStringWidth("%.d") + (2 * 200), 10, 10, "P3", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - 350, Application::SCREEN_SIZE_Y / 2 - 300 - GetDrawFormatStringWidth("%.d") + (3 * 200), 10, 10, "P4", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /*- GetDrawFormatStringWidth("%.d")*/ + (0 * 200), 10, 10, "P1", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /*- GetDrawFormatStringWidth("%.d")*/ + (1 * 200), 10, 10, "P2", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /*- GetDrawFormatStringWidth("%.d")*/ + (2 * 200), 10, 10, "P3", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /* - GetDrawFormatStringWidth("%.d")*/ + (3 * 200), 10, 10, "P4", 0xff0000);
 
 		int playNum = 4;
 		for (int i = 0; i < playNum; i++)
 		{
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - 50, Application::SCREEN_SIZE_Y / 2 - 300 - GetDrawFormatStringWidth("%.d") + (i * 200),
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 -  50, Application::SCREEN_SIZE_Y / 2 - 340 /*- GetDrawFormatStringWidth("%.d")*/ + (i * 200),
 				10, 10, 0xff0000, "%.d", score_.GetScoreArray()[i]);
 		}
 	}

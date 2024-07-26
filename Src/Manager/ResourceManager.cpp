@@ -56,6 +56,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "pause.png");
 	resourcesMap_.emplace(SRC::PAUSE, res);
 
+	// FINISHâÊëú
+	res = new RES(RES_T::IMG, PATH_IMG + "finish.png");
+	resourcesMap_.emplace(SRC::IMG_FINISH, res);
+
 	// ÉvÉåÉCÉÑÅ[
 	res = new RES(RES_T::MODEL, PATH_MDL + "Player/playerA.mv1");
 	resourcesMap_.emplace(SRC::PLAYER, res);

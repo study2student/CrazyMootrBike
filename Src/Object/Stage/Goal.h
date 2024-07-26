@@ -12,7 +12,7 @@ public:
 	static constexpr VECTOR GOAL_BASE_POS = { 1650.0f,-800.0f,0.0f };
 
 	//ゴールを生成するための最大ステージ数
-	static constexpr int STAGE_NUM_MAX_FOR_GOAL = 68;
+	static constexpr int STAGE_NUM_MAX_FOR_GOAL = 75;
 
 
 	// コンストラクタ
