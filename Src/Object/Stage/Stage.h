@@ -1,6 +1,7 @@
 #pragma once
 #include <queue>
 #include<map>
+#include <memory>
 #include "../Common/Transform.h"
 class ResourceManager;
 class Planet;
@@ -12,6 +13,8 @@ class Bomb;
 class City;
 class Goal;
 class Spike;
+class ModelMaterial;
+class ModelRenderer;
 
 class Stage
 {
@@ -94,6 +97,9 @@ public:
 
 
 private:
+
+	std::shared_ptr<ModelMaterial> material_;
+	std::shared_ptr<ModelRenderer> render_;
 
 	//ゲームシーンポインタ
 	GameScene* gameScene_;

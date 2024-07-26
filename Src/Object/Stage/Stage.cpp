@@ -3,6 +3,7 @@
 #include "../../Utility/MyUtility.h"
 #include "../../Manager/SceneManager.h"
 #include "../../Manager/ResourceManager.h"
+#include "../../Manager/Camera.h"
 #include "../Common/Collider.h"
 #include "../Common/Capsule.h"
 #include "../Common/Transform.h"
@@ -14,6 +15,8 @@
 #include "../../Scene/GameScene.h"
 #include "../Stage/Goal.h"
 #include "../Stage/City.h"
+#include"../../Shader/ModelMaterial.h"
+#include"../../Shader/ModelRenderer.h"
 #include "Planet.h"
 #include "LoopStage.h"
 #include "Stage.h"
@@ -150,7 +153,14 @@ void Stage::Draw(void)
 	for (const auto& ls : loopStage_)
 	{
 		ls->Draw();
+
 	}
+
+	// カメラ位置
+	VECTOR cameraPos = SceneManager::GetInstance().GetCamera()->GetPos();
+	material_->SetConstBufPS(3, { cameraPos.x, cameraPos.y, cameraPos.z, 1.0f });
+
+	render_->Draw();
 
 	goal_->Draw();
 
@@ -329,6 +339,28 @@ void Stage::MakeLoopStage(void)
 		loopStage_.push_back(stage);
 		isMakeLoopStage_ = true;
 
+
+		//モデル描画用
+		material_ = std::make_unique<ModelMaterial>(
+			"RimModelVS.cso", 0,
+			"RimModelPS.cso", 4
+			);
+		// 拡散光
+		material_->AddConstBufPS({ 1.0f, 1.0f, 1.0f, 1.0f });
+
+		//環境光
+		material_->AddConstBufPS({ 0.2f, 0.2f, 0.2f, 1.0f });
+
+		//光の向いている方向（ワールド空間)(ディレクショなるライト)
+		auto lDir = GetLightDirection();
+		material_->AddConstBufPS({ lDir.x, lDir.y, lDir.z, 1.0f });
+
+		// カメラ位置
+		VECTOR cameraPos = SceneManager::GetInstance().GetCamera()->GetPos();
+		material_->AddConstBufPS({ cameraPos.x, cameraPos.y, cameraPos.z, 1.0f });
+
+		render_ = std::make_unique<ModelRenderer>(loopTrans.modelId, *material_);
+
 	}
 	else
 	{
@@ -345,7 +377,6 @@ void Stage::MakeLoopStage(void)
 		tailLoop->Destroy();
 
 	}
-
 }
 
 // ステージを追加する関数
