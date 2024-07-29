@@ -80,6 +80,7 @@ public:
 		SND_TITLE_BGM,//タイトルBGM
 		SND_GAME_BGM,//ゲームBGM
 		SND_COIN,//コイン収集時の音
+		SND_BOOST,//ブースと使用時の音
 		SND_MOTOR,//モーター音
 		SND_SELECT,//セレクトシーンの選択時の音
 		SND_START,//セレクト決定時の音

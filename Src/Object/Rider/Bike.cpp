@@ -621,6 +621,10 @@ void Bike::ProcessBoost(void)
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;
 
+		// コイン収集時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_BOOST).handleId_, DX_PLAYTYPE_BACK, true);
+
 		SceneManager::GetInstance().GetCamera()->SetIsBoost(true);
 		deleyBoost_ = DELEY_BOOST_MAX;
 		speedBoost_ = ADD_SPEED_BOOST;

@@ -284,6 +284,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::SOUND, PATH_SND + "collectcoin.mp3");
 	resourcesMap_.emplace(SRC::SND_COIN, res);
 
+	//ブースと使用時の音
+	res = new RES(RES_T::SOUND, PATH_SND + "Boost.mp3");
+	resourcesMap_.emplace(SRC::SND_BOOST, res);
+
 	//モーター音
 	res = new RES(RES_T::SOUND, PATH_SND + "motor.mp3");
 	resourcesMap_.emplace(SRC::SND_MOTOR, res);
