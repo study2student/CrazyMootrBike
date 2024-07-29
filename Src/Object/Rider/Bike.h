@@ -249,21 +249,16 @@ private:
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
 	void ChangeStateFliped(void);
-<<<<<<< Updated upstream
 	void ChangeStateCrash(void);
-=======
 	void ChangeStateDead(void);
->>>>>>> Stashed changes
+
 
 	// 更新ステップ
 	void UpdateNone(void);
 	void UpdatePlay(void);
 	void UpdateFliped(void);
-<<<<<<< Updated upstream
 	void UpdateCrash(void);
-=======
 	void UpdateDead(void);
->>>>>>> Stashed changes
 
 	// 描画系
 	void DrawDebug(void);

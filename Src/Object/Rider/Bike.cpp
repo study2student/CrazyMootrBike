@@ -136,13 +136,10 @@ void Bike::Update(void)
 	case Bike::STATE::FLIPED:
 		UpdateFliped();
 		break;
-<<<<<<< Updated upstream
 	case STATE::CRASH:
 		UpdateCrash();
-=======
 	case Bike::STATE::DEAD:
 		UpdateDead();
->>>>>>> Stashed changes
 		break;
 	}
 
@@ -185,9 +182,7 @@ const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 void Bike::Damage(int damage)
 {
 	hp_ -= damage;
-<<<<<<< Updated upstream
 	ChangeState(STATE::CRASH);
-=======
 
 	//HP‰ºŒÀ’l
 	if (hp_ <= MIN_HP)
@@ -195,7 +190,6 @@ void Bike::Damage(int damage)
 		hp_ = MIN_HP;
 		state_ = STATE::DEAD;
 	}
->>>>>>> Stashed changes
 }
 
 const int& Bike::GetHP(void)
@@ -273,13 +267,10 @@ void Bike::ChangeState(STATE state)
 	case STATE::FLIPED:
 		ChangeStateFliped();
 		break;
-<<<<<<< Updated upstream
 	case STATE::CRASH:
 		ChangeStateCrash();
-=======
 	case Bike::STATE::DEAD:
 		ChangeStateDead();
->>>>>>> Stashed changes
 		break;
 	}
 }
@@ -296,11 +287,11 @@ void Bike::ChangeStateFliped(void)
 {
 }
 
-<<<<<<< Updated upstream
 void Bike::ChangeStateCrash(void)
-=======
+{
+}
+
 void Bike::ChangeStateDead(void)
->>>>>>> Stashed changes
 {
 }
 
@@ -364,7 +355,6 @@ void Bike::UpdateFliped(void)
 	transform_.quaRot = playerRotY_;
 }
 
-<<<<<<< Updated upstream
 void Bike::UpdateCrash(void)
 {
 	speed_ = SPEED_MOVE - 50.0f;
@@ -398,10 +388,11 @@ void Bike::UpdateCrash(void)
 
 	// ‘¼‚ÌXVˆ—
 	transform_.Update();
-=======
+}
+
 void Bike::UpdateDead(void)
 {
->>>>>>> Stashed changes
+
 }
 
 void Bike::DrawDebug(void)
