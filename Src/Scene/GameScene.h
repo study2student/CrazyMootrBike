@@ -133,6 +133,9 @@ private:
 	//FINISH画像
 	int imgFinish_;
 
+	//コイン画像
+	int imgCoin_;
+
 	// カメラ
 	std::vector<std::shared_ptr<Camera>> cameras_;
 
@@ -170,8 +173,8 @@ private:
 	// UI表示
 	void DrawUI(int x, int y, int playerID);
 
-	// 最初の人がゴールした時の処理
-	void FirstPersonGoal(void);
+	// ゴールした時の処理
+	void GoalProcess(void);
 
 	// コインの配置
 	void CoinPlace(void);
@@ -260,4 +263,7 @@ private:
 
 	//ゴールしたあとの処理
 	void GoalAfterDraw(void);
+
+	//コイン画像描画
+	void CoinImgDraw(int x, int y);
 };

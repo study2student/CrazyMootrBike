@@ -96,9 +96,10 @@ void Stage::Update(void)
 		{
 			
 			isGoal_ = true;
+
 			// ゴール音を再生
 			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, false);
+				ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
 		}
 		else
 		{
@@ -114,9 +115,10 @@ void Stage::Update(void)
 				//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 				isGoal_ = true;
 				bike->SetIsGoal(true);
+
 				// ゴール音を再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
-					ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, false);
+					ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
 			}
 			else
 			{
@@ -373,7 +375,7 @@ void Stage::MakeLoopStage(void)
 	{
 
 		// ステージを削除する
-		std::shared_ptr<LoopStage> tailLoop = loopStage_[size-11];
+		std::shared_ptr<LoopStage> tailLoop = loopStage_[size - (DELETION_NUM - 1)];
 		tailLoop->Destroy();
 
 	}
@@ -453,7 +455,7 @@ void Stage::MakeCity(void)
 	if (city_.size() >= DELETION_NUM)
 	{
 		// ステージを削除する
-		std::shared_ptr<City> tailLoop = city_[size - 11];
+		std::shared_ptr<City> tailLoop = city_[size - (DELETION_NUM - 1)];
 		tailLoop->Destroy();
 	}
 }

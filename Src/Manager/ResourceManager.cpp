@@ -152,6 +152,10 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::IMG, PATH_IMG + "Operation.png");
 	resourcesMap_.emplace(SRC::IMG_OPERATION, res);
 
+	//操作画面スティック
+	res = new RES(RES_T::IMG, PATH_IMG + "coin.png");
+	resourcesMap_.emplace(SRC::IMG_COIN, res);
+
 	// 仮ステージ
 	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::DEMO_STAGE, res);

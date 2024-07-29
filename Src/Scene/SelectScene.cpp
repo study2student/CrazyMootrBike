@@ -38,6 +38,9 @@ void SelectScene::Init(void)
 	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 
 	Operation = resMng_.Load(ResourceManager::SRC::IMG_OPERATION).handleId_;
+
+	selectSE_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_;
+	decideSE_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_;
 	
 	isCursorHit_ = false;
 
@@ -179,15 +182,14 @@ void SelectScene::DecideProcess(void)
 	{
 		//ボタンにふれている場合
 		onePersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
 			//データ保存
 			int playNum = 1;
 			data_.SetData(DataSave::DataType::PLAYER_NUM, playNum);
 
 			// 決定時の音を再生
-			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_NORMAL, false);
+			PlaySoundMem(decideSE_, DX_PLAYTYPE_BACK, true);
 
 			//左クリックまたはスペースキーでゲームを開始する
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
@@ -219,15 +221,14 @@ void SelectScene::DecideProcess(void)
 	{
 		//ボタンにふれている場合
 		fourPersonFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)|| ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
 			//データ保存
 			int playNum = 4;
 			data_.SetData(DataSave::DataType::PLAYER_NUM, playNum);
 
 			// 決定時の音を再生
-			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_NORMAL, false);
+			PlaySoundMem(decideSE_, DX_PLAYTYPE_BACK, true);
 
 
 			//左クリックまたはスペースキーでゲームを開始する
@@ -247,22 +248,22 @@ void SelectScene::SelectProcess(void)
 	auto& ins_ = InputManager::GetInstance();
 
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_LEFT)|| static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
+	if (ins_.IsTrgDown(KEY_INPUT_LEFT) && nowCursor_ == SELECT_MAX_NUM - 1
+		|| ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::L_STICK_LEFT) && nowCursor_== SELECT_MAX_NUM - 1)
 	{
-		// 決定時の音を再生
-		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, false);
+		// 選択時の音を再生
+		PlaySoundMem(selectSE_, DX_PLAYTYPE_BACK, true);
 		nowCursor_--;
 		if (nowCursor_ <= 0)
 		{
 			nowCursor_ = 0;
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_RIGHT) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
+	if (ins_.IsTrgDown(KEY_INPUT_RIGHT) && nowCursor_ == 0 
+		|| ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::L_STICK_RIGHT) && nowCursor_ == 0)
 	{
-		// 決定時の音を再生
-		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, false);
+		// 選択時の音を再生
+		PlaySoundMem(selectSE_, DX_PLAYTYPE_BACK, true);
 		nowCursor_++;
 		if (nowCursor_ >= SELECT_MAX_NUM - 1)
 		{

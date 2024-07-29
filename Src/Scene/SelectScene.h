@@ -105,6 +105,12 @@ private:
 	//現カーソル位置
 	int nowCursor_;
 
+	//選択音
+	int selectSE_;
+
+	//決定音
+	int decideSE_;
+
 	//状態
 	STATE state_;
 

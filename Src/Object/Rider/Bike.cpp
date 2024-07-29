@@ -136,13 +136,18 @@ void Bike::Update(void)
 	case Bike::STATE::FLIPED:
 		UpdateFliped();
 		break;
+<<<<<<< Updated upstream
 	case STATE::CRASH:
 		UpdateCrash();
+=======
+	case Bike::STATE::DEAD:
+		UpdateDead();
+>>>>>>> Stashed changes
 		break;
 	}
 
-	ChangeVolumeSoundMem(10, PlaySoundMem(ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false));
+	/*ChangeVolumeSoundMem(10, PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false));*/
 
 
 	// モデル制御更新
@@ -180,7 +185,17 @@ const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 void Bike::Damage(int damage)
 {
 	hp_ -= damage;
+<<<<<<< Updated upstream
 	ChangeState(STATE::CRASH);
+=======
+
+	//HP下限値
+	if (hp_ <= MIN_HP)
+	{
+		hp_ = MIN_HP;
+		state_ = STATE::DEAD;
+	}
+>>>>>>> Stashed changes
 }
 
 const int& Bike::GetHP(void)
@@ -258,8 +273,13 @@ void Bike::ChangeState(STATE state)
 	case STATE::FLIPED:
 		ChangeStateFliped();
 		break;
+<<<<<<< Updated upstream
 	case STATE::CRASH:
 		ChangeStateCrash();
+=======
+	case Bike::STATE::DEAD:
+		ChangeStateDead();
+>>>>>>> Stashed changes
 		break;
 	}
 }
@@ -276,7 +296,11 @@ void Bike::ChangeStateFliped(void)
 {
 }
 
+<<<<<<< Updated upstream
 void Bike::ChangeStateCrash(void)
+=======
+void Bike::ChangeStateDead(void)
+>>>>>>> Stashed changes
 {
 }
 
@@ -311,13 +335,6 @@ void Bike::UpdatePlay(void)
 
 	//アニメーションループ
 	animationController_->SetEndLoop(33.0f, 36.0f, 1.0f);
-
-	//HP下限値
-	if (hp_ <= MIN_HP)
-	{
-		hp_ = MIN_HP;
-		state_ = STATE::DEAD;
-	}
 }
 
 void Bike::UpdateFliped(void)
@@ -347,6 +364,7 @@ void Bike::UpdateFliped(void)
 	transform_.quaRot = playerRotY_;
 }
 
+<<<<<<< Updated upstream
 void Bike::UpdateCrash(void)
 {
 	speed_ = SPEED_MOVE - 50.0f;
@@ -380,6 +398,10 @@ void Bike::UpdateCrash(void)
 
 	// 他の更新処理
 	transform_.Update();
+=======
+void Bike::UpdateDead(void)
+{
+>>>>>>> Stashed changes
 }
 
 void Bike::DrawDebug(void)
@@ -436,32 +458,16 @@ void Bike::ProcessMove(void)
 	const auto& input = playerInputs[playerID_];
 	int padState = GetJoypadInputState(input.padId);
 
+	//右
 	if (padState & static_cast<int>(input.right)) {
 		rotRadZ = MyUtility::Deg2RadF(-SLOPE);
 		dir = cameraRot.GetRight();
 	}
 
+	//左
 	if (padState & static_cast<int>(input.left)) {
 		rotRadZ = MyUtility::Deg2RadF(SLOPE);
 		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_RIGHT))
-	{
-		rotRadZ = MyUtility::Deg2RadF(-SLOPE);
-		dir = cameraRot.GetRight();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT))
-	{
-		rotRadZ = MyUtility::Deg2RadF(SLOPE);
-		dir = cameraRot.GetLeft();
-	}
-
-	if (static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
-	{
-		rotRad = MyUtility::Deg2RadF(180.0f);
-		dir = cameraRot.GetBack();
 	}
 
 	//もし上ってしまったら戻す
@@ -482,8 +488,8 @@ void Bike::ProcessMove(void)
 			// カメラ方向から後退したい
 			if (ins.IsNew(KEY_INPUT_S))
 			{
-				rotRad = MyUtility::Deg2RadF(180.0f);
-				dir = cameraRot.GetBack();
+				/*rotRad = MyUtility::Deg2RadF(180.0f);
+				dir = cameraRot.GetBack();*/
 			}
 
 			// カメラ方向から右側へ移動したい
@@ -559,14 +565,14 @@ void Bike::ProcessMove(void)
 		{
 			speed_ = SPEED_MOVE_X;
 		}
-		if (ins.IsNew(KEY_INPUT_RSHIFT))
+		/*if (ins.IsNew(KEY_INPUT_RSHIFT))
 		{
 			speed_ = SPEED_RUN;
 			if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
 			{
 				speed_ = SPEED_MOVE_X;
 			}
-		}
+		}*/
 
 
 		// 回転処理

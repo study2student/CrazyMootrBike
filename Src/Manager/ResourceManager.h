@@ -44,6 +44,7 @@ public:
 		IMG_OPERATION,//操作説明画面
 		IMG_GAMEOVER_SELECT_BG,	//ゲームオーバーシーンセレクト背景
 		IMG_FINISH,		//フィニッシュ文字画像
+		IMG_COIN,		//コイン画像
 
 		DEMO_STAGE,//仮ステージ
 		JUMP_RAMP,//ジャンプ台

@@ -130,8 +130,11 @@ void GameOverScene::DecideProcess(void)
 	{
 		//ボタンにふれている場合
 		reTryFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
+			// 決定時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_BACK, true);
+
 			//左クリックまたはスペースキーでリトライ
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		}
@@ -162,8 +165,11 @@ void GameOverScene::DecideProcess(void)
 	{
 		//ボタンにふれている場合
 		endFontColor_ = GetColor(0, 0, 255);
-		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
+		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
+			// 決定時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_BACK, true);
+
 			//左クリックまたはスペースキーでタイトルへ
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 		}
@@ -180,16 +186,24 @@ void GameOverScene::SelectProcess(void)
 	auto& ins_ = InputManager::GetInstance();
 
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_UP) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_UP))
+	if (ins_.IsTrgDown(KEY_INPUT_UP) && nowCursor_ == SELECT_MAX_NUM - 1
+		|| ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::L_STICK_UP) && nowCursor_ == SELECT_MAX_NUM - 1)
 	{
+		// 選択時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
+
 		nowCursor_--;
 		if (nowCursor_ <= 0)
 		{
 			nowCursor_ = 0;
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_DOWN) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_DOWN))
+	if (ins_.IsTrgDown(KEY_INPUT_DOWN) && nowCursor_ == 0
+		|| ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::L_STICK_DOWN) && nowCursor_ == 0)
 	{
+		// 選択時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
+
 		nowCursor_++;
 		if (nowCursor_ >= SELECT_MAX_NUM - 1)
 		{

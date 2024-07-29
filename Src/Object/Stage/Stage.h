@@ -55,7 +55,7 @@ public:
 	static constexpr float STAGE_RIGHT_POS_X_MAX = 2500.0f;
 
 	// 削除するステージ数
-	static constexpr int DELETION_NUM = 12;
+	static constexpr int DELETION_NUM = 22;
 
 	// ステージ名
 	enum class NAME

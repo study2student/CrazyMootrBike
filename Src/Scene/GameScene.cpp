@@ -159,6 +159,7 @@ void GameScene::Init(void)
 
 	imgPause_ = resMng_.Load(ResourceManager::SRC::PAUSE).handleId_;
 	imgFinish_= resMng_.Load(ResourceManager::SRC::IMG_FINISH).handleId_;
+	imgCoin_= resMng_.Load(ResourceManager::SRC::IMG_COIN).handleId_;
 
 
 	//スコアリセット
@@ -216,18 +217,18 @@ void GameScene::Update(void)
 	//最初の人がゴールしたら
 	if (stage_->GetIsGoal())
 	{
-		FirstPersonGoal();
+		GoalProcess();
 	}
 
 	
 	//1人プレイ時ゴールしたかどうかセット
 	onePersonIsGoal_ = stage_->GetIsGoal();
 
-	// シーン遷移
-	if (ins.IsTrgDown(KEY_INPUT_SPACE))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-	}
+	//// シーン遷移(デバッグ用)
+	//if (ins.IsTrgDown(KEY_INPUT_SPACE))
+	//{
+	//	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+	//}
 
 
 	// スタート時のカウントダウンを減らす
@@ -242,8 +243,8 @@ void GameScene::Update(void)
 		float deltaTime = hitStopDuration;
 
 		// BGMを再生
-		PlaySoundMem(ResourceManager::GetInstance().Load(
-			ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+		//PlaySoundMem(ResourceManager::GetInstance().Load(
+			//ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
 
 		for (auto& skyDome : skyDomes_)
 		{
@@ -339,7 +340,10 @@ void GameScene::Draw(void)
 
 		DrawGraph(0, 0, mainScreen_, false);
 		//スコア描画
-		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, 0, 2, 2, 0xff0000, "Player %d Score:%d", 1, bikes_[0]->GetScore());
+		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2, 0, 2, 2, 0xff0000, "Player %d       :%d", 1, bikes_[0]->GetScore());
+		int coinX_ = 240;
+		int coinY_ = 20;
+		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 + coinX_, coinY_, 0.15, 0.0, imgCoin_, true);
 		//HP描画
 		using ap = Application;
 		int sc_x = ap::SCREEN_SIZE_X - 500;
@@ -404,11 +408,16 @@ void GameScene::Draw(void)
 				//枠線の半分の太さ
 				int halfBorderSize = 5;
 
+				//コイン調整座標
+				int coinX = 140;
+				int coinY = 31;
+
 				switch (i)
 				{
 				case 0:
 					DrawGraph(0, 0, mainScreen_, false);
 					DrawUI(sx / 2 - width, 0, 0);
+					CoinImgDraw(sx / 2 - coinX, coinY);
 
 					//エフェクトの再生
 					if (bikes_[0]->IsBoost())
@@ -439,6 +448,7 @@ void GameScene::Draw(void)
 				case 1:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
 					DrawUI(sx - width, 0, 1);
+					CoinImgDraw(sx - coinX, coinY);
 
 					//エフェクトの再生
 					if (bikes_[1]->IsBoost())
@@ -469,6 +479,7 @@ void GameScene::Draw(void)
 				case 2:
 					DrawGraph(0, sy / 2, mainScreen_, false);
 					DrawUI(sx / 2 - width, sy / 2, 2);
+					CoinImgDraw(sx / 2 - coinX, sy / 2 + coinY);
 
 					//エフェクトの再生
 					if (bikes_[2]->IsBoost())
@@ -499,6 +510,7 @@ void GameScene::Draw(void)
 				case 3:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
 					DrawUI(sx - width, sy / 2, 3);
+					CoinImgDraw(sx - coinX, sy / 2 + coinY);
 
 					//エフェクトの再生
 					if (bikes_[3]->IsBoost())
@@ -662,14 +674,16 @@ void GameScene::DrawUI(int x, int y, int playerID)
 	//	0x000000, false, 13.0f);
 
 	// スコア描画
-	DrawExtendFormatString(x, y + 20, 2, 2, 0xff0000, "Player %d Score:%d", playerID + 1, bikes_[playerID]->GetScore());
+	int addX = 250;
+	DrawExtendFormatString(x + addX, y + 20, 2, 2, 0xff0000, "Player %d     :%d", playerID + 1, bikes_[playerID]->GetScore());
 }
 
-void GameScene::FirstPersonGoal(void)
+void GameScene::GoalProcess(void)
 {
 	//ゲームオーバーシーンで描画するため保存しておく
 	if (playNumber_ == 1)
 	{
+
 		//爆弾は出させない
 		helicopter_->ChangeState(Helicopter::STATE::MOVE);
 	}
@@ -678,6 +692,7 @@ void GameScene::FirstPersonGoal(void)
 		bool allBikeGoal = true;
 		for (auto& bike : bikes_)
 		{
+
 			// プレイヤーのHPが0でないバイクだけをゴールのチェック対象とする
 			if (bike->GetHP() > 0)
 			{
@@ -1178,16 +1193,22 @@ void GameScene::SelectProcess(void)
 
 	//PC
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_UP))
+	if (ins_.IsTrgDown(KEY_INPUT_UP) && !(nowCursor_==0))
 	{
+		// 選択時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
+
 		nowCursor_--;
 		if (nowCursor_ <= 0)
 		{
 			nowCursor_ = 0;
 		}
 	}
-	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
+	if (ins_.IsTrgDown(KEY_INPUT_DOWN) && !(nowCursor_ == SELECT_MAX_NUM - 1))
 	{
+		// 選択時の音を再生
+		PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
+
 		nowCursor_++;
 		if (nowCursor_ >= SELECT_MAX_NUM - 1)
 		{
@@ -1217,16 +1238,22 @@ void GameScene::SelectProcess(void)
 		}
 
 		//カーソル番号による上下操作
-		if (ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_UP))
+		if (ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_UP) && !(nowCursor_ == 0))
 		{
+			// 選択時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
+
 			nowCursor_--;
 			if (nowCursor_ <= 0)
 			{
 				nowCursor_ = 0;
 			}
 		}
-		if (ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_DOWN))
+		if (ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_DOWN) && !(nowCursor_ == SELECT_MAX_NUM - 1))
 		{
+			// 選択時の音を再生
+			PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
+
 			nowCursor_++;
 			if (nowCursor_ >= SELECT_MAX_NUM - 1)
 			{
@@ -1347,4 +1374,9 @@ void GameScene::GoalAfterDraw(void)
 	//FINISH文字描画
 	DrawRotaGraph(finishFontPos_.x, finishFontPos_.y, 1.5, 0.0, imgFinish_, true);
 
+}
+
+void GameScene::CoinImgDraw(int x, int y)
+{
+	DrawRotaGraph(x, y, 0.15, 0.0, imgCoin_, true);
 }
