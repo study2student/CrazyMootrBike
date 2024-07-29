@@ -143,7 +143,8 @@ void GameScene::Init(void)
 	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + addX , Application::SCREEN_SIZE_Y / 2 + 150 };
 
 	//FINISH文字の初期位置
-	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2 - 220 ,-40 };
+	int addPosX = 0;
+	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2 + addPosX ,-40 };
 	finishFontPos_ = finishStartPos;
 
 	isPause_ = false;
@@ -157,6 +158,7 @@ void GameScene::Init(void)
 	warningImgScale_ = WARNING_IMG_MIN_SCALE;
 
 	imgPause_ = resMng_.Load(ResourceManager::SRC::PAUSE).handleId_;
+	imgFinish_= resMng_.Load(ResourceManager::SRC::IMG_FINISH).handleId_;
 
 
 	//スコアリセット
@@ -419,8 +421,8 @@ void GameScene::Draw(void)
 					{
 						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 300,200 };
-						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+						Vector2 finishFontPos = { 450,250 };
+						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0,imgFinish_, true);
 					}
 
 					//死亡文字
@@ -449,8 +451,8 @@ void GameScene::Draw(void)
 					{
 						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 1250,200 };
-						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+						Vector2 finishFontPos = { 1400,250 };
+						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0, imgFinish_, true);
 					}
 
 					//死亡文字
@@ -479,8 +481,8 @@ void GameScene::Draw(void)
 					{
 						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 300,700 };
-						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+						Vector2 finishFontPos = { 450,750 };
+						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0, imgFinish_, true);
 					}
 
 					//死亡文字
@@ -509,8 +511,8 @@ void GameScene::Draw(void)
 					{
 						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 1250,700 };
-						DrawExtendFormatString(finishFontPos.x, finishFontPos.y, 6, 6, finishFontColor_, "FINISH");
+						Vector2 finishFontPos = { 1400,750 };
+						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0, imgFinish_, true);
 					}
 
 					//死亡文字
@@ -551,11 +553,6 @@ void GameScene::Draw(void)
 	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
 	//DrawDubg();
 
-	//ポーズ中
-	if (isPause_)
-	{
-		PauseDraw();
-	}
 
 	//ゴールしたら文字出現
 	if (playNumber_ == 1)
@@ -593,7 +590,13 @@ void GameScene::Draw(void)
 			//警告
 			WarningDraw();
 		}
-		
+
+	}
+
+	//ポーズ中
+	if (isPause_)
+	{
+		PauseDraw();
 	}
 
 	
@@ -1173,8 +1176,27 @@ void GameScene::SelectProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
 
+	//PC
+	//カーソル番号による上下操作
+	if (ins_.IsTrgDown(KEY_INPUT_UP))
+	{
+		nowCursor_--;
+		if (nowCursor_ <= 0)
+		{
+			nowCursor_ = 0;
+		}
+	}
+	if (ins_.IsTrgDown(KEY_INPUT_DOWN))
+	{
+		nowCursor_++;
+		if (nowCursor_ >= SELECT_MAX_NUM - 1)
+		{
+			nowCursor_ = SELECT_MAX_NUM - 1;
+		}
+	}
 
 
+	//PAD
 	InputManager::JOYPAD_NO padNum[PAD_MAX];
 	for (int i = 0; i < PAD_MAX; i++)
 	{
@@ -1195,7 +1217,7 @@ void GameScene::SelectProcess(void)
 		}
 
 		//カーソル番号による上下操作
-		if (ins_.IsTrgDown(KEY_INPUT_UP) || ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_UP))
+		if (ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_UP))
 		{
 			nowCursor_--;
 			if (nowCursor_ <= 0)
@@ -1203,7 +1225,7 @@ void GameScene::SelectProcess(void)
 				nowCursor_ = 0;
 			}
 		}
-		if (ins_.IsTrgDown(KEY_INPUT_DOWN) || ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_DOWN))
+		if (ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::L_STICK_DOWN))
 		{
 			nowCursor_++;
 			if (nowCursor_ >= SELECT_MAX_NUM - 1)
@@ -1308,8 +1330,6 @@ void GameScene::PauseDraw(void)
 
 void GameScene::GoalAfterDraw(void)
 {
-	//FINISH文字色
-	int finishFontColor_ = GetColor(255, 165, 0);
 
 	//座標
 	if(!isPause_)
@@ -1318,13 +1338,13 @@ void GameScene::GoalAfterDraw(void)
 		finishFontPos_.y += addPosY;
 	}
 
-	float stopPosY = Application::SCREEN_SIZE_Y / 2 - WARNING_POS_Y;
+	float stopPosY = Application::SCREEN_SIZE_Y / 2 - 40;
 	if (finishFontPos_.y >= stopPosY)
 	{
 		finishFontPos_.y = stopPosY;
 	}
 
 	//FINISH文字描画
-	DrawExtendFormatString(finishFontPos_.x, finishFontPos_.y, 9, 9, finishFontColor_, "FINISH");
+	DrawRotaGraph(finishFontPos_.x, finishFontPos_.y, 1.5, 0.0, imgFinish_, true);
 
 }
