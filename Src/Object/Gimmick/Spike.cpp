@@ -78,8 +78,6 @@ void Spike::Update(void)
 
 void Spike::Draw(void)
 {
-	// デバッグ描画
-	DrawDebug();
 
 	//動いている時以外は描画しない
 	if (!(state_ == STATE::THROW_MOVE))
@@ -341,14 +339,6 @@ void Spike::UpdateDestroy(void)
 		ChangeState(STATE::IDLE);
 		stepTyreDestroy_ = 0.0f;
 	}
-}
-
-void Spike::DrawDebug(void)
-{
-}
-
-void Spike::ProcessDebug(void)
-{
 }
 
 void Spike::Rotate(void)

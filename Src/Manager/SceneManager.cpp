@@ -123,8 +123,11 @@ void SceneManager::Draw(void)
 	// カメラ設定
 	camera_->SetBeforeDraw();
 
-	// Effekseerにより再生中のエフェクトを更新する。
-	UpdateEffekseer3D();
+	if (!(sceneId_ == SCENE_ID::GAME))
+	{
+		// Effekseerにより再生中のエフェクトを更新する。
+		UpdateEffekseer3D();
+	}
 
 	// 描画
 	scene_->Draw();
@@ -132,8 +135,11 @@ void SceneManager::Draw(void)
 	// 主にポストエフェクト用
 	camera_->Draw();
 
-	// Effekseerにより再生中のエフェクトを描画する。
-	DrawEffekseer3D();
+	if (!(sceneId_ == SCENE_ID::GAME))
+	{
+		// Effekseerにより再生中のエフェクトを描画する。
+		DrawEffekseer3D();
+	}
 	
 	// 暗転・明転
 	fader_->Draw();

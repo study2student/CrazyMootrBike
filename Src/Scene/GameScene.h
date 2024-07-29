@@ -138,7 +138,7 @@ private:
 	// スカイドーム
 	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
-	//タイヤ
+	//トゲ
 	Spike* spike_;
 
 	// 複数プレイヤー

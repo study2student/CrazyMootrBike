@@ -192,12 +192,6 @@ private:
 	void UpdateThrowMove(void);
 	void UpdateDestroy(void);
 
-	// 描画系
-	void DrawDebug(void);
-
-	// 操作
-	void ProcessDebug(void);//デバッグ用
-
 	// 回転
 	void Rotate(void);
 

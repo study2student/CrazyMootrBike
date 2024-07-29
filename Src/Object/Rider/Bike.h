@@ -84,6 +84,7 @@ public:
 		NONE,
 		PLAY,
 		FLIPED,
+		CRASH,
 		DEAD,
 		END
 	};
@@ -199,6 +200,7 @@ private:
 	Quaternion playerRotY_;
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
+	float currentTime = 0.0f;
 
 	// ジャンプ量
 	VECTOR jumpPow_;
@@ -247,11 +249,13 @@ private:
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
 	void ChangeStateFliped(void);
+	void ChangeStateCrash(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
 	void UpdatePlay(void);
 	void UpdateFliped(void);
+	void UpdateCrash(void);
 
 	// 描画系
 	void DrawDebug(void);

@@ -136,6 +136,9 @@ void Bike::Update(void)
 	case Bike::STATE::FLIPED:
 		UpdateFliped();
 		break;
+	case STATE::CRASH:
+		UpdateCrash();
+		break;
 	}
 
 	ChangeVolumeSoundMem(10, PlaySoundMem(ResourceManager::GetInstance().Load(
@@ -177,6 +180,7 @@ const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
 void Bike::Damage(int damage)
 {
 	hp_ -= damage;
+	ChangeState(STATE::CRASH);
 }
 
 const int& Bike::GetHP(void)
@@ -245,14 +249,17 @@ void Bike::ChangeState(STATE state)
 	// 各状態遷移の初期処理
 	switch (state_)
 	{
-	case Bike::STATE::NONE:
+	case STATE::NONE:
 		ChangeStateNone();
 		break;
-	case Bike::STATE::PLAY:
+	case STATE::PLAY:
 		ChangeStatePlay();
 		break;
-	case Bike::STATE::FLIPED:
+	case STATE::FLIPED:
 		ChangeStateFliped();
+		break;
+	case STATE::CRASH:
+		ChangeStateCrash();
 		break;
 	}
 }
@@ -266,6 +273,10 @@ void Bike::ChangeStatePlay(void)
 }
 
 void Bike::ChangeStateFliped(void)
+{
+}
+
+void Bike::ChangeStateCrash(void)
 {
 }
 
@@ -334,6 +345,41 @@ void Bike::UpdateFliped(void)
 
 	// 回転させる
 	transform_.quaRot = playerRotY_;
+}
+
+void Bike::UpdateCrash(void)
+{
+	speed_ = SPEED_MOVE - 50.0f;
+
+	// Y軸起点に揺れを追加
+	float swayAngle = MyUtility::Deg2RadF(45.0f);  // 揺れの角度の範囲
+	float swaySpeed = 0.1f;  // 揺れの速度
+	float sway = swayAngle * sinf(swaySpeed * currentTime);
+
+	// Y軸周りの揺れを設定
+	transform_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
+	transformPlayer_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
+
+	currentTime += 2.0f;
+
+	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
+	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
+	//前に進む
+	VECTOR movePowF_ = VScale(cameraRot.GetForward(), SPEED_MOVE + speedBoost_);
+
+	//前へ進むベクトルと横に曲がるベクトルを合成する
+	//moveDir_ = dir;
+	movePow_ = VAdd(VScale(cameraRot.GetForward(), speed_), movePowF_);
+
+	speed_ += 1.0f;
+
+	if (speed_ == SPEED_MOVE)
+	{
+		ChangeState(STATE::PLAY);
+	}
+
+	// 他の更新処理
+	transform_.Update();
 }
 
 void Bike::DrawDebug(void)

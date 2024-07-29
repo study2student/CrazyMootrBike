@@ -327,6 +327,12 @@ void GameScene::Draw(void)
 		// 各バイクを描画
 		bikes_[0]->Draw();
 
+		// Effekseerにより再生中のエフェクトを更新する。
+		UpdateEffekseer3D();
+
+		// Effekseerにより再生中のエフェクトを描画する。
+		DrawEffekseer3D();
+
 		SetDrawScreen(DX_SCREEN_BACK);
 
 		DrawGraph(0, 0, mainScreen_, false);
@@ -373,6 +379,12 @@ void GameScene::Draw(void)
 				bike->Draw();
 				
 			}
+
+			// Effekseerにより再生中のエフェクトを更新する。
+			UpdateEffekseer3D();
+
+			// Effekseerにより再生中のエフェクトを描画する。
+			DrawEffekseer3D();
 
 			for (int p = 0; p < bikes_.size(); p++) {
 				//int score = bikes_[p]->GetScore();
