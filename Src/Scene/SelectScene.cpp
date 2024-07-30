@@ -39,12 +39,20 @@ void SelectScene::Init(void)
 
 	Operation = resMng_.Load(ResourceManager::SRC::IMG_OPERATION).handleId_;
 
+	//コイン画像
+	coinImg_ = resMng_.Load(ResourceManager::SRC::IMG_COIN).handleId_;
+	coinImgPos_ = { Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 4 - 80 };
+
+	// バイク画像
+	bikeImg_ = resMng_.Load(ResourceManager::SRC::IMG_BIKE).handleId_;
+	bikeImgPos_ = { Application::SCREEN_SIZE_X / 4,Application::SCREEN_SIZE_Y % 3 };
+
 	selectSE_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_;
 	decideSE_ = ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_;
 	
 	isCursorHit_ = false;
 
-	selectAloneImgScale_ = 1.5f;
+	selectAloneImgScale_ = 1.0f;
 	selectFourImgScale_ = 1.5f;
 }
 
@@ -55,6 +63,9 @@ void SelectScene::Update(void)
 
 	//キー操作
 	SelectProcess();
+
+	//バイク画像の動き
+	BikeImgUpdate();
 }
 
 void SelectScene::Draw(void)
@@ -127,9 +138,7 @@ void SelectScene::Draw(void)
 		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, everyoneImg_, true);
 	}
 
-	//操作説明画像描画
-	//DrawGraph(0, 0, StickImg_, true);
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2, 235, 0.5, 0, Operation, true);
+
 
 	//点滅表示
 	float maxStepFlash = 0.80f;
@@ -155,8 +164,38 @@ void SelectScene::Draw(void)
 	{
 		DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
 	}
+
+	DrawOpe();
 }
 
+
+void SelectScene::DrawOpe(void)
+{
+	int scX = Application::SCREEN_SIZE_X;
+	int scY = Application::SCREEN_SIZE_Y;
+
+	//操作説明画像描画
+	DrawRotaGraph(scX / 2, 280, 0.8, 0.0, Operation, true);
+
+
+	if (bikeImgPos_.x - 1666 / 5 <= coinImgPos_.x)
+	{
+		// コイン画像の大きさ
+		int size = 60;
+		for (int i = 0; i < 180; i += size)
+		{
+			DrawExtendGraph(coinImgPos_.x + i, coinImgPos_.y, coinImgPos_.x + size + i, coinImgPos_.y + size, coinImg_, true);
+		}
+	}
+
+
+	// バイク画像
+	DrawExtendGraph(bikeImgPos_.x, bikeImgPos_.y,
+			bikeImgPos_.x - 1666 / 4, bikeImgPos_.y + 1111 / 4,
+			bikeImg_, true);
+
+
+}
 
 void SelectScene::DecideProcess(void)
 {
@@ -274,6 +313,16 @@ void SelectScene::SelectProcess(void)
 	//現カーソルから状態を変化
 	CursorToState(nowCursor_);
 
+}
+
+void SelectScene::BikeImgUpdate(void)
+{
+	if (bikeImgPos_.x > Application::SCREEN_SIZE_X)
+	{
+		// 初期値に戻す
+		bikeImgPos_.x = Application::SCREEN_SIZE_X / 4;
+	}
+	bikeImgPos_.x += 10;
 }
 
 void SelectScene::ChangeState(STATE state)

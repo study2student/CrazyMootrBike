@@ -30,16 +30,16 @@ public:
 	static constexpr int FOUR_PERSON_FONT_HEIGHT = 360;
 
 	//ひとりプレイ選択画像最大サイズ
-	static constexpr float SELECT_IMG_MAX_SCALE = 1.50f;
+	static constexpr float SELECT_IMG_MAX_SCALE = 1.2f;
 
 	//ひとりプレイ選択画像最小サイズ
-	static constexpr float SELECT_IMG_MIN_SCALE = 1.30f;
+	static constexpr float SELECT_IMG_MIN_SCALE = 1.0f;
 
 	//四人プレイ選択画像最大サイズ
-	static constexpr float SELECT_FOUR_IMG_MAX_SCALE = 1.50f;
+	static constexpr float SELECT_FOUR_IMG_MAX_SCALE = 1.2f;
 
 	//四人プレイ選択画像最小サイズ
-	static constexpr float SELECT_FOUR_IMG_MIN_SCALE = 1.30f;
+	static constexpr float SELECT_FOUR_IMG_MIN_SCALE = 1.0f;
 
 	//選択画像大きさ変化量
 	static constexpr float SELECT_IMG_CHANGE_SCALE = 0.006f;
@@ -81,10 +81,19 @@ private:
 	int everyoneImg_;
 
 	// 操作画像
-
 	int Operation;
 
 	int imgPush_;
+
+	// コイン画像
+	int coinImg_;
+	// コイン画像の座標
+	Vector2 coinImgPos_;
+
+	// バイク画像
+	int bikeImg_;
+	// バイク画像の座標
+	Vector2 bikeImgPos_;
 
 	// ひとりプレイ選択画像の大きさ
 	float selectAloneImgScale_;
@@ -121,11 +130,17 @@ private:
 	//消えているかどうか
 	bool isInvisible_;
 
+	// 操作説明画像描画
+	void DrawOpe(void);
+
 	//マウス操作
 	void DecideProcess(void);
 
 	//キー操作
 	void SelectProcess(void);
+
+	//バイク画像の動き
+	void BikeImgUpdate(void);
 
 	//状態遷移
 	void ChangeState(STATE state);
