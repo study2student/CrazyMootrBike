@@ -168,10 +168,15 @@ void GameScene::Init(void)
 	// ゲームスタート時のカウント
 	startCount_ = 3.0f;
 	isStart_ = false;
+
+	//エンジン音
+	PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false);
 }
 
 void GameScene::Update(void)
 {
+
 	InputManager& ins = InputManager::GetInstance();
 
 
@@ -242,9 +247,9 @@ void GameScene::Update(void)
 	{
 		float deltaTime = hitStopDuration;
 
-		// BGMを再生
-		//PlaySoundMem(ResourceManager::GetInstance().Load(
-			//ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+		//BGMを再生
+		ChangeVolumeSoundMem(125,PlaySoundMem(ResourceManager::GetInstance().Load(
+			ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false));
 
 		for (auto& skyDome : skyDomes_)
 		{
@@ -853,44 +858,56 @@ void GameScene::Collision(void)
 	for (const auto& bike : bikes_)
 	{
 		auto bikeCap = bike->GetCapsule();
-		if(!helicopter_->GetBomb()->GetIsCol())
+		if(!(helicopter_->GetBomb()->GetState()== Bomb::STATE::IDLE))
 		{
-			//爆弾
-			auto bombCap = helicopter_->GetBomb()->GetCapsule();
-
-			VECTOR diffB = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
-			float  disB = MyUtility::SqrMagnitudeF(diffB);
-			if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+			if (!helicopter_->GetBomb()->GetIsCol())
 			{
-				if (playNumber_ == 1)
+				//爆弾
+				auto bombCap = helicopter_->GetBomb()->GetCapsule();
+
+				VECTOR diffB = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+				float  disB = MyUtility::SqrMagnitudeF(diffB);
+				if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
 				{
-					//ゴールしてない場合
-					if (!stage_->GetIsGoal())
+					if (playNumber_ == 1)
 					{
-						//プレイヤーにダメージ
-						bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
-						
+						//ゴールしてない場合
+						if (!stage_->GetIsGoal())
+						{
+							//プレイヤーにダメージ
+							bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+							//コントローラー振動
+							StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
+
+						}
 					}
-				}
-				else
-				{
-					//ゴールしてないプレイヤーにだけダメージ
-					if (!bike->GetIsGoal())
+					else
 					{
-						//プレイヤーにダメージ
-						bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+						//ゴールしてないプレイヤーにだけダメージ
+						if (!bike->GetIsGoal())
+						{
+							//プレイヤーにダメージ
+							bike->Damage(helicopter_->GetBomb()->BOMB_DAMAGE);
+
+
+							//ぶつかったプレイヤーのコントローラーを振動
+							// 衝突したバイクのインデックスを取得
+							auto it = std::find(bikes_.begin(), bikes_.end(), bike);
+							int bikeIndex = std::distance(bikes_.begin(), it);
+							int pad = DX_INPUT_PAD1 + bikeIndex;
+							StartJoypadVibration(pad, CE_SWING_VALUE, CE_SWING_TIME, -1);
+						}
 					}
+
+					//当たった
+					helicopter_->GetBomb()->SetIsCol(true);
+
+
+					// 効果音再生
+					PlaySoundMem(ResourceManager::GetInstance().Load(
+						ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, true);
 				}
-
-				//当たった
-				helicopter_->GetBomb()->SetIsCol(true);
-
-				//コントローラーを振動
-				StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
-
-				// 効果音再生
-				PlaySoundMem(ResourceManager::GetInstance().Load(
-					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
 			}
 		}
 
@@ -912,6 +929,9 @@ void GameScene::Collision(void)
 						//プレイヤーにダメージ
 						bike->Damage(spike_->THROW_DAMAGE);
 
+						//コントローラー振動
+						StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
+
 					}
 				}
 				else
@@ -921,18 +941,22 @@ void GameScene::Collision(void)
 					{
 						//プレイヤーにダメージ
 						bike->Damage(spike_->THROW_DAMAGE);
+
+						//ぶつかったプレイヤーのコントローラーを振動
+						// 衝突したバイクのインデックスを取得
+						auto it = std::find(bikes_.begin(), bikes_.end(), bike);
+						int bikeIndex = std::distance(bikes_.begin(), it);
+						int pad = DX_INPUT_PAD1 + bikeIndex;
+						StartJoypadVibration(pad, CE_SWING_VALUE, CE_SWING_TIME, -1);
 					}
 				}
 
 				//当たった
 				spike_->SetIsCol(true);
 
-				//コントローラーを振動
-				StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
-
 				// 効果音再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
-					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, false);
+					ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, true);
 			}
 		}
 
@@ -1089,6 +1113,9 @@ void GameScene::DecideProcess(void)
 			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
 				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
 			{
+				// 決定時の音を再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_BACK, true);
+
 				//ポーズ解除
 				stepPauseKeyHit_ = 0.0f;
 				isPause_ = false;
@@ -1123,6 +1150,9 @@ void GameScene::DecideProcess(void)
 			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
 				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
 			{
+				// 決定時の音を再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_BACK, true);
+
 				//左クリックまたはスペースキーでリトライ
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 			}
@@ -1157,6 +1187,9 @@ void GameScene::DecideProcess(void)
 			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) 
 				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
 			{
+				// 決定時の音を再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_START).handleId_, DX_PLAYTYPE_BACK, true);
+
 				//左クリックまたはスペースキーでタイトルへ
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 			}

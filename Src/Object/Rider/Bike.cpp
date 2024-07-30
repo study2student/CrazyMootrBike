@@ -138,14 +138,11 @@ void Bike::Update(void)
 		break;
 	case STATE::CRASH:
 		UpdateCrash();
+		break;
 	case Bike::STATE::DEAD:
 		UpdateDead();
 		break;
 	}
-
-	/*ChangeVolumeSoundMem(10, PlaySoundMem(ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false));*/
-
 
 	// モデル制御更新
 	transform_.Update();
@@ -188,7 +185,7 @@ void Bike::Damage(int damage)
 	if (hp_ <= MIN_HP)
 	{
 		hp_ = MIN_HP;
-		state_ = STATE::DEAD;
+ 		ChangeState(STATE::DEAD);
 	}
 }
 
@@ -229,6 +226,11 @@ const int Bike::GetPlayerID(void) const
 
 void Bike::Flip(VECTOR dir)
 {
+	if (state_ == STATE::DEAD || state_ == STATE::CRASH)
+	{
+		return;
+	}
+
 	flipDir_ = dir;
 	flipSpeed_ = 5.0f;
 	ChangeState(STATE::FLIPED);
@@ -269,6 +271,7 @@ void Bike::ChangeState(STATE state)
 		break;
 	case STATE::CRASH:
 		ChangeStateCrash();
+		break;
 	case Bike::STATE::DEAD:
 		ChangeStateDead();
 		break;
@@ -281,6 +284,7 @@ void Bike::ChangeStateNone(void)
 
 void Bike::ChangeStatePlay(void)
 {
+	currentTime = 0.0f;
 }
 
 void Bike::ChangeStateFliped(void)
@@ -289,6 +293,7 @@ void Bike::ChangeStateFliped(void)
 
 void Bike::ChangeStateCrash(void)
 {
+	speed_ = 10.0f;
 }
 
 void Bike::ChangeStateDead(void)
@@ -357,33 +362,25 @@ void Bike::UpdateFliped(void)
 
 void Bike::UpdateCrash(void)
 {
-	speed_ = SPEED_MOVE - 50.0f;
 
-	// Y軸起点に揺れを追加
-	float swayAngle = MyUtility::Deg2RadF(45.0f);  // 揺れの角度の範囲
-	float swaySpeed = 0.1f;  // 揺れの速度
-	float sway = swayAngle * sinf(swaySpeed * currentTime);
-
-	// Y軸周りの揺れを設定
-	transform_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
-	transformPlayer_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
-
-	currentTime += 2.0f;
-
-	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
-	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
-	//前に進む
-	VECTOR movePowF_ = VScale(cameraRot.GetForward(), SPEED_MOVE + speedBoost_);
-
-	//前へ進むベクトルと横に曲がるベクトルを合成する
-	//moveDir_ = dir;
-	movePow_ = VAdd(VScale(cameraRot.GetForward(), speed_), movePowF_);
-
-	speed_ += 1.0f;
-
-	if (speed_ == SPEED_MOVE)
+	if (currentTime >= SWAY_CURRENT_MAX_TIME)
 	{
+		transform_.quaRotLocal =Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
+		transformPlayer_.quaRotLocal =Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 		ChangeState(STATE::PLAY);
+	}
+	else
+	{
+		// Y軸起点に揺れを追加
+		float swayAngle = MyUtility::Deg2RadF(45.0f);  // 揺れの角度の範囲
+		float swaySpeed = 0.1f;  // 揺れの速度
+		float sway = swayAngle * sinf(swaySpeed * currentTime);
+
+		// Y軸周りの揺れを設定
+		transform_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
+		transformPlayer_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
+
+		currentTime += 2.0f;
 	}
 
 	// 他の更新処理
@@ -418,7 +415,10 @@ void Bike::DrawDebug(void)
 
 void Bike::ProcessMove(void)
 {
-
+	if (state_ == STATE::DEAD)
+	{
+		return;
+	}
 
 	auto& ins = InputManager::GetInstance();
 
@@ -618,7 +618,7 @@ void Bike::ProcessBoost(void)
 		//HPを消費して発動(ブーストで死なないように40以上の場合のみ)
 		hp_ -= BOOST_USE_HP;
 
-		// コイン収集時の音を再生
+		//音を再生
 		PlaySoundMem(ResourceManager::GetInstance().Load(
 			ResourceManager::SRC::SND_BOOST).handleId_, DX_PLAYTYPE_BACK, true);
 

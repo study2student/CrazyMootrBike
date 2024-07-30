@@ -20,7 +20,7 @@ public:
 	static constexpr float RESERVE_MAX_TIME = 2.5f;
 
 	//爆弾復活時間
-	static constexpr float BOMB_REMAKE_MAX_TIME = 2.0f;
+	static constexpr float BOMB_REMAKE_MAX_TIME = 0.8f;
 
 	// スピード
 	static constexpr float SPEED = 30.0f;

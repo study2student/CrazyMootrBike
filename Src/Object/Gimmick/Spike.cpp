@@ -151,7 +151,8 @@ void Spike::BombEffect(void)
 	VECTOR localPos = {};
 	if (isCol_)
 	{
-		localPos = { 0.0f,0.0f,2200.0f };
+		//localPos = { 0.0f,0.0f,2200.0f };
+		localPos = { 0.0f,0.0f,0.0f };
 	}
 	else
 	{

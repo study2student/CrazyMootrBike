@@ -35,6 +35,8 @@ Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bo
 
 	isGoal_ = false;
 
+	hasPlayedGoalSound = false;
+
 }
 
 Stage::~Stage(void)
@@ -95,9 +97,14 @@ void Stage::Update(void)
 			
 			isGoal_ = true;
 
-			// ゴール音を再生
-			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
+			//1回だけ再生
+			if(!hasPlayedGoalSound)
+			{
+				// ゴール音を再生
+				PlaySoundMem(ResourceManager::GetInstance().Load(
+					ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
+			}
+			hasPlayedGoalSound = true;
 		}
 		else
 		{
@@ -110,13 +117,17 @@ void Stage::Update(void)
 		{
 			if (bike->GetTransform().pos.z >= goal_->GetTransform().pos.z)
 			{
-				//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 				isGoal_ = true;
 				bike->SetIsGoal(true);
-
-				// ゴール音を再生
-				PlaySoundMem(ResourceManager::GetInstance().Load(
-					ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
+			
+				//1回だけ再生
+				if (!hasPlayedGoalSound)
+				{
+					// ゴール音を再生
+					PlaySoundMem(ResourceManager::GetInstance().Load(
+						ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
+				}
+				hasPlayedGoalSound = true;
 			}
 			else
 			{

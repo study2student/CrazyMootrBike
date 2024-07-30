@@ -144,7 +144,8 @@ void Bomb::BombEffect(void)
 	VECTOR localPos = {};
 	if (isCol_)
 	{
-		localPos = { 0.0f,0.0f,2200.0f };
+		//localPos = { 0.0f,0.0f,2200.0f };
+		localPos = { 0.0f,0.0f,0.0f };
 	}
 	else
 	{
@@ -271,7 +272,7 @@ void Bomb::UpdateBlast(void)
 	transform_.Update();
 
 
-	//5•bŒã‚É•œŠˆ
+	//1.5•bŒã‚É•œŠˆ
 	stepBombBlast_ += SceneManager::GetInstance().GetDeltaTime();
 
 	if (stepBombBlast_ >= BOMB_REMAKE_MAX_TIME)

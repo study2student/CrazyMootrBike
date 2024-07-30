@@ -130,9 +130,10 @@ void TitleScene::Init(void)
 	//データリセット
 	data_.ResetData();
 
-	// BGMを再生
+	 //BGMを再生
 	PlaySoundMem(ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::SND_TITLE_BGM).handleId_, DX_PLAYTYPE_LOOP, false);
+
 }
 
 void TitleScene::Update(void)
@@ -227,6 +228,11 @@ void TitleScene::ChangeStateIdle(void)
 
 void TitleScene::ChangeStateStart(void)
 {
+	//エンジン音
+	PlaySoundMem(ResourceManager::GetInstance().Load(
+		ResourceManager::SRC::SND_MOTOR).handleId_, DX_PLAYTYPE_LOOP, false);
+
+	//スタートエフェクト
 	StartEffect();
 }
 
@@ -245,11 +251,11 @@ void TitleScene::UpdateIdle(void)
 		ChangeState(STATE::START);
 	}
 
-	//スキップデバッグ
-	if (ins.IsTrgDown(KEY_INPUT_S))
-	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
-	}
+	////スキップデバッグ
+	//if (ins.IsTrgDown(KEY_INPUT_S))
+	//{
+	//	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+	//}
 
 	// キャラアニメーション
 	animationController_->Update();

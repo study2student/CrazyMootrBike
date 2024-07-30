@@ -139,6 +139,9 @@ private:
 	//ゴールしたかどうか
 	bool isGoal_;
 
+	//ゴール音が再生されたかどうか
+	bool hasPlayedGoalSound;
+
 	//ループ用のステージが生成されたかどうか
 	bool isMakeLoopStage_;
 

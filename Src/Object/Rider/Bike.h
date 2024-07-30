@@ -57,6 +57,9 @@ public:
 	// ジャンプ受付時間
 	static constexpr float TIME_JUMP_IN = 0.5f;
 
+	//横揺れマックス時間
+	static constexpr float SWAY_CURRENT_MAX_TIME = 70.0f;
+
 	//バーンアウトエフェクト初期高さ
 	static constexpr float BURNOUT_EFFECT_FIRST_POS_Y = -280.0f; //-290.0f
 
@@ -164,6 +167,7 @@ public:
 
 	// ブーストを使ったかどうか
 	const bool IsBoost(void);
+
 private:
 
 	Transform transformPlayer_;

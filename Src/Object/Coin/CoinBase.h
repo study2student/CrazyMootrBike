@@ -46,7 +46,7 @@ public:
 	static constexpr float SPEED_ROT = 7.0f;
 
 	//€–Só‘Ô‚É‚È‚é‚Ü‚Å‚ÌÅ‘åŠÔ
-	static constexpr float TO_DEAD_TIME_MAX = 4.0f;
+	static constexpr float TO_DEAD_TIME_MAX = 6.0f;
 
 	// u–]ó‘Ô‚É‚È‚éYÀ•W
 	static constexpr float DEAD_POS_Y = -500.0f;
