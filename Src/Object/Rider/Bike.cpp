@@ -13,89 +13,106 @@
 #include "../Score.h"
 #include "Bike.h"
 
-Bike::Bike(float localpos, int playerID) : localPosX_(localpos), playerID_(playerID)
+#pragma region 変数宣言
+	// プレイヤーのモデルの大きさ
+	const float PLAYER_SCALE = 1.3f;
+
+	// 初期位置
+	const VECTOR INIT_POS = { 1270.0f , -260.0f ,0.0f };
+	const VECTOR INIT_LOCAL_POS = { 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f };
+
+	// 当たり判定用コライダーの上座標
+	const VECTOR COLLIDER_POS_TOP = { 0.0f, 130.0f, 0.0f };
+	// 当たり判定用コライダーの下座標
+	const VECTOR COLLIDER_POS_DOWN = { 0.0f, 130.0f, -150.0f };
+
+	// スピード
+	const float SPEED_MOVE = 100.0f;
+
+	// プレイヤーの傾き
+	const float SLOPE = 45.0f;
+
+	// ブースト使用時の加速速度
+	const float ADD_SPEED_BOOST = 50.0f;
+	// 次ブースト使えるようになるまでのカウント
+	const float DELEY_BOOST_MAX = 220.0f;
+	// ブースト発動させるためのHP消費量
+	const int BOOST_USE_HP = 40;
+
+	// 横移動のスピード
+	const float SPEED_MOVE_X = 18.0f;
+
+	// 回転完了までの時間
+	const float TIME_ROT = 1.0f;
+
+	// 横揺れマックス時間
+	const float SWAY_CURRENT_MAX_TIME = 70.0f;
+
+#pragma endregion
+
+Bike::Bike(float localpos, int playerID) :
+	
+	animationController_(nullptr),
+	state_(STATE::NONE),
+	isOutSide_(false),
+	playerID_(playerID),
+	moveSpeed_(0.0f),
+	moveDir_({}),
+	movePow_({}),
+	movedPos_({}),
+	localPosX_(localpos),
+	playerRotY_({}),
+	goalQuaRot_({}),
+	stepRotTime_(0.0f),
+	currentTime_(0.0f),
+	jumpPow_({}),
+	stepJump_(0.0f),
+	stepJumpSecond_(0.0f),
+	colliders_(0),
+	capsule_(nullptr),
+	gravHitPosDown_({}),
+	gravHitPosUp_({}),
+	hp_(0),
+	score_(0),
+	flipSpeed_(0.0f),
+	flipDir_({}),
+	speedBoost_(0.0f),
+	deleyBoost_(0.0f),
+	isBoost_(false),
+	isGoal_(false),
+	effectBoostResId_(-1),
+	effectBoostPlayId_(-1)
 {
-	//localPosX_ = localpos;
-
-	animationController_ = nullptr;
-
-	state_ = STATE::NONE;
-
-	speed_ = 0.0f;
-	moveDir_ = MyUtility::VECTOR_ZERO;
-	movePow_ = MyUtility::VECTOR_ZERO;
-	movedPos_ = MyUtility::VECTOR_ZERO;
-
-	playerRotY_ = Quaternion();
-	goalQuaRot_ = Quaternion();
-	stepRotTime_ = 0.0f;
-
-	jumpPow_ = MyUtility::VECTOR_ZERO;
-	isJump_ = false;
-	stepJump_ = 0.0f;
-	stepJumpSecond_ = 0.0f;
-	jumpSpeed_ = 1.0f;
-
-	isAttack_ = false;
-	isOutSide_ = false;
-	isGoal_ = false;
-
-	// ブースト時の加算速度
-	speedBoost_ = 0.0f;
-
-	// ブースト使用間隔
-	deleyBoost_ = 0;
-
-	// ブーストを使用したか
-	isBoost_ = false;
-
-	// 衝突チェック
-	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
-	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
-
-	imgShadow_ = -1;
-
-	hp_ = 0;
-
-	capsule_ = nullptr;
-
 }
 
 Bike::~Bike(void)
 {
-
 	StopEffekseer3DEffect(effectBoostPlayId_);
 }
 
 void Bike::Init(void)
 {
 
-
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::BIKE));
-	float scale = 1.3f;
-	transform_.scl = { scale, scale, scale };
+	transform_.scl = { PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE };
 	transform_.pos = { INIT_POS.x + localPosX_, INIT_POS.y, INIT_POS.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
-	//transform_.Update();
+		Quaternion::Euler(INIT_LOCAL_POS);
 
 	// モデルの基本設定
 	transformPlayer_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::PLAYER));
-	float pScale = 1.3f;
-	transformPlayer_.scl = { pScale, pScale, pScale };
-	//transformPlayer_.pos = { transform_.pos.x, transform_.pos.y , transform_.pos.z };
+	transformPlayer_.scl = { PLAYER_SCALE, PLAYER_SCALE, PLAYER_SCALE };
 	transformPlayer_.pos = VAdd(transform_.pos, RELATIVE_P2B_POS);
 	//transformPlayer_.quaRot = Quaternion();
 	transformPlayer_.quaRot = transform_.quaRot;
 	transformPlayer_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler(INIT_LOCAL_POS);
 	transform_.Update();
 	transformPlayer_.Update();
-
 
 	// アニメーションの設定
 	InitAnimation();
@@ -111,7 +128,6 @@ void Bike::Init(void)
 
 	// 体力
 	hp_ = MAX_HP;
-
 
 	// スコア
 	score_ = std::make_shared<Score>();
@@ -248,7 +264,6 @@ void Bike::InitAnimation(void)
 	animationController_->Add((int)ANIM_TYPE::IDLE, path + "Idle.mv1", 20.0f);
 	animationController_->Add((int)ANIM_TYPE::RUN, path + "Run.mv1", 20.0f);
 	animationController_->Add((int)ANIM_TYPE::SIT, path + "Sit.mv1", 1.0f);
-
 	animationController_->Play((int)ANIM_TYPE::SIT, true, 33.0f, 36.0f);
 }
 
@@ -284,7 +299,7 @@ void Bike::ChangeStateNone(void)
 
 void Bike::ChangeStatePlay(void)
 {
-	currentTime = 0.0f;
+	currentTime_ = 0.0f;
 }
 
 void Bike::ChangeStateFliped(void)
@@ -293,7 +308,7 @@ void Bike::ChangeStateFliped(void)
 
 void Bike::ChangeStateCrash(void)
 {
-	speed_ = 10.0f;
+	moveSpeed_ = 10.0f;
 }
 
 void Bike::ChangeStateDead(void)
@@ -312,9 +327,6 @@ void Bike::UpdatePlay(void)
 
 	//ブースト
 	ProcessBoost();
-
-	// デバッグ用
-	ProcessDebug();
 
 	// 移動方向に応じた回転
 	Rotate();
@@ -363,7 +375,7 @@ void Bike::UpdateFliped(void)
 void Bike::UpdateCrash(void)
 {
 
-	if (currentTime >= SWAY_CURRENT_MAX_TIME)
+	if (currentTime_ >= SWAY_CURRENT_MAX_TIME)
 	{
 		transform_.quaRotLocal =Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
 		transformPlayer_.quaRotLocal =Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
@@ -374,13 +386,13 @@ void Bike::UpdateCrash(void)
 		// Y軸起点に揺れを追加
 		float swayAngle = MyUtility::Deg2RadF(45.0f);  // 揺れの角度の範囲
 		float swaySpeed = 0.1f;  // 揺れの速度
-		float sway = swayAngle * sinf(swaySpeed * currentTime);
+		float sway = swayAngle * sinf(swaySpeed * currentTime_);
 
 		// Y軸周りの揺れを設定
 		transform_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
 		transformPlayer_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
 
-		currentTime += 2.0f;
+		currentTime_ += 2.0f;
 	}
 
 	// 他の更新処理
@@ -389,19 +401,12 @@ void Bike::UpdateCrash(void)
 
 void Bike::UpdateDead(void)
 {
-
 }
 
 void Bike::DrawDebug(void)
 {
 	capsule_->Draw();
 	//DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
-
-	// 攻撃が当たったか
-	if (isAttack_ == true)
-	{
-		DrawString(0, 0, "Attack", 0x000000);
-	}
 
 	DrawFormatString(0, 40, 0xffffff,
 		"バイクの回転：%f,%f,%f",
@@ -426,19 +431,19 @@ void Bike::ProcessMove(void)
 	movePow_ = MyUtility::VECTOR_ZERO;
 
 
+	std::array<PlayerInput, 4> playerInputs = { {
+	{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
+	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
+	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
+	{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
+} };
+
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
 	// 回転したい角度
 	float rotRad = 0.0f;
 	float rotRadZ = 0.0f;
-
-	std::array<PlayerInput, 4> playerInputs = { {
-		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
-		{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
-		{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
-		{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
-	} };
 
 	VECTOR dir = MyUtility::VECTOR_ZERO;
 
@@ -476,12 +481,6 @@ void Bike::ProcessMove(void)
 		if (!(transform_.pos.x <= Stage::STAGE_LEFT_POS_X_MAX))
 		{
 			SceneManager::GetInstance().GetCamera()->SetIsCameraReset(false);
-			// カメラ方向から後退したい
-			if (ins.IsNew(KEY_INPUT_S))
-			{
-				/*rotRad = MyUtility::Deg2RadF(180.0f);
-				dir = cameraRot.GetBack();*/
-			}
 
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
@@ -515,12 +514,6 @@ void Bike::ProcessMove(void)
 		{
 
 			SceneManager::GetInstance().GetCamera()->SetIsCameraReset(false);
-			// カメラ方向から後退したい
-			if (ins.IsNew(KEY_INPUT_S))
-			{
-				rotRad = MyUtility::Deg2RadF(180.0f);
-				dir = cameraRot.GetBack();
-			}
 
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
@@ -545,26 +538,16 @@ void Bike::ProcessMove(void)
 		isOutSide_ = false;
 	}
 
-
 	if (!MyUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
 
 		// 移動処理
-		speed_ = SPEED_MOVE;
+		moveSpeed_ = SPEED_MOVE;
 
 
-		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
+		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) &  PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
 		{
-			speed_ = SPEED_MOVE_X;
+			moveSpeed_ = SPEED_MOVE_X;
 		}
-		/*if (ins.IsNew(KEY_INPUT_RSHIFT))
-		{
-			speed_ = SPEED_RUN;
-			if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D))
-			{
-				speed_ = SPEED_MOVE_X;
-			}
-		}*/
-
 
 		// 回転処理
 		SetGoalRotate(rotRad);
@@ -581,36 +564,36 @@ void Bike::ProcessMove(void)
 		SetGoalRotateZ(rotRadZ);
 	}
 
-
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
-	movePow_ = VAdd(VScale(dir, speed_), movePowF_);
-
-	// ソニックブームエフェクト
-	float scale = 10.0f;
-	SonicBoomEffect();
-	effectSonicPlayId_ = PlayEffekseer3DEffect(effectSonicResId_);
-	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
+	movePow_ = VAdd(VScale(dir, moveSpeed_), movePowF_);
 
 }
 
-
-void Bike::ProcessBoost(void)
+bool Bike::IsBoostPush(void)
 {
 	auto& ins = InputManager::GetInstance();
 
 	std::array<PlayerInput, 4> playerInputs = { {
-		{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
-		{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
-		{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
-		{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
-	} };
+	{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
+	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
+	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
+	{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
+} };
 
 	// プレイヤーごとの入力処理
 	const auto& input = playerInputs[playerID_];
 	int padState = GetJoypadInputState(input.padId);
 
-	if (ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP || padState & static_cast<int>(input.action) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP)
+	return ins.IsTrgDown(KEY_INPUT_E) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP || padState & static_cast<int>(input.action) && deleyBoost_ <= 0 && hp_ > BOOST_USE_HP;
+}
+
+
+void Bike::ProcessBoost(void)
+{
+
+	//Eキーもしくはpadのアクションボタンを押すと、ブースト発動
+	if (IsBoostPush())
 	{
 		// ブースト判定をtrueに
 		isBoost_ = true;
@@ -650,16 +633,6 @@ void Bike::ProcessBoost(void)
 
 		SyncBoostEffect(transform_);
 	}
-}
-
-void Bike::ProcessDebug(void)
-{
-	auto& ins = InputManager::GetInstance();
-
-	/*if (ins.IsNew(KEY_INPUT_C))
-	{
-		hp_ -= 1;
-	}*/
 }
 
 void Bike::SetGoalRotate(float rotRad)
@@ -761,8 +734,6 @@ void Bike::CollisionGravity(void)
 			jumpPow_ = MyUtility::VECTOR_ZERO;
 			stepJump_ = 0.0f;
 
-			isJump_ = false;
-
 		}
 
 	}
@@ -844,24 +815,9 @@ void Bike::CalcGravityPow(void)
 
 void Bike::InitEffect(void)
 {
-	// ヒットエフェクト
-	effectSonicResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::SONICEFFECT).handleId_;
-
 	//ブーストエフェクト
 	effectBoostResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::BOOST_EFFECT).handleId_;
-}
-
-void Bike::SonicBoomEffect(void)
-{
-	SetPosPlayingEffekseer3DEffect(effectSonicPlayId_, transform_.pos.x, transform_.pos.y + 200.0f, transform_.pos.z + 1000);
-	//角度の同期
-	VECTOR angles = transform_.quaRot.ToEuler();
-	SetRotationPlayingEffekseer3DEffect(effectSonicPlayId_, angles.x, angles.y, angles.z);
-	// 大きさ
-	float scale = 10.0f;
-	SetScalePlayingEffekseer3DEffect(effectSonicPlayId_, scale, scale, scale);
 }
 
 void Bike::SyncBoostEffect(Transform player)
