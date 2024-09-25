@@ -48,6 +48,40 @@
 	// 横揺れマックス時間
 	const float SWAY_CURRENT_MAX_TIME = 70.0f;
 
+	// 通常時の横の速さ
+	const float NOMAL_FLIP_SPEED = 5.0f;
+
+	// クラッシュ時の横の速さ
+	const float CLASH_FLIP_SPEED = 0.16f;
+
+	// クラッシュ時の速さ
+	const float CLASH_MOVE_SPEED = 10.0f;
+
+	// クラッシュ時の揺れ角度
+	const float CLASH_SWAY_ANGLE = 45.0f;
+
+	// クラッシュ時の揺れの速さ
+	const float CLASH_SWAY_SPEED = 0.1f;
+
+	// クラッシュ時間
+	const float CLASH_TIME = 2.0f;
+
+	// アニメーション終了後に繰り返すループ
+	const float ANIM_START_STEP = 33.0f;
+	const float ANIM_END_STEP = 36.0f;
+	const float ANIM_SPEED = 1.0f;
+
+	// ブーストエフェクトの拡大率
+	const VECTOR BOOST_SCALE = { 30.0f,30.0f,30.0f };
+
+	// ブースト時の加算速度
+	const float BOOST_ADDITION_SPEED = 0.34f;
+
+	// 
+	const float CHECK_POW = 10.0f;
+
+	// プレイヤー人数
+	const int PLAYER_NUM = 4;
 #pragma endregion
 
 Bike::Bike(float localpos, int playerID) :
@@ -248,7 +282,7 @@ void Bike::Flip(VECTOR dir)
 	}
 
 	flipDir_ = dir;
-	flipSpeed_ = 5.0f;
+	flipSpeed_ = NOMAL_FLIP_SPEED;
 	ChangeState(STATE::FLIPED);
 }
 
@@ -308,7 +342,7 @@ void Bike::ChangeStateFliped(void)
 
 void Bike::ChangeStateCrash(void)
 {
-	moveSpeed_ = 10.0f;
+	moveSpeed_ = CLASH_MOVE_SPEED;
 }
 
 void Bike::ChangeStateDead(void)
@@ -342,7 +376,7 @@ void Bike::UpdatePlay(void)
 	transformPlayer_.quaRot = playerRotY_;
 
 	//アニメーションループ
-	animationController_->SetEndLoop(33.0f, 36.0f, 1.0f);
+	animationController_->SetEndLoop(ANIM_START_STEP, ANIM_END_STEP, ANIM_SPEED);
 }
 
 void Bike::UpdateFliped(void)
@@ -351,7 +385,7 @@ void Bike::UpdateFliped(void)
 	ProcessMove();
 
 	// 吹っ飛ばされる
-	flipSpeed_ -= 0.16f;
+	flipSpeed_ -= CLASH_FLIP_SPEED;
 	if (flipSpeed_ < 0.0f)
 	{
 		flipSpeed_ = 0.0f;
@@ -377,22 +411,21 @@ void Bike::UpdateCrash(void)
 
 	if (currentTime_ >= SWAY_CURRENT_MAX_TIME)
 	{
-		transform_.quaRotLocal =Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
-		transformPlayer_.quaRotLocal =Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
+		transform_.quaRotLocal =Quaternion::Euler(INIT_LOCAL_POS);
+		transformPlayer_.quaRotLocal =Quaternion::Euler(INIT_LOCAL_POS);
 		ChangeState(STATE::PLAY);
 	}
 	else
 	{
 		// Y軸起点に揺れを追加
-		float swayAngle = MyUtility::Deg2RadF(45.0f);  // 揺れの角度の範囲
-		float swaySpeed = 0.1f;  // 揺れの速度
-		float sway = swayAngle * sinf(swaySpeed * currentTime_);
+		float swayAngle = MyUtility::Deg2RadF(CLASH_SWAY_ANGLE);  // 揺れの角度の範囲
+		float sway = swayAngle * sinf(CLASH_SWAY_SPEED * currentTime_);
 
 		// Y軸周りの揺れを設定
-		transform_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
-		transformPlayer_.quaRotLocal = Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f) + sway, 0.0f });
+		transform_.quaRotLocal = Quaternion::Euler({ INIT_LOCAL_POS.x, INIT_LOCAL_POS.y + sway, INIT_LOCAL_POS.z });
+		transformPlayer_.quaRotLocal = Quaternion::Euler({ INIT_LOCAL_POS.x, INIT_LOCAL_POS.y + sway,INIT_LOCAL_POS.y });
 
-		currentTime_ += 2.0f;
+		currentTime_ += CLASH_TIME;
 	}
 
 	// 他の更新処理
@@ -431,7 +464,7 @@ void Bike::ProcessMove(void)
 	movePow_ = MyUtility::VECTOR_ZERO;
 
 
-	std::array<PlayerInput, 4> playerInputs = { {
+	std::array<PlayerInput, PLAYER_NUM> playerInputs = { {
 	{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
 	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
 	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
@@ -574,7 +607,7 @@ bool Bike::IsBoostPush(void)
 {
 	auto& ins = InputManager::GetInstance();
 
-	std::array<PlayerInput, 4> playerInputs = { {
+	std::array<PlayerInput, PLAYER_NUM> playerInputs = { {
 	{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
 	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
 	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
@@ -611,8 +644,7 @@ void Bike::ProcessBoost(void)
 		effectBoostPlayId_ = PlayEffekseer3DEffect(effectBoostResId_);
 
 		// 大きさ
-		float boostSCALE = 30.0f;
-		SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, boostSCALE, boostSCALE, boostSCALE);
+		SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, BOOST_SCALE.x, BOOST_SCALE.y, BOOST_SCALE.z);
 		SyncBoostEffect(transform_);
 	}
 	else
@@ -624,7 +656,7 @@ void Bike::ProcessBoost(void)
 		{
 			deleyBoost_ = 0.0f;
 		}
-		speedBoost_ -= 0.340f;
+		speedBoost_ -= BOOST_ADDITION_SPEED;
 		if (speedBoost_ <= 0)
 		{
 			speedBoost_ = 0.0f;
@@ -712,7 +744,7 @@ void Bike::CollisionGravity(void)
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
 
-	float checkPow = 10.0f;
+	float checkPow = CHECK_POW;
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
 	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
 	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
@@ -834,6 +866,5 @@ void Bike::SyncBoostEffect(Transform player)
 	SetRotationPlayingEffekseer3DEffect(effectBoostPlayId_, angles.x, angles.y, angles.z);
 
 	// 大きさ
-	float boostSCALE = 30.0f;
-	SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, boostSCALE, boostSCALE, boostSCALE);
+	SetScalePlayingEffekseer3DEffect(effectBoostPlayId_, BOOST_SCALE.x, BOOST_SCALE.y, BOOST_SCALE.z);
 }

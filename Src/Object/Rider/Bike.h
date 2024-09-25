@@ -158,6 +158,8 @@ private:
 	Quaternion playerRotY_;
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
+
+	//
 	float currentTime_;
 
 	// ƒWƒƒƒ“ƒv—Ê
