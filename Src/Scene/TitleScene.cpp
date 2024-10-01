@@ -15,16 +15,80 @@
 #include "../Object/DataSave.h"
 #include "TitleScene.h"
 
+#pragma region 変数宣言
+	//ボタンが押されてからのバイクの待機最大時間
+	const float BIKE_IDLE__MAX_TIME = 3.0f;
+
+	//バイクが発車してから次のシーンまでの最大時間
+	const float BIKE_DEPARTURE_TO_NEXT_MAX_TIME = 4.5f;
+
+	// メインステージ座標
+	const VECTOR MAINSTAGE_POS = { -20150.0f, -12000.0f, 6100.0f };
+	// メインステージ大きさ
+	const VECTOR MAINSTAGE_SIZE = { 3.5f, 2.5f, 4.5f };
+
+	// ビル群の座標,大きさ,角度
+	const VECTOR SITY_POS = { 250.0f, -100.0f, 21100.0f };
+	const VECTOR SITY_SIZE = { 1.0f,1.0f,1.0f };
+	const VECTOR SITY_ROT = { 0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f };
+
+	// バイクの座標、大きさ、角度
+	const VECTOR BIKE_POS = { -150.0f, -100.0f, -100.0f };
+	const VECTOR BIKE_SIZE = { 1.3f,1.3f,1.3f };
+	const VECTOR BIKE_ROT = { 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f };
+
+	// プレイヤーの座標、大きさ、角度
+	const VECTOR CHARACTOR_POS = { -150.0f, -50.0f, -109.0f };
+	const VECTOR CHARACTOR_SIZE = { 1.0f, 1.0f, 1.0f };
+	const VECTOR CHARACTOR_ROT = { 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f };
+
+	// バイクからフロントタイヤ相対座標
+	const VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS_FOR_TITLE = { 10.0f,68.0f,45.0f };
+	// フロントタイヤの大きさ,角度
+	const VECTOR FRONT_TYRE_SIZE = { 1.3f,1.3f,1.3f };
+	const VECTOR FRONT_TYRE_ROT = { 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f };
+
+	// バイクからリアタイヤ相対座標
+	const VECTOR BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE = { -5.0f,58.0f,-157.0f };
+	// リアタイヤの大きさ、角度
+	const VECTOR REAR_TYRE_SIZE = { 1.7f,1.7f,1.7f };
+	const VECTOR REAR_TYRE_ROT = { 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f };
+
+	// アニメーションスピード
+	const float ANIMATION_SPEED = 1.0f;
+	//アニメーションの再生位置
+	const float ANIMATION_START_STEP = 33.0f;
+	const float ANIMATION_END_STEP = 36.0f;
+
+	// 点滅表示
+	const float MAX_STEP_FLASH = 0.8f;
+
+	// プッシュ文字画像の座標
+	const VECTOR IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 145, 700 };
+
+	// バイクのスピード
+	const float BIKE_SPEED = 60.0f;
+#pragma endregion
+
 TitleScene::TitleScene(void)
+	:
+	imgTitle_(-1),
+	imgPush_(-1),
+	skyDome_(nullptr),
+	animationController_(nullptr),
+	isBikeDeparture_(false),
+	tyreRotX_({}),
+	effectStartResId_(-1),
+	effectStartPlayId_(-1),
+	effectBurnoutResId_(-1),
+	effectBurnoutPlayId_(-1),
+	effectBurnoutPosY_(0.0f),
+	stepBikeDeparture_(0.0f),
+	stepFlash_(0.0f),
+	isInvisible_(false),
+	state_(STATE::IDLE)
 {
-	imgPush_ = -1;
-	imgTitle_ = -1;
-	skyDome_ = nullptr;
-	animationController_ = nullptr;
-	stepBikeDeparture_ = 0.0f;
-	stepFlash_ = 0.0f;
-	isInvisible_ = false;
-	effectBurnoutPosY_ = Bike::BURNOUT_EFFECT_FIRST_POS_Y;
+	isInvisible_ = false;	
 }
 
 TitleScene::~TitleScene(void)
@@ -51,78 +115,67 @@ void TitleScene::Init(void)
 
 	// メインステージ
 	mainStage_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
-	mainStage_.pos = { -20150.0f, -12000.0f, 6100.0f };
+	mainStage_.pos = {MAINSTAGE_POS};
 	mainStage_.quaRot = Quaternion();
-	size = 1.0f;
-	mainStage_.scl = { size * 3.5f, size * 2.5f, size * 4.5f };
+	mainStage_.scl = { MAINSTAGE_SIZE };
 	mainStage_.Update();
 
 	// ビル
 	sity_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
-	sity_.pos = { 250.0f, -100.0f, 21100.0f };
-	size = 1.0f;
-	sity_.scl = { size, size, size };
-	sity_.quaRotLocal = Quaternion::Euler(
-		0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f);
+	sity_.pos = { SITY_POS };
+	sity_.scl = { SITY_SIZE };
+	sity_.quaRotLocal = Quaternion::Euler(SITY_ROT);
 	sity_.Update();
-
 
 
 	//バイク
 	bike.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BIKE));
-	bike.pos = { -150.0f, -100.0f, -100.0f };
-	size = 1.3f;
-	bike.scl = { size, size, size };
-	bike.quaRotLocal = Quaternion::Euler(
-		0.0f, MyUtility::Deg2RadF(180.0f), 0.0f);
+	bike.pos = { BIKE_POS };
+	bike.scl = { BIKE_SIZE };
+	bike.quaRotLocal = Quaternion::Euler(BIKE_ROT);
 	bike.Update();
 
 	// キャラ
 	charactor_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::PLAYER));
-	//charactor_.pos = { -150.0f, -42.0f, -105.0f };
-	charactor_.pos = { -150.0f, -50.0f, -109.0f };
-	size = 1.0f;
-	charactor_.scl = { size, size, size };
-	charactor_.quaRot = Quaternion::Euler(
-		0.0f, MyUtility::Deg2RadF(180.0f), 0.0f);
+	charactor_.pos = { CHARACTOR_POS };
+	charactor_.scl = { CHARACTOR_SIZE };
+	charactor_.quaRot = Quaternion::Euler(CHARACTOR_ROT);
 	charactor_.Update();
 
 	// フロントタイヤ
 	frontTyre_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::TYRE));
-	//frontTyre_.pos = { -150.0f, -32.0f, -55.0f };
 	frontTyre_.pos = VAdd(bike.pos, BIKE_TO_FRONT_TYRE_LOCALPOS_FOR_TITLE);
-	size = 1.3f;
-	frontTyre_.scl = { size, size, size };
+	frontTyre_.scl = { FRONT_TYRE_SIZE };
 	frontTyre_.quaRot = Quaternion::Euler(
-		0.0f, MyUtility::Deg2RadF(0.0f), 0.0f);
+		FRONT_TYRE_ROT);
 	frontTyre_.Update();
 
 	// リアタイヤ
 	rearTyre_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::TYRE));
-	//rearTyre_.pos = { -155.0f, -42.0f, -257.0f };
 	rearTyre_.pos = VAdd(bike.pos, BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE);
 	size = 1.7f;
-	rearTyre_.scl = { size, size, size };
+	rearTyre_.scl = { REAR_TYRE_SIZE };
 	rearTyre_.quaRot = Quaternion::Euler(
-		0.0f, MyUtility::Deg2RadF(0.0f), 0.0f);
+		REAR_TYRE_ROT);
 	rearTyre_.Update();
 
 	// アニメーションの設定
 	std::string path = Application::PATH_MODEL + "Player/";
 	animationController_ = new AnimationController(charactor_.modelId);
 	// 無理やりアニメーション
-	animationController_->Add(0, path + "Sit.mv1",1.0f);
-	animationController_->Play(0,true,33.0f,36.0f);
+	animationController_->Add(0, path + "Sit.mv1",ANIMATION_SPEED);
+	animationController_->Play(0, true, ANIMATION_START_STEP, ANIMATION_END_STEP);
 
 	// 定点カメラ
 	SceneManager::GetInstance().GetCamera()->ChangeMode(Camera::MODE::FIXED_POINT);
 
 	//待機状態
 	state_ = STATE::IDLE;
-	isBikeDeparture_ = false;
 
 	//エフェクト読み込み
 	InitEffect();
+
+	effectBurnoutPosY_ = Bike::BURNOUT_EFFECT_FIRST_POS_Y;
 
 	//スコアリセット
 	score_.ResetScore();
@@ -149,8 +202,7 @@ void TitleScene::Update(void)
 	}
 
 	//アニメーションループ
-	animationController_->SetEndLoop(33.0f, 36.0f, 1.0f);
-
+	animationController_->SetEndLoop(ANIMATION_START_STEP, ANIMATION_START_STEP, ANIMATION_SPEED);
 
 }
 
@@ -171,12 +223,10 @@ void TitleScene::Draw(void)
 		DrawExtendGraph(160, 150, Application::SCREEN_SIZE_X - 160,Application::SCREEN_SIZE_Y, imgTitle_, true);
 
 		//点滅表示
-		float maxStepFlash = 0.80f;
-		float minStepFlash = 0.0f;
 		if (!isInvisible_)
 		{
 			stepFlash_ += SceneManager::GetInstance().GetDeltaTime();
-			if (stepFlash_ >= maxStepFlash)
+			if (stepFlash_ >= MAX_STEP_FLASH)
 			{
 				isInvisible_ = true;
 			}
@@ -184,7 +234,7 @@ void TitleScene::Draw(void)
 		else
 		{
 			stepFlash_ -= SceneManager::GetInstance().GetDeltaTime();
-			if (stepFlash_ <= minStepFlash)
+			if (stepFlash_ <= 0.0f)
 			{
 				isInvisible_ = false;
 			}
@@ -192,7 +242,7 @@ void TitleScene::Draw(void)
 
 		if(!isInvisible_)
 		{
-			DrawGraph(Application::SCREEN_SIZE_X / 2 - 145, 700, imgPush_, true);
+			DrawGraph(IMG_PUSH.x, IMG_PUSH.y, imgPush_, true);
 		}
 	}
 
@@ -295,8 +345,7 @@ void TitleScene::BikeDeparture(void)
 {
 	//バイクを前方方向へ
 	//バイクスピード
-	float bikeSpeed_ = 40.0f;
-	bike.pos = VAdd(bike.pos, VScale(bike.GetForward(), bikeSpeed_ * 1.5f));
+	bike.pos = VAdd(bike.pos, VScale(bike.GetForward(), BIKE_SPEED));
 	bike.Update();
 	charactor_.pos.z = bike.pos.z;
 	charactor_.Update();

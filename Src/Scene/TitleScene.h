@@ -21,18 +21,6 @@ public:
 		START
 	};
 
-	//ボタンが押されてからのバイクの待機最大時間
-	static constexpr float BIKE_IDLE__MAX_TIME = 3.0f;
-
-	//バイクが発車してから次のシーンまでの最大時間
-	static constexpr float BIKE_DEPARTURE_TO_NEXT_MAX_TIME = 4.5f;
-
-	//バイクからフロントタイヤ相対座標
-	static constexpr VECTOR BIKE_TO_FRONT_TYRE_LOCALPOS_FOR_TITLE = { 10.0f,68.0f,45.0f };
-
-	//バイクからリアタイヤ相対座標
-	static constexpr VECTOR BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE = { -5.0f,58.0f,-157.0f };
-
 	// コンストラクタ
 	TitleScene(void);
 
@@ -47,6 +35,7 @@ private:
 
 	// 画像
 	int imgTitle_;
+	// プッシュ文字画像
 	int imgPush_;
 
 	// スカイドーム用
@@ -59,7 +48,6 @@ private:
 	Transform mainStage_;
 
 	//ビル
-	/*std::vector<Transform*> sity_;*/
 	Transform sity_;
 
 	// キャラクター
