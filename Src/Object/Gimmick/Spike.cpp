@@ -194,12 +194,12 @@ void Spike::SetIsCol(bool isCol)
 	isCol_ = isCol;
 }
 
-bool Spike::GetIsCol(void)
+const bool& Spike::GetIsCol(void) const
 {
 	return isCol_;
 }
 
-bool Spike::IsIdle(void)
+const bool Spike::IsIdle(void)
 {
 	return state_ == STATE::IDLE;
 }

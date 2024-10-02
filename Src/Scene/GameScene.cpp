@@ -208,7 +208,6 @@ void GameScene::Update(void)
 	}
 	
 	
-
 	//ƒ|[ƒY’†‚ÍƒJƒƒ‰‚Ì‰ñ“]‚ð‚³‚¹‚È‚¢‚½‚ß‚Éî•ñ‚ð“n‚µ‚Ä‚¨‚­
 	SceneManager::GetInstance().GetCamera()->SetIsPause(isPause_);
 

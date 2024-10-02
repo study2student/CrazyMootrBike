@@ -64,13 +64,14 @@ public:
 	void SetIsCol(bool isCol);
 
 	//当たったか取得
-	bool GetIsCol(void);
+	const bool& GetIsCol(void) const;
 
 	//待機状態かどうか
-	bool IsIdle(void);
+	const bool IsIdle(void);
 
 private:
 
+	//目標(プレイヤー)の位置回転情報
 	Transform transformTarget_;
 
 	// 状態管理
@@ -97,10 +98,10 @@ private:
 	//場所表示時間
 	float stepPlaceDrawTime_;
 
-	//タイヤが出現してから消えるまでの時間
+	//とげが出現してから消えるまでの時間
 	float stepToDeleteTime_;
 
-	//タイヤが消えてからどのくらい時間経過したか
+	//とげが消えてからどのくらい時間経過したか
 	float stepSpikeDestroy_;
 
 	// 衝突判定に用いられるコライダ
