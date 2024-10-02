@@ -2,6 +2,7 @@
 
 class CopperCoin : public CoinBase
 {
+
 public:
 
 	CopperCoin(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);

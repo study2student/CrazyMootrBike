@@ -15,15 +15,6 @@ public:
 	//半径
 	static constexpr float RADIUS = 200.0f;
 
-	//当たり判定用コライダーの上座標
-	static constexpr VECTOR COLLIDER_POS_TOP = { 0.0f, 110.0f, 0.0f };
-
-	//当たり判定用コライダーの下座標
-	static constexpr VECTOR COLLIDER_POS_DOWN = { 0.0f, 30.0f, 0.0f };
-
-	//回転完了までの時間
-	static constexpr float TIME_ROT = 1.0f;
-
 	//1ループステージあたりの敵の生成数
 	static constexpr int MAX_MAKE_NUM = 3;
 
@@ -36,23 +27,17 @@ public:
 	//敵生成時の横の調整用
 	static constexpr float ADJUST_POS_X = 14300.0f;
 
-	//倒した時のスコア増分
-	static constexpr int SCORE_INCREMENT = 100;
-
-	//地面衝突後の座標
-	static constexpr float COLL_AFTER_POS_Y = -150.0f;
-
-	//回転スピード
-	static constexpr float SPEED_ROT = 7.0f;
-
 	//死亡状態になるまでの最大時間
 	static constexpr float TO_DEAD_TIME_MAX = 6.0f;
 
-	// 志望状態になるY座標
-	static constexpr float DEAD_POS_Y = -500.0f;
+	// コインの大きさ
+	static constexpr float SCL = 200.0f;
 
-	// エフェクト出現位置Z座標
-	static constexpr int EFF_POS_Z = 500;
+	// コイン初期Y座標
+	static constexpr float INIT_POS_Y = 700.0f;
+
+	// コイン初期ローカルY回転
+	static constexpr float INIT_LOCAL_ROT_Y = 180.0f;
 
 	// 状態
 	enum class STATE
@@ -107,16 +92,16 @@ public:
 	void Flip(VECTOR dir);
 
 	// プレイヤーと当たったか
-	bool GetIsBikeCol(void);
+	const bool& GetIsBikeCol(void) const;
 
 	//スコアを加算してよいか取得
-	bool GetIsAddScore(void);
+	const bool& GetIsAddScore(void) const;
 
 	//状態取得
-	STATE GetState(void);
+	const STATE& GetState(void) const;
 
 	//死亡状態か
-	bool IsDestroy(void);
+	const bool& IsDestroy(void) const;
 
 	//死亡状態へ
 	void Destroy(void);
@@ -173,10 +158,6 @@ protected:
 
 	//プレイヤー(バイク)とあたっているかどうか
 	bool isBikeCol_;
-
-	//攻撃用
-	VECTOR fowardPos_;
-	VECTOR backPos_;
 
 	//スコアを加算してもよいか
 	bool isAddScore_;

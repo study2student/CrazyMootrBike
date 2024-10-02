@@ -6,10 +6,8 @@ class Capsule;
 
 class Goal : public ActorBase
 {
-public:
 
-	//ゴール基本位置
-	static constexpr VECTOR GOAL_BASE_POS = { 1650.0f,-800.0f,0.0f };
+public:
 
 	//ゴールを生成するための最大ステージ数
 	static constexpr int STAGE_NUM_MAX_FOR_GOAL = 75;
@@ -37,20 +35,11 @@ public:
 
 private:
 
-	// 移動方向
-	VECTOR moveDir_;
-
 	// 移動量
 	VECTOR movePow_;
 
 	// 移動後の座標
 	VECTOR movedPos_;
-
-
-	// 回転
-	Quaternion rotY_;
-	Quaternion goalQuaRot_;
-	float stepRotTime_;
 
 	// 衝突判定に用いられるコライダ
 	std::vector<std::shared_ptr<Collider>> colliders_;

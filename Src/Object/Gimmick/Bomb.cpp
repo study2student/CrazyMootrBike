@@ -9,15 +9,59 @@
 #include "../Common/Collider.h"
 #include "Bomb.h"
 
+#pragma region 定数宣言
+
+//爆弾場所表示時間
+const float PLACE_DRAW_MAX_TIME = 5.0f;
+
+//爆弾爆発準備時間
+const float RESERVE_MAX_TIME = 2.5f;
+
+//爆弾復活時間
+const float BOMB_REMAKE_MAX_TIME = 0.8f;
+
+//カプセルローカル座標上
+const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 30.0f, 0.0f };
+
+//カプセルローカル座標下
+const VECTOR CAPSULE_LOCAL_POS_DOWN = { 0.0f, 10.0f, 0.0f };
+
+//カプセル半径
+const float CAPSULE_RADIUS = 100.0f;
+
+//エフェクト大きさ
+const float EFFECT_SCL = 30.0f;
+
+// スピード
+const float SPEED = 30.0f;
+
+//大きさ
+const float SCL = 0.15f;
+
+//初期相対回転Y
+const float INIT_LOCAL_ROT_Y = 180.0f;
+
+#pragma endregion
+
+
 Bomb::Bomb()
+	:
+	heliTrans_(Transform()),
+	state_(STATE::NONE),
+	stepPlaceDrawTime_(0.0f),
+	stepReserveTime_(0.0f),
+	stepBombBlast_(0.0f),
+	isCol_(false),
+	bombEffectResId_(-1),
+	bombEffectPlayId_(-1),
+	bombTargetPos_({}),
+	colliders_({}),
+	capsule_(nullptr),
+	gravHitPosDown_({}),
+	gravHitPosUp_({}),
+	movedPos_({}),
+	movePow_({})
 {
-	state_ = STATE::NONE;
-
-	stepPlaceDrawTime_ = 0.0f;
-	stepReserveTime_ = 0.0f;
-
-	stepBombBlast_ = 0.0f;
-	isCol_ = false;
 }
 
 Bomb::~Bomb(void)
@@ -28,24 +72,22 @@ Bomb::~Bomb(void)
 void Bomb::Init(void)
 {
 	transform_.modelId = MV1DuplicateModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BOMB));
-	float scale = 0.15f;
-	transform_.scl = { scale, scale, scale };
+	transform_.scl = { SCL, SCL, SCL };
 	//ヘリに乗せとく
 	transform_.pos = heliTrans_.pos;
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
 	transform_.Update();
 
 	//爆発エフェクト
 	InitEffect();
 
 	// カプセルコライダ
-	//capsule_ = new Capsule(transform_);
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
-	capsule_->SetRadius(100.0f);
+	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
+	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
+	capsule_->SetRadius(CAPSULE_RADIUS);
 
 	ChangeState(STATE::IDLE);
 }
@@ -77,10 +119,8 @@ void Bomb::Draw(void)
 	switch (state_)
 	{
 	case Bomb::STATE::NONE:
-		//MV1DrawModel(transform_.modelId);
 		break;
 	case Bomb::STATE::IDLE:
-		//MV1DrawModel(transform_.modelId);
 		DrawBombPlace();
 		break;
 	case Bomb::STATE::RESERVE:
@@ -117,12 +157,12 @@ void Bomb::SetIsCol(bool isCol)
 	isCol_ = isCol;
 }
 
-bool Bomb::GetIsCol(void)
+const bool& Bomb::GetIsCol(void) const
 {
 	return isCol_;
 }
 
-const Bomb::STATE& Bomb::GetState(void)
+const Bomb::STATE& Bomb::GetState(void) const
 {
 	return state_;
 }
@@ -132,36 +172,15 @@ void Bomb::InitEffect(void)
 	bombEffectResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::BOMB_EFFECT).handleId_;
 
-	bombPlaceEffectResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::BOMB_PLACE_EFFECT).handleId_;
 }
 
 void Bomb::BombEffect(void)
 {
 	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
 
-	//何かに当たった時は前で爆発
-	VECTOR localPos = {};
-	if (isCol_)
-	{
-		//localPos = { 0.0f,0.0f,2200.0f };
-		localPos = { 0.0f,0.0f,0.0f };
-	}
-	else
-	{
-		localPos = { 0.0f,0.0f,0.0f };
-	}
-	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
-	float scl = 30.0f;
-	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
-}
-
-void Bomb::SyncBombPlaceEffect(void)
-{
-	float scale = 10.0f;
-	SetScalePlayingEffekseer3DEffect(bombPlaceEffectPlayId_, scale, scale, scale);
-	SetPosPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, bombTargetPos_.x, 0.0f, bombTargetPos_.z);
-	SetRotationPlayingEffekseer3DEffect(bombPlaceEffectPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
+	//何かに当たった時は爆発
+	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, EFFECT_SCL, EFFECT_SCL, EFFECT_SCL);
 }
 
 void Bomb::ChangeState(STATE state)
@@ -202,7 +221,6 @@ void Bomb::ChangeStateIdle(void)
 
 void Bomb::ChangeStateReserve(void)
 {
-	StopEffekseer3DEffect(bombPlaceEffectPlayId_);
 }
 
 void Bomb::ChangeStateBlast(void)
@@ -229,9 +247,6 @@ void Bomb::UpdateIdle(void)
 		ChangeState(STATE::RESERVE);
 		stepPlaceDrawTime_ = 0.0f;
 	}
-
-	////爆発場所エフェクト
-	//SyncBombPlaceEffect();
 }
 
 void Bomb::UpdateReserve(void)
@@ -330,7 +345,7 @@ void Bomb::CollisionGravity(void)
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
 	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
 	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 
 		// 地面との衝突
@@ -359,7 +374,7 @@ void Bomb::CollisionCapsule(void)
 	Capsule cap = Capsule(*capsule_, trans);
 
 	// カプセルとの衝突判定
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 
 		auto hits = MV1CollCheck_Capsule(

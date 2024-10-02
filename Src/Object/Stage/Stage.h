@@ -19,27 +19,6 @@ class Stage
 
 public:
 
-	// ステージの切り替え間隔
-	static constexpr float TIME_STAGE_CHANGE = 1.0f;
-
-	//ステージの初期位置
-	static constexpr VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
-
-	//カーブの初期位置
-	static constexpr VECTOR CURVE_START_POS = { 4000.0f,-100.0f, 4000.0f };
-
-	//モデルのサイズ
-	static constexpr float STAGE_SIZE = 1.0f;
-
-	//モデルの拡大率
-	static constexpr float STAGE_SCALE = 2.5f;
-
-	// ステージの生成距離(Z方向)
-	static constexpr float STAGE_WIDTH = 5000.0f;
-
-	//町の初期位置
-	static constexpr VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
-
 	//左壁に当たった時の法線ベクトル
 	static constexpr VECTOR LEFT_NORMAL_VEC = { 1.0f,0.0f,0.0f };
 
@@ -52,8 +31,6 @@ public:
 	//下のステージ右側の最大座標
 	static constexpr float STAGE_RIGHT_POS_X_MAX = 2500.0f;
 
-	// 削除するステージ数
-	static constexpr int DELETION_NUM = 22;
 
 	// ステージ名
 	enum class NAME
@@ -106,7 +83,6 @@ private:
 	std::vector<std::shared_ptr<Bike>> bikes_;
 
 	CoinBase* coin_;
-	//std::shared_ptr<Bomb> bomb_;
 	Bomb* bomb_;
 	Spike* spike_;
 	std::deque<std::shared_ptr<City>> city_;
@@ -118,15 +94,7 @@ private:
 	NAME activeName_;
 	std::weak_ptr<Planet> activePlanet_;
 
-	//ループ用のステージ
-	//Transform loopStage_;
-	//ループ用のステージ
-	//std::vector<LoopStage*> loopStage_;
-
-	//deque使ってもいいよ
-	//std::queue<LoopStage*> loopStage_;
 	std::deque<std::shared_ptr<LoopStage>> loopStage_;
-
 
 	// 惑星
 	std::map<NAME, std::shared_ptr<Planet>> planets_;
@@ -134,18 +102,22 @@ private:
 	// 空のPlanet
 	std::shared_ptr<Planet> nullPlanet = nullptr;
 
+	//ステージの切り替え間隔
 	float step_;
 
 	//ゴールしたかどうか
 	bool isGoal_;
 
 	//ゴール音が再生されたかどうか
-	bool hasPlayedGoalSound;
+	bool hasPlayedGoalSound_;
 
 	//ループ用のステージが生成されたかどうか
 	bool isMakeLoopStage_;
 
-	// 最初の惑星
+	// loopStage_のサイズ
+	int sizeS_;
+
+	// 最初のステージ
 	void MakeMainStage(void);
 
 	//ループ用のステージ(最初)
@@ -153,10 +125,7 @@ private:
 
 	void AddStage(std::shared_ptr<LoopStage> newStage);
 
-	// sizeはloopStage_のサイズを指す
-	int sizeS = 0;
-
-	//町生成
+	//背景生成
 	void MakeCity(void);
 
 };

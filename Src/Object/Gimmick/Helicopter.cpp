@@ -14,46 +14,75 @@
 #include "../../Scene/GameScene.h"
 #include "Helicopter.h"
 
+#pragma region 定数宣言
+
+// 通常スピード
+const float SPEED_MOVE = 120.0f;
+
+// 回転完了までの時間
+const float TIME_ROT = 1.0f;
+
+//攻撃状態にするためのプレイヤーからヘリまでの相対座標
+const VECTOR ATTACK_LINE_LOCAL_POS = { 0.0f,0.0f,5000.0f };
+
+//攻撃状態の最大範囲を作るためのプレイヤーからヘリまでの相対座標
+const VECTOR ATTACK_LINE_MAX_LOCAL_POS = { 0.0f,0.0f,10000.0f };
+
+// HPの最大値
+const int MAX_HP = 100;
+
+//ヘリの大きさ
+const float SCL = 5.0f;
+
+// 初期座標
+const VECTOR INIT_POS = { 1670.0f, 500.0f, 0.0f };
+
+// 初期ローカルY回転
+const float INIT_LOCAL_ROT_Y = 180.0f;
+
+//カプセルローカル座標上
+const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 190.0f, -60.0f };
+
+//カプセルローカル座標下
+const VECTOR CAPSULE_LOCAL_POS_DOWN = { 0.0f, 150.0f, -60.0f };
+
+//カプセル半径
+const float CAPSULE_RADIUS = 135.0f;
+
+//回転しきい値
+const float ROTATE_ANGLE_DIFF_MIN = 0.1f;
+
+#pragma endregion
+
+
 Helicopter::Helicopter(GameScene* gameScene)
+	:
+	gameScene_(gameScene),
+	rotor_(nullptr),
+	bomb_(nullptr),
+	targetTrans_(Transform()),
+	isTargetOutside_(false),
+	state_(STATE::NONE),
+	attackState_(),
+	speed_(0.0f),
+	moveDir_({}),
+	movePow_({}),
+	movedPos_({}),
+	rotY_(Quaternion()),
+	goalQuaRot_(Quaternion()),
+	stepRotTime_(0.0f),
+	colliders_({}),
+	capsule_(nullptr),
+	gravHitPosDown_({}),
+	gravHitPosUp_({}),
+	hp_(-1),
+	isAttack_(false)
 {
-
-	gameScene_ = gameScene;
-
-	//animationController_ = nullptr;
-
-	state_ = STATE::NONE;
-
-	attackState_ = ATTACK_TYPE::NONE;
-
-	speed_ = SPEED_MOVE;
-	moveDir_ = MyUtility::VECTOR_ZERO;
-	movePow_ = MyUtility::VECTOR_ZERO;
-	movedPos_ = MyUtility::VECTOR_ZERO;
-
-	rotY_ = Quaternion();
-	goalQuaRot_ = Quaternion();
-	stepRotTime_ = 0.0f;
-
-	isAttack_ = false;
-
-	// 衝突チェック
-	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
-	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
-
-	imgShadow_ = -1;
-
-	hp_ = 0;
-
-	capsule_ = nullptr;
-	bomb_ = nullptr;
-	rotor_ = nullptr;
-
 }
 
 Helicopter::~Helicopter(void)
 {
 	delete rotor_;
-	//delete animationController_;
 }
 
 void Helicopter::Init(void)
@@ -71,28 +100,23 @@ void Helicopter::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::HELICOPTER));
-	float scale = 5.0f;
-	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f, 500.0f, 0.0f };
+	transform_.scl = { SCL, SCL, SCL };
+	transform_.pos = INIT_POS;
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
-	//transform_.Update();
-
-	// アニメーションの設定
-	InitAnimation();
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
-	capsule_->SetRadius(135.0f);
+	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
+	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
+	capsule_->SetRadius(CAPSULE_RADIUS);
 
 	// 体力
 	hp_ = MAX_HP;
 
-	// 丸影画像
-	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
+	//スピード
+	speed_ = SPEED_MOVE;
 
 	// 初期状態
 	ChangeState(STATE::MOVE);
@@ -118,11 +142,8 @@ void Helicopter::Update(void)
 		break;
 	}
 
-
 	// モデル制御更新
 	transform_.Update();
-	//// アニメーション再生
-	//animationController_->Update();
 }
 
 void Helicopter::Draw(void)
@@ -135,17 +156,6 @@ void Helicopter::Draw(void)
 
 	//爆弾
 	bomb_->Draw();
-
-	// 体力とかゲージとか
-	DrawUI();
-
-	// 丸影描画
-	DrawShadow();
-
-	//player_->Draw();
-
-	// デバッグ描画
-	//DrawDebug();
 }
 
 void Helicopter::AddCollider(std::shared_ptr<Collider> collider)
@@ -176,22 +186,6 @@ void Helicopter::SetBikeTrans(const Transform& bikeTrans)
 Bomb* Helicopter::GetBomb(void)
 {
 	return bomb_;
-}
-
-void Helicopter::InitAnimation(void)
-{
-	/*std::string path = Application::PATH_MODEL + "Player/";
-	animationController_ = new AnimationController(transformPlayer_.modelId);
-	animationController_->Add((int)ANIM_TYPE::IDLE, path + "Idle.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::RUN, path + "Run.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::FAST_RUN, path + "FastRun.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::JUMP, path + "Jump.mv1", 60.0f);
-	animationController_->Add((int)ANIM_TYPE::WARP_PAUSE, path + "WarpPose.mv1", 60.0f);
-	animationController_->Add((int)ANIM_TYPE::FLY, path + "Flying.mv1", 60.0f);
-	animationController_->Add((int)ANIM_TYPE::FALLING, path + "Falling.mv1", 80.0f);
-	animationController_->Add((int)ANIM_TYPE::VICTORY, path + "Victory.mv1", 60.0f);
-
-	animationController_->Play((int)ANIM_TYPE::IDLE);*/
 }
 
 void Helicopter::ChangeState(STATE state)
@@ -243,9 +237,6 @@ void Helicopter::UpdateMove(void)
 	// 移動処理
 	ProcessMove();
 
-	// ジャンプ処理
-	ProcessJump();
-
 	// デバッグ用
 	ProcessDebug();
 
@@ -260,7 +251,6 @@ void Helicopter::UpdateMove(void)
 
 	// 回転させる
 	transform_.quaRot = rotY_;
-
 
 }
 
@@ -294,14 +284,6 @@ void Helicopter::UpdateDead(void)
 {
 }
 
-void Helicopter::DrawUI(void)
-{
-}
-
-void Helicopter::DrawShadow(void)
-{
-
-}
 
 void Helicopter::DrawDebug(void)
 {
@@ -344,36 +326,14 @@ void Helicopter::ProcessMove(void)
 		
 	}
 
-
 	//前に進む
 	VECTOR movePowF_ = VScale(transform_.GetForward(), speed_);
 
-
-	if (!MyUtility::EqualsVZero(dir) /*&& (isJump_)*/) {
-
+	if (!MyUtility::EqualsVZero(dir))
+	{
 		// 移動処理
 		speed_ = SPEED_MOVE;
-
-		/*moveDir_ = dir;
-		movePow_ = VAdd(VScale(dir, speed_), movePowF_);*/
-
-
-		//// 回転処理
-		//SetGoalRotate(rotRad);
-		//SetGoalRotateZ(rotRadZ);
-
-
 	}
-	//else
-	//{
-
-	//	//傾きっぱになるので角度リセットしておく
-	//	rotRad = MyUtility::Deg2RadD(0.0f);
-	//	dir = cameraRot.GetForward();
-
-	//	//// 回転処理
-	//	//SetGoalRotateZ(rotRadZ);
-	//}
 
 	//前へ進むベクトルと横に曲がるベクトルを合成する
 	moveDir_ = dir;
@@ -383,38 +343,14 @@ void Helicopter::ProcessMove(void)
 	BikeDisFunc();
 }
 
-void Helicopter::ProcessJump(void)
-{
-}
-
 void Helicopter::ProcessAttack(void)
 {
-
-	//// 攻撃更新
-	//switch (attackState_)
-	//{
-	//case Bike::ATTACK_TYPE::NONE:
-	//	break;
-	//case Bike::ATTACK_TYPE::NORMAL:
-	//	NormalAttack();
-	//	break;
-	//case Bike::ATTACK_TYPE::SPECIAL:
-	//	SpecialAttack();
-	//	break;
-	//case Bike::ATTACK_TYPE::LONG:
-	//	LongAttack();
-	//	break;
-	//default:
-	//	break;
-	//}
-
 	NormalAttack();
 	LongAttack();
 }
 
 void Helicopter::ProcessDebug(void)
 {
-	auto& ins = InputManager::GetInstance();
 }
 
 void Helicopter::NormalAttack(void)
@@ -435,7 +371,6 @@ void Helicopter::NormalAttack(void)
 
 void Helicopter::LongAttack(void)
 {
-
 }
 
 void Helicopter::SetGoalRotate(float rotRad)
@@ -447,7 +382,7 @@ void Helicopter::SetGoalRotate(float rotRad)
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// しきい値
-	if (angleDiff > 0.1)
+	if (angleDiff > ROTATE_ANGLE_DIFF_MIN)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -464,7 +399,7 @@ void Helicopter::SetGoalRotateZ(float rotRad)
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// しきい値
-	if (angleDiff > 0.1)
+	if (angleDiff > ROTATE_ANGLE_DIFF_MIN)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -489,15 +424,8 @@ void Helicopter::Collision(void)
 	// 衝突(カプセル)
 	CollisionCapsule();
 
-	// 衝突(重力)
-	CollisionGravity();
-
 	// 移動
 	transform_.pos = movedPos_;
-}
-
-void Helicopter::CollisionGravity(void)
-{
 }
 
 void Helicopter::CollisionCapsule(void)
@@ -509,7 +437,7 @@ void Helicopter::CollisionCapsule(void)
 	Capsule cap = Capsule(*capsule_, trans);
 
 	// カプセルとの衝突判定
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 		auto hits = MV1CollCheck_Capsule(
 			c->modelId_, -1,
@@ -588,7 +516,6 @@ void Helicopter::BikeDisFunc(void)
 		{
 			//攻撃状態に移行するためにスピードを上げる
 			speed_ += SceneManager::GetInstance().GetDeltaTime();
-
 		}
 		break;
 	case Helicopter::STATE::ATTACK:
@@ -613,12 +540,4 @@ void Helicopter::BikeDisFunc(void)
 		break;
 	}
 }
-
-bool Helicopter::IsEndLanding(void)
-{
-	bool ret = true;
-
-	return false;
-}
-
 

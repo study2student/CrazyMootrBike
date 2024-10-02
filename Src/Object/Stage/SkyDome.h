@@ -7,9 +7,6 @@ class SkyDome : public ActorBase
 
 public:
 
-	static constexpr float STAGE_SCALE = 100.0f;
-	static constexpr VECTOR SCALES = { STAGE_SCALE, STAGE_SCALE, STAGE_SCALE };
-
 	// èÛë‘
 	enum class STATE
 	{

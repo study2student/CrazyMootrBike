@@ -4,12 +4,11 @@
 #include "City.h"
 
 City::City(std::shared_ptr<Bike> bike, const Transform& transform)
+	:
+	bike_(bike),
+	state_(STATE::NONE)
 {
-	bike_ = bike;
-
 	transform_ = transform;
-
-	state_ = STATE::NONE;
 }
 
 City::~City(void)
@@ -18,7 +17,6 @@ City::~City(void)
 
 void City::Init(void)
 {
-
 	ChangeState(STATE::IDLE);
 }
 

@@ -5,7 +5,6 @@ class DataSave
 
 public:
 
-
 	//データ
 	struct Data
 	{
@@ -42,7 +41,6 @@ private:
 
 	//データ
 	Data data_;
-
 	
 };
 

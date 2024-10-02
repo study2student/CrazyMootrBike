@@ -16,7 +16,9 @@
 #include "CopperCoin.h"
 
 
-CopperCoin::CopperCoin(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) : CoinBase(bikes, gameScene,loopStagePos, localPos)
+CopperCoin::CopperCoin(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos) 
+	: 
+	CoinBase(bikes, gameScene,loopStagePos, localPos)
 {
 	makePos_ = loopStagePos;
 	localPos_ = localPos;
@@ -28,12 +30,11 @@ void CopperCoin::SetParam(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::COPPER_COIN));
-	float SCL = 200.0f;
 	transform_.scl = { SCL,SCL,SCL };
-	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, 700.0f, makePos_.z + localPos_.z };
+	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, INIT_POS_Y, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
 	transform_.Update();
 
 	// 初期状態
@@ -58,7 +59,6 @@ void CopperCoin::Update(void)
 		UpdateDead();
 		break;
 	}
-
 
 	// モデル制御更新
 	transform_.Update();

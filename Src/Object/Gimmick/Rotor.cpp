@@ -11,40 +11,64 @@
 #include "../Stage/Planet.h"
 #include "Rotor.h"
 
+#pragma region 定数宣言
+
+// 回転完了までの時間
+const float TIME_ROT = 1.0f;
+
+//回転速度
+const float SPEED_ROT = 20.0f;
+
+// HPの最大値
+const int MAX_HP = 100;
+
+//羽の大きさ
+const float SCL = 5.0f;
+
+//初期座標
+const VECTOR INIT_POS = { 1670.0f, 500.0f, 0.0f };
+
+// 初期ローカルY回転
+const float INIT_LOCAL_ROT_Y = 180.0f;
+
+//カプセルローカル座標上
+const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 190.0f, -60.0f };
+
+//カプセルローカル座標下
+const VECTOR CAPSULE_LOCAL_POS_DOWN = { 0.0f, 150.0f, -60.0f };
+
+//カプセル半径
+const float CAPSULE_RADIUS = 135.0f;
+
+//相対座標
+const VECTOR LOCAL_POS = { 0.0f,250.0f,0.0f };
+
+//回転しきい値
+const float ROTATE_ANGLE_DIFF_MIN = 0.1f;
+
+#pragma endregion
+
+
 Rotor::Rotor()
+	:
+	transformParent_(Transform()),
+	state_(STATE::NONE),
+	movePow_({}),
+	movedPos_({}),
+	rotY_(Quaternion()),
+	goalQuaRot_(Quaternion()),
+	stepRotTime_(0.0f),
+	colliders_({}),
+	capsule_(nullptr),
+	gravHitPosDown_({}),
+	gravHitPosUp_({}),
+	hp_(-1)
 {
-
-	state_ = STATE::NONE;
-
-	attackState_ = ATTACK_TYPE::NONE;
-
-	speed_ = 0.0f;
-	moveDir_ = MyUtility::VECTOR_ZERO;
-	movePow_ = MyUtility::VECTOR_ZERO;
-	movedPos_ = MyUtility::VECTOR_ZERO;
-
-	rotY_ = Quaternion();
-	goalQuaRot_ = Quaternion();
-	stepRotTime_ = 0.0f;
-
-	isAttack_ = false;
-
-	// 衝突チェック
-	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
-	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
-
-	imgShadow_ = -1;
-
-	hp_ = 0;
-
-	capsule_ = nullptr;
-
 }
 
 Rotor::~Rotor(void)
 {
 	delete capsule_;
-	//delete animationController_;
 }
 
 void Rotor::Init(void)
@@ -53,28 +77,20 @@ void Rotor::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::HELICOPTER_ROTOR));
-	float scale = 5.0f;
-	transform_.scl = { scale, scale, scale };
-	transform_.pos = { 1670.0f, 500.0f, 0.0f };
+	transform_.scl = { SCL, SCL, SCL };
+	transform_.pos = INIT_POS;
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
-	//transform_.Update();
-
-	// アニメーションの設定
-	InitAnimation();
+		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
 
 	// カプセルコライダ
 	capsule_ = new Capsule(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
-	capsule_->SetRadius(135.0f);
+	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
+	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
+	capsule_->SetRadius(CAPSULE_RADIUS);
 
 	// 体力
 	hp_ = MAX_HP;
-
-	// 丸影画像
-	imgShadow_ = resMng_.Load(ResourceManager::SRC::PLAYER_SHADOW).handleId_;
 
 	// 初期状態
 	ChangeState(STATE::PLAY);
@@ -94,7 +110,6 @@ void Rotor::Update(void)
 		break;
 	}
 
-
 	// モデル制御更新
 	transform_.Update();
 }
@@ -103,12 +118,6 @@ void Rotor::Draw(void)
 {
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
-
-	// 体力とかゲージとか
-	DrawUI();
-
-	// 丸影描画
-	DrawShadow();
 
 	// デバッグ描画
 	DrawDebug();
@@ -132,10 +141,6 @@ const Capsule* Rotor::GetCapsule(void) const
 void Rotor::SetTransform(Transform& transformParent)
 {
 	transformParent_ = transformParent;
-}
-
-void Rotor::InitAnimation(void)
-{
 }
 
 void Rotor::ChangeState(STATE state)
@@ -173,14 +178,8 @@ void Rotor::UpdatePlay(void)
 	// 移動処理
 	ProcessMove();
 
-	// 攻撃処理
-	ProcessAttack();
-
 	// デバッグ用
 	ProcessDebug();
-
-	// 移動方向に応じた回転
-	Rotate();
 
 	// 重力による移動量
 	CalcGravityPow();
@@ -191,14 +190,6 @@ void Rotor::UpdatePlay(void)
 	// 回転させる
 	transform_.quaRot = rotY_;
 	transform_.Update();
-}
-
-void Rotor::DrawUI(void)
-{
-}
-
-void Rotor::DrawShadow(void)
-{
 }
 
 void Rotor::DrawDebug(void)
@@ -225,34 +216,9 @@ void Rotor::ProcessMove(void)
 
 }
 
-void Rotor::ProcessJump(void)
-{
-}
-
-void Rotor::ProcessAttack(void)
-{
-
-	NormalAttack();
-	SpecialAttack();
-	LongAttack();
-}
-
 void Rotor::ProcessDebug(void)
 {
 	auto& ins = InputManager::GetInstance();
-}
-
-void Rotor::NormalAttack(void)
-{
-}
-
-void Rotor::LongAttack(void)
-{
-
-}
-
-void Rotor::SpecialAttack(void)
-{
 }
 
 void Rotor::SetGoalRotate(float rotRad)
@@ -264,7 +230,7 @@ void Rotor::SetGoalRotate(float rotRad)
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// しきい値
-	if (angleDiff > 0.1)
+	if (angleDiff > ROTATE_ANGLE_DIFF_MIN)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -281,7 +247,7 @@ void Rotor::SetGoalRotateZ(float rotRad)
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// しきい値
-	if (angleDiff > 0.1)
+	if (angleDiff > ROTATE_ANGLE_DIFF_MIN)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -289,14 +255,6 @@ void Rotor::SetGoalRotateZ(float rotRad)
 	goalQuaRot_ = axis;
 }
 
-void Rotor::Rotate(void)
-{
-	//stepRotTime_ -= scnMng_.GetDeltaTime();
-
-	//// 回転の球面補間
-	//rotY_ = Quaternion::Slerp(
-	//	rotY_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
-}
 
 void Rotor::Collision(void)
 {
@@ -306,58 +264,8 @@ void Rotor::Collision(void)
 	// 衝突(カプセル)
 	CollisionCapsule();
 
-	// 衝突(重力)
-	CollisionGravity();
-
 	// 移動
 	transform_.pos = movedPos_;
-}
-
-void Rotor::CollisionGravity(void)
-{
-
-	//// 重力方向
-	//VECTOR dirGravity = MyUtility::DIR_D;
-
-	//// 重力方向の反対
-	//VECTOR dirUpGravity = MyUtility::DIR_U;
-
-	//// 重力の強さ
-	//float gravityPow = Planet::DEFAULT_GRAVITY_POW;
-
-	//float checkPow = 10.0f;
-	//gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	//gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
-	//gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	//for (const auto c : colliders_)
-	//{
-
-	//	// 地面との衝突
-	//	auto hit = MV1CollCheck_Line(
-	//		c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
-
-	//	// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
-	//	if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
-	//	{
-
-	//		// 衝突地点から、少し上に移動
-	//		movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
-
-	//	
-	//
-
-	//		if (isJump_)
-	//		{
-	//			// 着地モーション
-	//			animationController_->Play(
-	//				(int)ANIM_TYPE::JUMP, false, 29.0f, 45.0f, false, true);
-	//		}
-
-	//		isJump_ = false;
-
-	//	}
-
-	//}
 }
 
 void Rotor::CollisionCapsule(void)
@@ -421,29 +329,8 @@ void Rotor::CalcGravityPow(void)
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 
-	// 最初は実装しない。地面と突き抜けることを確認する。
-	// 内積
-	//float dot = VDot(dirGravity, jumpPow_);
-	//if (dot >= 0.0f)
-	//{
-	//	// 重力方向と反対方向(マイナス)でなければ、ジャンプ力を無くす
-	//	jumpPow_ = gravity;
-	//}
-
 }
 
-bool Rotor::IsEndLanding(void)
-{
-	bool ret = true;
-
-	////アニメーションが終了しているか
-	//if (animationController_->IsEnd())
-	//{
-	//	return ret;
-	//}
-
-	return false;
-}
 
 
 

@@ -8,7 +8,6 @@ class LoopStage : public ActorBase
 
 public:
 
-
 	// ó‘Ô
 	enum class STATE
 	{

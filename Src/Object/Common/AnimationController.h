@@ -21,6 +21,7 @@ public :
 
 	// コンストラクタ
 	AnimationController(int modelId);
+
 	// デストラクタ
 	~AnimationController(void);
 

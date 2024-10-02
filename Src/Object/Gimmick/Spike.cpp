@@ -13,17 +13,99 @@
 #include "../Rider/Bike.h"
 #include "Spike.h"
 
+#pragma region 定数宣言
+
+//回転速度
+const float SPEED_ROT = 20.0f;
+
+//速度
+const float SPEED_MOVE = 60.0f;
+
+//場所表示時間
+const float PLACE_DRAW_MAX_TIME = 3.0f;
+
+//消えるまでの時間
+const float TO_DELETE_MAX_TIME = 4.5f;
+
+//とげ復活時間
+const float SPIKE_REMAKE_MAX_TIME = 6.0f;
+
+//右から投げる位置(少し横に)
+const VECTOR RIGHT_THROW_LOCAL_POS_TO_SIDE = { -900.0f,100.0f,13500.0f };
+
+//右から投げる位置(少し斜めに)
+const VECTOR RIGHT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -750.0f,100.0f,11000.0f };
+
+//右から投げる位置(大きく斜めに)
+const VECTOR RIGHT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -600.0f,100.0f,7000.0f };
+
+//左から投げる位置(少し横に)
+const VECTOR LEFT_THROW_LOCAL_POS_TO_SIDE = { 600.0f,100.0f,7000.0f };
+
+//左から投げる位置(少し斜めに)
+const VECTOR LEFT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { 770.0f,100.0f,12800.0f };
+
+//左から投げる位置(大きく斜めに)
+const VECTOR LEFT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { 900.0f,100.0f,13500.0f };
+
+//右の場合の出現するX座標
+const float MAKE_RIGHT_POS_X = 2499.0f;
+
+//左の場合の出現するX座標
+const float MAKE_LEFT_POS_X = 909.0f;
+
+//ローカル待機座標
+const VECTOR SPIKE_IDLE_ROCAL_POS = { 0.0f,100.0f,15000.0f };
+
+//とげの大きさ
+const float SCL = 120.0f;
+
+//初期座標
+const VECTOR INIT_POS = { 1500.0f, 1000.0f, 3000.0f };
+
+//カプセルローカル座標上
+const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 30.0f, 0.0f };
+
+//カプセルローカル座標下
+const VECTOR CAPSULE_LOCAL_POS_DOWN = { 0.0f, 10.0f, 0.0f };
+
+//カプセル半径
+const float CAPSULE_RADIUS = 130.0f;
+
+//発生エフェクト大きさ
+const float MAKE_EFFECT_SCL = 130.0f;
+
+//発生エフェクトローカル座標
+const VECTOR MKAE_EFFECT_LOCAL_POS = { 0.0f,300.0f,0.0f };
+
+//爆発エフェクト大きさ
+const float BOMB_EFFECT_SCL = 30.0f;
+
+#pragma endregion
+
+
 Spike::Spike()
+	:
+	transformTarget_(Transform()),
+	state_(STATE::IDLE),
+	targetDir_({}),
+	targetDirSave_({}),
+	movePow_({}),
+	movedPos_({}),
+	rotX_(Quaternion()),
+	isCol_(false),
+	stepPlaceDrawTime_(0.0f),
+	stepToDeleteTime_(0.0f),
+	stepSpikeDestroy_(0.0f),
+	colliders_({}),
+	capsule_(nullptr),
+	gravHitPosDown_({}),
+	gravHitPosUp_({}),
+	makeEffectResId_(-1),
+	makeEffectPlayId_(-1),
+	bombEffectResId_(-1),
+	bombEffectPlayId_(-1)
 {
-	state_ = STATE::IDLE;
-
-
-	speed_ = 0.0f;
-	moveDir_ = MyUtility::VECTOR_ZERO;
-	movePow_ = MyUtility::VECTOR_ZERO;
-	movedPos_ = MyUtility::VECTOR_ZERO;
-
-	rotX_ = Quaternion();
 }
 
 Spike::~Spike(void)
@@ -35,20 +117,18 @@ void Spike::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::SPIKE_BALL));
-	float scale = 120.0f;
-	transform_.scl = { scale , scale, scale };
-	transform_.pos = { 1500.0f,1000.0f, 3000.0f };
+	transform_.scl = { SCL , SCL, SCL };
+	transform_.pos = INIT_POS;
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f });
 	transform_.Update();
 
 	// カプセルコライダ
-	//capsule_ = new Capsule(transform_);
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 30.0f, 0.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 10.0f, 0.0f });
-	capsule_->SetRadius(130.0f);
+	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
+	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
+	capsule_->SetRadius(CAPSULE_RADIUS);
 
 	//エフェクト
 	InitEffect();
@@ -126,7 +206,7 @@ bool Spike::IsIdle(void)
 
 void Spike::InitEffect(void)
 {
-	effectMakeResId_= ResourceManager::GetInstance().Load(
+	makeEffectResId_= ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::THROW_MAKE_EFFECT).handleId_;
 
 	bombEffectResId_= ResourceManager::GetInstance().Load(
@@ -135,32 +215,20 @@ void Spike::InitEffect(void)
 
 void Spike::MakeEffect(void)
 {
-	effectMakePlayId_ = PlayEffekseer3DEffect(effectMakeResId_);
-	float scale = 130.0f;
-	SetScalePlayingEffekseer3DEffect(effectMakePlayId_, scale, scale, scale);
-	VECTOR localPos = { 0.0f,300.0f,0.0f };
-	SetPosPlayingEffekseer3DEffect(effectMakePlayId_, transform_.pos.x, transform_.pos.y + localPos.y, transform_.pos.z);
-	SetRotationPlayingEffekseer3DEffect(effectMakePlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
+	makeEffectPlayId_ = PlayEffekseer3DEffect(makeEffectResId_);
+	SetScalePlayingEffekseer3DEffect(makeEffectPlayId_, MAKE_EFFECT_SCL, MAKE_EFFECT_SCL, MAKE_EFFECT_SCL);
+	VECTOR localPos = MKAE_EFFECT_LOCAL_POS;
+	SetPosPlayingEffekseer3DEffect(makeEffectPlayId_, transform_.pos.x, transform_.pos.y + localPos.y, transform_.pos.z);
+	SetRotationPlayingEffekseer3DEffect(makeEffectPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 }
 
 void Spike::BombEffect(void)
 {
 	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
 
-	//何かに当たった時は前で爆発
-	VECTOR localPos = {};
-	if (isCol_)
-	{
-		//localPos = { 0.0f,0.0f,2200.0f };
-		localPos = { 0.0f,0.0f,0.0f };
-	}
-	else
-	{
-		localPos = { 0.0f,0.0f,0.0f };
-	}
-	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + localPos.z);
-	float scl = 30.0f;
-	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, scl, scl, scl);
+	//何かに当たった時は爆発
+	SetPosPlayingEffekseer3DEffect(bombEffectPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z);
+	SetScalePlayingEffekseer3DEffect(bombEffectPlayId_, BOMB_EFFECT_SCL, BOMB_EFFECT_SCL, BOMB_EFFECT_SCL);
 }
 
 void Spike::ChangeState(STATE state)
@@ -190,7 +258,7 @@ void Spike::ChangeStateIdle(void)
 void Spike::ChangeStateThrow(void)
 {
 
-	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+	transform_.pos = VAdd(transformTarget_.pos, SPIKE_IDLE_ROCAL_POS);
 
 	//どこから投げるかランダムで決める
 	int randDir = GetRand(static_cast<int>(Spike::DIR::MAX) - 1);
@@ -272,7 +340,7 @@ void Spike::ChangeStateDestroy(void)
 void Spike::UpdateIdle(void)
 {
 	//プレイヤーの少し先で待機
-	transform_.pos = VAdd(transformTarget_.pos, TYRE_IDLE_ROCAL_POS);
+	transform_.pos = VAdd(transformTarget_.pos, SPIKE_IDLE_ROCAL_POS);
 
 	//3秒後に投げる
 	stepPlaceDrawTime_ += SceneManager::GetInstance().GetDeltaTime();
@@ -287,8 +355,6 @@ void Spike::UpdateIdle(void)
 
 void Spike::UpdateThrowMove(void)
 {
-	//// デバッグ用
-	//ProcessDebug();
 
 	// 移動方向に応じた回転
 	Rotate();
@@ -311,8 +377,6 @@ void Spike::UpdateThrowMove(void)
 	// 移動処理
 	transform_.pos = VAdd(transform_.pos, movePow);
 
-	// 重力による移動量
-	CalcGravityPow();
 	// 衝突判定
 	Collision();
 	transform_.Update();
@@ -332,13 +396,13 @@ void Spike::UpdateThrowMove(void)
 void Spike::UpdateDestroy(void)
 {
 	//8秒後に復活
-	stepTyreDestroy_ += SceneManager::GetInstance().GetDeltaTime();
+	stepSpikeDestroy_ += SceneManager::GetInstance().GetDeltaTime();
 
-	if (stepTyreDestroy_ >= SPIKE_REMAKE_MAX_TIME)
+	if (stepSpikeDestroy_ >= SPIKE_REMAKE_MAX_TIME)
 	{
 		//爆弾爆発発射前状態に移行
 		ChangeState(STATE::IDLE);
-		stepTyreDestroy_ = 0.0f;
+		stepSpikeDestroy_ = 0.0f;
 	}
 }
 
@@ -400,11 +464,8 @@ void Spike::CollisionGravity(void)
 
 		if (hit.HitFlag > 0)
 		{
-
 			// 衝突地点から、少し上に移動
 			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
-
-
 		}
 
 	}
@@ -459,8 +520,4 @@ void Spike::CollisionCapsule(void)
 		MV1CollResultPolyDimTerminate(hits);
 
 	}
-}
-
-void Spike::CalcGravityPow(void)
-{
 }

@@ -12,19 +12,6 @@ class Bomb : public ActorBase
 
 public:
 
-
-	//爆弾場所表示時間
-	static constexpr float PLACE_DRAW_MAX_TIME = 5.0f;
-
-	//爆弾爆発準備時間
-	static constexpr float RESERVE_MAX_TIME = 2.5f;
-
-	//爆弾復活時間
-	static constexpr float BOMB_REMAKE_MAX_TIME = 0.8f;
-
-	// スピード
-	static constexpr float SPEED = 30.0f;
-
 	//ダメージ
 	static constexpr int BOMB_DAMAGE = 50;
 
@@ -61,13 +48,12 @@ public:
 	void SetIsCol(bool isCol);
 
 	//爆弾が当たったが取得
-	bool GetIsCol(void);
+	const bool& GetIsCol(void) const;
 
 	//状態取得
-	const STATE& GetState(void);
+	const STATE& GetState(void) const;
 
 private:
-
 
 	//ヘリ
 	Transform heliTrans_;
@@ -87,10 +73,6 @@ private:
 	//爆発エフェクト
 	int bombEffectResId_;
 	int bombEffectPlayId_;
-
-	// 爆発位置エフェクト
-	int bombPlaceEffectResId_;
-	int bombPlaceEffectPlayId_;
 
 	//爆発目標
 	VECTOR bombTargetPos_;
@@ -115,7 +97,6 @@ private:
 	//爆発エフェクト
 	void InitEffect(void);
 	void BombEffect(void);
-	void SyncBombPlaceEffect(void);
 
 
 	// 状態遷移

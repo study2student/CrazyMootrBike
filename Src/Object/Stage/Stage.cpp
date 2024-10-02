@@ -19,32 +19,67 @@
 #include "LoopStage.h"
 #include "Stage.h"
 
+#pragma region 定数宣言
+
+// ステージの切り替え間隔
+const float TIME_STAGE_CHANGE = 1.0f;
+
+//ステージの初期位置
+const VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
+
+//モデルのサイズ
+const float STAGE_SCL = 1.0f;
+
+//モデルの拡大率
+const float STAGE_RATIO = 2.5f;
+
+// ステージの生成距離(Z方向)
+const float STAGE_WIDTH = 5000.0f;
+
+//背景の初期位置
+const VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
+
+// 削除するステージ数
+const int DELETION_NUM = 22;
+
+//バイクプレイヤー1
+const int BIKE_P1_NUM = 0;
+
+//ステージ削除するまでの最大数
+const int TO_DESTROY_MAX_NUM = 5;
+
+//ステージ生成する位置(プレイヤーからの増分)
+const float TO_MAKE_STAGE_ADD_POS_Z = 6000.0f;
+
+#pragma endregion
+
+
 Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, Spike* throwTyre, GameScene* gameScene)
-	: resMng_(ResourceManager::GetInstance()), bikes_(bikes)
+	: 
+	resMng_(ResourceManager::GetInstance()),
+	bikes_(bikes),
+	gameScene_(gameScene),
+	coin_(coin),
+	bomb_(bomb),
+	spike_(throwTyre),
+	city_(NULL),
+	goal_(nullptr),
+	activeName_(NAME::MAIN_PLANET),
+	activePlanet_(nullPlanet),
+	loopStage_(NULL),
+	planets_({}),
+	step_(-1.0f),
+	isGoal_(false),
+	hasPlayedGoalSound_(false),
+	isMakeLoopStage_(false),
+	sizeS_(0)
 {
-	gameScene_ = gameScene;
-
-	//bike_ = bike;
-	coin_ = coin;
-	bomb_ = bomb;
-	spike_ = throwTyre;
-	activeName_ = NAME::MAIN_PLANET;
-	step_ = 0.0f;
-
-	isMakeLoopStage_ = false;
-
-	isGoal_ = false;
-
-	hasPlayedGoalSound = false;
-
 }
 
 Stage::~Stage(void)
 {
-
-	// 惑星
+	// ステージ
 	planets_.clear();
-
 	loopStage_.clear();
 }
 
@@ -56,14 +91,12 @@ void Stage::Init(void)
 
 	goal_ = std::make_unique<Goal>();
 	goal_->Init();
-
-	step_ = -1.0f;
 }
 
 void Stage::Update(void)
 {
 
-	//町
+	//背景
 	for (const auto& ct : city_)
 	{
 		ct->Update();
@@ -83,7 +116,6 @@ void Stage::Update(void)
 
 	//ステージを生成する
 	MakeLoopStage();
-	//MakeCurveStage();
 	MakeCity();
 
 	//ゴール
@@ -92,19 +124,19 @@ void Stage::Update(void)
 	//誰かがゴールゾーンを超えたらクリア
 	if (gameScene_->GetPlayNum() == 1)
 	{
-		if (bikes_[0]->GetTransform().pos.z >= goal_->GetTransform().pos.z)
+		if (bikes_[BIKE_P1_NUM]->GetTransform().pos.z >= goal_->GetTransform().pos.z)
 		{
 			
 			isGoal_ = true;
 
 			//1回だけ再生
-			if(!hasPlayedGoalSound)
+			if(!hasPlayedGoalSound_)
 			{
 				// ゴール音を再生
 				PlaySoundMem(ResourceManager::GetInstance().Load(
 					ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
 			}
-			hasPlayedGoalSound = true;
+			hasPlayedGoalSound_ = true;
 		}
 		else
 		{
@@ -121,13 +153,13 @@ void Stage::Update(void)
 				bike->SetIsGoal(true);
 			
 				//1回だけ再生
-				if (!hasPlayedGoalSound)
+				if (!hasPlayedGoalSound_)
 				{
 					// ゴール音を再生
 					PlaySoundMem(ResourceManager::GetInstance().Load(
 						ResourceManager::SRC::SND_GOAL).handleId_, DX_PLAYTYPE_BACK, true);
 				}
-				hasPlayedGoalSound = true;
+				hasPlayedGoalSound_ = true;
 			}
 			else
 			{
@@ -139,16 +171,15 @@ void Stage::Update(void)
 	//ステージを一定数生成したらゴールが出現
 	if (loopStage_.size() >= Goal::STAGE_NUM_MAX_FOR_GOAL)
 	{
-		goal_->SetPosZ(5000.0f * (Goal::STAGE_NUM_MAX_FOR_GOAL + 1));
+		goal_->SetPosZ(STAGE_WIDTH * (Goal::STAGE_NUM_MAX_FOR_GOAL + 1));
 	}
-
 
 }
 
 void Stage::Draw(void)
 {
 
-	//町
+	//背景
 	for (const auto& ct : city_)
 	{
 		ct->Draw();
@@ -256,12 +287,12 @@ bool Stage::GetIsGoal(void)
 void Stage::MakeMainStage(void)
 {
 
-	// 最初の惑星
+	// 最初のステージ
 	//------------------------------------------------------------------------------
 	Transform planetTrans;
 	planetTrans.SetModel(
 		resMng_.LoadModelDuplicate(ResourceManager::SRC::MAIN_PLANET));
-	planetTrans.scl = { STAGE_SIZE * STAGE_SCALE,STAGE_SIZE,STAGE_SIZE };
+	planetTrans.scl = { STAGE_SCL * STAGE_RATIO,STAGE_SCL,STAGE_SCL };
 	planetTrans.quaRot = Quaternion();
 	planetTrans.pos = { STAGE_START_POS };
 
@@ -308,7 +339,7 @@ void Stage::MakeLoopStage(void)
 	//先頭のバイクの座標
 	float z = bikes_[posZMaxIndex]->GetTransform().pos.z;
 
-	int mapZ = (int)((z + 6000.0f) / STAGE_WIDTH);
+	int mapZ = (int)((z + TO_MAKE_STAGE_ADD_POS_Z) / STAGE_WIDTH);
 	int size = (int)loopStage_.size();
 
 	//一定の距離超えたら
@@ -318,9 +349,7 @@ void Stage::MakeLoopStage(void)
 		loopTrans.SetModel(
 			resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
 
-
-
-		loopTrans.scl = { STAGE_SIZE * STAGE_SCALE,STAGE_SIZE ,STAGE_SIZE };
+		loopTrans.scl = { STAGE_SCL * STAGE_RATIO,STAGE_SCL ,STAGE_SCL };
 		loopTrans.quaRot = Quaternion();
 		loopTrans.pos = { STAGE_START_POS.x,  STAGE_START_POS.y,  STAGE_START_POS.z + STAGE_WIDTH * (size + 1) };
 
@@ -367,21 +396,14 @@ void Stage::AddStage(std::shared_ptr<LoopStage> newStage)
 {
 
 	loopStage_.push_back(newStage);
-	//stageQueue(newStage);
-	sizeS++;
+	sizeS_++;
 
 	// 6以上のステージがある場合は古いステージを削除
-	if (loopStage_.size() > 5) {
+	if (loopStage_.size() > TO_DESTROY_MAX_NUM) {
 		std::shared_ptr<LoopStage> oldStage = loopStage_.front();
 		loopStage_.pop_front();
 
 		oldStage->Destroy();
-
-		// 古いステージをloopStage_から削除
-		//loopStage_.erase(
-		//	std::remove(loopStage_.begin(), loopStage_.end(), oldStage),
-		//	loopStage_.end()
-		//);
 	}
 }
 
@@ -406,8 +428,6 @@ void Stage::MakeCity(void)
 
 		cityTrans.SetModel(
 			resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
-
-
 
 		float scale = 1.0f;
 		cityTrans.scl = { scale,scale,scale };

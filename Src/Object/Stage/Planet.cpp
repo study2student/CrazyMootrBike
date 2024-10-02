@@ -3,17 +3,26 @@
 #include "../Common/Transform.h"
 #include "Planet.h"
 
+#pragma region 定数宣言
+
+// 重力がかかる範囲
+const float DEFAULT_GRAVITY_RADIUS = 5000.0f;
+
+// ゲームオーバー範囲
+const float DEFAULT_DEAD_LENGTH = 1000.0f;
+
+#pragma endregion
+
+
 Planet::Planet(const Stage::NAME& name, const TYPE& type, const Transform& transform)
+	:
+	name_(name),
+	type_(type),
+	gravityPow_(0.0f),
+	gravityRadius_(0.0f),
+	deadLength_(0.0f)
 {
-
-	name_ = name;
-	type_ = type;
 	transform_ = transform;
-
-	gravityPow_ = 0.0f;
-	gravityRadius_ = 0.0f;
-	deadLength_ = 0.0f;
-
 }
 
 Planet::~Planet(void)

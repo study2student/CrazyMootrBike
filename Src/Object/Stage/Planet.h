@@ -11,11 +11,6 @@ public:
 	// 重力の強さ
 	static constexpr float DEFAULT_GRAVITY_POW = 25.0f;
 
-	// 重力がかかる範囲
-	static constexpr float DEFAULT_GRAVITY_RADIUS = 5000.0f;
-
-	// ゲームオーバー範囲
-	static constexpr float DEFAULT_DEAD_LENGTH = 1000.0f;
 
 	// 重力種別
 	enum class TYPE

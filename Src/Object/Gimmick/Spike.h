@@ -10,53 +10,8 @@ class Spike : public ActorBase
 {
 public:
 
-	// 回転完了までの時間
-	static constexpr float TIME_ROT = 1.0f;
-
-	//回転速度
-	static constexpr float SPEED_ROT = 20.0f;
-
-	//速度
-	static constexpr float SPEED_MOVE = 60.0f;
-
-	//場所表示時間
-	static constexpr float PLACE_DRAW_MAX_TIME = 3.0f;
-
-	//消えるまでの時間
-	static constexpr float TO_DELETE_MAX_TIME = 4.5f;
-
-	//とげ復活時間
-	static constexpr float SPIKE_REMAKE_MAX_TIME = 6.0f;
-
-	//右から投げる位置(少し横に)
-	static constexpr VECTOR RIGHT_THROW_LOCAL_POS_TO_SIDE = { -900.0f,100.0f,13500.0f };
-
-	//右から投げる位置(少し斜めに)
-	static constexpr VECTOR RIGHT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { -750.0f,100.0f,11000.0f };
-
-	//右から投げる位置(大きく斜めに)
-	static constexpr VECTOR RIGHT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { -600.0f,100.0f,7000.0f };
-
-	//左から投げる位置(少し横に)
-	static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_SIDE = { 600.0f,100.0f,7000.0f };
-
-	//左から投げる位置(少し斜めに)
-	static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_SLIGHTLY_OBLIPUE = { 770.0f,100.0f,12800.0f };
-
-	//左から投げる位置(大きく斜めに)
-	static constexpr VECTOR LEFT_THROW_LOCAL_POS_TO_LARGE_OBLIPUE = { 900.0f,100.0f,13500.0f };
-
-	//右の場合の出現するX座標
-	static constexpr float MAKE_RIGHT_POS_X = 2499.0f;
-
-	//左の場合の出現するX座標
-	static constexpr float MAKE_LEFT_POS_X = 909.0f;
-
-	//ローカル待機座標
-	static constexpr VECTOR TYRE_IDLE_ROCAL_POS = { 0.0f,100.0f,15000.0f };
-
 	//ダメージ
-	static constexpr int THROW_DAMAGE = 25;
+	static constexpr int SPIKE_DAMAGE = 25;
 
 
 	// 状態
@@ -114,19 +69,12 @@ public:
 	//待機状態かどうか
 	bool IsIdle(void);
 
-
 private:
 
 	Transform transformTarget_;
 
 	// 状態管理
 	STATE state_;
-
-	// スピード
-	float speed_;
-
-	// 移動方向
-	VECTOR moveDir_;
 
 	//ターゲットに向けた向き
 	VECTOR targetDir_;
@@ -153,7 +101,7 @@ private:
 	float stepToDeleteTime_;
 
 	//タイヤが消えてからどのくらい時間経過したか
-	float stepTyreDestroy_;
+	float stepSpikeDestroy_;
 
 	// 衝突判定に用いられるコライダ
 	std::vector<std::shared_ptr<Collider>> colliders_;
@@ -164,8 +112,8 @@ private:
 	VECTOR gravHitPosUp_;
 
 	// 発生エフェクト
-	int effectMakeResId_;
-	int effectMakePlayId_;
+	int makeEffectResId_;
+	int makeEffectPlayId_;
 
 	//爆発エフェクト
 	int bombEffectResId_;
@@ -196,8 +144,4 @@ private:
 	void Collision(void);
 	void CollisionGravity(void);
 	void CollisionCapsule(void);
-
-	// 移動量の計算
-	void CalcGravityPow(void);
-
 };

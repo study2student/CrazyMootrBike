@@ -927,7 +927,7 @@ void GameScene::Collision(void)
 					if (!stage_->GetIsGoal())
 					{
 						//プレイヤーにダメージ
-						bike->Damage(spike_->THROW_DAMAGE);
+						bike->Damage(spike_->SPIKE_DAMAGE);
 
 						//コントローラー振動
 						StartJoypadVibration(DX_INPUT_PAD1, CE_SWING_VALUE, CE_SWING_TIME, -1);
@@ -940,7 +940,7 @@ void GameScene::Collision(void)
 					if (!bike->GetIsGoal())
 					{
 						//プレイヤーにダメージ
-						bike->Damage(spike_->THROW_DAMAGE);
+						bike->Damage(spike_->SPIKE_DAMAGE);
 
 						//ぶつかったプレイヤーのコントローラーを振動
 						// 衝突したバイクのインデックスを取得

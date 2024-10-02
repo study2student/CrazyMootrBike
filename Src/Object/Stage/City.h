@@ -30,6 +30,7 @@ public:
 	VECTOR GetPos(void);
 	STATE GetState(void);
 	bool IsDestroy(void);
+
 private:
 
 	// ƒvƒŒƒCƒ„[

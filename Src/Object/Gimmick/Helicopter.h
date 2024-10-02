@@ -14,27 +14,6 @@ class Helicopter : public ActorBase
 {
 public:
 
-	// 通常スピード
-	static constexpr float SPEED_MOVE = 120.0f;
-
-	// 追いつくためのスピード
-	static constexpr float SPEED_FAST = 160.0f;
-
-	//横移動のスピード
-	static constexpr float SPEED_MOVE_X = 80.0f;
-
-	// 回転完了までの時間
-	static constexpr float TIME_ROT = 1.0f;
-
-	//攻撃状態にするためのプレイヤーからヘリまでの相対座標
-	static constexpr VECTOR ATTACK_LINE_LOCAL_POS = { 0.0f,0.0f,5000.0f };
-
-	//攻撃状態の最大範囲を作るためのプレイヤーからヘリまでの相対座標
-	static constexpr VECTOR ATTACK_LINE_MAX_LOCAL_POS = { 0.0f,0.0f,10000.0f };
-
-	// HPの最大値
-	static constexpr int MAX_HP = 100;
-
 	// 状態
 	enum class STATE
 	{
@@ -100,18 +79,16 @@ private:
 	Rotor* rotor_;
 
 	//爆弾
-	//std::shared_ptr<Bomb> bomb_;
 	Bomb* bomb_;
 
 	//バイク情報
 	Transform targetTrans_;
+
+	//バイクがステージ外にいるかどうか
 	bool isTargetOutside_;
 
 	//ゲームシーン
 	GameScene* gameScene_;
-
-	//// アニメーション
-	//AnimationController* animationController_;
 
 	// 状態管理
 	STATE state_;
@@ -131,7 +108,6 @@ private:
 	// 移動後の座標
 	VECTOR movedPos_;
 
-
 	// 回転
 	Quaternion rotY_;
 	Quaternion goalQuaRot_;
@@ -145,17 +121,11 @@ private:
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;
 
-	// 丸影
-	int imgShadow_;
-
 	// 体力
 	int hp_;
 
 	// 攻撃が当たったか
 	bool isAttack_;
-
-	//アニメーション
-	void InitAnimation(void);
 
 	// 状態遷移
 	void ChangeStateNone(void);
@@ -170,13 +140,10 @@ private:
 	void UpdateDead(void);
 
 	// 描画系
-	void DrawUI(void);
-	void DrawShadow(void);
 	void DrawDebug(void);
 
 	// 操作
 	void ProcessMove(void);//移動
-	void ProcessJump(void);//ジャンプ
 	void ProcessAttack(void);//攻撃
 	void ProcessDebug(void);//デバッグ用
 
@@ -191,7 +158,6 @@ private:
 
 	// 衝突判定
 	void Collision(void);
-	void CollisionGravity(void);
 	void CollisionCapsule(void);
 
 	// 移動量の計算
@@ -199,9 +165,6 @@ private:
 
 	//バイクとの距離による処理
 	void BikeDisFunc(void);
-
-	// 着地モーション終了
-	bool IsEndLanding(void);
 };
 
 

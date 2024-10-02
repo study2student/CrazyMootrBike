@@ -5,13 +5,11 @@
 #include "LoopStage.h"
 
 LoopStage::LoopStage(std::shared_ptr<Bike> bike, const Transform& transform)
+	:
+	bike_(bike),
+	state_(STATE::NONE)
 {
-	bike_ = bike;
-
 	transform_ = transform;
-
-	state_ = STATE::NONE;
-
 }
 
 LoopStage::~LoopStage(void)

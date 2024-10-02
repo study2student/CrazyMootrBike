@@ -7,22 +7,38 @@
 #include "Planet.h"
 #include "Goal.h"
 
+#pragma region 定数宣言
+
+//ゴール基本位置
+const VECTOR GOAL_BASE_POS = { 1650.0f,-800.0f,200000000.0f };
+
+//ゴールの大きさ
+const float SCL = 7.0f;
+
+//ゴールの大きさ調整用値
+const float SCL_ADJUST_NUM = 1.1f;
+
+//カプセルローカル座標上
+const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 190.0f, 0.0f };
+
+//カプセルローカル座標下
+const VECTOR CAPSULE_LOCAL_POS_DOWN = { 0.0f, 150.0f, 0.0f };
+
+//カプセル半径
+const float CAPSULE_RADIUS = 135.0f;
+
+#pragma endregion
+
+
 Goal::Goal(void)
+	:
+	movePow_({}),
+	movedPos_({}),
+	colliders_({}),
+	capsule_(nullptr),
+	gravHitPosDown_({}),
+	gravHitPosUp_({})
 {
-
-	moveDir_ = MyUtility::VECTOR_ZERO;
-	movePow_ = MyUtility::VECTOR_ZERO;
-	movedPos_ = MyUtility::VECTOR_ZERO;
-
-	rotY_ = Quaternion();
-	goalQuaRot_ = Quaternion();
-	stepRotTime_ = 0.0f;
-
-	// 衝突チェック
-	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
-	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
-
-	capsule_ = nullptr;
 }
 
 Goal::~Goal(void)
@@ -35,10 +51,9 @@ void Goal::Init(void)
 	// モデルの基本設定
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::GOAL));
-	float scale = 7.0f;
-	transform_.scl = { scale / 1.1f, scale, scale };
+	transform_.scl = { SCL / SCL_ADJUST_NUM, SCL, SCL };
 	//最初は見えない場所へ
-	transform_.pos = { GOAL_BASE_POS.x, GOAL_BASE_POS.y ,GOAL_BASE_POS.z + 200000000.0f };
+	transform_.pos = { GOAL_BASE_POS.x, GOAL_BASE_POS.y ,GOAL_BASE_POS.z};
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f });
@@ -47,9 +62,9 @@ void Goal::Init(void)
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop({ 0.0f, 190.0f, -60.0f });
-	capsule_->SetLocalPosDown({ 0.0f, 150.0f, -60.0f });
-	capsule_->SetRadius(135.0f);
+	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
+	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
+	capsule_->SetRadius(CAPSULE_RADIUS);
 }
 
 void Goal::Update(void)
@@ -69,8 +84,6 @@ void Goal::Draw(void)
 {
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
-
-	//DrawDebug();
 }
 
 void Goal::AddCollider(std::shared_ptr<Collider> collider)

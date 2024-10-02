@@ -14,39 +14,64 @@
 #include "../../Scene/GameScene.h"
 #include "CoinBase.h"
 
+#pragma region 定数宣言
+
+//当たり判定用コライダーの上座標
+const VECTOR COLLIDER_POS_TOP = { 0.0f, 110.0f, 0.0f };
+
+//当たり判定用コライダーの下座標
+const VECTOR COLLIDER_POS_DOWN = { 0.0f, 30.0f, 0.0f };
+
+//回転完了までの時間
+const float TIME_ROT = 1.0f;
+
+//当たった時のスコア増分
+const int SCORE_INCREMENT = 100;
+
+//地面衝突後の座標
+const float COLL_AFTER_POS_Y = -150.0f;
+
+//回転スピード
+const float SPEED_ROT = 7.0f;
+
+// 削除状態になるY座標
+const float DEAD_POS_Y = -500.0f;
+
+// エフェクト出現位置Z座標
+const int EFF_POS_Z = 500;
+
+//回転しきい値
+const float ROTATE_ANGLE_DIFF_MIN = 0.1f;
+#pragma endregion
+
+
 CoinBase::CoinBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos)
+	:
+	bikes_(bikes),
+	gameScene_(gameScene),
+	state_(STATE::NONE),
+	moveDir_(MyUtility::VECTOR_ZERO),
+	movePow_(MyUtility::VECTOR_ZERO),
+	movedPos_(MyUtility::VECTOR_ZERO),
+	makePos_(loopStagePos),
+	localPos_(localPos),
+	enemyRotY_(Quaternion()),
+	goalQuaRot_(Quaternion()),
+	stepRotTime_(0.0f),
+	jumpPow_(MyUtility::VECTOR_ZERO),
+	gravHitPosDown_(MyUtility::VECTOR_ZERO),
+	gravHitPosUp_(MyUtility::VECTOR_ZERO),
+	isBikeCol_(false),
+	isAddScore_(false),
+	colliders_({}),
+	capsule_(nullptr),
+	isCollGround_ (false),
+	stepMade_(0.0f),
+	flipSpeed_(0.0f),
+	flipDir_(MyUtility::VECTOR_ZERO),
+	effectHitResId_(-1),
+	effectHitPlayId_(-1)
 {
-	bikes_ = bikes;
-	gameScene_ = gameScene;
-
-	state_ = STATE::NONE;
-
-	moveDir_ = MyUtility::VECTOR_ZERO;
-	movePow_ = MyUtility::VECTOR_ZERO;
-	movedPos_ = MyUtility::VECTOR_ZERO;
-
-	makePos_ = loopStagePos;
-	localPos_ = localPos;
-
-	enemyRotY_ = Quaternion();
-	goalQuaRot_ = Quaternion();
-	stepRotTime_ = 0.0f;
-
-	jumpPow_ = MyUtility::VECTOR_ZERO;
-
-	// 衝突チェック
-	gravHitPosDown_ = MyUtility::VECTOR_ZERO;
-	gravHitPosUp_ = MyUtility::VECTOR_ZERO;
-
-	isBikeCol_ = false;
-
-	isAddScore_ = false;
-
-	capsule_ = nullptr;
-
-	isCollGround_ = false;
-
-	stepMade_ = 0.0f;
 }
 
 CoinBase::~CoinBase(void)
@@ -122,8 +147,6 @@ void CoinBase::Draw(void)
 	// モデルの描画
 	MV1DrawModel(transform_.modelId);
 
-	DrawLine3D(fowardPos_, backPos_, 0x0000ff);
-
 }
 
 void CoinBase::AddCollider(std::shared_ptr<Collider> collider)
@@ -148,22 +171,22 @@ void CoinBase::Flip(VECTOR dir)
 	ChangeState(STATE::FLIPED);
 }
 
-bool CoinBase::GetIsBikeCol(void)
+const bool& CoinBase::GetIsBikeCol(void) const
 {
 	return isBikeCol_;
 }
 
-bool CoinBase::GetIsAddScore(void)
+const bool& CoinBase::GetIsAddScore(void) const
 {
 	return isAddScore_;
 }
 
-CoinBase::STATE CoinBase::GetState(void)
+const CoinBase::STATE& CoinBase::GetState(void) const
 {
 	return state_;
 }
 
-bool CoinBase::IsDestroy(void)
+const bool& CoinBase::IsDestroy(void) const
 {
 	return state_ == STATE::DEAD;
 }
@@ -347,14 +370,13 @@ void CoinBase::ProcessMove(void)
 
 void CoinBase::SetGoalRotate(float rotRad)
 {
-	//VECTOR cameraRot = SceneManager::GetInstance().GetCamera()->GetAngles();
 	Quaternion axis = Quaternion::AngleAxis(rotRad, MyUtility::AXIS_Y);
 
 	// 現在設定されている回転との角度差を取る
 	float angleDiff = Quaternion::Angle(axis, goalQuaRot_);
 
 	// しきい値
-	if (angleDiff > 0.1f)
+	if (angleDiff > ROTATE_ANGLE_DIFF_MIN)
 	{
 		stepRotTime_ = TIME_ROT;
 	}
@@ -419,7 +441,7 @@ void CoinBase::CollisionGravity(void)
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
 	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
 	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 
 		// 地面との衝突
@@ -452,7 +474,7 @@ void CoinBase::CollisionCapsule(void)
 	Capsule cap = Capsule(*capsule_, trans);
 
 	// カプセルとの衝突判定
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 
 		auto hits = MV1CollCheck_Capsule(

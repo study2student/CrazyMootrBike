@@ -4,11 +4,23 @@
 #include "../Common/Transform.h"
 #include "SkyDome.h"
 
-SkyDome::SkyDome(const Transform& syncTransform) : syncTransform_(syncTransform)
+#pragma region ’è”éŒ¾
+
+//‘å‚«‚³ŠÖ˜A
+const float STAGE_SCALE = 100.0f;
+const VECTOR SCALES = { STAGE_SCALE, STAGE_SCALE, STAGE_SCALE };
+
+//‰Šú‘Š‘Î‰ñ“]Y
+const float INIT_LOCAL_ROT_Y = 180.0f;
+
+#pragma endregion
+
+
+SkyDome::SkyDome(const Transform& syncTransform)
+	: 
+	syncTransform_(syncTransform),
+	state_(STATE::NONE)
 {
-
-	state_ = STATE::NONE;
-
 }
 
 SkyDome::~SkyDome(void)
@@ -26,7 +38,7 @@ void SkyDome::Init(void)
 	transform_.pos = MyUtility::VECTOR_ZERO;
 	transform_.quaRot = Quaternion::Euler(
 		0.0f, 
-		MyUtility::Deg2RadF(180.0f),
+		MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y),
 		0.0f
 	);
 	transform_.quaRotLocal = Quaternion();
