@@ -68,6 +68,30 @@
 
 	// バイクのスピード
 	const float BIKE_SPEED = 60.0f;
+
+	// タイヤの回転数(IDLE状態)
+	const float IDLE_TYRE_ROT_SPEED = 10.0f;
+
+	// タイヤの回転数(START状態)
+	const float START_TYRE_ROT_SPEED = 20.0f;
+
+	// スタート時のエフェクトの大きさ
+	const float START_EFFECT_SIZE = 50.0f;
+
+	// スタート時のエフェクトの相対位置
+	const float START_EFFECT_LOCAL_POS = 100.0f;
+
+	// スタート前の待機中エフェクトの大きさ
+	const float BURNOUT_IDLE_EFFECT_SIZE = 60.0f;
+
+	// スタート前の待機中エフェクトのZ座標の相対位置
+	const float BURNOUT_IDLE_EFFECT_LOCALPOS_Z = 80.0f;
+
+	// スタート時のバーンエフェクトの大きさ
+	const float BURNOUT_MOVE_EFFECT_SIZE = 60.0f;
+
+	// 徐々に高さを上げる
+	const float GRADUALLY_INCREASE_HEIGHT = 1.1f;
 #pragma endregion
 
 TitleScene::TitleScene(void)
@@ -111,8 +135,6 @@ void TitleScene::Init(void)
 	skyDome_ = std::make_unique<SkyDome>(spaceDomeTran_);
 	skyDome_->Init();
 
-	float size;
-
 	// メインステージ
 	mainStage_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::DEMO_STAGE));
 	mainStage_.pos = {MAINSTAGE_POS};
@@ -153,7 +175,6 @@ void TitleScene::Init(void)
 	// リアタイヤ
 	rearTyre_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::TYRE));
 	rearTyre_.pos = VAdd(bike.pos, BIKE_TO_REAR_TYRE_LOCALPOS_FOR_TITLE);
-	size = 1.7f;
 	rearTyre_.scl = { REAR_TYRE_SIZE };
 	rearTyre_.quaRot = Quaternion::Euler(
 		REAR_TYRE_ROT);
@@ -366,10 +387,10 @@ void TitleScene::BikeTyreRot(void)
 	switch (state_)
 	{
 	case TitleScene::STATE::IDLE:
-		speedRot = 10.0f;
+		speedRot = IDLE_TYRE_ROT_SPEED;
 		break;
 	case TitleScene::STATE::START:
-		speedRot = 20.0f;
+		speedRot = START_TYRE_ROT_SPEED;
 		break;
 	}
 	// デグリーからラジアン(変換)
@@ -397,30 +418,29 @@ void TitleScene::BikeTyreRot(void)
 void TitleScene::StartEffect(void)
 {
 	effectStartPlayId_ = PlayEffekseer3DEffect(effectStartResId_);
-	float scale = 50.0f;
+	float scale = START_EFFECT_SIZE;
 	SetScalePlayingEffekseer3DEffect(effectStartPlayId_, scale, scale, scale);
-	SetPosPlayingEffekseer3DEffect(effectStartPlayId_, bike.pos.x, bike.pos.y + 100.0f , bike.pos.z -100.0f);
+	SetPosPlayingEffekseer3DEffect(effectStartPlayId_, bike.pos.x, bike.pos.y + START_EFFECT_LOCAL_POS, bike.pos.z - START_EFFECT_LOCAL_POS);
 	SetRotationPlayingEffekseer3DEffect(effectStartPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
 }
 
 void TitleScene::BurnoutIdleEffect(void)
 {
 	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
-	float scale = 60.0f;
+	float scale = BURNOUT_IDLE_EFFECT_SIZE;
 	SetScalePlayingEffekseer3DEffect(effectBurnoutPlayId_, scale / 2, scale, scale);
-	float localPosZ = 80.0f;
-	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, Bike::IDLE_EFFECT_POS_Y, bike.pos.z - localPosZ);
+	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, Bike::IDLE_EFFECT_POS_Y, bike.pos.z - BURNOUT_IDLE_EFFECT_LOCALPOS_Z);
 	SetRotationPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
 }
 
 void TitleScene::BurnoutMoveEffect(void)
 {
 	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
-	float scale = 60.0f;
+	float scale = BURNOUT_MOVE_EFFECT_SIZE;
 	SetScalePlayingEffekseer3DEffect(effectBurnoutPlayId_, scale / 2, scale, scale);
 
 	//徐々に高さを上げる
-	effectBurnoutPosY_ += stepBikeDeparture_ * 1.1f;
+	effectBurnoutPosY_ += stepBikeDeparture_ * GRADUALLY_INCREASE_HEIGHT;
 	if (effectBurnoutPosY_ >= Bike::BURNOUT_EFFECT_MAX_POS_Y)
 	{
 		//高さ制限

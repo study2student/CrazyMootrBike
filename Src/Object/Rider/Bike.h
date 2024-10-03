@@ -88,7 +88,7 @@ public:
 	void ClearCollider(void);
 
 	// 衝突用カプセルの取得
-	const std::weak_ptr<Capsule> GetCapsule(void) const;
+	const std::weak_ptr<Capsule> GetCapsule(void) const { return capsule_; }
 
 	// エフェクト制御
 	void SyncBoostEffect(Transform player);
@@ -97,16 +97,16 @@ public:
 	void Damage(int damage);
 
 	// 現HP取得
-	const int& GetHP(void);
+	const int& GetHP(void)const { return hp_; }
 
 	// バイクが場外に出たか取得
-	const bool& GetIsOutSide(void);
+	const bool& GetIsOutSide(void)const { return isOutSide_; }
 
 	// バイクがゴールしたか設定
 	void SetIsGoal(bool isGoal);
 
 	// バイクがゴールしたか取得
-	const bool& GetIsGoal(void);
+	const bool& GetIsGoal(void) const { return isGoal_; }
 
 	// スコア加算
 	void AddScore(int score);
@@ -115,13 +115,13 @@ public:
 	const int GetScore(void) const;
 
 	// プレイヤーIDのゲッター
-	const int GetPlayerID(void) const;
+	const int GetPlayerID(void) const { return playerID_; }
 
 	// プレイヤー同士の当たり判定
 	void Flip(VECTOR dir);
 
 	// ブーストを使ったかどうか
-	const bool IsBoost(void);
+	const bool GetIsBoost(void)const { return isBoost_; }
 
 private:
 

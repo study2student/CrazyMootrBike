@@ -424,7 +424,7 @@ void GameScene::Draw(void)
 					CoinImgDraw(sx / 2 - coinX, coinY);
 
 					//エフェクトの再生
-					if (bikes_[0]->IsBoost())
+					if (bikes_[0]->GetIsBoost())
 					{
 						bikes_[0]->SyncBoostEffect(bikes_[0]->GetTransform());
 					}
@@ -455,7 +455,7 @@ void GameScene::Draw(void)
 					CoinImgDraw(sx - coinX, coinY);
 
 					//エフェクトの再生
-					if (bikes_[1]->IsBoost())
+					if (bikes_[1]->GetIsBoost())
 					{
 						bikes_[1]->SyncBoostEffect(bikes_[1]->GetTransform());
 					}
@@ -486,7 +486,7 @@ void GameScene::Draw(void)
 					CoinImgDraw(sx / 2 - coinX, sy / 2 + coinY);
 
 					//エフェクトの再生
-					if (bikes_[2]->IsBoost())
+					if (bikes_[2]->GetIsBoost())
 					{
 						bikes_[2]->SyncBoostEffect(bikes_[2]->GetTransform());
 					}
@@ -517,7 +517,7 @@ void GameScene::Draw(void)
 					CoinImgDraw(sx - coinX, sy / 2 + coinY);
 
 					//エフェクトの再生
-					if (bikes_[3]->IsBoost())
+					if (bikes_[3]->GetIsBoost())
 					{
 						bikes_[3]->SyncBoostEffect(bikes_[3]->GetTransform());
 					}

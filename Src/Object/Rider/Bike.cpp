@@ -221,10 +221,10 @@ void Bike::ClearCollider(void)
 	colliders_.clear();
 }
 
-const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
-{
-	return capsule_;
-}
+//const std::weak_ptr<Capsule> Bike::GetCapsule(void) const
+//{
+//	return capsule_;
+//}
 
 void Bike::Damage(int damage)
 {
@@ -239,25 +239,25 @@ void Bike::Damage(int damage)
 	}
 }
 
-const int& Bike::GetHP(void)
-{
-	return hp_;
-}
+//const int& Bike::GetHP(void)
+//{
+//	return hp_;
+//}
 
-const bool& Bike::GetIsOutSide(void)
-{
-	return isOutSide_;
-}
+//const bool& Bike::GetIsOutSide(void)
+//{
+//	return isOutSide_;
+//}
 
 void Bike::SetIsGoal(bool isGoal)
 {
 	isGoal_ = isGoal;
 }
 
-const bool& Bike::GetIsGoal(void)
-{
-	return isGoal_;
-}
+//const bool& Bike::GetIsGoal(void)
+//{
+//	return isGoal_;
+//}
 
 void Bike::AddScore(int score)
 {
@@ -269,10 +269,10 @@ const int Bike::GetScore() const
 	return score_->GetScore();
 }
 
-const int Bike::GetPlayerID(void) const
-{
-	return playerID_;
-}
+//const int Bike::GetPlayerID(void) const
+//{
+//	return playerID_;
+//}
 
 void Bike::Flip(VECTOR dir)
 {
@@ -286,10 +286,10 @@ void Bike::Flip(VECTOR dir)
 	ChangeState(STATE::FLIPED);
 }
 
-const bool Bike::IsBoost(void)
-{
-	return isBoost_;
-}
+//const bool Bike::IsBoost(void)
+//{
+//	return isBoost_;
+//}
 
 void Bike::InitAnimation(void)
 {
