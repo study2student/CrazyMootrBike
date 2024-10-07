@@ -90,6 +90,7 @@ void SilverCoin::ProcessMove(void)
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
 
+	//バイク情報取得
 	for (const auto& bike : bikes_) {
 		Transform bikeTrans_ = bike->GetTransform();
 	}
@@ -112,6 +113,7 @@ void SilverCoin::ProcessMove(void)
 			{
 				if (!gameScene_->OnePersonIsGoal())
 				{
+					//スコア加算
 					AddScoreToPlayer(bike->GetPlayerID(), 10);
 
 					// コイン収集時の音を再生
@@ -124,6 +126,7 @@ void SilverCoin::ProcessMove(void)
 				//ゴールしてないプレイヤーにだけ
 				if (!bike->GetIsGoal())
 				{
+					//スコア加算
 					AddScoreToPlayer(bike->GetPlayerID(), 10);
 
 					// コイン収集時の音を再生

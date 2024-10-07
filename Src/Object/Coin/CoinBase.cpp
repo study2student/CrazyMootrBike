@@ -37,6 +37,9 @@ const float SPEED_ROT = 7.0f;
 // 削除状態になるY座標
 const float DEAD_POS_Y = -500.0f;
 
+// エフェクト大きさ
+const float EFF_SCL = 50.0f;
+
 // エフェクト出現位置Z座標
 const int EFF_POS_Z = 500;
 
@@ -139,7 +142,7 @@ void CoinBase::Update(void)
 void CoinBase::Draw(void)
 {
 	//死亡状態は描画しない
-	if (state_ == STATE::DEAD)
+	if (IsDestroy())
 	{
 		return;
 	}
@@ -216,11 +219,9 @@ void CoinBase::HitEffect()
 {
 	effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
 
-	float scale = 50.0f;
-
 	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + EFF_POS_Z);
 	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
-	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
+	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, EFF_SCL, EFF_SCL, EFF_SCL);
 	
 }
 

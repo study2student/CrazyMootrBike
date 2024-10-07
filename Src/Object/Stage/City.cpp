@@ -52,17 +52,17 @@ void City::Destroy(void)
 	MV1DeleteModel(transform_.modelId);
 }
 
-VECTOR City::GetPos(void)
+const VECTOR& City::GetPos(void) const
 {
 	return transform_.pos;;
 }
 
-City::STATE City::GetState(void)
+const City::STATE City::GetState(void) const
 {
 	return state_;
 }
 
-bool City::IsDestroy(void)
+const bool& City::IsDestroy(void)
 {
 	return state_ == STATE::BACK;
 }

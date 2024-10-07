@@ -38,12 +38,12 @@ void Score::ScoreSetArray(int scoreSet)
 	scoreArray_.emplace_back(scoreSet);
 }
 
-const int Score::GetScore(void) const
+const int& Score::GetScore(void) const
 {
 	return scoreNum_;
 }
 
- std::vector<int> Score::GetScoreArray(void)
+const std::vector<int>& Score::GetScoreArray(void) const
 {
 	return scoreArray_;
 }

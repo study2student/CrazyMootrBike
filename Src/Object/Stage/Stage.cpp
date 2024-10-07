@@ -258,7 +258,7 @@ std::weak_ptr<Planet> Stage::GetPlanet(NAME type)
 	return planets_[type];
 }
 
-bool Stage::GetIsMakeLoopStage(void)
+const bool& Stage::GetIsMakeLoopStage(void) const
 {
 	return isMakeLoopStage_;
 }
@@ -268,19 +268,19 @@ void Stage::SetMakeLoopStage(bool value)
 	isMakeLoopStage_ = value;
 }
 
-VECTOR Stage::GetForwardLoopPos(void)
+const VECTOR& Stage::GetForwardLoopPos(void) const
 {
 	//先頭ループステージの座標を取得
 	int size = (int)loopStage_.size();
 	return loopStage_[size - 1]->GetPos();
 }
 
-int Stage::GetLoopStageSize(void)
+const int& Stage::GetLoopStageSize(void) const
 {
 	return loopStage_.size();
 }
 
-bool Stage::GetIsGoal(void)
+const bool& Stage::GetIsGoal(void) const
 {
 	return isGoal_;
 }
@@ -412,7 +412,6 @@ void Stage::MakeCity(void)
 {
 	Transform cityTrans;
 	std::shared_ptr<City> city;
-
 
 	//pos.z が最大の要素のインデックスを取得する
 	size_t posZMaxIndex = gameScene_->GetBikeMaxPosZIndex();

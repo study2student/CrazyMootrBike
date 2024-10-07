@@ -171,7 +171,6 @@ void Bomb::InitEffect(void)
 {
 	bombEffectResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::BOMB_EFFECT).handleId_;
-
 }
 
 void Bomb::BombEffect(void)
@@ -213,10 +212,6 @@ void Bomb::ChangeStateNone(void)
 void Bomb::ChangeStateIdle(void)
 {
 	isCol_ = false;
-
-	////爆発場所エフェクト
-	//bombPlaceEffectPlayId_ = PlayEffekseer3DEffect(bombPlaceEffectResId_);
-	//SyncBombPlaceEffect();
 }
 
 void Bomb::ChangeStateReserve(void)
@@ -286,7 +281,6 @@ void Bomb::UpdateBlast(void)
 	Collision();
 	transform_.Update();
 
-
 	//1.5秒後に復活
 	stepBombBlast_ += SceneManager::GetInstance().GetDeltaTime();
 
@@ -296,8 +290,6 @@ void Bomb::UpdateBlast(void)
 		ChangeState(STATE::IDLE);
 		stepBombBlast_ = 0.0f;
 	}
-
-
 }
 
 void Bomb::DrawBombPlace(void)
@@ -425,6 +417,5 @@ void Bomb::CalcGravityPow(void)
 
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
-
 
 }

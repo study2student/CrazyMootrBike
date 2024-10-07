@@ -23,9 +23,11 @@ public:
 	//4人用
 	void ScoreSetArray(int scoreSet);
 
-	const int GetScore(void) const;
+	//スコア取得(一人用)
+	const int& GetScore(void) const;
 
-	std::vector<int> GetScoreArray(void);
+	//スコア取得(四人用)
+	const std::vector<int>& GetScoreArray(void) const;
 
 	void ResetScore(void);
 

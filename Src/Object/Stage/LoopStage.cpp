@@ -54,17 +54,17 @@ void LoopStage::Destroy(void)
 	MV1DeleteModel(transform_.modelId);
 }
 
-VECTOR LoopStage::GetPos(void)
+const VECTOR& LoopStage::GetPos(void) const
 {
 	return transform_.pos;
 }
 
-LoopStage::STATE LoopStage::GetState(void)
+const LoopStage::STATE& LoopStage::GetState(void) const
 {
 	return state_;
 }
 
-bool LoopStage::IsDestroy(void)
+const bool& LoopStage::IsDestroy(void)
 {
 	return state_==STATE::BACK;
 }

@@ -27,9 +27,9 @@ public:
 	void Draw(void);
 	void Destroy(void);
 
-	VECTOR GetPos(void);
-	STATE GetState(void);
-	bool IsDestroy(void);
+ 	const VECTOR& GetPos(void) const;
+	const STATE GetState(void) const;
+	const bool& IsDestroy(void);
 
 private:
 

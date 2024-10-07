@@ -96,7 +96,6 @@ void Helicopter::Init(void)
 	bomb_ = new Bomb();
 	bomb_->Init();
 
-
 	// ƒ‚ƒfƒ‹‚ÌŠî–{İ’è
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::HELICOPTER));

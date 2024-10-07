@@ -58,18 +58,17 @@ public:
 	std::weak_ptr<Planet> GetPlanet(NAME type);
 
 	//ループ用のステージが生成されたかどうか取得
-	bool GetIsMakeLoopStage(void);
+	const bool& GetIsMakeLoopStage(void) const;
 	void SetMakeLoopStage(bool value);
 
 	//先頭のループ用ステージの座標を取得
-	VECTOR GetForwardLoopPos(void);
+	const VECTOR& GetForwardLoopPos(void) const;
 
 	//ループステージのサイズ
-	int GetLoopStageSize(void);
+	const int& GetLoopStageSize(void) const;
 
 	//ゴールしたかどうか
-	bool GetIsGoal(void);
-
+	const bool& GetIsGoal(void) const;
 
 private:
 
