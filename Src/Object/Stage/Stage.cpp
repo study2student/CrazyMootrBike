@@ -54,7 +54,7 @@ const float TO_MAKE_STAGE_ADD_POS_Z = 6000.0f;
 #pragma endregion
 
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, Spike* throwTyre, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, std::shared_ptr<Spike>& throwTyre, GameScene* gameScene)
 	: 
 	resMng_(ResourceManager::GetInstance()),
 	bikes_(bikes),

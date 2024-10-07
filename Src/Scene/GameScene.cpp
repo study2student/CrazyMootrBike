@@ -40,7 +40,6 @@ GameScene::GameScene(void)
 GameScene::~GameScene(void)
 {
 	delete coin_;
-	delete spike_;
 }
 
 void GameScene::Init(void)
@@ -75,7 +74,7 @@ void GameScene::Init(void)
 	helicopter_->Init();
 
 	//投げトゲ
-	spike_ = new Spike();
+	spike_ = std::make_shared<Spike>();
 	spike_->Init();
 
 	// ステージ
@@ -179,7 +178,6 @@ void GameScene::Update(void)
 
 	InputManager& ins = InputManager::GetInstance();
 
-
 	//ポーズメニュー
 	InputManager::JOYPAD_NO padNum[PAD_MAX];
 	for (int i = 0; i < PAD_MAX; i++)
@@ -207,7 +205,6 @@ void GameScene::Update(void)
 		}
 	}
 	
-	
 	//ポーズ中はカメラの回転をさせないために情報を渡しておく
 	SceneManager::GetInstance().GetCamera()->SetIsPause(isPause_);
 
@@ -223,17 +220,9 @@ void GameScene::Update(void)
 	{
 		GoalProcess();
 	}
-
 	
 	//1人プレイ時ゴールしたかどうかセット
 	onePersonIsGoal_ = stage_->GetIsGoal();
-
-	//// シーン遷移(デバッグ用)
-	//if (ins.IsTrgDown(KEY_INPUT_SPACE))
-	//{
-	//	SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
-	//}
-
 
 	// スタート時のカウントダウンを減らす
 	if (startCount_ > 0.0f)

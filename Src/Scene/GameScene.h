@@ -146,7 +146,7 @@ private:
 	std::vector<std::unique_ptr<SkyDome>> skyDomes_;
 
 	//トゲ
-	Spike* spike_;
+	std::shared_ptr<Spike> spike_;
 
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;

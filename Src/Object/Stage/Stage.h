@@ -42,7 +42,7 @@ public:
 	};
 
 	// コンストラクタ
-	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, Spike* throwTyre, GameScene* gameScene);
+	Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bomb* bomb, std::shared_ptr<Spike>& throwTyre, GameScene* gameScene);
 
 	// デストラクタ
 	~Stage(void);
@@ -83,7 +83,7 @@ private:
 
 	CoinBase* coin_;
 	Bomb* bomb_;
-	Spike* spike_;
+	std::shared_ptr<Spike> spike_;
 	std::deque<std::shared_ptr<City>> city_;
 
 	//ゴール
