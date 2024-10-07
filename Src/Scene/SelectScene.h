@@ -17,35 +17,6 @@ public:
 		FOUR_PERSON		//4人で
 	};
 
-	//1人でボタンの横の長さ
-	static constexpr int ONE_PERSON_FONT_LENGTH = 400;
-
-	//1人でボタンの高さ
-	static constexpr int ONE_PERSON_FONT_HEIGHT = 392;
-
-	//4人でボタンの横の長さ
-	static constexpr int FOUR_PERSON_FONT_LENGTH = 400;
-
-	//4人でボタンの高さ
-	static constexpr int FOUR_PERSON_FONT_HEIGHT = 360;
-
-	//ひとりプレイ選択画像最大サイズ
-	static constexpr float SELECT_IMG_MAX_SCALE = 1.2f;
-
-	//ひとりプレイ選択画像最小サイズ
-	static constexpr float SELECT_IMG_MIN_SCALE = 1.0f;
-
-	//四人プレイ選択画像最大サイズ
-	static constexpr float SELECT_FOUR_IMG_MAX_SCALE = 1.2f;
-
-	//四人プレイ選択画像最小サイズ
-	static constexpr float SELECT_FOUR_IMG_MIN_SCALE = 1.0f;
-
-	//選択画像大きさ変化量
-	static constexpr float SELECT_IMG_CHANGE_SCALE = 0.006f;
-
-	//選択肢数
-	static constexpr int SELECT_MAX_NUM = 2;
 
 	// コンストラクタ
 	SelectScene(void);
