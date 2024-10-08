@@ -67,8 +67,14 @@ const Vector2 DEAD_FONT_POS_P4 = { 1300,700 };
 //€–S•¶š‘å‚«‚³
 const double DEAD_FONT_EXRATE = 6;
 
-//€–S•¶š‘å‚«‚³
+//€–S•¶š
 const std::string DEAD_FONT = "DEAD";
+
+//€–S”wŒiF
+const unsigned int DEAD_BACK_BOX_COLOR = GetColor(0, 0, 0);
+
+//€–S•¶šF
+const unsigned int DEAD_FONT_COLOR = GetColor(255, 0, 0);
 
 #pragma endregion
 
@@ -1410,14 +1416,13 @@ void GameScene::GoalAfterDraw(int playNum, Vector2 drawPos)
 
 void GameScene::DeadAfterDraw(Vector2 drawPos, Vector2 boxMinPos, Vector2 boxMaxPos)
 {
-	//•‚¢”wŒi
-	DrawBox(boxMinPos.x, boxMinPos.y, boxMaxPos.x, boxMaxPos.y, 0x000000, true);
 
-	//€–S•¶šF
-	int deadFontColor_ = GetColor(255, 0, 0);
+	//•‚¢”wŒi
+	DrawBox(boxMinPos.x, boxMinPos.y, boxMaxPos.x, boxMaxPos.y, DEAD_BACK_BOX_COLOR, true);
 
 	//€–S•¶š
-	DrawExtendFormatString(drawPos.x, drawPos.y, DEAD_FONT_EXRATE, DEAD_FONT_EXRATE, deadFontColor_, DEAD_FONT.c_str());
+	DrawExtendFormatString(drawPos.x, drawPos.y, DEAD_FONT_EXRATE, DEAD_FONT_EXRATE, DEAD_FONT_COLOR, DEAD_FONT.c_str());
+
 }
 
 void GameScene::CoinImgDraw(int x, int y)
