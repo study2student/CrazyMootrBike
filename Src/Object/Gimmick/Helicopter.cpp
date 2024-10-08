@@ -37,8 +37,14 @@ const float SCL = 5.0f;
 // 初期座標
 const VECTOR INIT_POS = { 1670.0f, 500.0f, 0.0f };
 
-// 初期ローカルY回転
-const float INIT_LOCAL_ROT_Y = 180.0f;
+// 初期大きさ
+const VECTOR INIT_SCL = { 5.0f,5.0f,5.0f };
+
+// 初期回転
+const VECTOR INIT_ROT = { 0.0f, 0.0f, 0.0f };
+
+// 初期ローカル回転
+const VECTOR INIT_LOCAL_ROT = { 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f };
 
 //カプセルローカル座標上
 const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 190.0f, -60.0f };
@@ -65,61 +71,30 @@ Helicopter::Helicopter(GameScene* gameScene)
 	state_(STATE::NONE),
 	attackState_(),
 	speed_(0.0f),
-	moveDir_({}),
-	movePow_({}),
-	movedPos_({}),
-	rotY_(Quaternion()),
-	goalQuaRot_(Quaternion()),
-	stepRotTime_(0.0f),
-	colliders_({}),
-	capsule_(nullptr),
-	gravHitPosDown_({}),
-	gravHitPosUp_({}),
+	moveDir_({}),	
 	hp_(-1),
 	isAttack_(false)
 {
+	//位置回転大きさ
+	initScl_ = INIT_SCL;
+	initRotEuler_ = INIT_ROT;
+	initLocalRotEuler_ = INIT_LOCAL_ROT;
+	initPos_ = INIT_POS;
+
+	//カプセル
+	capsulePosTop_ = CAPSULE_LOCAL_POS_TOP;
+	capsulePosDown_ = CAPSULE_LOCAL_POS_DOWN;
+	capsuleRadius_ = CAPSULE_RADIUS;
+
+	//回転
+	rotY_ = Quaternion();
+	goalQuaRot_ = Quaternion();
+	stepRotTime_ = 0.0f;
 }
 
 Helicopter::~Helicopter(void)
 {
 	delete rotor_;
-}
-
-void Helicopter::Init(void)
-{
-	//羽
-	rotor_ = new Rotor();
-	rotor_->Init();
-
-	//爆弾
-	//bomb_ = std::make_shared<Bomb>();
-	bomb_ = new Bomb();
-	bomb_->Init();
-
-	// モデルの基本設定
-	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::HELICOPTER));
-	transform_.scl = { SCL, SCL, SCL };
-	transform_.pos = INIT_POS;
-	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
-
-	// カプセルコライダ
-	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
-	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
-	capsule_->SetRadius(CAPSULE_RADIUS);
-
-	// 体力
-	hp_ = MAX_HP;
-
-	//スピード
-	speed_ = SPEED_MOVE;
-
-	// 初期状態
-	ChangeState(STATE::MOVE);
-
 }
 
 void Helicopter::Update(void)
@@ -155,21 +130,6 @@ void Helicopter::Draw(void)
 
 	//爆弾
 	bomb_->Draw();
-}
-
-void Helicopter::AddCollider(std::shared_ptr<Collider> collider)
-{
-	colliders_.push_back(collider);
-}
-
-void Helicopter::ClearCollider(void)
-{
-	colliders_.clear();
-}
-
-const std::weak_ptr<Capsule> Helicopter::GetCapsule(void) const
-{
-	return capsule_;
 }
 
 void Helicopter::SetBikeIsOutside(const bool& isOutside)
@@ -415,67 +375,6 @@ void Helicopter::Rotate(void)
 		rotY_, goalQuaRot_, (TIME_ROT - stepRotTime_) / TIME_ROT);
 }
 
-void Helicopter::Collision(void)
-{
-	// 現在座標を起点に移動後座標を決める
-	movedPos_ = VAdd(transform_.pos, movePow_);
-
-	// 衝突(カプセル)
-	CollisionCapsule();
-
-	// 移動
-	transform_.pos = movedPos_;
-}
-
-void Helicopter::CollisionCapsule(void)
-{
-	// カプセルを移動させる
-	Transform trans = Transform(transform_);
-	trans.pos = movedPos_;
-	trans.Update();
-	Capsule cap = Capsule(*capsule_, trans);
-
-	// カプセルとの衝突判定
-	for (const auto& c : colliders_)
-	{
-		auto hits = MV1CollCheck_Capsule(
-			c->modelId_, -1,
-			cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius());
-
-		for (int i = 0; i < hits.HitNum; i++)
-		{
-
-			auto hit = hits.Dim[i];
-
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
-			{
-
-				int pHit = HitCheck_Capsule_Triangle(
-					cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius(),
-					hit.Position[0], hit.Position[1], hit.Position[2]);
-
-				if (pHit)
-				{
-					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
-					// カプセルを移動させる
-					trans.pos = movedPos_;
-					trans.Update();
-					continue;
-				}
-
-				break;
-
-			}
-
-		}
-
-		// 検出した地面ポリゴン情報の後始末
-		MV1CollResultPolyDimTerminate(hits);
-
-	}
-
-}
-
 void Helicopter::CalcGravityPow(void)
 {
 	// 重力方向
@@ -538,5 +437,31 @@ void Helicopter::BikeDisFunc(void)
 	default:
 		break;
 	}
+}
+
+void Helicopter::InitLoad(void)
+{
+	//羽
+	rotor_ = new Rotor();
+	rotor_->Init();
+
+	//爆弾
+	bomb_ = new Bomb();
+	bomb_->Init();
+
+	//モデルの読み込み
+	transform_.modelId = MV1DuplicateModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::HELICOPTER));
+}
+
+void Helicopter::InitPost(void)
+{
+	// 体力
+	hp_ = MAX_HP;
+
+	//スピード
+	speed_ = SPEED_MOVE;
+
+	// 初期状態
+	ChangeState(STATE::MOVE);
 }
 

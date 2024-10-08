@@ -22,14 +22,17 @@ const float SPEED_ROT = 20.0f;
 // HPの最大値
 const int MAX_HP = 100;
 
-//羽の大きさ
-const float SCL = 5.0f;
-
-//初期座標
+// 初期座標
 const VECTOR INIT_POS = { 1670.0f, 500.0f, 0.0f };
 
-// 初期ローカルY回転
-const float INIT_LOCAL_ROT_Y = 180.0f;
+// 初期大きさ
+const VECTOR INIT_SCL = { 5.0f,5.0f,5.0f };
+
+// 初期回転
+const VECTOR INIT_ROT = { 0.0f, 0.0f, 0.0f };
+
+// 初期ローカル回転
+const VECTOR INIT_LOCAL_ROT = { 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f };
 
 //カプセルローカル座標上
 const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 190.0f, -60.0f };
@@ -53,48 +56,27 @@ Rotor::Rotor()
 	:
 	transformParent_(Transform()),
 	state_(STATE::NONE),
-	movePow_({}),
-	movedPos_({}),
-	rotY_(Quaternion()),
-	goalQuaRot_(Quaternion()),
-	stepRotTime_(0.0f),
-	colliders_({}),
-	capsule_(nullptr),
-	gravHitPosDown_({}),
-	gravHitPosUp_({}),
 	hp_(-1)
 {
+	//位置回転大きさ
+	initScl_ = INIT_SCL;
+	initRotEuler_ = INIT_ROT;
+	initLocalRotEuler_ = INIT_LOCAL_ROT;
+	initPos_ = INIT_POS;
+
+	//カプセル
+	capsulePosTop_ = CAPSULE_LOCAL_POS_TOP;
+	capsulePosDown_ = CAPSULE_LOCAL_POS_DOWN;
+	capsuleRadius_ = CAPSULE_RADIUS;
+
+	//回転
+	rotY_ = Quaternion();
+	goalQuaRot_ = Quaternion();
+	stepRotTime_ = 0.0f;
 }
 
 Rotor::~Rotor(void)
 {
-	delete capsule_;
-}
-
-void Rotor::Init(void)
-{
-
-	// モデルの基本設定
-	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::HELICOPTER_ROTOR));
-	transform_.scl = { SCL, SCL, SCL };
-	transform_.pos = INIT_POS;
-	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
-
-	// カプセルコライダ
-	capsule_ = new Capsule(transform_);
-	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
-	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
-	capsule_->SetRadius(CAPSULE_RADIUS);
-
-	// 体力
-	hp_ = MAX_HP;
-
-	// 初期状態
-	ChangeState(STATE::PLAY);
-
 }
 
 void Rotor::Update(void)
@@ -121,21 +103,6 @@ void Rotor::Draw(void)
 
 	// デバッグ描画
 	DrawDebug();
-}
-
-void Rotor::AddCollider(Collider* collider)
-{
-	colliders_.push_back(collider);
-}
-
-void Rotor::ClearCollider(void)
-{
-	colliders_.clear();
-}
-
-const Capsule* Rotor::GetCapsule(void) const
-{
-	return capsule_;
 }
 
 void Rotor::SetTransform(Transform& transformParent)
@@ -255,69 +222,6 @@ void Rotor::SetGoalRotateZ(float rotRad)
 	goalQuaRot_ = axis;
 }
 
-
-void Rotor::Collision(void)
-{
-	// 現在座標を起点に移動後座標を決める
-	movedPos_ = VAdd(transform_.pos, movePow_);
-
-	// 衝突(カプセル)
-	CollisionCapsule();
-
-	// 移動
-	transform_.pos = movedPos_;
-}
-
-void Rotor::CollisionCapsule(void)
-{
-	// カプセルを移動させる
-	Transform trans = Transform(transform_);
-	trans.pos = movedPos_;
-	trans.Update();
-	Capsule cap = Capsule(*capsule_, trans);
-
-	// カプセルとの衝突判定
-	for (const auto c : colliders_)
-	{
-
-		auto hits = MV1CollCheck_Capsule(
-			c->modelId_, -1,
-			cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius());
-
-		for (int i = 0; i < hits.HitNum; i++)
-		{
-
-			auto hit = hits.Dim[i];
-
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
-			{
-
-				int pHit = HitCheck_Capsule_Triangle(
-					cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius(),
-					hit.Position[0], hit.Position[1], hit.Position[2]);
-
-				if (pHit)
-				{
-					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
-					// カプセルを移動させる
-					trans.pos = movedPos_;
-					trans.Update();
-					continue;
-				}
-
-				break;
-
-			}
-
-		}
-
-		// 検出した地面ポリゴン情報の後始末
-		MV1CollResultPolyDimTerminate(hits);
-
-	}
-
-}
-
 void Rotor::CalcGravityPow(void)
 {
 	// 重力方向
@@ -329,6 +233,21 @@ void Rotor::CalcGravityPow(void)
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 
+}
+
+void Rotor::InitLoad(void)
+{
+	// モデルの基本設定
+	transform_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::HELICOPTER_ROTOR));
+}
+
+void Rotor::InitPost(void)
+{
+	// 体力
+	hp_ = MAX_HP;
+
+	// 初期状態
+	ChangeState(STATE::PLAY);
 }
 
 

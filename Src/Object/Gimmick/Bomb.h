@@ -2,12 +2,13 @@
 #include <map>
 #include "../Common/Transform.h"
 #include "../ActorBase.h"
+#include "GimmickBase.h"
 class Player;
 class Collider;
 class Capsule;
 class Helicopter;
 
-class Bomb : public ActorBase
+class Bomb : public GimmickBase
 {
 
 public:
@@ -30,16 +31,8 @@ public:
 	// デストラクタ
 	~Bomb(void);
 
-	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
-
-	// 衝突判定に用いられるコライダ制御
-	void AddCollider(std::shared_ptr<Collider> collider);
-	void ClearCollider(void);
-
-	// 衝突用カプセルの取得
-	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
 	//ヘリの情報設定用
 	void SetHeliTrans(const Transform& heliTrans);
@@ -77,27 +70,14 @@ private:
 	//爆発目標
 	VECTOR bombTargetPos_;
 
-	// 移動後の座標
-	VECTOR movedPos_;
-
-	// 移動量
-	VECTOR movePow_;
-
 	//爆弾が何かに当たったか
 	bool isCol_;
 
-	// 衝突判定に用いられるコライダ
-	std::vector<std::shared_ptr<Collider>> colliders_;
-	std::shared_ptr<Capsule> capsule_;
+	//エフェクト読み込み
+	void InitEffectLoad(void);
 
-	// 衝突チェック
-	VECTOR gravHitPosDown_;
-	VECTOR gravHitPosUp_;
-
-	//爆発エフェクト
-	void InitEffect(void);
-	void BombEffect(void);
-
+	//爆発エフェクト再生
+	void PlayBombEffect(void);
 
 	// 状態遷移
 	void ChangeState(STATE state);
@@ -115,13 +95,14 @@ private:
 	//爆弾の位置
 	void DrawBombPlace(void);
 
-	// 衝突判定
-	void Collision(void);
-	void CollisionGravity(void);
-	void CollisionCapsule(void);
-
 	// 移動量の計算
 	void CalcGravityPow(void);
+
+	// 初期化(外部読み込み)
+	void InitLoad(void) override;
+
+	// 初期化(事後処理)
+	void InitPost(void) override;
 
 };
 

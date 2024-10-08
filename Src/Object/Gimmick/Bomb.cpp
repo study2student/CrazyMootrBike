@@ -35,11 +35,14 @@ const float EFFECT_SCL = 30.0f;
 // スピード
 const float SPEED = 30.0f;
 
-//大きさ
-const float SCL = 0.15f;
+// 初期大きさ
+const VECTOR INIT_SCL = { 0.15f,0.15f,0.15f };
 
-//初期相対回転Y
-const float INIT_LOCAL_ROT_Y = 180.0f;
+// 初期回転
+const VECTOR INIT_ROT = { 0.0f, 0.0f, 0.0f };
+
+// 初期ローカル回転
+const VECTOR INIT_LOCAL_ROT = { 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f };
 
 #pragma endregion
 
@@ -54,42 +57,23 @@ Bomb::Bomb()
 	isCol_(false),
 	bombEffectResId_(-1),
 	bombEffectPlayId_(-1),
-	bombTargetPos_({}),
-	colliders_({}),
-	capsule_(nullptr),
-	gravHitPosDown_({}),
-	gravHitPosUp_({}),
-	movedPos_({}),
-	movePow_({})
+	bombTargetPos_({})
 {
+	//位置回転大きさ
+	initScl_ = INIT_SCL;
+	initRotEuler_ = INIT_ROT;
+	initLocalRotEuler_ = INIT_LOCAL_ROT;
+  	initPos_ = heliTrans_.pos;
+
+	//カプセル
+	capsulePosTop_ = CAPSULE_LOCAL_POS_TOP;
+	capsulePosDown_ = CAPSULE_LOCAL_POS_DOWN;
+	capsuleRadius_ = CAPSULE_RADIUS;
 }
 
 Bomb::~Bomb(void)
 {
 	StopEffekseer3DEffect(bombEffectPlayId_);
-}
-
-void Bomb::Init(void)
-{
-	transform_.modelId = MV1DuplicateModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BOMB));
-	transform_.scl = { SCL, SCL, SCL };
-	//ヘリに乗せとく
-	transform_.pos = heliTrans_.pos;
-	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
-	transform_.Update();
-
-	//爆発エフェクト
-	InitEffect();
-
-	// カプセルコライダ
-	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
-	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
-	capsule_->SetRadius(CAPSULE_RADIUS);
-
-	ChangeState(STATE::IDLE);
 }
 
 void Bomb::Update(void)
@@ -132,21 +116,6 @@ void Bomb::Draw(void)
 
 }
 
-void Bomb::AddCollider(std::shared_ptr<Collider> collider)
-{
-	colliders_.push_back(collider);
-}
-
-void Bomb::ClearCollider(void)
-{
-	colliders_.clear();
-}
-
-const std::weak_ptr<Capsule> Bomb::GetCapsule(void) const
-{
-	return capsule_;
-}
-
 void Bomb::SetHeliTrans(const Transform& heliTrans)
 {
 	heliTrans_ = heliTrans;
@@ -167,13 +136,13 @@ const Bomb::STATE& Bomb::GetState(void) const
 	return state_;
 }
 
-void Bomb::InitEffect(void)
+void Bomb::InitEffectLoad(void)
 {
 	bombEffectResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::BOMB_EFFECT).handleId_;
 }
 
-void Bomb::BombEffect(void)
+void Bomb::PlayBombEffect(void)
 {
 	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
 
@@ -221,7 +190,7 @@ void Bomb::ChangeStateReserve(void)
 void Bomb::ChangeStateBlast(void)
 {
 	//爆発エフェクト
-	BombEffect();
+	PlayBombEffect();
 }
 
 void Bomb::UpdateNone(void)
@@ -306,107 +275,6 @@ void Bomb::DrawBombPlace(void)
 	transform_.Update();
 }
 
-void Bomb::Collision(void)
-{
-	// 現在座標を起点に移動後座標を決める
-	movedPos_ = VAdd(transform_.pos, movePow_);
-
-	// 衝突(カプセル)
-	CollisionCapsule();
-
-	// 衝突(重力)
-	CollisionGravity();
-
-	// 移動
-	transform_.pos = movedPos_;
-}
-
-void Bomb::CollisionGravity(void)
-{
-
-	// 重力方向
-	VECTOR dirGravity = MyUtility::DIR_D;
-
-	// 重力方向の反対
-	VECTOR dirUpGravity = MyUtility::DIR_U;
-
-	// 重力の強さ
-	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
-
-	float checkPow = 10.0f;
-	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
-	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	for (const auto& c : colliders_)
-	{
-
-		// 地面との衝突
-		auto hit = MV1CollCheck_Line(
-			c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
-
-		// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
-		if (hit.HitFlag > 0)
-		{
-
-			// 衝突地点から、少し上に移動
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
-
-
-		}
-
-	}
-}
-
-void Bomb::CollisionCapsule(void)
-{
-	// カプセルを移動させる
-	Transform trans = Transform(transform_);
-	trans.pos = movedPos_;
-	trans.Update();
-	Capsule cap = Capsule(*capsule_, trans);
-
-	// カプセルとの衝突判定
-	for (const auto& c : colliders_)
-	{
-
-		auto hits = MV1CollCheck_Capsule(
-			c->modelId_, -1,
-			cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius());
-
-		for (int i = 0; i < hits.HitNum; i++)
-		{
-
-			auto hit = hits.Dim[i];
-
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
-			{
-
-				int pHit = HitCheck_Capsule_Triangle(
-					cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius(),
-					hit.Position[0], hit.Position[1], hit.Position[2]);
-
-				if (pHit)
-				{
-					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
-					// カプセルを移動させる
-					trans.pos = movedPos_;
-					trans.Update();
-					continue;
-				}
-
-				break;
-
-			}
-
-		}
-
-		// 検出した地面ポリゴン情報の後始末
-		MV1CollResultPolyDimTerminate(hits);
-
-	}
-
-}
-
 void Bomb::CalcGravityPow(void)
 {
 	// 重力方向
@@ -418,4 +286,19 @@ void Bomb::CalcGravityPow(void)
 	// 重力
 	VECTOR gravity = VScale(dirGravity, gravityPow);
 
+}
+
+void Bomb::InitLoad(void)
+{
+	//モデル読み込み
+	transform_.modelId = MV1DuplicateModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BOMB));
+
+	//爆発エフェクト読み込み
+	InitEffectLoad();
+}
+
+void Bomb::InitPost(void)
+{
+	//待機状態
+	ChangeState(STATE::IDLE);
 }

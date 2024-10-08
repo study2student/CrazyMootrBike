@@ -1,13 +1,13 @@
 #pragma once
 #include <map>
 #include <DxLib.h>
-#include "../ActorBase.h"
+#include "GimmickBase.h"
 #include <vector>
 class AnimationController;
 class Collider;
 class Capsule;
 
-class Rotor : public ActorBase
+class Rotor : public GimmickBase
 {
 
 public:
@@ -40,16 +40,8 @@ public:
 	// デストラクタ
 	~Rotor(void);
 
-	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
-
-	// 衝突判定に用いられるコライダ制御
-	void AddCollider(Collider* collider);
-	void ClearCollider(void);
-
-	// 衝突用カプセルの取得
-	const Capsule* GetCapsule(void) const;
 
 	//親ヘリコプターの情報設定
 	void SetTransform(Transform& transformParent);
@@ -60,25 +52,6 @@ private:
 
 	// 状態管理
 	STATE state_;
-
-	// 移動量
-	VECTOR movePow_;
-
-	// 移動後の座標
-	VECTOR movedPos_;
-
-	// 回転
-	Quaternion rotY_;
-	Quaternion goalQuaRot_;
-	float stepRotTime_;
-
-	// 衝突判定に用いられるコライダ
-	std::vector<Collider*> colliders_;
-	Capsule* capsule_;
-
-	// 衝突チェック
-	VECTOR gravHitPosDown_;
-	VECTOR gravHitPosUp_;
 
 	// 体力
 	int hp_;
@@ -103,12 +76,14 @@ private:
 	void SetGoalRotate(float rotRad);
 	void SetGoalRotateZ(float rotRad);
 
-	// 衝突判定
-	void Collision(void);
-	void CollisionCapsule(void);
-
 	// 移動量の計算
 	void CalcGravityPow(void);
+
+	// 初期化(外部読み込み)
+	void InitLoad(void) override;
+
+	// 初期化(事後処理)
+	void InitPost(void) override;
 
 };
 

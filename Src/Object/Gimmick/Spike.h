@@ -1,12 +1,12 @@
 #pragma once
 #include <map>
-#include "../ActorBase.h"
+#include "GimmickBase.h"
 #include <vector>
 class AnimationController;
 class Collider;
 class Capsule;
 
-class Spike : public ActorBase
+class Spike : public GimmickBase
 {
 public:
 
@@ -46,19 +46,11 @@ public:
 	// デストラクタ
 	~Spike(void);
 
-	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
 
 	//バイクの情報設定
 	void SetTransform(Transform transformTarget);
-
-	// 衝突判定に用いられるコライダ制御
-	void AddCollider(std::shared_ptr<Collider> collider);
-	void ClearCollider(void);
-
-	// 衝突用カプセルの取得
-	const std::weak_ptr<Capsule> GetCapsule(void) const;
 
 	//何かに当たったか設定
 	void SetIsCol(bool isCol);
@@ -83,12 +75,6 @@ private:
 	//ターゲットに向けた向き保存用
 	VECTOR targetDirSave_;
 
-	// 移動量
-	VECTOR movePow_;
-
-	// 移動後の座標
-	VECTOR movedPos_;
-
 	// 回転
 	Quaternion rotX_;
 
@@ -104,14 +90,6 @@ private:
 	//とげが消えてからどのくらい時間経過したか
 	float stepSpikeDestroy_;
 
-	// 衝突判定に用いられるコライダ
-	std::vector<std::shared_ptr<Collider>> colliders_;
-	std::shared_ptr<Capsule> capsule_;
-
-	// 衝突チェック
-	VECTOR gravHitPosDown_;
-	VECTOR gravHitPosUp_;
-
 	// 発生エフェクト
 	int makeEffectResId_;
 	int makeEffectPlayId_;
@@ -124,8 +102,8 @@ private:
 	void InitEffect(void);
 
 	// エフェクト
-	void MakeEffect(void);
-	void BombEffect(void);
+	void PlayMakeEffect(void);
+	void PlayBombEffect(void);
 
 	// 状態遷移
 	void ChangeState(STATE state);
@@ -141,8 +119,9 @@ private:
 	// 回転
 	void Rotate(void);
 
-	// 衝突判定
-	void Collision(void);
-	void CollisionGravity(void);
-	void CollisionCapsule(void);
+	// 初期化(外部読み込み)
+	void InitLoad(void) override;
+
+	// 初期化(事後処理)
+	void InitPost(void) override;
 };

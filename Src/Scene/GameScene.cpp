@@ -851,9 +851,9 @@ void GameScene::Collision(void)
 				//”š’e
 				auto bombCap = helicopter_->GetBomb()->GetCapsule();
 
-				VECTOR diffB = VSub(bombCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+				VECTOR diffB = VSub(bombCap.GetCenter(), bikeCap.lock()->GetCenter());
 				float  disB = MyUtility::SqrMagnitudeF(diffB);
-				if (disB < bombCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+				if (disB < bombCap.GetRadius() * bikeCap.lock()->GetRadius())
 				{
 					if (playNumber_ == 1)
 					{
@@ -903,9 +903,9 @@ void GameScene::Collision(void)
 			//“Š‚°ƒ‚ƒm
 			auto throwCap = spike_->GetCapsule();
 
-			VECTOR diffT = VSub(throwCap.lock()->GetCenter(), bikeCap.lock()->GetCenter());
+			VECTOR diffT = VSub(throwCap.GetCenter(), bikeCap.lock()->GetCenter());
 			float  disT = MyUtility::SqrMagnitudeF(diffT);
-			if (disT < throwCap.lock()->GetRadius() * bikeCap.lock()->GetRadius())
+			if (disT < throwCap.GetRadius() * bikeCap.lock()->GetRadius())
 			{
 				if (playNumber_ == 1)
 				{

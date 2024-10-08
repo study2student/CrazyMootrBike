@@ -57,11 +57,17 @@ const float MAKE_LEFT_POS_X = 909.0f;
 //ローカル待機座標
 const VECTOR SPIKE_IDLE_ROCAL_POS = { 0.0f,100.0f,15000.0f };
 
-//とげの大きさ
-const float SCL = 120.0f;
-
 //初期座標
 const VECTOR INIT_POS = { 1500.0f, 1000.0f, 3000.0f };
+
+// 初期大きさ
+const VECTOR INIT_SCL = { 120.0f,120.0f,120.0f };
+
+// 初期回転
+const VECTOR INIT_ROT = { 0.0f, 0.0f, 0.0f };
+
+// 初期ローカル回転
+const VECTOR INIT_LOCAL_ROT = { 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f };
 
 //カプセルローカル座標上
 const VECTOR CAPSULE_LOCAL_POS_TOP = { 0.0f, 30.0f, 0.0f };
@@ -90,51 +96,35 @@ Spike::Spike()
 	state_(STATE::IDLE),
 	targetDir_({}),
 	targetDirSave_({}),
-	movePow_({}),
-	movedPos_({}),
 	rotX_(Quaternion()),
 	isCol_(false),
 	stepPlaceDrawTime_(0.0f),
 	stepToDeleteTime_(0.0f),
 	stepSpikeDestroy_(0.0f),
-	colliders_({}),
-	capsule_(nullptr),
-	gravHitPosDown_({}),
-	gravHitPosUp_({}),
 	makeEffectResId_(-1),
 	makeEffectPlayId_(-1),
 	bombEffectResId_(-1),
 	bombEffectPlayId_(-1)
 {
+	//位置回転大きさ
+	initScl_ = INIT_SCL;
+	initRotEuler_ = INIT_ROT;
+	initLocalRotEuler_ = INIT_LOCAL_ROT;
+	initPos_ = INIT_POS;
+
+	//カプセル
+	capsulePosTop_ = CAPSULE_LOCAL_POS_TOP;
+	capsulePosDown_ = CAPSULE_LOCAL_POS_DOWN;
+	capsuleRadius_ = CAPSULE_RADIUS;
+
+	//回転
+	rotY_ = Quaternion();
+	goalQuaRot_ = Quaternion();
+	stepRotTime_ = 0.0f;
 }
 
 Spike::~Spike(void)
 {
-}
-
-void Spike::Init(void)
-{
-	// モデルの基本設定
-	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::SPIKE_BALL));
-	transform_.scl = { SCL , SCL, SCL };
-	transform_.pos = INIT_POS;
-	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f });
-	transform_.Update();
-
-	// カプセルコライダ
-	capsule_ = std::make_shared<Capsule>(transform_);
-	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
-	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
-	capsule_->SetRadius(CAPSULE_RADIUS);
-
-	//エフェクト
-	InitEffect();
-
-	// 初期状態
-	ChangeState(STATE::DESTROY);
 }
 
 void Spike::Update(void)
@@ -174,21 +164,6 @@ void Spike::SetTransform(Transform transformTarget)
 	transformTarget_ = transformTarget;
 }
 
-void Spike::AddCollider(std::shared_ptr<Collider> collider)
-{
-	colliders_.push_back(collider);
-}
-
-void Spike::ClearCollider(void)
-{
-	colliders_.clear();
-}
-
-const std::weak_ptr<Capsule> Spike::GetCapsule(void) const
-{
-	return capsule_;
-}
-
 void Spike::SetIsCol(bool isCol)
 {
 	isCol_ = isCol;
@@ -213,7 +188,7 @@ void Spike::InitEffect(void)
 		ResourceManager::SRC::BOMB_EFFECT).handleId_;
 }
 
-void Spike::MakeEffect(void)
+void Spike::PlayMakeEffect(void)
 {
 	makeEffectPlayId_ = PlayEffekseer3DEffect(makeEffectResId_);
 	SetScalePlayingEffekseer3DEffect(makeEffectPlayId_, MAKE_EFFECT_SCL, MAKE_EFFECT_SCL, MAKE_EFFECT_SCL);
@@ -222,7 +197,7 @@ void Spike::MakeEffect(void)
 	SetRotationPlayingEffekseer3DEffect(makeEffectPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 }
 
-void Spike::BombEffect(void)
+void Spike::PlayBombEffect(void)
 {
 	bombEffectPlayId_ = PlayEffekseer3DEffect(bombEffectResId_);
 
@@ -277,7 +252,7 @@ void Spike::ChangeStateThrow(void)
 	}
 
 	//発生エフェクト
-	MakeEffect();
+	PlayMakeEffect();
 
 	//ランダムな3パターンの動作
 	int randAngle = GetRand(static_cast<int>(Spike::ANGLE::MAX) - 1);
@@ -334,7 +309,7 @@ void Spike::ChangeStateThrow(void)
 void Spike::ChangeStateDestroy(void)
 {
 	//爆発エフェクト
-	BombEffect();
+	PlayBombEffect();
 }
 
 void Spike::UpdateIdle(void)
@@ -425,99 +400,17 @@ void Spike::Rotate(void)
 	transform_.Update();
 }
 
-void Spike::Collision(void)
+void Spike::InitLoad(void)
 {
-	// 現在座標を起点に移動後座標を決める
-	movedPos_ = VAdd(transform_.pos, movePow_);
+	// モデルの基本設定
+	transform_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::SPIKE_BALL));
 
-	// 衝突(カプセル)
-	CollisionCapsule();
-
-	// 衝突(重力)
-	CollisionGravity();
-
-	// 移動
-	transform_.pos = movedPos_;
+	//エフェクト読み込み
+	InitEffect();
 }
 
-void Spike::CollisionGravity(void)
+void Spike::InitPost(void)
 {
-	// 重力方向
-	VECTOR dirGravity = MyUtility::DIR_D;
-
-	// 重力方向の反対
-	VECTOR dirUpGravity = MyUtility::DIR_U;
-
-	// 重力の強さ
-	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
-
-	float checkPow = 10.0f;
-	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
-	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	for (const auto& c : colliders_)
-	{
-
-		// 地面との衝突
-		auto hit = MV1CollCheck_Line(
-			c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
-
-		if (hit.HitFlag > 0)
-		{
-			// 衝突地点から、少し上に移動
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
-		}
-
-	}
-}
-
-void Spike::CollisionCapsule(void)
-{
-	// カプセルを移動させる
-	Transform trans = Transform(transform_);
-	trans.pos = movedPos_;
-	trans.Update();
-	Capsule cap = Capsule(*capsule_, trans);
-
-	// カプセルとの衝突判定
-	for (const auto& c : colliders_)
-	{
-
-		auto hits = MV1CollCheck_Capsule(
-			c->modelId_, -1,
-			cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius());
-
-		for (int i = 0; i < hits.HitNum; i++)
-		{
-
-			auto hit = hits.Dim[i];
-
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
-			{
-
-				int pHit = HitCheck_Capsule_Triangle(
-					cap.GetPosTop(), cap.GetPosDown(), cap.GetRadius(),
-					hit.Position[0], hit.Position[1], hit.Position[2]);
-
-				if (pHit)
-				{
-					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
-
-					
-					// カプセルを移動させる
-					trans.pos = movedPos_;
-					trans.Update();
-					continue;
-				}
-
-				break;
-
-			}
-
-		}
-
-		// 検出した地面ポリゴン情報の後始末
-		MV1CollResultPolyDimTerminate(hits);
-
-	}
+	// 初期状態
+	ChangeState(STATE::DESTROY);
 }
