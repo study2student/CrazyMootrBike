@@ -286,8 +286,6 @@ void GameScene::Update(void)
 			if (coins_[i]->GetIsAddScore())
 			{
 				isHitStop = true;
-				// ヒットエフェクト
-				HitEffect();
 			}
 		}
 
@@ -1035,18 +1033,6 @@ void GameScene::InitEffect(void)
 	// ヒットエフェクト
 	effectHitResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::HITEFFECT).handleId_;
-}
-
-void GameScene::HitEffect(void)
-{
-	//effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
-	//float scale = 50.0f;
-	//for (auto& enemy : enemys_) {
-	//	const auto ePos = enemy->GetTransform();
-	//	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, ePos.pos.x, ePos.pos.y, ePos.pos.z + 500);
-	//	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, ePos.rot.x, ePos.rot.y, ePos.rot.z);
-	//	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, scale, scale, scale);
-	//}
 }
 
 void GameScene::DecideProcess(void)
