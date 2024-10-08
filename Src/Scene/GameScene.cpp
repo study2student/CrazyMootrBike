@@ -25,6 +25,54 @@
 #include "../Application.h"
 #include "GameScene.h"
 
+#pragma region 定数宣言
+
+//4人対戦用のゴール文字位置
+//プレイヤー1
+const Vector2 FINISH_FONT_POS_MULTI_P1 = { 450,250 };
+
+//プレイヤー2
+const Vector2 FINISH_FONT_POS_MULTI_P2 = { 1400,250 };
+
+//プレイヤー3
+const Vector2 FINISH_FONT_POS_MULTI_P3 = { 450,750 };
+
+//プレイヤー4
+const Vector2 FINISH_FONT_POS_MULTI_P4 = { 1400,750 };
+
+//画面分割枠線の半分の太さ
+const int HALF_BORDER_SIZE = 5;
+
+//死亡黒背景の左上と右下座標と文字の位置sx / 2 + halfBorderSize, sy / 2 + halfBorderSize, sx, sy
+//プレイヤー1
+const Vector2 DEAD_BACK_BOX_MIN_POS_P1 = { 0, 0 };
+const Vector2 DEAD_BACK_BOX_MAX_POS_P1 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
+const Vector2 DEAD_FONT_POS_P1 = { 350,200 };
+
+//プレイヤー2
+const Vector2 DEAD_BACK_BOX_MIN_POS_P2 = { Application::SCREEN_SIZE_X / 2 + HALF_BORDER_SIZE, 0 };
+const Vector2 DEAD_BACK_BOX_MAX_POS_P2 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
+const Vector2 DEAD_FONT_POS_P2 = { 1300,200 };
+
+//プレイヤー3
+const Vector2 DEAD_BACK_BOX_MIN_POS_P3 = { 0, Application::SCREEN_SIZE_Y / 2 + HALF_BORDER_SIZE };
+const Vector2 DEAD_BACK_BOX_MAX_POS_P3 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y};
+const Vector2 DEAD_FONT_POS_P3 = { 350,700 };
+
+//プレイヤー4
+const Vector2 DEAD_BACK_BOX_MIN_POS_P4 = { Application::SCREEN_SIZE_X / 2 + HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 + HALF_BORDER_SIZE };
+const Vector2 DEAD_BACK_BOX_MAX_POS_P4 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y };
+const Vector2 DEAD_FONT_POS_P4 = { 1300,700 };
+
+//死亡文字大きさ
+const double DEAD_FONT_EXRATE = 6;
+
+//死亡文字大きさ
+const std::string DEAD_FONT = "DEAD";
+
+#pragma endregion
+
+
 GameScene::GameScene(void)
 {
 	coin_ = nullptr;
@@ -144,7 +192,7 @@ void GameScene::Init(void)
 	//FINISH文字の初期位置
 	int addPosX = 0;
 	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2 + addPosX ,-40 };
-	finishFontPos_ = finishStartPos;
+	finishFontMovePos_ = finishStartPos;
 
 	isPause_ = false;
 	isCursorHit_ = false;
@@ -363,6 +411,7 @@ void GameScene::Draw(void)
 	}
 	else
 	{
+		//スクリーンサイズ
 		int sx = Application::SCREEN_SIZE_X;
 		int sy = Application::SCREEN_SIZE_Y;
 
@@ -388,16 +437,8 @@ void GameScene::Draw(void)
 
 				SetDrawScreen(DX_SCREEN_BACK);
 
+				//1枠の横の大きさ
 				int width = 600;
-
-				//FINISH文字色
-				int finishFontColor_ = GetColor(255, 165, 0);
-
-				//死亡文字色
-				int deadFontColor_ = GetColor(255, 0, 0);
-
-				//枠線の半分の太さ
-				int halfBorderSize = 5;
 
 				//コイン調整座標
 				int coinX = 140;
@@ -419,21 +460,15 @@ void GameScene::Draw(void)
 					//ゴール文字
 					if (bikes_[0]->GetIsGoal())
 					{
-						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 450,250 };
-						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0,imgFinish_, true);
+						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P1);
 					}
 
 					//死亡文字
 					if (bikes_[0]->GetHP() <= 0)
 					{
-						//黒い背景
-						DrawBox(0, 0, sx / 2 - halfBorderSize, sy / 2 - halfBorderSize, 0x000000, true);
-
 						//死亡文字描画
-						Vector2 deadFontPos = { 350,200 };
-						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
+						DeadAfterDraw(DEAD_FONT_POS_P1, DEAD_BACK_BOX_MIN_POS_P1, DEAD_BACK_BOX_MAX_POS_P1);
 					}
 					break;
 				case 1:
@@ -450,21 +485,15 @@ void GameScene::Draw(void)
 					//ゴール文字
 					if (bikes_[1]->GetIsGoal())
 					{
-						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 1400,250 };
-						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0, imgFinish_, true);
+						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P2);
 					}
 
 					//死亡文字
 					if (bikes_[1]->GetHP() <= 0)
 					{
-						//黒い背景
-						DrawBox(sx / 2 + halfBorderSize, 0, sx, sy / 2 - halfBorderSize, 0x000000, true);
-
 						//死亡文字描画
-						Vector2 deadFontPos = { 1300,200 };
-						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
+						DeadAfterDraw(DEAD_FONT_POS_P2, DEAD_BACK_BOX_MIN_POS_P2, DEAD_BACK_BOX_MAX_POS_P2);
 					}
 					break;
 				case 2:
@@ -481,21 +510,15 @@ void GameScene::Draw(void)
 					//ゴール文字
 					if (bikes_[2]->GetIsGoal())
 					{
-						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 450,750 };
-						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0, imgFinish_, true);
+						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P3);
 					}
 
 					//死亡文字
 					if (bikes_[2]->GetHP() <= 0)
 					{
-						//黒い背景
-						DrawBox(0, sy / 2 + halfBorderSize, sx / 2 - halfBorderSize, sy, 0x000000, true);
-
 						//死亡文字描画
-						Vector2 deadFontPos = { 350,700 };
-						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
+						DeadAfterDraw(DEAD_FONT_POS_P3, DEAD_BACK_BOX_MIN_POS_P3, DEAD_BACK_BOX_MAX_POS_P3);
 					}
 					break;
 				case 3:
@@ -512,21 +535,15 @@ void GameScene::Draw(void)
 					//ゴール文字
 					if (bikes_[3]->GetIsGoal())
 					{
-						//GoalAfterDraw();
 						//FINISH文字描画
-						Vector2 finishFontPos = { 1400,750 };
-						DrawRotaGraph(finishFontPos.x, finishFontPos.y, 1.0, 0.0, imgFinish_, true);
+						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P4);
 					}
 
 					//死亡文字
 					if (bikes_[3]->GetHP() <= 0)
 					{
-						//黒い背景
-						DrawBox(sx / 2 + halfBorderSize, sy / 2 + halfBorderSize, sx, sy , 0x000000, true);
-
 						//死亡文字描画
-						Vector2 deadFontPos = { 1300,700 };
-						DrawExtendFormatString(deadFontPos.x, deadFontPos.y, 6, 6, deadFontColor_, "DEAD");
+						DeadAfterDraw(DEAD_FONT_POS_P4, DEAD_BACK_BOX_MIN_POS_P4, DEAD_BACK_BOX_MAX_POS_P4);
 					}
 					break;
 				}
@@ -562,7 +579,8 @@ void GameScene::Draw(void)
 	{
 		if (stage_->GetIsGoal())
 		{
-			GoalAfterDraw();
+			Vector2 noUse = {};
+			GoalAfterDraw(playNumber_, noUse);
 		}
 		else
 		{
@@ -1200,7 +1218,7 @@ void GameScene::SelectProcess(void)
 
 	//PC
 	//カーソル番号による上下操作
-	if (ins_.IsTrgDown(KEY_INPUT_UP) && !(nowCursor_==0))
+	if (ins_.IsTrgDown(KEY_INPUT_UP) && !(nowCursor_== 0))
 	{
 		// 選択時の音を再生
 		PlaySoundMem(ResourceManager::GetInstance().Load(ResourceManager::SRC::SND_SELECT).handleId_, DX_PLAYTYPE_BACK, true);
@@ -1269,7 +1287,6 @@ void GameScene::SelectProcess(void)
 		}
 	}
 	
-
 	//現カーソルから状態を変化
 	CursorToPState(nowCursor_);
 }
@@ -1362,25 +1379,45 @@ void GameScene::PauseDraw(void)
 	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, fontScl, fontScl, endFontColor_, "終わる");
 }
 
-void GameScene::GoalAfterDraw(void)
+void GameScene::GoalAfterDraw(int playNum, Vector2 drawPos)
 {
-
-	//座標
-	if(!isPause_)
+	//1人用
+	if (playNum == 1)
 	{
-		int addPosY = 10;
-		finishFontPos_.y += addPosY;
+		//座標
+		if (!isPause_)
+		{
+			int addPosY = 10;
+			finishFontMovePos_.y += addPosY;
+		}
+
+		float stopPosY = Application::SCREEN_SIZE_Y / 2 - 40;
+		if (finishFontMovePos_.y >= stopPosY)
+		{
+			finishFontMovePos_.y = stopPosY;
+		}
+
+		//FINISH文字描画
+		DrawRotaGraph(finishFontMovePos_.x, finishFontMovePos_.y, 1.5, 0.0, imgFinish_, true);
+	}
+	//4人用
+	else
+	{
+		DrawRotaGraph(drawPos.x, drawPos.y, 1.0, 0.0, imgFinish_, true);
 	}
 
-	float stopPosY = Application::SCREEN_SIZE_Y / 2 - 40;
-	if (finishFontPos_.y >= stopPosY)
-	{
-		finishFontPos_.y = stopPosY;
-	}
+}
 
-	//FINISH文字描画
-	DrawRotaGraph(finishFontPos_.x, finishFontPos_.y, 1.5, 0.0, imgFinish_, true);
+void GameScene::DeadAfterDraw(Vector2 drawPos, Vector2 boxMinPos, Vector2 boxMaxPos)
+{
+	//黒い背景
+	DrawBox(boxMinPos.x, boxMinPos.y, boxMaxPos.x, boxMaxPos.y, 0x000000, true);
 
+	//死亡文字色
+	int deadFontColor_ = GetColor(255, 0, 0);
+
+	//死亡文字
+	DrawExtendFormatString(drawPos.x, drawPos.y, DEAD_FONT_EXRATE, DEAD_FONT_EXRATE, deadFontColor_, DEAD_FONT.c_str());
 }
 
 void GameScene::CoinImgDraw(int x, int y)

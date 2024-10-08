@@ -232,7 +232,7 @@ private:
 	float stepPauseKeyHit_;
 
 	//FINISH文字の位置
-	Vector2 finishFontPos_;
+	Vector2 finishFontMovePos_;
 
 	//ゴールしてからの経過時間
 	float stepGoalAfter_;
@@ -261,8 +261,11 @@ private:
 	//ポーズ文字描画
 	void PauseDraw(void);
 
-	//ゴールしたあとの処理
-	void GoalAfterDraw(void);
+	//ゴールしたあとの描画処理
+	void GoalAfterDraw(int playNum, Vector2 drawPos);
+
+	//死亡したあとの描画処理
+	void DeadAfterDraw(Vector2 drawPos,Vector2 boxMinPos, Vector2 boxMaxPos);
 
 	//コイン画像描画
 	void CoinImgDraw(int x, int y);
