@@ -7,8 +7,11 @@ class Application
 public:
 
 	// スクリーンサイズ
-	static constexpr int SCREEN_SIZE_X = 1840;
-	static constexpr int SCREEN_SIZE_Y = 960;
+	static constexpr int SCREEN_SIZE_X = 1440;
+	static constexpr int SCREEN_SIZE_Y = 800;
+
+	//設定フレームレート
+	static constexpr float FRAME_RATE = (1000 / 60);
 
 	// データパス関連
 	//-------------------------------------------
@@ -65,5 +68,20 @@ private:
 
 	// Effekseerの初期化
 	void InitEffekseer(void);
+
+
+	int currentTime = 0;			//現在の時間
+	int lastFrameTime = 0;			//前回のフレーム実行時の時間
+
+	int frameCnt = 0;				//フレームカウント用
+	int updateFrameRateTime = 0;	//フレームレートを更新した時間
+
+	float frameRate = 0.f;			//フレームレート(表示用)
+
+	//フレームレート計算
+	void CalcFrameRate();
+
+	// フレームレート表示用(デバッグ)
+	void DrawFrameRate();
 
 };

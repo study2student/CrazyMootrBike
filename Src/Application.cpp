@@ -81,12 +81,33 @@ void Application::Run(void)
 	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0 && !isGameFinishKey_)
 	{
 
-		inputManager.Update();
-		sceneManager.Update();
+		Sleep(1);		//システムに処理を返す
 
-		sceneManager.Draw();
+		currentTime = GetNowCount();
 
-		ScreenFlip();
+		// 現在の時刻が、前回のフレーム時より
+		// 1/60秒経過していたら処理を実行する
+		if (currentTime - lastFrameTime >= FRAME_RATE)
+		{
+			// フレーム実行時間を更新
+			lastFrameTime = currentTime;
+
+			// フレーム数をカウント
+			frameCnt++;
+
+			inputManager.Update();
+			sceneManager.Update();
+
+			sceneManager.Draw();
+
+			// フレームレート計算
+			CalcFrameRate();
+
+			// フレームレート表示
+			DrawFrameRate();
+
+			ScreenFlip();
+		}
 
 	}
 
@@ -143,4 +164,34 @@ void Application::InitEffekseer(void)
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
+}
+
+void Application::CalcFrameRate()
+{
+	// 前回のフレームレート更新からの経過時間を求める
+	int nDirTime = currentTime - updateFrameRateTime;
+
+	// 前回のフレームレートを更新から
+	// 1秒以上経過していたらフレームレートを更新する
+	if (nDirTime > 1000)
+	{
+		// フレーム回数をミリ秒に合わせる
+		//少数まで出したのでfloatにキャスト
+		float fFrameCnt = (float)(frameCnt * 1000);
+
+		// フレームレートを求める
+		// 理想通りなら60000 / 1000 で 60となる
+		frameRate = fFrameCnt / nDirTime;
+
+		// フレームカウントをクリア
+		frameCnt = 0;
+
+		// フレームレート更新時間を更新
+		updateFrameRateTime = currentTime;
+	}
+}
+
+void Application::DrawFrameRate()
+{
+	DrawFormatString(SCREEN_SIZE_X - 90, 0, GetColor(255, 30, 30), "FPS[%.2f]", frameRate);
 }
