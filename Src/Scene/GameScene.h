@@ -195,8 +195,6 @@ private:
 
 	// エフェクト初期化
 	void InitEffect(void);
-	// Hitエフェクトの位置
-	void HitEffect(void);
 
 	//プレイヤー人数
 	int playNumber_;

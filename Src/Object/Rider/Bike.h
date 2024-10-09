@@ -97,16 +97,16 @@ public:
 	void Damage(int damage);
 
 	// 現HP取得
-	const int& GetHP(void)const { return hp_; }
+	const int& GetHP(void)const& { return hp_; }
 
 	// バイクが場外に出たか取得
-	const bool& GetIsOutSide(void)const { return isOutSide_; }
+	const bool& GetIsOutSide(void)const& { return isOutSide_; }
 
 	// バイクがゴールしたか設定
 	void SetIsGoal(bool isGoal);
 
 	// バイクがゴールしたか取得
-	const bool& GetIsGoal(void) const { return isGoal_; }
+	const bool& GetIsGoal(void) const& { return isGoal_; }
 
 	// スコア加算
 	void AddScore(int score);
@@ -115,13 +115,13 @@ public:
 	const int GetScore(void) const;
 
 	// プレイヤーIDのゲッター
-	const int GetPlayerID(void) const { return playerID_; }
+	const int& GetPlayerID(void) const& { return playerID_; }
 
 	// プレイヤー同士の当たり判定
 	void Flip(VECTOR dir);
 
 	// ブーストを使ったかどうか
-	const bool GetIsBoost(void)const { return isBoost_; }
+	const bool& GetIsBoost(void)const& { return isBoost_; }
 
 private:
 

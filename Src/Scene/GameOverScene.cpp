@@ -8,9 +8,59 @@
 #include "../../Src/Object/Rider/Bike.h"
 #include "GameOverScene.h"
 
+#pragma region 定数宣言
+	//リトライボタンの横の長さ
+	const int RETRY_FONT_LENGTH = 200;
+	//リトライボタンの高さ
+	const int RETRY_FONT_HEIGHT = 48;
+	//終わるボタンの横の長さ
+	const int END_FONT_LENGTH = 150;
+	//終わるボタンの高さ
+	const int END_FONT_HEIGHT = 48;
+	//選択肢数
+	const int SELECT_MAX_NUM = 2;
+	//プレイヤー人数
+	const int PLAYER_NUM = 4;
+	//プレイヤー初期値
+	const float PLAYER_LOCAL_POS = 200.0f;
+	//左上のリトライポジションx,y
+	const int RETRY_POS_X = 580;
+	const int RETRY_POS_Y = 10;
+	//左上の終わるポジションx,y
+	const int END_POS_X = 615;
+	const int END_POS_Y = 150;
+	//背景画像描画拡大描画用座標
+	const int IMG_BG_POS_Y = 20;
+	//スコア表示座標
+	const int SCORE_STRING_POS_X = 90;
+	//プレイヤーナンバー文字描画座標
+	const int DRAW_PLAYER_NUM_POS_X = 340;
+	const int DRAW_PLAYER_NUM_POS_Y = 342;
+	//スコア表示文字描画
+	const int DRAW_SCORE_POS_X = 50;
+	const int DRAW_SCORE_POS_Y = 340;
+	//文字描画のY座標のずらし幅
+	const int SHIFT_WIDTH = 200;
+	//文字描画の拡大率
+	const int MAG_RATE = 10;
+	
+#pragma endregion
+
+
 GameOverScene::GameOverScene(void)
+	:
+	bikes_({}),
+	img_BG(0),
+	imgPush_(0),
+	imgSelectBG_(0),
+	pState_(PAUSE_STATE::END),
+	reTryFontBasePos_({}),
+	endFontBasePos_({}),
+	reTryFontColor_(0),
+	endFontColor_(0),
+	nowCursor_(0),
+	isCursorHit_(false)
 {
-	/*score_ = nullptr;*/
 }
 
 GameOverScene::~GameOverScene(void)
@@ -19,35 +69,28 @@ GameOverScene::~GameOverScene(void)
 
 void GameOverScene::Init(void)
 {
-	/*score_ = std::make_shared<Score>();
-	score_->Init();*/
-
 	//背景画像
 	img_BG = resMng_.Load(ResourceManager::SRC::IMG_SCORE).handleId_;
 	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 	imgSelectBG_= resMng_.Load(ResourceManager::SRC::IMG_GAMEOVER_SELECT_BG).handleId_;
 	//バイクの読み込み
-	for (int i = 0; i < 4; ++i) {
-		bikes_.emplace_back(std::make_shared<Bike>(200.0f * (i + 1), i));
+	for (int i = 0; i < PLAYER_NUM; ++i) {
+		bikes_.emplace_back(std::make_shared<Bike>(PLAYER_LOCAL_POS * (i + 1), i));
 	}
 	for (auto& bike : bikes_) {
 		bike->Init();
 	}
 
 	//左上のリトライポジション
-	int addX;
-	addX = 580;
-	reTryFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + addX , Application::SCREEN_SIZE_Y / 2 + 10 };
+	reTryFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + RETRY_POS_X , Application::SCREEN_SIZE_Y / 2 + RETRY_POS_Y };
 
 	//左上の終わるポジション
-	addX = 615;
-	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + addX , Application::SCREEN_SIZE_Y / 2 + 150 };
+	endFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + END_POS_X , Application::SCREEN_SIZE_Y / 2 + END_POS_Y };
 
 }
 
 void GameOverScene::Update(void)
 {
-	//score_.Update();
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) & PAD_INPUT_A))
@@ -68,32 +111,27 @@ void GameOverScene::Draw(void)
 	using ap = Application;
 
 	//背景画像描画
-	DrawExtendGraph(Application::SCREEN_SIZE_X / 4, 0, ap::SCREEN_SIZE_X - ap::SCREEN_SIZE_X / 4, ap::SCREEN_SIZE_Y + 20, img_BG, true);
+	DrawExtendGraph(Application::SCREEN_SIZE_X / 4, 0, ap::SCREEN_SIZE_X - ap::SCREEN_SIZE_X / 4, ap::SCREEN_SIZE_Y + IMG_BG_POS_Y, img_BG, true);
 
 	if(data_.GetData().playerNum_ == 1)
 	{
-		//DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawStringWidth("スコア", strlen("スコア")), 300, 3, 3, "スコア", 0xff0000);
 
-		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - 90, Application::SCREEN_SIZE_Y / 2 - GetDrawFormatStringWidth("%.d"),
+		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - SCORE_STRING_POS_X, Application::SCREEN_SIZE_Y / 2 - GetDrawFormatStringWidth("%.d"),
 			10, 10, 0xff0000, "%.d", score_.GetScore());
 	}
 	else
 	{
-		//DrawExtendString(Application::SCREEN_SIZE_X / 2 - GetDrawStringWidth("スコア", strlen("スコア")), 100, 3, 3, "スコア", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /*- GetDrawFormatStringWidth("%.d")*/ + (0 * 200), 10, 10, "P1", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /*- GetDrawFormatStringWidth("%.d")*/ + (1 * 200), 10, 10, "P2", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /*- GetDrawFormatStringWidth("%.d")*/ + (2 * 200), 10, 10, "P3", 0xff0000);
-		DrawExtendString(Application::SCREEN_SIZE_X / 2 -  340, Application::SCREEN_SIZE_Y / 2 - 342 /* - GetDrawFormatStringWidth("%.d")*/ + (3 * 200), 10, 10, "P4", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 - DRAW_PLAYER_NUM_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_PLAYER_NUM_POS_Y + (0 * SHIFT_WIDTH), MAG_RATE, MAG_RATE, "P1", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 - DRAW_PLAYER_NUM_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_PLAYER_NUM_POS_Y + (1 * SHIFT_WIDTH), MAG_RATE, MAG_RATE, "P2", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 - DRAW_PLAYER_NUM_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_PLAYER_NUM_POS_Y + (2 * SHIFT_WIDTH), MAG_RATE, MAG_RATE, "P3", 0xff0000);
+		DrawExtendString(Application::SCREEN_SIZE_X / 2 - DRAW_PLAYER_NUM_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_PLAYER_NUM_POS_Y + (3 * SHIFT_WIDTH), MAG_RATE, MAG_RATE, "P4", 0xff0000);
 
-		int playNum = 4;
-		for (int i = 0; i < playNum; i++)
+		for (int i = 0; i < PLAYER_NUM; i++)
 		{
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 -  50, Application::SCREEN_SIZE_Y / 2 - 340 /*- GetDrawFormatStringWidth("%.d")*/ + (i * 200),
-				10, 10, 0xff0000, "%.d", score_.GetScoreArray()[i]);
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - DRAW_SCORE_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_SCORE_POS_Y + (i * SHIFT_WIDTH),
+				MAG_RATE, MAG_RATE, 0xff0000, "%.d", score_.GetScoreArray()[i]);
 		}
 	}
-	
-	//DrawGraph(200, 700, imgPush_, true);
 
 	//背景
 	DrawRotaGraphFastF(1600, 600, 3.0f, 0.0f, imgSelectBG_, true);
@@ -110,7 +148,6 @@ void GameOverScene::DecideProcess(void)
 
 	//マウス座標
 	Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
-
 
 	//リトライボタン
 	//カーソルが当たっている
@@ -144,8 +181,6 @@ void GameOverScene::DecideProcess(void)
 		//ボタンにふれいない場合
 		reTryFontColor_ = GetColor(255, 255, 255);
 	}
-
-
 
 	//終わるボタン
 	//カーソルが当たっている

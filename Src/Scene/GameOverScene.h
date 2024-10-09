@@ -14,21 +14,6 @@ public:
 		END		//終わる
 	};
 
-	//リトライボタンの横の長さ
-	static constexpr int RETRY_FONT_LENGTH = 200;
-
-	//リトライボタンの高さ
-	static constexpr int RETRY_FONT_HEIGHT = 48;
-
-	//終わるボタンの横の長さ
-	static constexpr int END_FONT_LENGTH = 150;
-
-	//終わるボタンの高さ
-	static constexpr int END_FONT_HEIGHT = 48;
-
-	//選択肢数
-	static constexpr int SELECT_MAX_NUM = 2;
-
 	// コンストラクタ
 	GameOverScene(void);
 
@@ -42,7 +27,6 @@ public:
 private:
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
-	//std::shared_ptr<Score> score_;
 
 	//スコア描画の背景
 	int img_BG;

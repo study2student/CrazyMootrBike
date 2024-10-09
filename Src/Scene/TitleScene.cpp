@@ -112,7 +112,6 @@ TitleScene::TitleScene(void)
 	isInvisible_(false),
 	state_(STATE::IDLE)
 {
-	isInvisible_ = false;	
 }
 
 TitleScene::~TitleScene(void)
