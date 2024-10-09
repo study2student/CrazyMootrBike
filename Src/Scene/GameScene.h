@@ -13,6 +13,7 @@ class CopperCoin;
 class Helicopter;
 class Score;
 class Spike;
+class Pause;
 
 class GameScene : public SceneBase
 {
@@ -32,27 +33,6 @@ public:
 	//パッド最大数
 	static constexpr int PAD_MAX = 4;
 
-	//再開ボタンの横の長さ
-	static constexpr int RESTART_FONT_LENGTH = 100;
-
-	//再開ボタンの高さ
-	static constexpr int RESTART_FONT_HEIGHT = 48;
-
-	//リトライボタンの横の長さ
-	static constexpr int RETRY_FONT_LENGTH = 200;
-
-	//リトライボタンの高さ
-	static constexpr int RETRY_FONT_HEIGHT = 48;
-
-	//終わるボタンの横の長さ
-	static constexpr int END_FONT_LENGTH = 150;
-
-	//終わるボタンの高さ
-	static constexpr int END_FONT_HEIGHT = 48;
-
-	//選択肢数
-	static constexpr int SELECT_MAX_NUM = 3;
-
 	//警告画像最大サイズ
 	static constexpr float WARNING_IMG_MAX_SCALE = 0.40f;
 
@@ -64,9 +44,6 @@ public:
 
 	//警告画像Y座標
 	static constexpr float WARNING_POS_Y = 120.0f;
-
-	//ポーズキー入力からもう一度押せるようになるまでの時間
-	static constexpr float PAUSE_KEY_HIT_MAX_TIME = 1.25f;
 
 	//ゴールしてから次のシーンになるまでの時間
 	static constexpr float GOAL_TO_NEXT_SCENE = 2.5f;
@@ -110,6 +87,8 @@ public:
 	
 
 private:
+
+	//メインスクリーン
 	int mainScreen_;
 
 	//1人プレイ時ゴールしたかどうか
@@ -166,6 +145,9 @@ private:
 	//コインが追加されたタイミングかどうか
 	bool isCreateCoin_;
 
+	//ポーズ
+	std::unique_ptr<Pause> pause_;
+
 	// カメラやスクリーンの表示の関数化
 	void DrawObject(int playerID);
 	//デバッグ表示
@@ -199,35 +181,8 @@ private:
 	//プレイヤー人数
 	int playNumber_;
 
-	//左上の再開ポジション
-	Vector2 reStartFontBasePos_;
-
-	//左上のリトライポジション
-	Vector2 reTryFontBasePos_;
-
-	//左上の終わるポジション
-	Vector2 endFontBasePos_;
-
-	//再開文字色
-	int reStartFontColor_;
-
-	//リトライ文字色
-	int reTryFontColor_;
-
-	//終わる文字色
-	int endFontColor_;
-
-	//現カーソル位置
-	int nowCursor_;
-
 	//ポーズメニュー中かどうか
 	bool isPause_;
-
-	//カーソルが文字にあってるかどうか
-	bool isCursorHit_;
-
-	//ポーズキー入力からの時間
-	float stepPauseKeyHit_;
 
 	//FINISH文字の位置
 	Vector2 finishFontMovePos_;
@@ -235,29 +190,8 @@ private:
 	//ゴールしてからの経過時間
 	float stepGoalAfter_;
 
-	//状態
-	PAUSE_STATE pState_;
-
-	//マウス操作
-	void DecideProcess(void);
-
-	//キー操作
-	void SelectProcess(void);
-
-	//状態遷移
-	void ChangePState(PAUSE_STATE pState);
-
-	//現カーソル番号から状態を変化させる
-	void CursorToPState(int cursor);
-
-	//ポーズ
-	void Pause(void);
-
 	//警告
 	void WarningDraw(void);
-
-	//ポーズ文字描画
-	void PauseDraw(void);
 
 	//ゴールしたあとの描画処理
 	void GoalAfterDraw(int playNum, Vector2 drawPos);

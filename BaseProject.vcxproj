@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Common\Pause.cpp" />
+    <ClCompile Include="Src\Object\Gimmick\GimmickBase.cpp" />
     <ClCompile Include="Src\Object\ActorBase.cpp" />
     <ClCompile Include="Src\Application.cpp" />
     <ClCompile Include="Src\Common\Fader.cpp" />
@@ -60,6 +62,8 @@
     <ClCompile Include="Src\Utility\MyUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Common\Pause.h" />
+    <ClInclude Include="Src\Object\Gimmick\GimmickBase.h" />
     <ClInclude Include="Src\Object\ActorBase.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />
