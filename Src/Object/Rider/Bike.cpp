@@ -718,7 +718,7 @@ void Bike::CollisionGravity(void)
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
 	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
 	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 
 		// 地面との衝突
@@ -750,7 +750,7 @@ void Bike::CollisionCapsule(void)
 	Capsule cap = Capsule(*capsule_, trans);
 
 	// カプセルとの衝突判定
-	for (const auto c : colliders_)
+	for (const auto& c : colliders_)
 	{
 
 		auto hits = MV1CollCheck_Capsule(

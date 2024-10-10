@@ -101,7 +101,7 @@ private:
 	void ChangeState(STATE state);
 	void ChangeStateIdle(void);
 	void ChangeStateStart(void);
-
+	
 	// 更新ステップ
 	void UpdateIdle(void);
 	void UpdateStart(void);
