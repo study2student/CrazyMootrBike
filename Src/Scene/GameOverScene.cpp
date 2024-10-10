@@ -42,7 +42,7 @@
 	//•¶š•`‰æ‚ÌYÀ•W‚Ì‚¸‚ç‚µ•
 	const int SHIFT_WIDTH = 200;
 	//•¶š•`‰æ‚ÌŠg‘å—¦
-	const int MAG_RATE = 10;
+	const int MAG_RATE = 8;
 	
 #pragma endregion
 
@@ -69,6 +69,11 @@ GameOverScene::~GameOverScene(void)
 
 void GameOverScene::Init(void)
 {
+	// DrawString ‚Å•`‰æ‚·‚é•¶š—ñ‚Ì‘å‚«‚³‚ğİ’è
+	SetFontSize(16);
+	// DrawString ‚Å•`‰æ‚·‚éƒtƒHƒ“ƒg‚ğ•ÏX
+	ChangeFont("Nikkyou Sans");
+
 	//”wŒi‰æ‘œ
 	img_BG = resMng_.Load(ResourceManager::SRC::IMG_SCORE).handleId_;
 	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;

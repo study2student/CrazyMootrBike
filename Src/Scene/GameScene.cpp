@@ -28,54 +28,54 @@
 
 #pragma region 定数宣言
 
-//4人対戦用のゴール文字位置
-//プレイヤー1
-const Vector2 FINISH_FONT_POS_MULTI_P1 = { 450,250 };
+	//4人対戦用のゴール文字位置
+	//プレイヤー1
+	const Vector2 FINISH_FONT_POS_MULTI_P1 = { 450,250 };
 
-//プレイヤー2
-const Vector2 FINISH_FONT_POS_MULTI_P2 = { 1400,250 };
+	//プレイヤー2
+	const Vector2 FINISH_FONT_POS_MULTI_P2 = { 1400,250 };
 
-//プレイヤー3
-const Vector2 FINISH_FONT_POS_MULTI_P3 = { 450,750 };
+	//プレイヤー3
+	const Vector2 FINISH_FONT_POS_MULTI_P3 = { 450,750 };
 
-//プレイヤー4
-const Vector2 FINISH_FONT_POS_MULTI_P4 = { 1400,750 };
+	//プレイヤー4
+	const Vector2 FINISH_FONT_POS_MULTI_P4 = { 1400,750 };
 
-//画面分割枠線の半分の太さ
-const int HALF_BORDER_SIZE = 5;
+	//画面分割枠線の半分の太さ
+	const int HALF_BORDER_SIZE = 5;
 
-//死亡黒背景の左上と右下座標と文字の位置
-//プレイヤー1
-const Vector2 DEAD_BACK_BOX_MIN_POS_P1 = { 0, 0 };
-const Vector2 DEAD_BACK_BOX_MAX_POS_P1 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
-const Vector2 DEAD_FONT_POS_P1 = { 350,200 };
+	//死亡黒背景の左上と右下座標と文字の位置sx / 2 + halfBorderSize, sy / 2 + halfBorderSize, sx, sy
+	//プレイヤー1
+	const Vector2 DEAD_BACK_BOX_MIN_POS_P1 = { 0, 0 };
+	const Vector2 DEAD_BACK_BOX_MAX_POS_P1 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
+	const Vector2 DEAD_FONT_POS_P1 = { 350,200 };
 
-//プレイヤー2
-const Vector2 DEAD_BACK_BOX_MIN_POS_P2 = { Application::SCREEN_SIZE_X / 2 + HALF_BORDER_SIZE, 0 };
-const Vector2 DEAD_BACK_BOX_MAX_POS_P2 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
-const Vector2 DEAD_FONT_POS_P2 = { 1300,200 };
+	//プレイヤー2
+	const Vector2 DEAD_BACK_BOX_MIN_POS_P2 = { Application::SCREEN_SIZE_X / 2 + HALF_BORDER_SIZE, 0 };
+	const Vector2 DEAD_BACK_BOX_MAX_POS_P2 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
+	const Vector2 DEAD_FONT_POS_P2 = { 1300,200 };
 
-//プレイヤー3
-const Vector2 DEAD_BACK_BOX_MIN_POS_P3 = { 0, Application::SCREEN_SIZE_Y / 2 + HALF_BORDER_SIZE };
-const Vector2 DEAD_BACK_BOX_MAX_POS_P3 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y};
-const Vector2 DEAD_FONT_POS_P3 = { 350,700 };
+	//プレイヤー3
+	const Vector2 DEAD_BACK_BOX_MIN_POS_P3 = { 0, Application::SCREEN_SIZE_Y / 2 + HALF_BORDER_SIZE };
+	const Vector2 DEAD_BACK_BOX_MAX_POS_P3 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y};
+	const Vector2 DEAD_FONT_POS_P3 = { 350,700 };
 
-//プレイヤー4
-const Vector2 DEAD_BACK_BOX_MIN_POS_P4 = { Application::SCREEN_SIZE_X / 2 + HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 + HALF_BORDER_SIZE };
-const Vector2 DEAD_BACK_BOX_MAX_POS_P4 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y };
-const Vector2 DEAD_FONT_POS_P4 = { 1300,700 };
+	//プレイヤー4
+	const Vector2 DEAD_BACK_BOX_MIN_POS_P4 = { Application::SCREEN_SIZE_X / 2 + HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 + HALF_BORDER_SIZE };
+	const Vector2 DEAD_BACK_BOX_MAX_POS_P4 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y };
+	const Vector2 DEAD_FONT_POS_P4 = { 1300,700 };
 
 //死亡文字大きさ
 const double DEAD_FONT_EXRATE = 6.0;
 
-//死亡文字
-const std::string DEAD_FONT = "DEAD";
+	//死亡文字
+	const std::string DEAD_FONT = "DEAD";
 
-//死亡背景色
-const unsigned int DEAD_BACK_BOX_COLOR = GetColor(0, 0, 0);
+	//死亡背景色
+	const unsigned int DEAD_BACK_BOX_COLOR = GetColor(0, 0, 0);
 
-//死亡文字色
-const unsigned int DEAD_FONT_COLOR = GetColor(255, 0, 0);
+	//死亡文字色
+	const unsigned int DEAD_FONT_COLOR = GetColor(255, 0, 0);
 
 #pragma endregion
 
@@ -97,6 +97,11 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	// DrawString で描画する文字列の大きさを設定
+	SetFontSize(16);
+	// DrawString で描画するフォントを変更
+	ChangeFont("Nikkyou Sans");
+
 	//プレイヤー人数
 	playNumber_ = data_.GetData().playerNum_;
 	if (playNumber_ == 1)
@@ -633,7 +638,7 @@ void GameScene::DrawUI(int x, int y, int playerID)
 {
 
 	using ap = Application;
-	int sc_x = x - 300;
+	int sc_x = x - 200;
 	int sc_y = y + 50;
 
 	// HPバーの幅

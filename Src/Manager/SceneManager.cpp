@@ -76,8 +76,8 @@ void SceneManager::Init3D(void)
 
 	// ÉtÉHÉOê›íË
 	SetFogEnable(true);
-	SetFogColor(5, 5, 5);
-	SetFogStartEnd(10000.0f, 20000.0f);
+	SetFogColor(5, 5, 8);
+	SetFogStartEnd(5000.0f, 15000.0f);
 
 }
 
