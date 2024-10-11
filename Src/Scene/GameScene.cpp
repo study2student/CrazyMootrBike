@@ -762,7 +762,7 @@ void GameScene::CoinPlace(void)
 		shiftX_ = CoinBase::DIR_LEN;
 		break;
 	}
-
+	
 	//ècÇ…ÉRÉCÉìÇê∂ê¨Ç∑ÇÈ
 	for (int i = 0; i < CoinBase::MAX_MAKE_NUM; i++)
 	{
@@ -796,13 +796,13 @@ void GameScene::CoinPlace(void)
 	}
 }
 
-std::vector<CoinBase*> GameScene::GetEnemys(void)
+std::vector<CoinBase*> GameScene::GetCoins(void)
 {
 	return coins_;
 }
 
 
-bool GameScene::GetIsCreateEnemy(void)
+bool GameScene::GetIsCreateCoin(void)
 {
 	return isCreateCoin_;
 }

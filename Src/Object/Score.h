@@ -29,6 +29,7 @@ public:
 	//スコア取得(四人用)
 	const std::vector<int>& GetScoreArray(void) const;
 
+	//スコアリセット
 	void ResetScore(void);
 
 private:

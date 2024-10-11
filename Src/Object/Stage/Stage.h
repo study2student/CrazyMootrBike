@@ -113,16 +113,11 @@ private:
 	//ループ用のステージが生成されたかどうか
 	bool isMakeLoopStage_;
 
-	// loopStage_のサイズ
-	int sizeS_;
-
 	// 最初のステージ
 	void MakeMainStage(void);
 
 	//ループ用のステージ(最初)
 	void MakeLoopStage(void);
-
-	void AddStage(std::shared_ptr<LoopStage> newStage);
 
 	//背景生成
 	void MakeCity(void);

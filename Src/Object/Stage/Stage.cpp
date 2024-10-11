@@ -72,8 +72,7 @@ Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes, CoinBase* coin, Bo
 	step_(-1.0f),
 	isGoal_(false),
 	hasPlayedGoalSound_(false),
-	isMakeLoopStage_(false),
-	sizeS_(0)
+	isMakeLoopStage_(false)
 {
 }
 
@@ -237,7 +236,7 @@ void Stage::ChangeStage(NAME type)
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
 	{
-		std::vector<CoinBase*>coins_ = gameScene_->GetEnemys();
+		std::vector<CoinBase*>coins_ = gameScene_->GetCoins();
 		for (int i = 0; i < coins_.size(); i++)
 		{
 			coins_[i]->AddCollider(ls->GetTransform().collider);
@@ -316,11 +315,11 @@ void Stage::MakeLoopStage(void)
 {
 
 	//すり抜けるためここでバイクと敵のコライダーも追加しとく
-	if (gameScene_->GetIsCreateEnemy())
+	if (gameScene_->GetIsCreateCoin())
 	{
 		for (const auto& ls : loopStage_)
 		{
-			std::vector<CoinBase*>coins_ = gameScene_->GetEnemys();
+			std::vector<CoinBase*>coins_ = gameScene_->GetCoins();
 			for (int i = 0; i < coins_.size(); i++)
 			{
 				coins_[i]->AddCollider(activePlanet_.lock()->GetTransform().collider);
@@ -389,22 +388,6 @@ void Stage::MakeLoopStage(void)
 		std::shared_ptr<LoopStage> tailLoop = loopStage_[size - (DELETION_NUM - 1)];
 		tailLoop->Destroy();
 
-	}
-}
-
-// ステージを追加する関数
-void Stage::AddStage(std::shared_ptr<LoopStage> newStage)
-{
-
-	loopStage_.push_back(newStage);
-	sizeS_++;
-
-	// 6以上のステージがある場合は古いステージを削除
-	if (loopStage_.size() > TO_DESTROY_MAX_NUM) {
-		std::shared_ptr<LoopStage> oldStage = loopStage_.front();
-		loopStage_.pop_front();
-
-		oldStage->Destroy();
 	}
 }
 

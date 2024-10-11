@@ -6,7 +6,7 @@ public:
 
 	SilverCoin(const std::vector<std::shared_ptr<Bike>>& bikes, GameScene* gameScene, VECTOR loopStagePos, VECTOR localPos);
 
-	//パラメータ設定		//override上書き
+	//パラメータ設定
 	void SetParam(void) override;
 	void Update(void) override;
 

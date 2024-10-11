@@ -45,9 +45,6 @@ private:
 	std::vector<std::shared_ptr<Collider>> colliders_;
 	std::shared_ptr<Capsule> capsule_;
 
-	//描画系
-	void DrawDebug(void);
-
 	// 衝突チェック
 	VECTOR gravHitPosDown_;
 	VECTOR gravHitPosUp_;

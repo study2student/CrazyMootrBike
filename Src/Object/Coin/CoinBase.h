@@ -108,6 +108,7 @@ public:
 
 	// スコア加算メソッド
 	void AddScoreToPlayer(int playerId, int score);
+
 protected:
 
 	//バイク情報
@@ -162,6 +163,7 @@ protected:
 	//スコアを加算してもよいか
 	bool isAddScore_;
 
+	//ふっとばし
 	float flipSpeed_;
 	VECTOR flipDir_;
 

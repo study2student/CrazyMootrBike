@@ -71,10 +71,10 @@ public:
 	void Draw(void) override;
 
 	//コイン情報
-	std::vector<CoinBase*> GetEnemys(void);
+	std::vector<CoinBase*> GetCoins(void);
 
 	//コインが追加されたタイミングかどうか
-	bool GetIsCreateEnemy(void);
+	bool GetIsCreateCoin(void);
 
 	//プレイヤー人数取得
 	int GetPlayNum(void);

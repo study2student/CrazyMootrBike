@@ -27,6 +27,15 @@ const VECTOR CAPSULE_LOCAL_POS_DOWN = { 0.0f, 150.0f, 0.0f };
 //カプセル半径
 const float CAPSULE_RADIUS = 135.0f;
 
+//衝突チェック用
+const float CHECK_POW = 10.0f;
+
+//重力量(上)
+const float DIR_UP_GRAVITY_POW = 2.0f;
+
+//衝突回数
+const int TRY_MAX_COUNT = 10;
+
 #pragma endregion
 
 
@@ -34,10 +43,10 @@ Goal::Goal(void)
 	:
 	movePow_({}),
 	movedPos_({}),
-	colliders_({}),
-	capsule_(nullptr),
 	gravHitPosDown_({}),
-	gravHitPosUp_({})
+	gravHitPosUp_({}),
+	capsule_(nullptr),
+	colliders_({})
 {
 }
 
@@ -59,12 +68,12 @@ void Goal::Init(void)
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(0.0f), 0.0f });
 	transform_.Update();
 
-
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop(CAPSULE_LOCAL_POS_TOP);
 	capsule_->SetLocalPosDown(CAPSULE_LOCAL_POS_DOWN);
 	capsule_->SetRadius(CAPSULE_RADIUS);
+
 }
 
 void Goal::Update(void)
@@ -106,11 +115,6 @@ void Goal::SetPosZ(float z)
 	transform_.pos.z = z;
 }
 
-void Goal::DrawDebug(void)
-{
-	capsule_->Draw();
-}
-
 void Goal::Collision(void)
 {
 	// 現在座標を起点に移動後座標を決める
@@ -137,10 +141,9 @@ void Goal::CollisionGravity(void)
 	// 重力の強さ
 	float gravityPow = Planet::DEFAULT_GRAVITY_POW;
 
-	float checkPow = 10.0f;
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
-	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
+	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, CHECK_POW * DIR_UP_GRAVITY_POW));
+	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, CHECK_POW));
 	for (const auto& c : colliders_)
 	{
 
@@ -153,7 +156,7 @@ void Goal::CollisionGravity(void)
 		{
 
 			// 衝突地点から、少し上に移動
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
+			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, DIR_UP_GRAVITY_POW));
 
 		}
 
@@ -181,7 +184,7 @@ void Goal::CollisionCapsule(void)
 
 			auto hit = hits.Dim[i];
 
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+			for (int tryCnt = 0; tryCnt < TRY_MAX_COUNT; tryCnt++)
 			{
 
 				int pHit = HitCheck_Capsule_Triangle(

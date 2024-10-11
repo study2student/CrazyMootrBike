@@ -48,6 +48,7 @@ public:
 
 private:
 
+	//e(ƒwƒŠ)‚Ìî•ñ
 	Transform transformParent_;
 
 	// ó‘ÔŠÇ—

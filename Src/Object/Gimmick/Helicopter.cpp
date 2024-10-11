@@ -58,6 +58,9 @@ const float CAPSULE_RADIUS = 135.0f;
 //回転しきい値
 const float ROTATE_ANGLE_DIFF_MIN = 0.1f;
 
+//多人数対戦時のプレイヤーに位置を合わせる用値
+const float TO_TARGET_MATCH_RATE_MULTI = 0.015f;
+
 #pragma endregion
 
 
@@ -279,8 +282,7 @@ void Helicopter::ProcessMove(void)
 		}
 		else
 		{
-			float  rate = 0.015f;
-			transform_.pos.x = MyUtility::Lerp(transform_.pos.x, targetTrans_.pos.x, rate);
+			transform_.pos.x = MyUtility::Lerp(transform_.pos.x, targetTrans_.pos.x, TO_TARGET_MATCH_RATE_MULTI);
 		}
 		
 	}
