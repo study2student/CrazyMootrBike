@@ -64,7 +64,9 @@
 	const float MAX_STEP_FLASH = 0.8f;
 
 	// プッシュ文字画像の座標
-	const VECTOR IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 145, 700 };
+	//const VECTOR IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 145, 700 };
+
+	const VECTOR IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 256, 700 };
 
 	// バイクのスピード
 	const float BIKE_SPEED = 60.0f;

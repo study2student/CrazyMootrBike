@@ -65,8 +65,8 @@
 	const Vector2 DEAD_BACK_BOX_MAX_POS_P4 = { Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y };
 	const Vector2 DEAD_FONT_POS_P4 = { 1300,700 };
 
-//死亡文字大きさ
-const double DEAD_FONT_EXRATE = 6.0;
+	//死亡文字大きさ
+	const double DEAD_FONT_EXRATE = 6.0;
 
 	//死亡文字
 	const std::string DEAD_FONT = "DEAD";
@@ -352,13 +352,16 @@ void GameScene::Draw(void)
 		SetDrawScreen(DX_SCREEN_BACK);
 
 		DrawGraph(0, 0, mainScreen_, false);
-		//スコア描画
-		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2, 0, 2, 2, 0xff0000, "Player %d       :%d", 1, bikes_[0]->GetScore());
-		int coinX_ = 240;
-		int coinY_ = 20;
-		DrawRotaGraph(Application::SCREEN_SIZE_X / 2 + coinX_, coinY_, 0.15, 0.0, imgCoin_, true);
-		//HP描画
 		using ap = Application;
+		//スコア描画
+		DrawExtendFormatString(ap::SCREEN_SIZE_X / 2, 10, 3, 3, 0xff0000, "Player     :%d", bikes_[0]->GetScore());
+
+		//コイン描画
+		int coinX_ = 250;
+		int coinY_ = 40;
+		DrawRotaGraph(ap::SCREEN_SIZE_X / 2 + coinX_, coinY_, 0.3, 0.0, imgCoin_, true);
+
+		//HP描画
 		int sc_x = ap::SCREEN_SIZE_X - 500;
 		int sc_y = ap::SCREEN_SIZE_Y - 100;
 
@@ -378,7 +381,7 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
+			DrawExtendFormatString(ap::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), ap::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
 		}
 
 	}
@@ -539,13 +542,6 @@ void GameScene::Draw(void)
 		}
 		
 	}
-	// ヘルプ
-	//DrawFormatString(840, 20, 0x000000, "移動　　：WASD");
-	//DrawFormatString(840, 40, 0x000000, "カメラ　：矢印キー");
-	//DrawFormatString(840, 60, 0x000000, "ダッシュ：右Shift");
-	//DrawFormatString(840, 80, 0x000000, "ジャンプ：＼(バクスラ)");
-	//DrawDubg();
-
 
 	//ゴールしたら文字出現
 	if (playNumber_ == 1)

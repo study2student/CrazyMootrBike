@@ -170,12 +170,12 @@ void GimmickBase::CollisionCapsule(void)
 }
 
 void GimmickBase::InitLoad(void)
-{
+{                                                                        
 }
 
 void GimmickBase::InitTransform(void)
 {
-	transform_.scl = initScl_;
+	transform_.scl = initScl_;														
 	transform_.quaRot = Quaternion::Euler(initRotEuler_);
 	transform_.quaRotLocal = Quaternion::Euler(initLocalRotEuler_);
 	transform_.pos = initPos_;

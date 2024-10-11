@@ -38,7 +38,8 @@
 	const float MAX_STEP_FLASH = 0.8f;
 	const float MIN_STEP_FLASH = 0.0f;
 	//PUSH画像の座標
-	const int IMG_PUSH_POS_X = Application::SCREEN_SIZE_X / 2 - 145;
+	//const int IMG_PUSH_POS_X = Application::SCREEN_SIZE_X / 2 - 145;
+	const int IMG_PUSH_POS_X = Application::SCREEN_SIZE_X / 2 - 256;//ゲーム大祭用
 	const int IMG_PUSH_POS_Y = 700;
 	//操作説明画像座標
 	const int IMG_OPERATION_POS_Y = 280;

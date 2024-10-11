@@ -37,7 +37,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::TITLE, res);
 
 	// PushSpace
-	res = new RES(RES_T::IMG, PATH_IMG + "push.png");
+	res = new RES(RES_T::IMG, PATH_IMG + "PushSpace.png");
 	resourcesMap_.emplace(SRC::PUSH_SPACE, res); 
 
 	// ‚«o‚µ
@@ -201,7 +201,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::HELICOPTER_ROTOR, res);
 
 	// “G‚ª—‚Æ‚·”š’e
-	res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/bomb.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Bomb/blackbomb.mv1");
 	resourcesMap_.emplace(SRC::BOMB, res);
 
 	//‹àƒƒ_ƒ‹
