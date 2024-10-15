@@ -2,6 +2,7 @@
 #include "SceneBase.h"
 #include <vector>
 #include <list>
+#include <memory>
 class Camera;
 class Stage;
 class SkyDome;

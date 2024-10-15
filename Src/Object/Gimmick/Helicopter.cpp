@@ -97,7 +97,6 @@ Helicopter::Helicopter(GameScene* gameScene)
 
 Helicopter::~Helicopter(void)
 {
-	delete rotor_;
 }
 
 void Helicopter::Update(void)
@@ -145,7 +144,7 @@ void Helicopter::SetBikeTrans(const Transform& bikeTrans)
 	targetTrans_ = bikeTrans;
 }
 
-Bomb* Helicopter::GetBomb(void)
+std::shared_ptr<Bomb> Helicopter::GetBomb(void)
 {
 	return bomb_;
 }
@@ -444,11 +443,11 @@ void Helicopter::BikeDisFunc(void)
 void Helicopter::InitLoad(void)
 {
 	//‰H
-	rotor_ = new Rotor();
+	rotor_ = std::make_unique<Rotor>();
 	rotor_->Init();
 
 	//”š’e
-	bomb_ = new Bomb();
+	bomb_ = std::make_shared<Bomb>();
 	bomb_->Init();
 
 	//ƒ‚ƒfƒ‹‚Ì“Ç‚İ‚İ

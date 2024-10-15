@@ -61,7 +61,7 @@ public:
 	void SetBikeIsOutside(const bool& isOutside);
 
 	//”š’eæ“¾
-	Bomb* GetBomb(void);
+	std::shared_ptr<Bomb> GetBomb(void);
 
 	// ó‘Ô‘JˆÚ
 	void ChangeState(STATE state);
@@ -69,10 +69,10 @@ public:
 private:
 
 	//‰H
-	Rotor* rotor_;
+	std::unique_ptr<Rotor> rotor_;
 
 	//”š’e
-	Bomb* bomb_;
+	std::shared_ptr<Bomb> bomb_;
 
 	//ƒoƒCƒNî•ñ
 	Transform targetTrans_;
