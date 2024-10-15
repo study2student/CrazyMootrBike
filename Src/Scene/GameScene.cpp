@@ -27,6 +27,66 @@
 #include "GameScene.h"
 
 #pragma region 定数宣言
+	//フォントサイズ
+	const int FONT_SIZE = 16;
+
+	//プレイ人数の最大数
+	const int MAX_PLAYER_NUM = 4;
+
+	//プレイヤー同士の初期幅
+	const float PLAYER_WIDTH = 200.0f;
+
+	//コインとステージとのローカル座標
+	const VECTOR LOCAL_STAGE_POS = { 0.0f,800.0f,0.0f };
+
+	//Finish文字の初期Y座標
+	const int FINISH_START_POS_Y = -40;
+
+	//BGMの音量
+	const int BGM_VOLUME = 125;
+
+	//スコア描画のY座標
+	const int SCORE_POS_Y = 10;
+
+	//スコア描画文字の大きさ
+	const double SCORE_SIZE = 3.0;
+
+	//コイン画像描画のX座標
+	const int COIN_IMG_POS_X = 250;
+
+	//コイン画像描画のY座標
+	const int COIN_IMG_POS_Y = 40;
+
+	//コイン画像の大きさ
+	const double COIN_IMG_SIZE = 0.3;
+
+	//HPバー描画時のローカル座標
+	const int HP_BAR_LOCAL_X = 500;
+	const int HP_BAR_LOCAL_Y = 100;
+
+	//警告画像最大サイズ
+	const float WARNING_IMG_MAX_SCALE = 0.40f;
+
+	//警告画像最小サイズ
+	const float WARNING_IMG_MIN_SCALE = 0.20f;
+
+	//警告画像大きさ変化量
+	const float WARNING_IMG_CHANGE_SCALE = 0.005f;
+
+	//警告画像Y座標
+	const float WARNING_POS_Y = 120.0f;
+
+	//ゴールしてから次のシーンになるまでの時間
+	const float GOAL_TO_NEXT_SCENE = 2.5f;
+
+	// HPバーの幅と高さ
+	const int HP_BER = 10;
+
+	// コントローラーの揺れ値
+	const int CE_SWING_VALUE = 1000;
+
+	// コントローラーの揺れ時間
+	const int CE_SWING_TIME = 700;
 
 	//4人対戦用のゴール文字位置
 	//プレイヤー1
@@ -81,13 +141,38 @@
 
 
 GameScene::GameScene(void)
+	:
+	mainScreen_(0),
+	onePersonIsGoal_(false),
+	startCount_(0.0f),
+	isStart_(false),
+	imgWarning_(0),
+	warningImgScale_(0.0f),
+	isMaxWarningScale_(false),
+	imgPause_(0),
+	imgFinish_(0),
+	imgCoin_(0),
+	cameras_({}),
+	stage_(nullptr),
+	skyDomes_(0),
+	spike_(nullptr),
+	bikes_({}),
+	helicopter_(nullptr),
+	coin_(nullptr),
+	coins_({}),
+	enCounter(0),
+	isCreateCoin_(false),
+	pause_(nullptr),
+	hitStopDuration(0.0f),
+	hitStopTimer(0.0f),
+	isHitStop(false),
+	effectHitResId_(0),
+	effectHitPlayId_(0),
+	playNumber_(0),
+	isPause_(false),
+	finishFontMovePos_({}),
+	stepGoalAfter_(0.0f)
 {
-	coin_ = nullptr;
-	stage_ = nullptr;
-	helicopter_ = nullptr;
-	spike_ = nullptr;
-	//score_ = nullptr;
-	stepGoalAfter_ = 0.0f;
 }
 
 GameScene::~GameScene(void)
@@ -98,7 +183,7 @@ GameScene::~GameScene(void)
 void GameScene::Init(void)
 {
 	// DrawString で描画する文字列の大きさを設定
-	SetFontSize(16);
+	SetFontSize(FONT_SIZE);
 	// DrawString で描画するフォントを変更
 	ChangeFont("Nikkyou Sans");
 
@@ -114,7 +199,7 @@ void GameScene::Init(void)
 	}
 
 	// プレイヤー
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < MAX_PLAYER_NUM; ++i) {
 		bikes_.emplace_back(std::make_shared<Bike>(PLAYER_WIDTH * (i + 1), i));
 	}
 
@@ -124,7 +209,7 @@ void GameScene::Init(void)
 
 	// コイン
 	for (auto& bike : bikes_) {
-		coin_ = new CoinBase(bikes_,this, { 0.0f,800.0f,0.0f }, { 0.0f,0.0f,0.0f });
+		coin_ = new CoinBase(bikes_,this, LOCAL_STAGE_POS, { 0.0f,0.0f,0.0f });
 	}
 
 	//ヘリコプター
@@ -186,8 +271,7 @@ void GameScene::Init(void)
 	isHitStop = false;
 
 	//FINISH文字の初期位置
-	int addPosX = 0;
-	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2 + addPosX ,-40 };
+	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2, FINISH_START_POS_Y };
 	finishFontMovePos_ = finishStartPos;
 
 	isPause_ = false;
@@ -258,7 +342,7 @@ void GameScene::Update(void)
 		float deltaTime = hitStopDuration;
 
 		//BGMを再生
-		ChangeVolumeSoundMem(125,PlaySoundMem(ResourceManager::GetInstance().Load(
+		ChangeVolumeSoundMem(BGM_VOLUME,PlaySoundMem(ResourceManager::GetInstance().Load(
 			ResourceManager::SRC::SND_GAME_BGM).handleId_, DX_PLAYTYPE_LOOP, false));
 
 		for (auto& skyDome : skyDomes_)
@@ -354,16 +438,14 @@ void GameScene::Draw(void)
 		DrawGraph(0, 0, mainScreen_, false);
 		using ap = Application;
 		//スコア描画
-		DrawExtendFormatString(ap::SCREEN_SIZE_X / 2, 10, 3, 3, 0xff0000, "Player     :%d", bikes_[0]->GetScore());
+		DrawExtendFormatString(ap::SCREEN_SIZE_X / 2, SCORE_POS_Y, SCORE_SIZE, SCORE_SIZE, 0xff0000, "Player     :%d", bikes_[0]->GetScore());
 
 		//コイン描画
-		int coinX_ = 250;
-		int coinY_ = 40;
-		DrawRotaGraph(ap::SCREEN_SIZE_X / 2 + coinX_, coinY_, 0.3, 0.0, imgCoin_, true);
+		DrawRotaGraph(ap::SCREEN_SIZE_X / 2 + COIN_IMG_POS_X, COIN_IMG_POS_Y, COIN_IMG_SIZE, 0.0, imgCoin_, true);
 
 		//HP描画
-		int sc_x = ap::SCREEN_SIZE_X - 500;
-		int sc_y = ap::SCREEN_SIZE_Y - 100;
+		int sc_x = ap::SCREEN_SIZE_X - HP_BAR_LOCAL_X;
+		int sc_y = ap::SCREEN_SIZE_Y - HP_BAR_LOCAL_Y;
 
 		// HPバーの幅
 		int HP_BAR_WIDTH = ap::SCREEN_SIZE_X - HP_BER - sc_x;

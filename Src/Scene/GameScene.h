@@ -28,38 +28,6 @@ public:
 		END		//終わる
 	};
 
-	// プレイヤー同士の初期幅
-	static constexpr float PLAYER_WIDTH = 200.0f;
-
-	//パッド最大数
-	static constexpr int PAD_MAX = 4;
-
-	//警告画像最大サイズ
-	static constexpr float WARNING_IMG_MAX_SCALE = 0.40f;
-
-	//警告画像最小サイズ
-	static constexpr float WARNING_IMG_MIN_SCALE = 0.20f;
-
-	//警告画像大きさ変化量
-	static constexpr float WARNING_IMG_CHANGE_SCALE = 0.005f;
-
-	//警告画像Y座標
-	static constexpr float WARNING_POS_Y = 120.0f;
-
-	//ゴールしてから次のシーンになるまでの時間
-	static constexpr float GOAL_TO_NEXT_SCENE = 2.5f;
-
-	// HPバーの幅と高さ
-	static constexpr int HP_BER = 10;
-
-	// コントローラーの揺れ値
-	static constexpr int CE_SWING_VALUE = 1000;
-
-	// コントローラーの揺れ時間
-	static constexpr int CE_SWING_TIME = 700;
-
-	//エンカウント値
-	static constexpr int ENCOUNT = 350;
 
 	// コンストラクタ
 	GameScene(void);
