@@ -634,7 +634,7 @@ void GameScene::DrawUI(int x, int y, int playerID)
 {
 
 	using ap = Application;
-	int sc_x = x - 200;
+	int sc_x = x - 300;
 	int sc_y = y + 50;
 
 	// HPƒo[‚Ì•

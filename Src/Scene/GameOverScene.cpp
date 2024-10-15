@@ -24,17 +24,11 @@
 	//プレイヤー初期値
 	const float PLAYER_LOCAL_POS = 200.0f;
 	//左上のリトライポジションx,y
-	//const int RETRY_POS_X = 580;
-	//const int RETRY_POS_Y = 10;
-	//ゲーム大祭用
-	const int RETRY_POS_X = 500;
+	const int RETRY_POS_X = 580;
 	const int RETRY_POS_Y = 10;
 	//左上の終わるポジションx,y
-	//ゲーム大祭用
-	const int END_POS_X = 535;
+	const int END_POS_X = 615;
 	const int END_POS_Y = 150;
-	//const int END_POS_X = 615;
-	//const int END_POS_Y = 150;
 	//背景画像描画拡大描画用座標
 	const int IMG_BG_POS_Y = 20;
 	//スコア表示座標
@@ -149,7 +143,7 @@ void GameOverScene::Draw(void)
 	}
 
 	//背景
-	//DrawRotaGraphFastF(1600, 600, 3.0f, 0.0f, imgSelectBG_, true);
+	DrawRotaGraphFastF(1600, 600, 3.0f, 0.0f, imgSelectBG_, true);
 
 	//文字表示
 	//float fontScl = 3.0f;

@@ -7,8 +7,8 @@ class Application
 public:
 
 	// スクリーンサイズ
-	static constexpr int SCREEN_SIZE_X = 1440;
-	static constexpr int SCREEN_SIZE_Y = 800;
+	static constexpr int SCREEN_SIZE_X = 1840;
+	static constexpr int SCREEN_SIZE_Y = 960;
 
 	//設定フレームレート
 	static constexpr float FRAME_RATE = (1000 / 60);
