@@ -175,6 +175,7 @@ void GimmickBase::InitLoad(void)
 
 void GimmickBase::InitTransform(void)
 {
+	//ˆÊ’u‰ñ“]‘å‚«‚³‰Šú‰»
 	transform_.scl = initScl_;														
 	transform_.quaRot = Quaternion::Euler(initRotEuler_);
 	transform_.quaRotLocal = Quaternion::Euler(initLocalRotEuler_);

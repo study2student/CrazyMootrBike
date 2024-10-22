@@ -25,6 +25,7 @@ void DataSave::Init(void)
 
 void DataSave::SetData(DataType dataType, int num)
 {
+    //データ設定
     switch (dataType)
     {
     case DataSave::DataType::PLAYER_NUM:
@@ -40,5 +41,6 @@ const DataSave::Data& DataSave::GetData(void) const
 
 void DataSave::ResetData(void)
 {
+    //リセット
     data_ = {};
 }

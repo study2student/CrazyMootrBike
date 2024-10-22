@@ -44,7 +44,6 @@ public:
 	{
 		NONE,
 		PLAY,
-		FLIPED,
 		DEAD,
 	};
 
@@ -73,13 +72,12 @@ public:
 	// デストラクタ
 	virtual ~CoinBase(void);
 
-	virtual void Init(void) override;
-	virtual void SetParam(void);
-	virtual void Update(void) override;
-	virtual void Draw(void) override;
+	void Init(void) override;
+	void Update(void) override;
+	void Draw(void) override;
 
-	virtual void UpdatePlay(void);
-	virtual void ProcessMove(void);
+	//パラメータ設定
+	virtual void SetParam(void);
 
 	// 衝突判定に用いられるコライダ制御
 	void AddCollider(std::shared_ptr<Collider> collider);
@@ -87,9 +85,6 @@ public:
 
 	// 衝突用カプセルの取得
 	const std::weak_ptr<Capsule> GetCapsule(void) const;
-
-	// 敵に吹っ飛ばされた
-	void Flip(VECTOR dir);
 
 	// プレイヤーと当たったか
 	const bool& GetIsBikeCol(void) const;
@@ -100,13 +95,13 @@ public:
 	//状態取得
 	const STATE& GetState(void) const;
 
-	//死亡状態か
+	//削除状態か
 	const bool& IsDestroy(void) const;
 
-	//死亡状態へ
+	//削除状態へ
 	void Destroy(void);
 
-	// スコア加算メソッド
+	// スコア加算関数
 	void AddScoreToPlayer(int playerId, int score);
 
 protected:
@@ -142,7 +137,7 @@ protected:
 	float stepMade_;
 
 	// 回転
-	Quaternion enemyRotY_;
+	Quaternion rotY_;
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
 
@@ -163,39 +158,38 @@ protected:
 	//スコアを加算してもよいか
 	bool isAddScore_;
 
-	//ふっとばし
-	float flipSpeed_;
-	VECTOR flipDir_;
-
 	// ヒットエフェクト
 	int effectHitResId_;
 	int effectHitPlayId_;
 
 	// エフェクト初期化
 	void InitEffect(void);
-	// Hitエフェクトの位置
-	void HitEffect();
+	// ヒットエフェクト再生
+	void PlayHitEffect(void);
 
 	// 状態遷移
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStatePlay(void);
-	void ChangeStateFliped(void);
 	void ChangeStateDead(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
-	void UpdateFliped(void);
+	void UpdatePlay(void);
 	void UpdateDead(void);
+
+	//動作
+	void ProcessMove(void);
 
 	// 回転
 	void SetGoalRotate(float rotRad);
 	void RotY(void);
 
 	// 衝突判定
-	void Collision(void);
+	void CollisionGround(void);
 	void CollisionGravity(void);
 	void CollisionCapsule(void);
+	void BikeCollision(void);
 
 	// 移動量の計算
 	void CalcGravityPow(void);

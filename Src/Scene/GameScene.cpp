@@ -27,6 +27,7 @@
 #include "GameScene.h"
 
 #pragma region 定数宣言
+
 	//フォントサイズ
 	const int FONT_SIZE = 16;
 
@@ -203,13 +204,14 @@ void GameScene::Init(void)
 		bikes_.emplace_back(std::make_shared<Bike>(PLAYER_WIDTH * (i + 1), i));
 	}
 
+	//プレイヤー初期化
 	for (auto& bike : bikes_) {
 		bike->Init();
 	}
 
 	// コイン
 	for (auto& bike : bikes_) {
-		coin_ = new CoinBase(bikes_,this, LOCAL_STAGE_POS, { 0.0f,0.0f,0.0f });
+		coin_ = new CoinBase(bikes_,this, LOCAL_STAGE_POS, MyUtility::VECTOR_ZERO);
 	}
 
 	//ヘリコプター
@@ -240,17 +242,18 @@ void GameScene::Init(void)
 	}
 	else
 	{
-		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
-		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
-		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
-		cameras_.push_back(std::make_shared<Camera>()); // 各プレイヤーのカメラを作成
+		// 各プレイヤーのカメラを作成
+		cameras_.push_back(std::make_shared<Camera>()); 
+		cameras_.push_back(std::make_shared<Camera>());
+		cameras_.push_back(std::make_shared<Camera>());
+		cameras_.push_back(std::make_shared<Camera>());
 	}
 
-
+	// 各プレイヤーのバイクを追従
 	for (int i = 0; i < cameras_.size(); i++) {
 		cameras_[i]->Init();
 		cameras_[i]->ChangeMode(Camera::MODE::FOLLOW);
-		cameras_[i]->SetFollow(&bikes_[i]->GetTransform()); // 各プレイヤーのバイクを追従
+		cameras_[i]->SetFollow(&bikes_[i]->GetTransform()); 
 	}
 
 	//ポーズ
@@ -282,12 +285,14 @@ void GameScene::Init(void)
 	imgWarning_= resMng_.Load(ResourceManager::SRC::WARNING).handleId_;
 	warningImgScale_ = WARNING_IMG_MIN_SCALE;
 
+	//ポーズ背景
+	//読み込みと設定
 	imgPause_ = resMng_.Load(ResourceManager::SRC::PAUSE).handleId_;
 	pause_->SetImgHandle(imgPause_);
 
+	//FINISH文字とコイン画像
 	imgFinish_= resMng_.Load(ResourceManager::SRC::IMG_FINISH).handleId_;
 	imgCoin_= resMng_.Load(ResourceManager::SRC::IMG_COIN).handleId_;
-
 
 	//スコアリセット
 	score_.ResetScore();
@@ -855,12 +860,15 @@ void GameScene::CoinPlace(void)
 			switch (type)
 			{
 			case CoinBase::TYPE::GOLD:
+				//金コイン配置
 				c = new GoldCoin(bikes_, this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			case CoinBase::TYPE::SILVER:
+				//銀コイン配置
 				c = new SilverCoin(bikes_, this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			case CoinBase::TYPE::COPPER:
+				//銅コイン配置
 				c = new CopperCoin(bikes_, this, stage_->GetForwardLoopPos(), { shiftX_,0.0f,i * len });
 				break;
 			}
@@ -870,7 +878,7 @@ void GameScene::CoinPlace(void)
 		isCreateCoin_ = true;
 
 		//可変長配列に要素を追加
-		coins_.push_back(c);
+		coins_.emplace_back(c);
 	}
 }
 
@@ -913,6 +921,7 @@ void GameScene::Collision(void)
 	//爆弾とプレイヤーの当たり判定、投げモノとプレイヤーの判定
 	//HPが減り続けてしまうので当たった時は処理中断
 
+	//爆弾
 	for (const auto& bike : bikes_)
 	{
 		auto bikeCap = bike->GetCapsule();
@@ -920,7 +929,6 @@ void GameScene::Collision(void)
 		{
 			if (!helicopter_->GetBomb()->GetIsCol())
 			{
-				//爆弾
 				Capsule bombCap = helicopter_->GetBomb()->GetCapsule();
 				
 				VECTOR diffB = VSub(bombCap.GetCenter(), bikeCap.lock()->GetCenter());
@@ -969,10 +977,10 @@ void GameScene::Collision(void)
 			}
 		}
 
+		//投げモノ
 		if (!spike_->GetIsCol())
 		{
 
-			//投げモノ
 			Capsule throwCap = spike_->GetCapsule();
 
 			VECTOR diffT = VSub(throwCap.GetCenter(), bikeCap.lock()->GetCenter());

@@ -263,6 +263,7 @@ void Bomb::UpdateBlast(void)
 
 void Bomb::DrawBombPlace(void)
 {
+	//爆発目標描画位置(カプセル)
 	VECTOR localPos1 = { 0.0f,-600.0f,-390.0f };
 	VECTOR localPos2 = { 0.0f,-590.0f,-390.0f };
 	VECTOR pos1 = VAdd(heliTrans_.pos, localPos1);

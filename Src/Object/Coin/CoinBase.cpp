@@ -45,6 +45,10 @@ const int EFF_POS_Z = 500;
 
 //回転しきい値
 const float ROTATE_ANGLE_DIFF_MIN = 0.1f;
+
+//スコア増分値
+const int ADD_SCORE_NUM = 10;
+
 #pragma endregion
 
 
@@ -58,7 +62,7 @@ CoinBase::CoinBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* ga
 	movedPos_(MyUtility::VECTOR_ZERO),
 	makePos_(loopStagePos),
 	localPos_(localPos),
-	enemyRotY_(Quaternion()),
+	rotY_(Quaternion()),
 	goalQuaRot_(Quaternion()),
 	stepRotTime_(0.0f),
 	jumpPow_(MyUtility::VECTOR_ZERO),
@@ -70,8 +74,6 @@ CoinBase::CoinBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* ga
 	capsule_(nullptr),
 	isCollGround_ (false),
 	stepMade_(0.0f),
-	flipSpeed_(0.0f),
-	flipDir_(MyUtility::VECTOR_ZERO),
 	effectHitResId_(-1),
 	effectHitPlayId_(-1)
 {
@@ -112,7 +114,6 @@ void CoinBase::Init(void)
 
 void CoinBase::SetParam(void)
 {
-
 }
 
 void CoinBase::Update(void)
@@ -126,14 +127,10 @@ void CoinBase::Update(void)
 	case CoinBase::STATE::PLAY:
 		UpdatePlay();
 		break;
-	case CoinBase::STATE::FLIPED:
-		UpdateFliped();
-		break;
 	case CoinBase::STATE::DEAD:
 		UpdateDead();
 		break;
 	}
-
 
 	// モデル制御更新
 	transform_.Update();
@@ -167,13 +164,6 @@ const std::weak_ptr<Capsule> CoinBase::GetCapsule(void) const
 	return capsule_;
 }
 
-void CoinBase::Flip(VECTOR dir)
-{
-	flipDir_ = dir;
-	flipSpeed_ = 10.0f;
-	ChangeState(STATE::FLIPED);
-}
-
 const bool& CoinBase::GetIsBikeCol(void) const
 {
 	return isBikeCol_;
@@ -201,6 +191,7 @@ void CoinBase::Destroy(void)
 
 void CoinBase::AddScoreToPlayer(int playerId, int score)
 {
+	//プレイヤーにスコアを与える
 	if (playerId >= 0 && playerId < bikes_.size())
 	{
 		bikes_[playerId]->AddScore(score);
@@ -209,16 +200,18 @@ void CoinBase::AddScoreToPlayer(int playerId, int score)
 
 void CoinBase::InitEffect(void)
 {
-	// ヒットエフェクト
+	// ヒットエフェクト読み込み
 	effectHitResId_ = ResourceManager::GetInstance().Load(
 		ResourceManager::SRC::HITEFFECT).handleId_;
 
 }
 
-void CoinBase::HitEffect()
+void CoinBase::PlayHitEffect()
 {
+	//ヒットエフェクト再生
 	effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
 
+	//位置回転大きさ設定
 	SetPosPlayingEffekseer3DEffect(effectHitPlayId_, transform_.pos.x, transform_.pos.y, transform_.pos.z + EFF_POS_Z);
 	SetRotationPlayingEffekseer3DEffect(effectHitPlayId_, transform_.rot.x, transform_.rot.y, transform_.rot.z);
 	SetScalePlayingEffekseer3DEffect(effectHitPlayId_, EFF_SCL, EFF_SCL, EFF_SCL);
@@ -239,9 +232,6 @@ void CoinBase::ChangeState(STATE state)
 	case CoinBase::STATE::PLAY:
 		ChangeStatePlay();
 		break;
-	case CoinBase::STATE::FLIPED:
-		ChangeStateFliped();
-		break;
 	case CoinBase::STATE::DEAD:
 		ChangeStateDead();
 		break;
@@ -256,10 +246,6 @@ void CoinBase::ChangeStatePlay(void)
 {
 }
 
-void CoinBase::ChangeStateFliped(void)
-{
-}
-
 void CoinBase::ChangeStateDead(void)
 {
 }
@@ -268,41 +254,20 @@ void CoinBase::UpdateNone(void)
 {
 }
 
-void CoinBase::UpdateFliped(void)
-{
-
-	// 移動処理
-	ProcessMove();
-
-	// 吹っ飛ばされる
-	flipSpeed_ -= 0.16f;
-	if (flipSpeed_ < 0.0f)
-	{
-		flipSpeed_ = 0.0f;
-		ChangeState(STATE::PLAY);
-	}
-	movePow_ = VAdd(movePow_, VScale(flipDir_, flipSpeed_));
-
-	// 重力による移動量
-	CalcGravityPow();
-
-	// 衝突判定
-	Collision();
-
-	// 回転させる
-	transform_.quaRot = enemyRotY_;
-
-}
-
 void CoinBase::UpdateDead(void)
 {
+	//スコアを追加しない
 	isAddScore_ = false;
 }
 
 void CoinBase::UpdatePlay(void)
 {
-	// 移動処理
+	// 動き処理
 	ProcessMove();
+}
+
+void CoinBase::ProcessMove(void)
+{
 
 	//回転
 	RotY();
@@ -310,57 +275,16 @@ void CoinBase::UpdatePlay(void)
 	// 重力による移動量
 	CalcGravityPow();
 
-	// 衝突判定
-	Collision();
+	// 地形衝突判定
+	CollisionGround();
 
 	// 回転させる
-	transform_.quaRot = enemyRotY_;
-}
+	transform_.quaRot = rotY_;
 
-void CoinBase::ProcessMove(void)
-{
-	auto& ins = InputManager::GetInstance();
+	//バイク(プレイヤー)との衝突判定
+	BikeCollision();
 
-	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
-	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
-
-	for (const auto& bike : bikes_) {
-		Transform bikeTrans_ = bike->GetTransform();
-	}
-
-	//衝突判定(敵とプレイヤー)
-	for (const auto& bike : bikes_) {
-		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
-		float  dis = MyUtility::SqrMagnitudeF(diff);
-		if (dis < RADIUS * RADIUS)
-		{
-			//スコア加算
-			isAddScore_ = true;
-			//衝突判定
-			isBikeCol_ = true;
-
-			// ヒットエフェクト
-			HitEffect();
-			effectHitPlayId_ = PlayEffekseer3DEffect(effectHitResId_);
-
-			//コイン収集時の音を再生
-			PlaySoundMem(ResourceManager::GetInstance().Load(
-				ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
-
-			if (isBikeCol_)
-			{
-				ChangeState(STATE::DEAD);
-			}
-		}
-		else
-		{
-			isBikeCol_ = false;
-			isAddScore_ = false;
-			
-		}
-	}
-
-	//削除処理
+	//時間がある程度たったら削除(取り逃したコイン)
 	stepMade_ += SceneManager::GetInstance().GetDeltaTime();
 	if (stepMade_ >= TO_DEAD_TIME_MAX)
 	{
@@ -398,11 +322,11 @@ void CoinBase::RotY(void)
 		Quaternion rotPow = Quaternion::AngleAxis(rad, MyUtility::AXIS_Y);
 
 		//クォータニオン(回転)の合成
-		enemyRotY_ = enemyRotY_.Mult(rotPow);
+		rotY_ = rotY_.Mult(rotPow);
 	}
 }
 
-void CoinBase::Collision(void)
+void CoinBase::CollisionGround(void)
 {
 	// 現在座標を起点に移動後座標を決める
 	movedPos_ = VAdd(transform_.pos, movePow_);
@@ -513,6 +437,74 @@ void CoinBase::CollisionCapsule(void)
 		MV1CollResultPolyDimTerminate(hits);
 	}
 
+}
+
+void CoinBase::BikeCollision(void)
+{
+	//バイクとの衝突判定
+
+	auto& ins = InputManager::GetInstance();
+
+	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
+	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
+
+	//バイク情報取得
+	for (const auto& bike : bikes_) {
+		Transform bikeTrans_ = bike->GetTransform();
+	}
+
+	//衝突判定(コインとプレイヤー)
+	for (const auto& bike : bikes_) {
+		VECTOR diff = VSub(bike->GetCapsule().lock()->GetCenter(), capsule_->GetCenter());
+		float  dis = MyUtility::SqrMagnitudeF(diff);
+		if (dis < RADIUS * RADIUS)
+		{
+			//範囲に入った
+			isBikeCol_ = true;
+			isAddScore_ = true;
+
+			// ヒットエフェクト再生
+			PlayHitEffect();
+
+			int playNum = gameScene_->GetPlayNum();
+			if (playNum == 1)
+			{
+				if (!gameScene_->OnePersonIsGoal())
+				{
+					//スコア加算
+					AddScoreToPlayer(bike->GetPlayerID(), ADD_SCORE_NUM);
+
+					// コイン収集時の音を再生
+					PlaySoundMem(ResourceManager::GetInstance().Load(
+						ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+				}
+			}
+			else
+			{
+				//ゴールしてないプレイヤーにだけ
+				if (!bike->GetIsGoal())
+				{
+					//スコア加算
+					AddScoreToPlayer(bike->GetPlayerID(), ADD_SCORE_NUM);
+
+					// コイン収集時の音を再生
+					PlaySoundMem(ResourceManager::GetInstance().Load(
+						ResourceManager::SRC::SND_COIN).handleId_, DX_PLAYTYPE_BACK, true);
+				}
+			}
+
+			if (isBikeCol_)
+			{
+				//当たったら削除
+				ChangeState(STATE::DEAD);
+			}
+		}
+		else
+		{
+			//スコア追加しない
+			isAddScore_ = false;
+		}
+	}
 }
 
 void CoinBase::CalcGravityPow(void)

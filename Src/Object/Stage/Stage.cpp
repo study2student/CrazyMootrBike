@@ -54,7 +54,7 @@ const float TO_MAKE_STAGE_ADD_POS_Z = 6000.0f;
 #pragma endregion
 
 
-Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes,  CoinBase* coin,  std::shared_ptr<Bomb> bomb , std::shared_ptr<Spike>& throwTyre, GameScene* gameScene)
+Stage::Stage(const std::vector<std::shared_ptr<Bike>>& bikes,  CoinBase* coin, std::shared_ptr<Bomb> bomb, std::shared_ptr<Spike>& throwTyre, GameScene* gameScene)
 	: 
 	resMng_(ResourceManager::GetInstance()),
 	bikes_(bikes),
@@ -85,6 +85,7 @@ Stage::~Stage(void)
 
 void Stage::Init(void)
 {
+	//ステージ生成
 	MakeMainStage();
 	MakeLoopStage();
 	MakeCity();
@@ -231,7 +232,9 @@ void Stage::ChangeStage(NAME type)
 
 	}
 
+	//コインの当たり判定設定
 	coin_->ClearCollider();
+
 	coin_->AddCollider(activePlanet_.lock()->GetTransform().collider);
 	//ループ用のステージ
 	for (const auto& ls : loopStage_)
@@ -328,10 +331,8 @@ void Stage::MakeLoopStage(void)
 		}
 	}
 
-
 	Transform loopTrans;
 	std::shared_ptr<LoopStage> stage;
-
 
 	//pos.z が最大の要素のインデックスを取得する
 	size_t posZMaxIndex = gameScene_->GetBikeMaxPosZIndex();

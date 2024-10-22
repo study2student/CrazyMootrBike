@@ -159,6 +159,9 @@ void Pause::PauseMidst(void)
 
 	//キー操作
 	SelectProcess();
+
+	//続きはif文前のコメントづけや条件の関数化など
+
 }
 
 void Pause::SetImgHandle(const int& handle)
@@ -173,6 +176,7 @@ void Pause::DecideProcess(void)
 	//マウス座標
 	Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
 
+	//パッドの設定
 	InputManager::JOYPAD_NO padNum[PAD_MAX];
 	for (int i = 0; i < PAD_MAX; i++)
 	{
@@ -193,7 +197,7 @@ void Pause::DecideProcess(void)
 		}
 
 
-		//再開ボタン
+		//[再開]ボタン
 		//カーソルが当たっている
 		Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
 		if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
@@ -230,8 +234,7 @@ void Pause::DecideProcess(void)
 		}
 
 
-
-		//リトライボタン
+		//[リトライ]ボタン
 		//カーソルが当たっている
 		Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
 		if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
@@ -266,7 +269,7 @@ void Pause::DecideProcess(void)
 		}
 
 
-		//終わるボタン
+		//[終わる]ボタン
 		//カーソルが当たっている
 		Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
 		if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
