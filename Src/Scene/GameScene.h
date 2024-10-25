@@ -119,8 +119,6 @@ private:
 
 	// カメラやスクリーンの表示の関数化
 	void DrawObject(int playerID);
-	//デバッグ表示
-	void DrawDubg(void);
 	// UI表示
 	void DrawUI(int x, int y, int playerID);
 
@@ -140,13 +138,6 @@ private:
 	float hitStopTimer;      // ヒットストップのタイマー
 	bool isHitStop;        // ヒットストップ中かどうかのフラグ
 
-	// ヒットエフェクト
-	int effectHitResId_;
-	int effectHitPlayId_;
-
-	// エフェクト初期化
-	void InitEffect(void);
-
 	//プレイヤー人数
 	int playNumber_;
 
@@ -154,7 +145,7 @@ private:
 	bool isPause_;
 
 	//FINISH文字の位置
-	Vector2 finishFontMovePos_;
+	Vector2 finishImgMovePos_;
 
 	//ゴールしてからの経過時間
 	float stepGoalAfter_;

@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
 #include "../Application.h"
+#include "../Common/Vector2.h"
 #include "../Utility/MyUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/ResourceManager.h"
@@ -66,7 +67,7 @@
 	// プッシュ文字画像の座標
 	//const VECTOR IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 145, 700 };
 
-	const VECTOR IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 256, 700 };
+	const Vector2 IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 256, 700 };
 
 	// バイクのスピード
 	const float BIKE_SPEED = 60.0f;

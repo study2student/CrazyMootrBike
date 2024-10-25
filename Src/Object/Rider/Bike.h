@@ -159,7 +159,7 @@ private:
 	Quaternion goalQuaRot_;
 	float stepRotTime_;
 
-	//
+	// 現在、現在、
 	float currentTime_;
 
 	// ジャンプ量
@@ -207,9 +207,6 @@ private:
 	void UpdateFliped(void);
 	void UpdateCrash(void);
 	void UpdateDead(void);
-
-	// 描画系
-	void DrawDebug(void);
 
 	// 操作
 	void ProcessMove(void);//移動

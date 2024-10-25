@@ -37,8 +37,8 @@
 	const int DRAW_PLAYER_NUM_POS_X = 340;
 	const int DRAW_PLAYER_NUM_POS_Y = 342;
 	//スコア表示文字描画
-	const int DRAW_SCORE_POS_X = 50;
-	const int DRAW_SCORE_POS_Y = 340;
+	const int DRAW_FOUR_SCORE_POS_X = 50;
+	const int DRAW_FOUR_SCORE_POS_Y = 340;
 	//文字描画のY座標のずらし幅
 	const int SHIFT_WIDTH = 200;
 	//文字描画の拡大率
@@ -137,7 +137,7 @@ void GameOverScene::Draw(void)
 
 		for (int i = 0; i < PLAYER_NUM; i++)
 		{
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - DRAW_SCORE_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_SCORE_POS_Y + (i * SHIFT_WIDTH),
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - DRAW_FOUR_SCORE_POS_X, Application::SCREEN_SIZE_Y / 2 - DRAW_FOUR_SCORE_POS_Y + (i * SHIFT_WIDTH),
 				MAG_RATE, MAG_RATE, 0xff0000, "%.d", score_.GetScoreArray()[i]);
 		}
 	}

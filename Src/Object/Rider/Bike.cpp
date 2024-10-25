@@ -406,21 +406,6 @@ void Bike::UpdateDead(void)
 {
 }
 
-void Bike::DrawDebug(void)
-{
-	capsule_->Draw();
-	//DrawLine3D(gravHitPosUp_, gravHitPosDown_, 0x00ffff);
-
-	DrawFormatString(0, 40, 0xffffff,
-		"バイクの回転：%f,%f,%f",
-		MyUtility::Rad2DegF(transform_.rot.x),
-		MyUtility::Rad2DegF(transform_.quaRot.ToEuler().y),
-		MyUtility::Deg2RadF(transform_.quaRotLocal.ToEuler().z));
-
-	DrawFormatString(0, 80, 0xffffff, "bikePos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);
-
-}
-
 void Bike::ProcessMove(void)
 {
 	if (state_ == STATE::DEAD)

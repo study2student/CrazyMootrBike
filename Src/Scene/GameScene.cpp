@@ -77,6 +77,47 @@
 	//警告画像Y座標
 	const float WARNING_POS_Y = 120.0f;
 
+	//スタート時のカウントの初期値
+	const float START_COUNT = 3.0f;
+
+	//スタート時の文字の描画位置,大きさ
+	const int START_COUNT_POS_X = 50;
+	const int START_COUNT_POS_Y = 95;
+	const double START_COUNT_SIZE = 15.0;
+
+	//HP描画の1枠の横の大きさ
+	const int DRAW_HP_SIZE_X = 600;
+
+	//画面分割の縦、横の線の太さ
+	const int DIVISION_LINE_THICKNESS = 8;
+
+	//四人対戦時のコイン画像の描画位置
+	const int COIN_FOUR_IMG_POS_X = 140;
+	const int COIN_FOUR_IMG_POS_Y = 31;
+
+	//四人対戦時のHP描画の位置
+	const int DRAW_FOUR_HP_POS_X = 300;
+	const int DRAW_FOUR_HP_POS_Y = 50;
+
+	//四人対戦時のスコア描画
+	const int DRAW_FOUR_SCORE_POS_X = 250;
+	const int DRAW_FOUR_SCORE_POS_Y = 20;
+
+	//四人対戦時のスコア描画の大きさ
+	const double DRAW_SCORE_SIZE = 2.0;
+
+	//一人用のFINISH画像の描画
+	const int FINISH_IMG_MOVE_POS_Y = 10;
+
+	//一人用のFINISH画像の描画を止める位置
+	const float FINISH_IMG_STOP_POS_Y = 40.0f;
+
+	//一人用のFINISH画像の描画時の大きさ
+	const double FINISH_IMG_SIZE = 1.5;
+
+	//四人用のFINISH画像の描画時の大きさ
+	const double FINISH_FOUR_IMG_SIZE = 1.0;
+
 	//ゴールしてから次のシーンになるまでの時間
 	const float GOAL_TO_NEXT_SCENE = 2.5f;
 
@@ -138,6 +179,8 @@
 	//死亡文字色
 	const unsigned int DEAD_FONT_COLOR = GetColor(255, 0, 0);
 
+	//四人用コイン画像の大きさ
+	const double COIN_FOUR_IMG_SIZE = 0.15;
 #pragma endregion
 
 
@@ -167,11 +210,9 @@ GameScene::GameScene(void)
 	hitStopDuration(0.0f),
 	hitStopTimer(0.0f),
 	isHitStop(false),
-	effectHitResId_(0),
-	effectHitPlayId_(0),
 	playNumber_(0),
 	isPause_(false),
-	finishFontMovePos_({}),
+	finishImgMovePos_({}),
 	stepGoalAfter_(0.0f)
 {
 }
@@ -260,22 +301,15 @@ void GameScene::Init(void)
 	pause_ = std::make_unique<Pause>();
 	pause_->Init();
 
-	// エフェクト初期化
-	InitEffect();
-
 	//エンカウントリセット
 	enCounter = 0;
 
 	//コインが生成されたか
 	isCreateCoin_ = false;
 
-	hitStopDuration = 6000.0f;
-	hitStopTimer = 0.0f;
-	isHitStop = false;
-
 	//FINISH文字の初期位置
 	Vector2 finishStartPos = { Application::SCREEN_SIZE_X / 2, FINISH_START_POS_Y };
-	finishFontMovePos_ = finishStartPos;
+	finishImgMovePos_ = finishStartPos;
 
 	isPause_ = false;
 
@@ -298,7 +332,7 @@ void GameScene::Init(void)
 	score_.ResetScore();
 
 	// ゲームスタート時のカウント
-	startCount_ = 3.0f;
+	startCount_ = START_COUNT;
 	isStart_ = false;
 
 	//エンジン音
@@ -338,7 +372,7 @@ void GameScene::Update(void)
 	// スタート時のカウントダウンを減らす
 	if (startCount_ > 0.0f)
 	{
-		startCount_ -= 1 / 60.0f;
+		startCount_ -= SceneManager::GetInstance().GetDeltaTime();
 	}
 
 
@@ -468,7 +502,7 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-			DrawExtendFormatString(ap::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), ap::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
+			DrawExtendFormatString(ap::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), ap::SCREEN_SIZE_Y / 2 -95, START_COUNT_SIZE, START_COUNT_SIZE, 0xffffff, "%.f", startCount_);
 		}
 
 	}
@@ -500,19 +534,12 @@ void GameScene::Draw(void)
 
 				SetDrawScreen(DX_SCREEN_BACK);
 
-				//1枠の横の大きさ
-				int width = 600;
-
-				//コイン調整座標
-				int coinX = 140;
-				int coinY = 31;
-
 				switch (i)
 				{
 				case 0:
 					DrawGraph(0, 0, mainScreen_, false);
-					DrawUI(sx / 2 - width, 0, 0);
-					CoinImgDraw(sx / 2 - coinX, coinY);
+					DrawUI(sx / 2 - DRAW_HP_SIZE_X, 0, 0);
+					CoinImgDraw(sx / 2 - COIN_FOUR_IMG_POS_X, COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
 					if (bikes_[0]->GetIsBoost())
@@ -536,8 +563,8 @@ void GameScene::Draw(void)
 					break;
 				case 1:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
-					DrawUI(sx - width, 0, 1);
-					CoinImgDraw(sx - coinX, coinY);
+					DrawUI(sx - DRAW_HP_SIZE_X, 0, 1);
+					CoinImgDraw(sx - COIN_FOUR_IMG_POS_X, COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
 					if (bikes_[1]->GetIsBoost())
@@ -561,8 +588,8 @@ void GameScene::Draw(void)
 					break;
 				case 2:
 					DrawGraph(0, sy / 2, mainScreen_, false);
-					DrawUI(sx / 2 - width, sy / 2, 2);
-					CoinImgDraw(sx / 2 - coinX, sy / 2 + coinY);
+					DrawUI(sx / 2 - DRAW_HP_SIZE_X, sy / 2, 2);
+					CoinImgDraw(sx / 2 - COIN_FOUR_IMG_POS_X, sy / 2 + COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
 					if (bikes_[2]->GetIsBoost())
@@ -586,8 +613,8 @@ void GameScene::Draw(void)
 					break;
 				case 3:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
-					DrawUI(sx - width, sy / 2, 3);
-					CoinImgDraw(sx - coinX, sy / 2 + coinY);
+					DrawUI(sx - DRAW_HP_SIZE_X, sy / 2, 3);
+					CoinImgDraw(sx - COIN_FOUR_IMG_POS_X, sy / 2 + COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
 					if (bikes_[3]->GetIsBoost())
@@ -613,18 +640,16 @@ void GameScene::Draw(void)
 			}
 		}
 
-		// 横の線
-		DrawLine(0, sy / 2, sx, sy / 2, 0xffff00, 8);
-		// 縦の線
-		DrawLine(sx / 2, 0, sx / 2, sy, 0xffff00, 8);
+		// 分割横の線
+		DrawLine(0, sy / 2, sx, sy / 2, 0xffff00, DIVISION_LINE_THICKNESS);
+		// 分割縦の線
+		DrawLine(sx / 2, 0, sx / 2, sy, 0xffff00, DIVISION_LINE_THICKNESS);
 
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
 
-			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2 -95, 15, 15, 0xffffff, "%.f", startCount_);
-
-			//DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - 400, Application::SCREEN_SIZE_Y / 2, 15, 15, 0xffffff, "%.f", startCount_);
+			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - START_COUNT_POS_Y - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2 - START_COUNT_POS_Y, START_COUNT_SIZE, START_COUNT_SIZE, 0xffffff, "%.f", startCount_);
 
 		}
 		
@@ -710,19 +735,12 @@ void GameScene::DrawObject(int playerID)
 	}
 }
 
-void GameScene::DrawDubg(void)
-{
-	DrawFormatString(840, 100, 0x000000, "DrawCall:%d", GetDrawCallCount());
-	DrawFormatString(840, 120, 0x000000, "FPS:%f", GetFPS());
-	DrawFormatString(0, 140, 0x000000, "IsHitStop:%d", isHitStop);
-}
-
 void GameScene::DrawUI(int x, int y, int playerID)
 {
 
 	using ap = Application;
-	int sc_x = x - 300;
-	int sc_y = y + 50;
+	int sc_x = x - DRAW_FOUR_HP_POS_X;
+	int sc_y = y + DRAW_FOUR_HP_POS_Y;
 
 	// HPバーの幅
 	int HP_BAR_WIDTH = x - HP_BER - sc_x;
@@ -737,13 +755,8 @@ void GameScene::DrawUI(int x, int y, int playerID)
 		x - HP_BER, HP_BAR_HEIGHT,
 		0x000000, false);
 
-	//DrawBoxAA(sc_x, sc_y,
-	//	x - 10, HP_BAR_HEIGHT,
-	//	0x000000, false, 13.0f);
-
 	// スコア描画
-	int addX = 250;
-	DrawExtendFormatString(x + addX, y + 20, 2, 2, 0xff0000, "Player %d     :%d", playerID + 1, bikes_[playerID]->GetScore());
+	DrawExtendFormatString(x + DRAW_FOUR_SCORE_POS_X, y + DRAW_FOUR_SCORE_POS_Y, DRAW_SCORE_SIZE, DRAW_SCORE_SIZE, 0xff0000, "Player %d     :%d", playerID + 1, bikes_[playerID]->GetScore());
 }
 
 void GameScene::GoalProcess(void)
@@ -1108,13 +1121,6 @@ void GameScene::BikeCollision(void)
 	}
 }
 
-void GameScene::InitEffect(void)
-{
-	// ヒットエフェクト
-	effectHitResId_ = ResourceManager::GetInstance().Load(
-		ResourceManager::SRC::HITEFFECT).handleId_;
-}
-
 void GameScene::WarningDraw(void)
 {
 	//投げモノが待機状態のときに描画
@@ -1165,23 +1171,22 @@ void GameScene::GoalAfterDraw(int playNum, Vector2 drawPos)
 		//座標
 		if (!isPause_)
 		{
-			int addPosY = 10;
-			finishFontMovePos_.y += addPosY;
+			finishImgMovePos_.y += FINISH_IMG_MOVE_POS_Y;
 		}
 
-		float stopPosY = Application::SCREEN_SIZE_Y / 2 - 40;
-		if (finishFontMovePos_.y >= stopPosY)
+		float stopPosY = Application::SCREEN_SIZE_Y / 2 - FINISH_IMG_STOP_POS_Y;
+		if (finishImgMovePos_.y >= stopPosY)
 		{
-			finishFontMovePos_.y = stopPosY;
+			finishImgMovePos_.y = stopPosY;
 		}
 
 		//FINISH文字描画
-		DrawRotaGraph(finishFontMovePos_.x, finishFontMovePos_.y, 1.5, 0.0, imgFinish_, true);
+		DrawRotaGraph(finishImgMovePos_.x, finishImgMovePos_.y, FINISH_IMG_SIZE, 0.0, imgFinish_, true);
 	}
 	//4人用
 	else
 	{
-		DrawRotaGraph(drawPos.x, drawPos.y, 1.0, 0.0, imgFinish_, true);
+		DrawRotaGraph(drawPos.x, drawPos.y, FINISH_FOUR_IMG_SIZE, 0.0, imgFinish_, true);
 	}
 
 }
@@ -1199,5 +1204,5 @@ void GameScene::DeadAfterDraw(Vector2 drawPos, Vector2 boxMinPos, Vector2 boxMax
 
 void GameScene::CoinImgDraw(int x, int y)
 {
-	DrawRotaGraph(x, y, 0.15, 0.0, imgCoin_, true);
+	DrawRotaGraph(x, y, COIN_FOUR_IMG_SIZE, 0.0, imgCoin_, true);
 }
