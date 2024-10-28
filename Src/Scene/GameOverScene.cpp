@@ -11,47 +11,62 @@
 #pragma region 定数宣言
 	//フィントサイズ
 	const int FONT_SIZE = 16;
+
 	//リトライボタンの横の長さ
 	const int RETRY_FONT_LENGTH = 200;
 	//リトライボタンの高さ
 	const int RETRY_FONT_HEIGHT = 48;
+
 	//終わるボタンの横の長さ
 	const int END_FONT_LENGTH = 150;
 	//終わるボタンの高さ
 	const int END_FONT_HEIGHT = 48;
+
 	//選択肢数
 	const int SELECT_MAX_NUM = 2;
+
 	//プレイヤー人数
 	const int PLAYER_NUM = 4;
+
 	//プレイヤー初期値
 	const float PLAYER_LOCAL_POS = 200.0f;
+
 	//左上のリトライポジションx,y
 	const int RETRY_POS_X = 580;
 	const int RETRY_POS_Y = 10;
+
 	//左上の終わるポジションx,y
 	const int END_POS_X = 615;
 	const int END_POS_Y = 150;
+
 	//背景画像描画拡大描画用座標
 	const int IMG_BG_POS_Y = 20;
+
 	//スコア描画の文字の大きさ
 	const int SCORE_SIZE = 10;
 	//スコア表示座標
 	const int SCORE_STRING_POS_X = 90;
+
 	//プレイヤーナンバー文字描画座標
 	const int DRAW_PLAYER_NUM_POS_X = 340;
 	const int DRAW_PLAYER_NUM_POS_Y = 342;
+
 	//スコア表示文字描画
 	const int DRAW_FOUR_SCORE_POS_X = 50;
 	const int DRAW_FOUR_SCORE_POS_Y = 340;
+
 	//文字描画のY座標のずらし幅
 	const int SHIFT_WIDTH = 200;
 	//文字描画の拡大率
 	const int MAG_RATE = 8;
+
 	//背景画像の位置
 	const float IMG_SELECT_BG_POS_X = 1600.0f;
 	const float IMG_SELECT_BG_POS_Y = 600.0f;
+
 	//背景画像の大きさ
 	const float IMG_SELECT_BG_SIZE = 3.0f;
+
 	//リトライ、エンド文字の大きさ
 	const double RETRY_SIZE = 3.0;
 	const double END_SIZE = 3.0;

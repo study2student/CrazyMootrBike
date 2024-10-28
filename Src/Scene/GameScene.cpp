@@ -122,7 +122,7 @@
 	const int FINISH_IMG_MOVE_POS_Y = 10;
 
 	//ˆêl—p‚ÌFINISH‰æ‘œ‚Ì•`‰æ‚ðŽ~‚ß‚éˆÊ’u
-	const float FINISH_IMG_STOP_POS_Y = 40.0f;
+	const int FINISH_IMG_STOP_POS_Y = 40;
 
 	//ˆêl—p‚ÌFINISH‰æ‘œ‚Ì•`‰æŽž‚Ì‘å‚«‚³
 	const double FINISH_IMG_SIZE = 1.5;
@@ -1174,7 +1174,7 @@ void GameScene::GoalAfterDraw(int playNum, Vector2 drawPos)
 			finishImgMovePos_.y += FINISH_IMG_MOVE_POS_Y;
 		}
 
-		float stopPosY = Application::SCREEN_SIZE_Y / 2 - FINISH_IMG_STOP_POS_Y;
+		int stopPosY = Application::SCREEN_SIZE_Y / 2 - FINISH_IMG_STOP_POS_Y;
 		if (finishImgMovePos_.y >= stopPosY)
 		{
 			finishImgMovePos_.y = stopPosY;

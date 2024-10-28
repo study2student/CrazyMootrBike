@@ -20,21 +20,6 @@ public:
 	// HPの最低値
 	static constexpr int MIN_HP = 0;
 
-	// バーンアウトエフェクト初期高さ
-	static constexpr float BURNOUT_EFFECT_FIRST_POS_Y = -280.0f;
-
-	// バーンアウトエフェクト最大高さ
-	static constexpr float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
-
-	// 待機エフェクト初期高
-	static constexpr float IDLE_EFFECT_POS_Y = -510.0f;
-
-	// バイクからブーストエフェクトまでの相対座標
-	static constexpr VECTOR RELATIVE_P2EB_POS = { 0.0f, 100.0f, -200.0f };
-
-	// バイクからプレイヤーまでの相対座標
-	static constexpr VECTOR RELATIVE_P2B_POS = { 0.0f,40.0f,-65.0f };
-
 	// 状態
 	enum class STATE
 	{

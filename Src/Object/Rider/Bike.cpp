@@ -77,7 +77,13 @@
 	// ブースト時の加算速度
 	const float BOOST_ADDITION_SPEED = 0.34f;
 
-	// 
+	// バイクからブーストエフェクトまでの相対座標
+	const VECTOR RELATIVE_P2EB_POS = { 0.0f, 100.0f, -200.0f };
+
+	// バイクからプレイヤーまでの相対座標
+	const VECTOR RELATIVE_P2B_POS = { 0.0f,40.0f,-65.0f };
+
+	// 衝突用
 	const float CHECK_POW = 10.0f;
 
 	// プレイヤー人数

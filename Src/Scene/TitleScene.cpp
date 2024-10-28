@@ -82,6 +82,15 @@
 	// タイヤの回転数(START状態)
 	const float START_TYRE_ROT_SPEED = 20.0f;
 
+	// バーンアウトエフェクト初期高さ
+	const float BURNOUT_EFFECT_FIRST_POS_Y = -280.0f;
+
+	// バーンアウトエフェクト最大高さ
+	const float BURNOUT_EFFECT_MAX_POS_Y = -180.0f;
+
+	// 待機エフェクト初期高
+	const float IDLE_EFFECT_POS_Y = -510.0f;
+
 	// スタート時のエフェクトの大きさ
 	const float START_EFFECT_SIZE = 50.0f;
 
@@ -201,7 +210,7 @@ void TitleScene::Init(void)
 	//エフェクト読み込み
 	InitEffect();
 
-	effectBurnoutPosY_ = Bike::BURNOUT_EFFECT_FIRST_POS_Y;
+	effectBurnoutPosY_ = BURNOUT_EFFECT_FIRST_POS_Y;
 
 	//スコアリセット
 	score_.ResetScore();
@@ -432,7 +441,7 @@ void TitleScene::BurnoutIdleEffect(void)
 	effectBurnoutPlayId_ = PlayEffekseer3DEffect(effectBurnoutResId_);
 	float scale = BURNOUT_IDLE_EFFECT_SIZE;
 	SetScalePlayingEffekseer3DEffect(effectBurnoutPlayId_, scale / 2, scale, scale);
-	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, Bike::IDLE_EFFECT_POS_Y, bike.pos.z - BURNOUT_IDLE_EFFECT_LOCALPOS_Z);
+	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, IDLE_EFFECT_POS_Y, bike.pos.z - BURNOUT_IDLE_EFFECT_LOCALPOS_Z);
 	SetRotationPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
 }
 
@@ -444,10 +453,10 @@ void TitleScene::BurnoutMoveEffect(void)
 
 	//徐々に高さを上げる
 	effectBurnoutPosY_ += stepBikeDeparture_ * GRADUALLY_INCREASE_HEIGHT;
-	if (effectBurnoutPosY_ >= Bike::BURNOUT_EFFECT_MAX_POS_Y)
+	if (effectBurnoutPosY_ >= BURNOUT_EFFECT_MAX_POS_Y)
 	{
 		//高さ制限
-		effectBurnoutPosY_ = Bike::BURNOUT_EFFECT_MAX_POS_Y;
+		effectBurnoutPosY_ = BURNOUT_EFFECT_MAX_POS_Y;
 	}
 	SetPosPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.pos.x, bike.pos.y + effectBurnoutPosY_, bike.pos.z);
 	SetRotationPlayingEffekseer3DEffect(effectBurnoutPlayId_, bike.rot.x, bike.rot.y, bike.rot.z);
