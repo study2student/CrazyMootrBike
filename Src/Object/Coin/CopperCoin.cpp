@@ -30,13 +30,10 @@ void CopperCoin::SetParam(void)
 	// ÉÇÉfÉãÇÃäÓñ{ê›íË
 	transform_.SetModel(resMng_.LoadModelDuplicate(
 		ResourceManager::SRC::COPPER_COIN));
-	transform_.scl = { SCL,SCL,SCL };
+	transform_.scl = { INIT_SCL,INIT_SCL,INIT_SCL };
 	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, INIT_POS_Y, makePos_.z + localPos_.z };
 	transform_.quaRot = Quaternion();
 	transform_.quaRotLocal =
 		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(INIT_LOCAL_ROT_Y), 0.0f });
 	transform_.Update();
-
-	// èâä˙èÛë‘
-	ChangeState(STATE::PLAY);
 }

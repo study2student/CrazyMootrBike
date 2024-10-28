@@ -19,7 +19,7 @@ public:
 
 	// 明示的にインステンスを生成する
 	static void CreateInstance(void);
-
+	
 	// 静的インスタンスの取得
 	static DataSave& GetInstance(void);
 

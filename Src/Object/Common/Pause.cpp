@@ -19,14 +19,11 @@
 //パッド最大数
 const int PAD_MAX = 4;
 
-//再開文字色
-const int RESTART_FONT_COLOR = GetColor(255, 255, 255);
+//カーソル当たっていないときの文字色
+const int CURSOR_NO_HIT_FONT_COLOR = GetColor(255, 255, 255);
 
-//リトライ文字色
-const int RETRY_FONT_COLOR = GetColor(255, 255, 255);
-
-//終わる文字色
-const int END_FONT_COLOR = GetColor(255, 255, 255);
+//カーソル当たっている時の文字色
+const int CURSOR_HIT_FONT_COLOR = GetColor(0, 0, 255);
 
 //左上の再開ポジション
 const Vector2 RESTART_FONT_BASE_POS = { Application::SCREEN_SIZE_X / 2 - 55 , Application::SCREEN_SIZE_Y / 2 - 130 };
@@ -54,6 +51,21 @@ const int END_FONT_LENGTH = 150;
 
 //終わるボタンの高さ
 const int END_FONT_HEIGHT = 48;
+
+//背景画像の大きさ
+const float IMAGE_SCALE = 3.0f;
+
+//文字の大きさ
+const float FONT_SCALE = 3.0f;
+
+//再開文字
+const std::string RESTART_FONT = "再開";
+
+//リトライ文字
+const std::string RETRY_FONT = "リトライ";
+
+//終わる文字
+const std::string END_FONT = "終わる";
 
 //選択肢数
 const int SELECT_MAX_NUM = 3;
@@ -88,9 +100,9 @@ void Pause::Init(void)
 {
 	//ポーズメニュー
 	//色
-	reStartFontColor_ = RESTART_FONT_COLOR;
-	reTryFontColor_ = RETRY_FONT_COLOR;
-	endFontColor_ = END_FONT_COLOR;
+	reStartFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
+	reTryFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
+	endFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
 
 	//左上の再開ポジション
 	reStartFontBasePos_ = RESTART_FONT_BASE_POS;
@@ -130,20 +142,21 @@ void Pause::PausePrevious(void)
 	{
 		switch (i)
 		{
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1:	//P1
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1] = InputManager::JOYPAD_NO::PAD1;
 			break;
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:	//P2
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1] = InputManager::JOYPAD_NO::PAD2;
 			break;
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:	//P3
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1] = InputManager::JOYPAD_NO::PAD3;
 			break;
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:	//P4
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1] = InputManager::JOYPAD_NO::PAD4;
 			break;
 		}
 
+		//開く(Cキーかパッドのスタートボタンが押されたら)
 		if (ins.IsTrgDown(KEY_INPUT_C) || ins.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::START))
 		{
 			//ポーズ状態
@@ -160,8 +173,6 @@ void Pause::PauseMidst(void)
 	//キー操作
 	SelectProcess();
 
-	//続きはif文前のコメントづけや条件の関数化など
-
 }
 
 void Pause::SetImgHandle(const int& handle)
@@ -173,8 +184,8 @@ void Pause::DecideProcess(void)
 {
 	auto& ins_ = InputManager::GetInstance();
 
-	//マウス座標
-	Vector2 mousePos_ = InputManager::GetInstance().GetMousePos();
+	//マウス座標更新
+	mousePos_ = InputManager::GetInstance().GetMousePos();
 
 	//パッドの設定
 	InputManager::JOYPAD_NO padNum[PAD_MAX];
@@ -182,16 +193,16 @@ void Pause::DecideProcess(void)
 	{
 		switch (i)
 		{
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1:	//P1
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD1) - 1] = InputManager::JOYPAD_NO::PAD1;
 			break;
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1:	//P2
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD2) - 1] = InputManager::JOYPAD_NO::PAD2;
 			break;
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1:	//P3
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD3) - 1] = InputManager::JOYPAD_NO::PAD3;
 			break;
-		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:
+		case static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1:	//P4
 			padNum[static_cast<int>(InputManager::JOYPAD_NO::PAD4) - 1] = InputManager::JOYPAD_NO::PAD4;
 			break;
 		}
@@ -199,9 +210,7 @@ void Pause::DecideProcess(void)
 
 		//[再開]ボタン
 		//カーソルが当たっている
-		Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
-		if (mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
-			&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y)
+		if (IsHitRestartMouseCursor())
 		{
 			nowCursor_ = (int)STATE::RESTART;
 			isCursorHit_ = true;
@@ -215,7 +224,7 @@ void Pause::DecideProcess(void)
 		if (state_ == STATE::RESTART)
 		{
 			//ボタンにふれている場合
-			reStartFontColor_ = GetColor(0, 0, 255);
+			reStartFontColor_ = CURSOR_HIT_FONT_COLOR;
 			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
 				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
 			{
@@ -230,15 +239,13 @@ void Pause::DecideProcess(void)
 		else
 		{
 			//ボタンにふれいない場合
-			reStartFontColor_ = GetColor(255, 255, 255);
+			reStartFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
 		}
 
 
 		//[リトライ]ボタン
 		//カーソルが当たっている
-		Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
-		if (mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
-			&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y)
+		if (IsHitReTryMouseCursor())
 		{
 			nowCursor_ = (int)STATE::RETRY;
 			isCursorHit_ = true;
@@ -251,7 +258,7 @@ void Pause::DecideProcess(void)
 		if (state_ == STATE::RETRY)
 		{
 			//ボタンにふれている場合
-			reTryFontColor_ = GetColor(0, 0, 255);
+			reTryFontColor_ = CURSOR_HIT_FONT_COLOR;
 			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
 				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
 			{
@@ -265,15 +272,13 @@ void Pause::DecideProcess(void)
 		else
 		{
 			//ボタンにふれいない場合
-			reTryFontColor_ = GetColor(255, 255, 255);
+			reTryFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
 		}
 
 
 		//[終わる]ボタン
 		//カーソルが当たっている
-		Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
-		if (mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
-			&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y)
+		if (IsHitEndMouseCursor())
 		{
 			nowCursor_ = (int)STATE::END;
 			isCursorHit_ = true;
@@ -287,7 +292,7 @@ void Pause::DecideProcess(void)
 		if (state_ == STATE::END)
 		{
 			//ボタンにふれている場合
-			endFontColor_ = GetColor(0, 0, 255);
+			endFontColor_ = CURSOR_HIT_FONT_COLOR;
 			if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)
 				|| ins_.IsPadBtnTrgDown(padNum[i], InputManager::JOYPAD_BTN::DOWN))
 			{
@@ -301,7 +306,7 @@ void Pause::DecideProcess(void)
 		else
 		{
 			//ボタンにふれいない場合
-			endFontColor_ = GetColor(255, 255, 255);
+			endFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
 		}
 
 
@@ -425,12 +430,37 @@ void Pause::CursorToState(int cursor)
 void Pause::PauseDraw(void)
 {
 	//ポーズ背景画像
-	float imgScl = 3.0f;
-	DrawRotaGraphFastF(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, imgScl, 0.0f, imgPause_, true);
+	DrawRotaGraphFastF(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, IMAGE_SCALE, 0.0f, imgPause_, true);
 
 	//文字表示
-	float fontScl = 3.0f;
-	DrawExtendFormatString(reStartFontBasePos_.x, reStartFontBasePos_.y, fontScl, fontScl, reStartFontColor_, "再開");
-	DrawExtendFormatString(reTryFontBasePos_.x, reTryFontBasePos_.y, fontScl, fontScl, reTryFontColor_, "リトライ");
-	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, fontScl, fontScl, endFontColor_, "終わる");
+	DrawExtendFormatString(reStartFontBasePos_.x, reStartFontBasePos_.y, FONT_SCALE, FONT_SCALE, reStartFontColor_, RESTART_FONT.c_str());
+	DrawExtendFormatString(reTryFontBasePos_.x, reTryFontBasePos_.y, FONT_SCALE, FONT_SCALE, reTryFontColor_, RETRY_FONT.c_str());
+	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, FONT_SCALE, FONT_SCALE, endFontColor_, END_FONT.c_str());
+}
+
+const bool& Pause::IsHitRestartMouseCursor(void) const
+{
+	//文字の長さ
+	Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
+
+	return mousePos_.x >= reStartFontBasePos_.x && mousePos_.x <= reStartFontLenPos_.x
+		&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y;
+}
+
+const bool& Pause::IsHitReTryMouseCursor(void) const
+{
+	//文字の長さ
+	Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
+
+	return mousePos_.x >= reTryFontBasePos_.x && mousePos_.x <= reTryFontLenPos_.x
+		&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y;
+}
+
+const bool& Pause::IsHitEndMouseCursor(void) const
+{
+	//文字の長さ
+	Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
+
+	return mousePos_.x >= endFontBasePos_.x && mousePos_.x <= endFontLenPos_.x
+		&& mousePos_.y >= endFontBasePos_.y && mousePos_.y <= endFontLenPos_.y;
 }

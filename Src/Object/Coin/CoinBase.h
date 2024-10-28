@@ -15,23 +15,23 @@ public:
 	//半径
 	static constexpr float RADIUS = 200.0f;
 
-	//1ループステージあたりの敵の生成数
+	//1ループステージあたりのコインの生成数
 	static constexpr int MAX_MAKE_NUM = 3;
 
-	//敵の生成時のセンター方向からの横幅
+	//コインの生成時のセンター方向からの横幅
 	static constexpr float DIR_LEN = 500.0f;
 
-	//縦の敵間距離
+	//縦のコイン間距離
 	static constexpr float X_LEN = 400.0f;
 
-	//敵生成時の横の調整用
+	//コイン生成時の横の調整用
 	static constexpr float ADJUST_POS_X = 14300.0f;
 
 	//死亡状態になるまでの最大時間
 	static constexpr float TO_DEAD_TIME_MAX = 6.0f;
 
 	// コインの大きさ
-	static constexpr float SCL = 200.0f;
+	static constexpr float INIT_SCL = 200.0f;
 
 	// コイン初期Y座標
 	static constexpr float INIT_POS_Y = 700.0f;

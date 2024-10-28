@@ -45,6 +45,9 @@ public:
 
 private:
 
+	//マウスカーソル位置
+	Vector2 mousePos_;
+
 	// ポーズ背景画像
 	int imgPause_;
 
@@ -95,5 +98,14 @@ private:
 
 	//ポーズ文字描画
 	void PauseDraw(void);
+
+	//[再開]ボタンにマウスカーソルがあっているか(あっているならtrue)
+	const bool& IsHitRestartMouseCursor(void) const;
+
+	//[リトライ]ボタンにマウスカーソルがあっているか(あっているならtrue)
+	const bool& IsHitReTryMouseCursor(void) const;
+
+	//[終わる]ボタンにマウスカーソルがあっているか(あっているならtrue)
+	const bool& IsHitEndMouseCursor(void) const;
 };
 

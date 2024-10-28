@@ -22,6 +22,9 @@ const VECTOR COLLIDER_POS_TOP = { 0.0f, 110.0f, 0.0f };
 //当たり判定用コライダーの下座標
 const VECTOR COLLIDER_POS_DOWN = { 0.0f, 30.0f, 0.0f };
 
+//当たり判定用コライダーの半径
+const float COLLIDER_RADIUS = 20.0f;
+
 //回転完了までの時間
 const float TIME_ROT = 1.0f;
 
@@ -49,6 +52,15 @@ const float ROTATE_ANGLE_DIFF_MIN = 0.1f;
 //スコア増分値
 const int ADD_SCORE_NUM = 10;
 
+//地面衝突後の上方向の力
+const float AFTER_HIT_GROUND_UP_POW = 2.0f;
+
+//衝突回数
+const int TRY_MAX = 10;
+
+//内積
+const float GRAVITY_THRES_HOLD = 0.9f;
+
 #pragma endregion
 
 
@@ -57,17 +69,17 @@ CoinBase::CoinBase(const std::vector<std::shared_ptr<Bike>>& bikes,GameScene* ga
 	bikes_(bikes),
 	gameScene_(gameScene),
 	state_(STATE::NONE),
-	moveDir_(MyUtility::VECTOR_ZERO),
-	movePow_(MyUtility::VECTOR_ZERO),
-	movedPos_(MyUtility::VECTOR_ZERO),
+	moveDir_({}),
+	movePow_({}),
+	movedPos_({}),
 	makePos_(loopStagePos),
 	localPos_(localPos),
-	rotY_(Quaternion()),
-	goalQuaRot_(Quaternion()),
+	rotY_({}),
+	goalQuaRot_({}),
 	stepRotTime_(0.0f),
-	jumpPow_(MyUtility::VECTOR_ZERO),
-	gravHitPosDown_(MyUtility::VECTOR_ZERO),
-	gravHitPosUp_(MyUtility::VECTOR_ZERO),
+	jumpPow_({}),
+	gravHitPosDown_({}),
+	gravHitPosUp_({}),
 	isBikeCol_(false),
 	isAddScore_(false),
 	colliders_({}),
@@ -86,27 +98,17 @@ CoinBase::~CoinBase(void)
 void CoinBase::Init(void)
 {
 
-	// モデルの基本設定
-	transform_.SetModel(resMng_.LoadModelDuplicate(
-		ResourceManager::SRC::COPPER_COIN));
-	transform_.scl = MyUtility::VECTOR_ONE;
-	transform_.pos = { makePos_.x + ADJUST_POS_X + localPos_.x, makePos_.y, makePos_.z };
-	transform_.quaRot = Quaternion();
-	transform_.quaRotLocal =
-		Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(180.0f), 0.0f });
-	transform_.Update();
+	//コイン個別のパラメータ設定
+	SetParam();
 
 	// カプセルコライダ
 	capsule_ = std::make_shared<Capsule>(transform_);
 	capsule_->SetLocalPosTop({ COLLIDER_POS_TOP });
 	capsule_->SetLocalPosDown({ COLLIDER_POS_DOWN });
-	capsule_->SetRadius(20.0f);
+	capsule_->SetRadius(COLLIDER_RADIUS);
 
 	// 初期状態
 	ChangeState(STATE::PLAY);
-
-	////敵キャラ個別のパラメータ設定
-	SetParam();
 
 	// エフェクト初期化
 	InitEffect();
@@ -364,7 +366,7 @@ void CoinBase::CollisionGravity(void)
 
 	float checkPow = 10.0f;
 	gravHitPosUp_ = VAdd(movedPos_, VScale(dirUpGravity, gravityPow));
-	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * 2.0f));
+	gravHitPosUp_ = VAdd(gravHitPosUp_, VScale(dirUpGravity, checkPow * AFTER_HIT_GROUND_UP_POW));
 	gravHitPosDown_ = VAdd(movedPos_, VScale(dirGravity, checkPow));
 	for (const auto& c : colliders_)
 	{
@@ -373,12 +375,11 @@ void CoinBase::CollisionGravity(void)
 		auto hit = MV1CollCheck_Line(
 			c->modelId_, -1, gravHitPosUp_, gravHitPosDown_);
 
-		// 最初は上の行のように実装して、木の上に登ってしまうことを確認する
-		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > 0.9f)
+		if (hit.HitFlag > 0 && VDot(dirGravity, jumpPow_) > GRAVITY_THRES_HOLD)
 		{
 
 			// 衝突地点から、少し上に移動
-			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, 2.0f));
+			movedPos_ = VAdd(hit.HitPosition, VScale(dirUpGravity, AFTER_HIT_GROUND_UP_POW));
 
 			// ジャンプリセット
 			jumpPow_ = MyUtility::VECTOR_ZERO;
@@ -411,7 +412,7 @@ void CoinBase::CollisionCapsule(void)
 
 			auto hit = hits.Dim[i];
 
-			for (int tryCnt = 0; tryCnt < 10; tryCnt++)
+			for (int tryCnt = 0; tryCnt < TRY_MAX; tryCnt++)
 			{
 
 				int pHit = HitCheck_Capsule_Triangle(

@@ -155,7 +155,7 @@
 	//画面分割枠線の半分の太さ
 	const int HALF_BORDER_SIZE = 5;
 
-	//死亡黒背景の左上と右下座標と文字の位置sx / 2 + halfBorderSize, sy / 2 + halfBorderSize, sx, sy
+	//死亡黒背景の左上と右下座標と文字の位置
 	//プレイヤー1
 	const Vector2 DEAD_BACK_BOX_MIN_POS_P1 = { 0, 0 };
 	const Vector2 DEAD_BACK_BOX_MAX_POS_P1 = { Application::SCREEN_SIZE_X / 2 - HALF_BORDER_SIZE, Application::SCREEN_SIZE_Y / 2 - HALF_BORDER_SIZE };
