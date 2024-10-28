@@ -7,62 +7,94 @@
 #include "../Object/DataSave.h"
 
 #pragma region 定数宣言
+
 	//1人でボタンの横の長さ
 	const int ONE_PERSON_FONT_LENGTH = 400;
+
 	//1人でボタンの高さ
 	const int ONE_PERSON_FONT_HEIGHT = 392;
+
 	//4人でボタンの横の長さ
 	const int FOUR_PERSON_FONT_LENGTH = 400;
+
 	//4人でボタンの高さ
 	const int FOUR_PERSON_FONT_HEIGHT = 360;
+
 	//ひとりプレイ選択画像最大サイズ
 	const float SELECT_IMG_MAX_SCALE = 1.2f;
+
 	//ひとりプレイ選択画像最小サイズ
 	const float SELECT_IMG_MIN_SCALE = 1.0f;
+
 	//四人プレイ選択画像最大サイズ
 	const float SELECT_FOUR_IMG_MAX_SCALE = 1.2f;
+
 	//四人プレイ選択画像最小サイズ
 	const float SELECT_FOUR_IMG_MIN_SCALE = 1.0f;
+
 	//選択画像大きさ変化量
 	const float SELECT_IMG_CHANGE_SCALE = 0.006f;
+
 	//選択肢数
 	const int SELECT_MAX_NUM = 2;
+
 	//コイン画像の配置のY座標
 	const int IMG_COIN_POS_Y = Application::SCREEN_SIZE_Y / 4 - 80;
+
 	//バイク画像の座標
 	const int IMG_BIKE_POS_X = Application::SCREEN_SIZE_X;
 	const int IMG_BIKE_POS_Y = Application::SCREEN_SIZE_Y % 3;
+
 	//四人プレイ選択時の画像の大きさの初期値
 	const float SELECT_FOUR_IMG_SCALE = 1.5f;
+
 	//点滅表示ステップ
 	const float MAX_STEP_FLASH = 0.8f;
 	const float MIN_STEP_FLASH = 0.0f;
+
 	//PUSH画像の座標
 	//const int IMG_PUSH_POS_X = Application::SCREEN_SIZE_X / 2 - 145;
 	const int IMG_PUSH_POS_X = Application::SCREEN_SIZE_X / 2 - 256;//ゲーム大祭用
 	const int IMG_PUSH_POS_Y = 700;
+
 	//操作説明画像座標
 	const int IMG_OPERATION_POS_Y = 280;
+
 	//操作説明画像の拡大率
 	const double IMG_OPERATION_MAGNIFICATION = 0.8;
+
 	//バイク画像のX座標移動
 	const int IMG_BIKE_MOVE_BOX_POS_X = 1666;
+
 	//バイク画像のX座標移動
 	const int IMG_BIKE_MOVE_POS_RATIO = 5;
+
 	//バイク画像を描画する矩形の右下頂点＋１の座標
 	const int IMG_BIKE_BOX_POS_Y = 1111;
+
 	//バイク画像を描画する矩形の右下頂点＋１の座標の拡大率
 	const int IMG_BIKE_BOX_POS = 4;
+
 	//コイン画像の大きさ
 	const int IMG_COIN_SIZE = 60;
+
 	//コイン画像の最大の大きさ
 	const int IMG_COIN_MAX_SIZE = 180;
+
 	//プレイヤー人数
 	const int PLAYER_NUM = 4;
+
 	//バイク画像の移動量
 	const int IMG_BIKE_MOVE_POS_X = 10;
+
 	//画面サイズの四分の一
 	const int SCREEN_SIZE_QUARTER = 4;
+
+	//カーソル当たっていないときの文字色
+	const int CURSOR_NO_HIT_FONT_COLOR = GetColor(255, 255, 255);
+
+	//カーソル当たっている時の文字色
+	const int CURSOR_HIT_FONT_COLOR = GetColor(0, 0, 255);
 #pragma endregion
 
 
@@ -137,7 +169,7 @@ void SelectScene::Init(void)
 
 void SelectScene::Update(void)
 {
-	//操作
+	//マウス操作
 	DecideProcess();
 
 	//キー操作
@@ -296,7 +328,7 @@ void SelectScene::DecideProcess(void)
 	if (state_ == STATE::ONE_PERSON)
 	{
 		//ボタンにふれている場合
-		onePersonFontColor_ = GetColor(0, 0, 255);
+		onePersonFontColor_ = CURSOR_HIT_FONT_COLOR;
 		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE) || ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
 			//データ保存
@@ -314,7 +346,7 @@ void SelectScene::DecideProcess(void)
 	else
 	{
 		//ボタンにふれいない場合
-		onePersonFontColor_ = GetColor(255, 255, 255);
+		onePersonFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
 	}
 
 
@@ -335,7 +367,7 @@ void SelectScene::DecideProcess(void)
 	if (state_ == STATE::FOUR_PERSON)
 	{
 		//ボタンにふれている場合
-		fourPersonFontColor_ = GetColor(0, 0, 255);
+		fourPersonFontColor_ = CURSOR_HIT_FONT_COLOR;
 		if (GetMouseInput() & MOUSE_INPUT_LEFT && isCursorHit_ || ins_.GetInstance().IsTrgDown(KEY_INPUT_SPACE)|| ins_.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
 		{
 			//データ保存
@@ -353,7 +385,7 @@ void SelectScene::DecideProcess(void)
 	else
 	{
 		//ボタンにふれいない場合
-		fourPersonFontColor_ = GetColor(255, 255, 255);
+		fourPersonFontColor_ = CURSOR_NO_HIT_FONT_COLOR;
 	}
 }
 
