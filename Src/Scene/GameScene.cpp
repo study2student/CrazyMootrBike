@@ -28,6 +28,15 @@
 
 #pragma region 定数宣言
 
+	//プレイヤーID 1～4
+	const int PLAYER_ID_1 = 0;
+	const int PLAYER_ID_2 = 1;
+	const int PLAYER_ID_3 = 2;
+	const int PLAYER_ID_4 = 3;
+
+	//ひとりプレイ用
+	const int ONE_PLAYER = 1;
+
 	//フォントサイズ
 	const int FONT_SIZE = 16;
 
@@ -231,7 +240,7 @@ void GameScene::Init(void)
 
 	//プレイヤー人数
 	playNumber_ = data_.GetData().playerNum_;
-	if (playNumber_ == 1)
+	if (playNumber_ == ONE_PLAYER)
 	{
 		mainScreen_ = MakeScreen(Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y);
 	}
@@ -277,7 +286,7 @@ void GameScene::Init(void)
 		skyDomes_.emplace_back(std::move(sky));
 	}
 
-	if (playNumber_ == 1)
+	if (playNumber_ == ONE_PLAYER)
 	{
 		cameras_.push_back(std::make_shared<Camera>());
 	}
@@ -391,9 +400,9 @@ void GameScene::Update(void)
 
 		if (!isHitStop)
 		{
-			if (playNumber_ == 1)
+			if (playNumber_ == ONE_PLAYER)
 			{
-				bikes_[0]->Update();
+				bikes_[PLAYER_ID_1]->Update();
 			}
 			else
 			{
@@ -416,7 +425,7 @@ void GameScene::Update(void)
 		//先頭(座標)の要素番号取得
 		size_t posZMaxIndex = GetBikeMaxPosZIndex();
 		helicopter_->SetBikeTrans(bikes_[posZMaxIndex]->GetTransform());
-		helicopter_->SetBikeIsOutside(bikes_[0]->GetIsOutSide());
+		helicopter_->SetBikeIsOutside(bikes_[PLAYER_ID_1]->GetIsOutSide());
 
 		//投げモノ
 		spike_->Update();
@@ -458,13 +467,13 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
-	if (playNumber_ == 1)
+	if (playNumber_ == ONE_PLAYER)
 	{
 
 		DrawObject(0);
 
 		// 各バイクを描画
-		bikes_[0]->Draw();
+		bikes_[PLAYER_ID_1]->Draw();
 
 		// Effekseerにより再生中のエフェクトを更新する。
 		UpdateEffekseer3D();
@@ -492,7 +501,7 @@ void GameScene::Draw(void)
 		int HP_BAR_HEIGHT = ap::SCREEN_SIZE_Y - HP_BER;
 		// HPバーを描画
 		DrawBox(sc_x, sc_y, sc_x + HP_BAR_WIDTH, HP_BAR_HEIGHT, 0x999999, true); // HPバーの背景
-		DrawBox(sc_x, sc_y, sc_x + (bikes_[0]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
+		DrawBox(sc_x, sc_y, sc_x + (bikes_[PLAYER_ID_1]->GetHP() * HP_BAR_WIDTH) / Bike::MAX_HP, HP_BAR_HEIGHT, 0x00aeef, true); // HPバー
 
 		// HPの黒枠
 		DrawBoxAA((float)sc_x, (float)sc_y,
@@ -530,107 +539,106 @@ void GameScene::Draw(void)
 			DrawEffekseer3D();
 
 			for (int p = 0; p < bikes_.size(); p++) {
-				//int score = bikes_[p]->GetScore();
 
 				SetDrawScreen(DX_SCREEN_BACK);
 
 				switch (i)
 				{
-				case 0:
+				case PLAYER_ID_1:
 					DrawGraph(0, 0, mainScreen_, false);
 					DrawUI(sx / 2 - DRAW_HP_SIZE_X, 0, 0);
 					CoinImgDraw(sx / 2 - COIN_FOUR_IMG_POS_X, COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
-					if (bikes_[0]->GetIsBoost())
+					if (bikes_[PLAYER_ID_1]->GetIsBoost())
 					{
-						bikes_[0]->SyncBoostEffect(bikes_[0]->GetTransform());
+						bikes_[PLAYER_ID_1]->SyncBoostEffect(bikes_[PLAYER_ID_1]->GetTransform());
 					}
 
 					//ゴール文字
-					if (bikes_[0]->GetIsGoal())
+					if (bikes_[PLAYER_ID_1]->GetIsGoal())
 					{
 						//FINISH文字描画
 						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P1);
 					}
 
 					//死亡文字
-					if (bikes_[0]->GetHP() <= 0)
+					if (bikes_[PLAYER_ID_1]->GetHP() <= 0)
 					{
 						//死亡文字描画
 						DeadAfterDraw(DEAD_FONT_POS_P1, DEAD_BACK_BOX_MIN_POS_P1, DEAD_BACK_BOX_MAX_POS_P1);
 					}
 					break;
-				case 1:
+				case PLAYER_ID_2:
 					DrawGraph(sx / 2, 0, mainScreen_, false);
 					DrawUI(sx - DRAW_HP_SIZE_X, 0, 1);
 					CoinImgDraw(sx - COIN_FOUR_IMG_POS_X, COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
-					if (bikes_[1]->GetIsBoost())
+					if (bikes_[PLAYER_ID_2]->GetIsBoost())
 					{
-						bikes_[1]->SyncBoostEffect(bikes_[1]->GetTransform());
+						bikes_[PLAYER_ID_2]->SyncBoostEffect(bikes_[PLAYER_ID_2]->GetTransform());
 					}
 
 					//ゴール文字
-					if (bikes_[1]->GetIsGoal())
+					if (bikes_[PLAYER_ID_2]->GetIsGoal())
 					{
 						//FINISH文字描画
 						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P2);
 					}
 
 					//死亡文字
-					if (bikes_[1]->GetHP() <= 0)
+					if (bikes_[PLAYER_ID_2]->GetHP() <= 0)
 					{
 						//死亡文字描画
 						DeadAfterDraw(DEAD_FONT_POS_P2, DEAD_BACK_BOX_MIN_POS_P2, DEAD_BACK_BOX_MAX_POS_P2);
 					}
 					break;
-				case 2:
+				case PLAYER_ID_3:
 					DrawGraph(0, sy / 2, mainScreen_, false);
 					DrawUI(sx / 2 - DRAW_HP_SIZE_X, sy / 2, 2);
 					CoinImgDraw(sx / 2 - COIN_FOUR_IMG_POS_X, sy / 2 + COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
-					if (bikes_[2]->GetIsBoost())
+					if (bikes_[PLAYER_ID_3]->GetIsBoost())
 					{
-						bikes_[2]->SyncBoostEffect(bikes_[2]->GetTransform());
+						bikes_[PLAYER_ID_3]->SyncBoostEffect(bikes_[PLAYER_ID_3]->GetTransform());
 					}
 
 					//ゴール文字
-					if (bikes_[2]->GetIsGoal())
+					if (bikes_[PLAYER_ID_3]->GetIsGoal())
 					{
 						//FINISH文字描画
 						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P3);
 					}
 
 					//死亡文字
-					if (bikes_[2]->GetHP() <= 0)
+					if (bikes_[PLAYER_ID_3]->GetHP() <= 0)
 					{
 						//死亡文字描画
 						DeadAfterDraw(DEAD_FONT_POS_P3, DEAD_BACK_BOX_MIN_POS_P3, DEAD_BACK_BOX_MAX_POS_P3);
 					}
 					break;
-				case 3:
+				case PLAYER_ID_4:
 					DrawGraph(sx / 2, sy / 2, mainScreen_, false);
 					DrawUI(sx - DRAW_HP_SIZE_X, sy / 2, 3);
 					CoinImgDraw(sx - COIN_FOUR_IMG_POS_X, sy / 2 + COIN_FOUR_IMG_POS_Y);
 
 					//エフェクトの再生
-					if (bikes_[3]->GetIsBoost())
+					if (bikes_[PLAYER_ID_4]->GetIsBoost())
 					{
-						bikes_[3]->SyncBoostEffect(bikes_[3]->GetTransform());
+						bikes_[PLAYER_ID_4]->SyncBoostEffect(bikes_[PLAYER_ID_4]->GetTransform());
 					}
 
 					//ゴール文字
-					if (bikes_[3]->GetIsGoal())
+					if (bikes_[PLAYER_ID_4]->GetIsGoal())
 					{
 						//FINISH文字描画
 						GoalAfterDraw(playNumber_, FINISH_FONT_POS_MULTI_P4);
 					}
 
 					//死亡文字
-					if (bikes_[3]->GetHP() <= 0)
+					if (bikes_[PLAYER_ID_4]->GetHP() <= 0)
 					{
 						//死亡文字描画
 						DeadAfterDraw(DEAD_FONT_POS_P4, DEAD_BACK_BOX_MIN_POS_P4, DEAD_BACK_BOX_MAX_POS_P4);
@@ -656,7 +664,7 @@ void GameScene::Draw(void)
 	}
 
 	//ゴールしたら文字出現
-	if (playNumber_ == 1)
+	if (playNumber_ == ONE_PLAYER)
 	{
 		if (stage_->GetIsGoal())
 		{
@@ -762,7 +770,7 @@ void GameScene::DrawUI(int x, int y, int playerID)
 void GameScene::GoalProcess(void)
 {
 	//ゲームオーバーシーンで描画するため保存しておく
-	if (playNumber_ == 1)
+	if (playNumber_ == ONE_PLAYER)
 	{
 
 		//爆弾は出させない
@@ -798,9 +806,9 @@ void GameScene::GoalProcess(void)
 	if (stepGoalAfter_ >= GOAL_TO_NEXT_SCENE)
 	{
 		//ゲームオーバーシーンで描画するため保存しておく
-		if (playNumber_ == 1)
+		if (playNumber_ == ONE_PLAYER)
 		{
-			score_.ScoreSet(bikes_[0]->GetScore());
+			score_.ScoreSet(bikes_[PLAYER_ID_1]->GetScore());
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 		}
 		else
@@ -948,7 +956,7 @@ void GameScene::Collision(void)
 				float  disB = MyUtility::SqrMagnitudeF(diffB);
 				if (disB < bombCap.GetRadius() * bikeCap.lock()->GetRadius())
 				{
-					if (playNumber_ == 1)
+					if (playNumber_ == ONE_PLAYER)
 					{
 						//ゴールしてない場合
 						if (!stage_->GetIsGoal())
@@ -1000,7 +1008,7 @@ void GameScene::Collision(void)
 			float  disT = MyUtility::SqrMagnitudeF(diffT);
 			if (disT < throwCap.GetRadius() * bikeCap.lock()->GetRadius())
 			{
-				if (playNumber_ == 1)
+				if (playNumber_ == ONE_PLAYER)
 				{
 					//ゴールしてない場合
 					if (!stage_->GetIsGoal())
@@ -1042,13 +1050,13 @@ void GameScene::Collision(void)
 		
 		//死亡処理
 		//ゲームオーバーシーンで描画するため保存しておく
-		if (playNumber_ == 1)
+		if (playNumber_ == ONE_PLAYER)
 		{
 			//ゲームオーバー処理
-			if (bikes_[0]->GetHP() <= 0)
+			if (bikes_[PLAYER_ID_1]->GetHP() <= 0)
 			{
 				//スコアを保持
-				score_.ScoreSet(bikes_[0]->GetScore());
+				score_.ScoreSet(bikes_[PLAYER_ID_1]->GetScore());
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 			}
 		}
@@ -1166,7 +1174,7 @@ void GameScene::WarningDraw(void)
 void GameScene::GoalAfterDraw(int playNum, Vector2 drawPos)
 {
 	//1人用
-	if (playNum == 1)
+	if (playNum == ONE_PLAYER)
 	{
 		//座標
 		if (!isPause_)

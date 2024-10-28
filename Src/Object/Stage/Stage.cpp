@@ -21,35 +21,35 @@
 
 #pragma region 定数宣言
 
-// ステージの切り替え間隔
-const float TIME_STAGE_CHANGE = 1.0f;
+	// ステージの切り替え間隔
+	const float TIME_STAGE_CHANGE = 1.0f;
 
-//ステージの初期位置
-const VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
+	//ステージの初期位置
+	const VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
 
-//モデルのサイズ
-const float STAGE_SCL = 1.0f;
+	//モデルのサイズ
+	const float STAGE_SCL = 1.0f;
 
-//モデルの拡大率
-const float STAGE_RATIO = 2.5f;
+	//モデルの拡大率
+	const float STAGE_RATIO = 2.5f;
 
-// ステージの生成距離(Z方向)
-const float STAGE_WIDTH = 5000.0f;
+	// ステージの生成距離(Z方向)
+	const float STAGE_WIDTH = 5000.0f;
 
-//背景の初期位置
-const VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
+	//背景の初期位置
+	const VECTOR CITY_START_POS = { 3000.0f,-3000.0f, 1000.0f };
 
-// 削除するステージ数
-const int DELETION_NUM = 22;
+	// 削除するステージ数
+	const int DELETION_NUM = 22;
 
-//バイクプレイヤー1
-const int BIKE_P1_NUM = 0;
+	//バイクプレイヤー1
+	const int BIKE_P1_NUM = 0;
 
-//ステージ削除するまでの最大数
-const int TO_DESTROY_MAX_NUM = 5;
+	//ステージ削除するまでの最大数
+	const int TO_DESTROY_MAX_NUM = 5;
 
-//ステージ生成する位置(プレイヤーからの増分)
-const float TO_MAKE_STAGE_ADD_POS_Z = 6000.0f;
+	//ステージ生成する位置(プレイヤーからの増分)
+	const float TO_MAKE_STAGE_ADD_POS_Z = 6000.0f;
 
 #pragma endregion
 
