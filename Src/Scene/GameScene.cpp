@@ -94,6 +94,9 @@
 	const int START_COUNT_POS_Y = 95;
 	const double START_COUNT_SIZE = 15.0;
 
+	//HPの黒枠の太さ
+	const float DRAW_HP_FRAME_THINCKNESS = 13.0f;
+
 	//HP描画の1枠の横の大きさ
 	const int DRAW_HP_SIZE_X = 600;
 
@@ -384,7 +387,6 @@ void GameScene::Update(void)
 		startCount_ -= SceneManager::GetInstance().GetDeltaTime();
 	}
 
-
 	if (startCount_ <= 0.0f)
 	{
 		float deltaTime = hitStopDuration;
@@ -431,7 +433,6 @@ void GameScene::Update(void)
 		spike_->Update();
 		spike_->SetTransform(bikes_[posZMaxIndex]->GetTransform());
 
-
 		//コイン
 		size_t sizeE = coins_.size();
 		for (int i = 0; i < sizeE; i++)
@@ -469,8 +470,8 @@ void GameScene::Draw(void)
 {
 	if (playNumber_ == ONE_PLAYER)
 	{
-
-		DrawObject(0);
+		// カメラやスクリーン表示
+		DrawObject(PLAYER_ID_1);
 
 		// 各バイクを描画
 		bikes_[PLAYER_ID_1]->Draw();
@@ -506,7 +507,7 @@ void GameScene::Draw(void)
 		// HPの黒枠
 		DrawBoxAA((float)sc_x, (float)sc_y,
 			(float)ap::SCREEN_SIZE_X - HP_BER, (float)HP_BAR_HEIGHT,
-			0x000000, false, 13.0f);
+			0x000000, false, DRAW_HP_FRAME_THINCKNESS);
 
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
@@ -524,6 +525,7 @@ void GameScene::Draw(void)
 		for (int i = 0; i < cameras_.size(); i++)
 		{
 
+			// カメラやスクリーンを描画
 			DrawObject(i);
 
 			// 各バイクを描画
@@ -656,11 +658,8 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-
 			DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - START_COUNT_POS_Y - GetDrawFormatStringWidth("%.f", startCount_), Application::SCREEN_SIZE_Y / 2 - START_COUNT_POS_Y, START_COUNT_SIZE, START_COUNT_SIZE, 0xffffff, "%.f", startCount_);
-
 		}
-		
 	}
 
 	//ゴールしたら文字出現
@@ -712,7 +711,6 @@ void GameScene::Draw(void)
 		pause_->Draw();
 	}
 
-	
 }
 
 void GameScene::DrawObject(int playerID)
@@ -745,7 +743,6 @@ void GameScene::DrawObject(int playerID)
 
 void GameScene::DrawUI(int x, int y, int playerID)
 {
-
 	using ap = Application;
 	int sc_x = x - DRAW_FOUR_HP_POS_X;
 	int sc_y = y + DRAW_FOUR_HP_POS_Y;
@@ -838,7 +835,6 @@ void GameScene::GoalProcess(void)
 				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMEOVER);
 			}
 		}
-
 	}
 }
 
@@ -907,7 +903,6 @@ std::vector<CoinBase*> GameScene::GetCoins(void)
 {
 	return coins_;
 }
-
 
 bool GameScene::GetIsCreateCoin(void)
 {
@@ -990,7 +985,6 @@ void GameScene::Collision(void)
 					//当たった
 					helicopter_->GetBomb()->SetIsCol(true);
 
-
 					// 効果音再生
 					PlaySoundMem(ResourceManager::GetInstance().Load(
 						ResourceManager::SRC::SND_EXPLOSION).handleId_, DX_PLAYTYPE_BACK, true);
@@ -1047,7 +1041,6 @@ void GameScene::Collision(void)
 			}
 		}
 
-		
 		//死亡処理
 		//ゲームオーバーシーンで描画するため保存しておく
 		if (playNumber_ == ONE_PLAYER)
@@ -1122,7 +1115,6 @@ void GameScene::BikeCollision(void)
 				bikes_[b1]->Flip(flipDirB1);
 				bikes_[b2]->Flip(flipDirB2);
 			}
-
 
 		}
 

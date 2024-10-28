@@ -50,7 +50,6 @@ public:
 	enum class ANIM_TYPE
 	{
 		IDLE,
-		RUN,
 		SIT
 	};
 

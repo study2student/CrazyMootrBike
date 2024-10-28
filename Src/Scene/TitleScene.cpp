@@ -69,6 +69,10 @@
 
 	const Vector2 IMG_PUSH = { Application::SCREEN_SIZE_X / 2 - 256, 700 };
 
+	// タイトル画像の位置
+	const int IMG_TITLE_X = 160;
+	const int IMG_TITLE_Y = 150;
+
 	// バイクのスピード
 	const float BIKE_SPEED = 60.0f;
 
@@ -111,8 +115,8 @@ TitleScene::TitleScene(void)
 	effectBurnoutPlayId_(-1),
 	effectBurnoutPosY_(0.0f),
 	stepBikeDeparture_(0.0f),
-	stepFlash_(0.0f),
-	isInvisible_(false),
+	stepImgFlash_(0.0f),
+	isImgInvisible_(false),
 	state_(STATE::IDLE)
 {
 }
@@ -150,7 +154,6 @@ void TitleScene::Init(void)
 	sity_.scl = { SITY_SIZE };
 	sity_.quaRotLocal = Quaternion::Euler(SITY_ROT);
 	sity_.Update();
-
 
 	//バイク
 	bike.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BIKE));
@@ -226,12 +229,10 @@ void TitleScene::Update(void)
 
 	//アニメーションループ
 	animationController_->SetEndLoop(ANIMATION_START_STEP, ANIMATION_START_STEP, ANIMATION_SPEED);
-
 }
 
 void TitleScene::Draw(void)
 {
-
 	skyDome_->Draw();
 
 	MV1DrawModel(charactor_.modelId);
@@ -243,27 +244,27 @@ void TitleScene::Draw(void)
 	//ボタンが押されたら表示しない
 	if(state_==STATE::IDLE)
 	{
-		DrawExtendGraph(160, 150, Application::SCREEN_SIZE_X - 160,Application::SCREEN_SIZE_Y, imgTitle_, true);
+		DrawExtendGraph(IMG_TITLE_X, IMG_TITLE_Y, Application::SCREEN_SIZE_X - IMG_TITLE_X,Application::SCREEN_SIZE_Y, imgTitle_, true);
 
 		//点滅表示
-		if (!isInvisible_)
+		if (!isImgInvisible_)
 		{
-			stepFlash_ += SceneManager::GetInstance().GetDeltaTime();
-			if (stepFlash_ >= MAX_STEP_FLASH)
+			stepImgFlash_ += SceneManager::GetInstance().GetDeltaTime();
+			if (stepImgFlash_ >= MAX_STEP_FLASH)
 			{
-				isInvisible_ = true;
+				isImgInvisible_ = true;
 			}
 		}
 		else
 		{
-			stepFlash_ -= SceneManager::GetInstance().GetDeltaTime();
-			if (stepFlash_ <= 0.0f)
+			stepImgFlash_ -= SceneManager::GetInstance().GetDeltaTime();
+			if (stepImgFlash_ <= 0.0f)
 			{
-				isInvisible_ = false;
+				isImgInvisible_ = false;
 			}
 		}
 
-		if(!isInvisible_)
+		if(!isImgInvisible_)
 		{
 			DrawGraph(IMG_PUSH.x, IMG_PUSH.y, imgPush_, true);
 		}
@@ -324,7 +325,7 @@ void TitleScene::UpdateIdle(void)
 		ChangeState(STATE::START);
 	}
 
-	////スキップデバッグ
+	//スキップデバッグ
 	if (ins.IsTrgDown(KEY_INPUT_S))
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);

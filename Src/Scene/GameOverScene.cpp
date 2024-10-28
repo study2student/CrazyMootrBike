@@ -10,7 +10,7 @@
 
 #pragma region 定数宣言
 	//フィントサイズ
-const int FONT_SIZE = 16;
+	const int FONT_SIZE = 16;
 	//リトライボタンの横の長さ
 	const int RETRY_FONT_LENGTH = 200;
 	//リトライボタンの高さ

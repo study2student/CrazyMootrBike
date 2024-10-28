@@ -30,7 +30,7 @@
 	const float SPEED_MOVE = 100.0f;
 
 	// プレイヤーの傾き
-	const float SLOPE = 45.0f;
+	const float PLAYER_______________________________________________SLOPE = 45.0f;
 
 	// ブースト使用時の加速速度
 	const float ADD_SPEED_BOOST = 50.0f;
@@ -207,8 +207,6 @@ void Bike::Draw(void)
 	MV1DrawModel(transform_.modelId);
 	MV1DrawModel(transformPlayer_.modelId);
 
-	// デバッグ描画
-	//DrawDebug();
 }
 
 void Bike::AddCollider(std::shared_ptr<Collider> collider)
@@ -265,10 +263,8 @@ void Bike::InitAnimation(void)
 {
 	std::string path = Application::PATH_MODEL + "Player/";
 	animationController_ = std::make_unique<AnimationController>(transformPlayer_.modelId);
-	animationController_->Add((int)ANIM_TYPE::IDLE, path + "Idle.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::RUN, path + "Run.mv1", 20.0f);
-	animationController_->Add((int)ANIM_TYPE::SIT, path + "Sit.mv1", 1.0f);
-	animationController_->Play((int)ANIM_TYPE::SIT, true, 33.0f, 36.0f);
+	animationController_->Add((int)ANIM_TYPE::SIT, path + "Sit.mv1", ANIM_SPEED);
+	animationController_->Play((int)ANIM_TYPE::SIT, true, ANIM_START_STEP, ANIM_END_STEP);
 }
 
 void Bike::ChangeState(STATE state)
@@ -418,13 +414,12 @@ void Bike::ProcessMove(void)
 	// 移動量をゼロ
 	movePow_ = MyUtility::VECTOR_ZERO;
 
-
 	std::array<PlayerInput, PLAYER_NUM> playerInputs = { {
 	{ DX_INPUT_PAD1, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 1
 	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
 	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
 	{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
-} };
+	} };
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得
 	Quaternion cameraRot = SceneManager::GetInstance().GetCamera()->GetQuaRotOutX();
@@ -444,13 +439,13 @@ void Bike::ProcessMove(void)
 
 	//右
 	if (padState & static_cast<int>(input.right)) {
-		rotRadZ = MyUtility::Deg2RadF(-SLOPE);
+		rotRadZ = MyUtility::Deg2RadF(-PLAYER_______________________________________________SLOPE);
 		dir = cameraRot.GetRight();
 	}
 
 	//左
 	if (padState & static_cast<int>(input.left)) {
-		rotRadZ = MyUtility::Deg2RadF(SLOPE);
+		rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
 		dir = cameraRot.GetLeft();
 	}
 
@@ -473,14 +468,14 @@ void Bike::ProcessMove(void)
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = MyUtility::Deg2RadF(SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = MyUtility::Deg2RadF(SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -506,14 +501,14 @@ void Bike::ProcessMove(void)
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = MyUtility::Deg2RadF(-SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(-PLAYER_______________________________________________SLOPE);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = MyUtility::Deg2RadF(SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -532,7 +527,8 @@ void Bike::ProcessMove(void)
 		moveSpeed_ = SPEED_MOVE;
 
 
-		if (ins.IsNew(KEY_INPUT_A) || ins.IsNew(KEY_INPUT_D) || static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) &  PAD_INPUT_LEFT || PAD_INPUT_RIGHT))
+		if (ins.IsNew(KEY_INPUT_D) || ins.IsNew(KEY_INPUT_A) || 
+			static_cast<bool>(GetJoypadInputState(DX_INPUT_PAD1) &&  PAD_INPUT_LEFT || GetJoypadInputState(DX_INPUT_PAD1) && PAD_INPUT_RIGHT))
 		{
 			moveSpeed_ = SPEED_MOVE_X;
 		}
@@ -567,7 +563,7 @@ bool Bike::IsBoostPush(void)
 	{ DX_INPUT_PAD2, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 2
 	{ DX_INPUT_PAD3, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }, // Player 3
 	{ DX_INPUT_PAD4, JoypadButton::UP, JoypadButton::DOWN, JoypadButton::LEFT, JoypadButton::RIGHT, JoypadButton::ACTION }  // Player 4
-} };
+	} };
 
 	// プレイヤーごとの入力処理
 	const auto& input = playerInputs[playerID_];
