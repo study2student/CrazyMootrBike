@@ -36,24 +36,25 @@ private:
 	// スカイドーム(背景)
 	SkyDome* skyDome_;
 
-	//左上の1人でポジション
+	// 左上の1人でポジション
 	Vector2 onePersonFontBasePos_;
 
-	//左上の4人でポジション
+	// 左上の4人でポジション
 	Vector2 fourPersonFontBasePos_;
 
 	// 背景画像
-	int background_;
+	int imgBackground_;
 
 	// ひとりで選択画像
-	int aloneImg_;
+	int imgAlone;
 
 	// みんなで選択画像
-	int everyoneImg_;
+	int imgEveryone_;
 
 	// 操作画像
-	int Operation;
+	int imgOperation_;
 
+	// プッシュ画像
 	int imgPush_;
 
 	// コイン画像
@@ -70,53 +71,52 @@ private:
 	float selectAloneImgScale_;
 	// 四人プレイ選択画像の大きさ
 	float selectFourImgScale_;
-	//最大サイズかどうか
+	// 最大サイズかどうか
 	bool isMaxSelectScale_;
 
-	//1人で文字色
+	// 1人で文字色
 	int onePersonFontColor_;
 
-	//4人で文字色
+	// 4人で文字色
 	int fourPersonFontColor_;
 
-	//カーソルが文字にあってるかどうか
+	// カーソルが文字にあってるかどうか
 	bool isCursorHit_;
 
-	//現カーソル位置
+	// 現カーソル位置
 	int nowCursor_;
 
-	//選択音
+	// 選択音
 	int selectSE_;
 
-	//決定音
+	// 決定音
 	int decideSE_;
 
-	//状態
+	// 状態
 	STATE state_;
 
-	//画像点滅
-	//点滅時間
-	float stepFlash_;
+	// 画像の点滅時間
+	float stepImgFlash_;
 
-	//消えているかどうか
+	// 消えているかどうか
 	bool isInvisible_;
 
 	// 操作説明画像描画
 	void DrawOpe(void);
 
-	//マウス操作
+	// マウス操作
 	void DecideProcess(void);
 
-	//キー操作
+	// キー操作
 	void SelectProcess(void);
 
-	//バイク画像の動き
+	// バイク画像の動き
 	void BikeImgUpdate(void);
 
-	//状態遷移
+	// 状態遷移
 	void ChangeState(STATE state);
 
-	//現カーソル番号から状態を変化させる
+	// 現カーソル番号から状態を変化させる
 	void CursorToState(int cursor);
 
 };

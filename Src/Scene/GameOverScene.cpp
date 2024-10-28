@@ -9,6 +9,8 @@
 #include "GameOverScene.h"
 
 #pragma region 定数宣言
+	//フィントサイズ
+const int FONT_SIZE = 16;
 	//リトライボタンの横の長さ
 	const int RETRY_FONT_LENGTH = 200;
 	//リトライボタンの高さ
@@ -31,6 +33,8 @@
 	const int END_POS_Y = 150;
 	//背景画像描画拡大描画用座標
 	const int IMG_BG_POS_Y = 20;
+	//スコア描画の文字の大きさ
+	const int SCORE_SIZE = 10;
 	//スコア表示座標
 	const int SCORE_STRING_POS_X = 90;
 	//プレイヤーナンバー文字描画座標
@@ -43,15 +47,21 @@
 	const int SHIFT_WIDTH = 200;
 	//文字描画の拡大率
 	const int MAG_RATE = 8;
-	
+	//背景画像の位置
+	const float IMG_SELECT_BG_POS_X = 1600.0f;
+	const float IMG_SELECT_BG_POS_Y = 600.0f;
+	//背景画像の大きさ
+	const float IMG_SELECT_BG_SIZE = 3.0f;
+	//リトライ、エンド文字の大きさ
+	const double RETRY_SIZE = 3.0;
+	const double END_SIZE = 3.0;
 #pragma endregion
 
 
 GameOverScene::GameOverScene(void)
 	:
 	bikes_({}),
-	img_BG(0),
-	imgPush_(0),
+	imgBG(0),
 	imgSelectBG_(0),
 	pState_(PAUSE_STATE::END),
 	reTryFontBasePos_({}),
@@ -70,13 +80,12 @@ GameOverScene::~GameOverScene(void)
 void GameOverScene::Init(void)
 {
 	// DrawString で描画する文字列の大きさを設定
-	SetFontSize(16);
+	SetFontSize(FONT_SIZE);
 	// DrawString で描画するフォントを変更
 	ChangeFont("Nikkyou Sans");
 
 	//背景画像
-	img_BG = resMng_.Load(ResourceManager::SRC::IMG_SCORE).handleId_;
-	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
+	imgBG = resMng_.Load(ResourceManager::SRC::IMG_SCORE).handleId_;
 	imgSelectBG_= resMng_.Load(ResourceManager::SRC::IMG_GAMEOVER_SELECT_BG).handleId_;
 	//バイクの読み込み
 	for (int i = 0; i < PLAYER_NUM; ++i) {
@@ -116,17 +125,14 @@ void GameOverScene::Draw(void)
 	using ap = Application;
 
 	//背景画像描画
-	DrawExtendGraph(Application::SCREEN_SIZE_X / 4, 0, ap::SCREEN_SIZE_X - ap::SCREEN_SIZE_X / 4, ap::SCREEN_SIZE_Y + IMG_BG_POS_Y, img_BG, true);
+	DrawExtendGraph(Application::SCREEN_SIZE_X / 4, 0, ap::SCREEN_SIZE_X - ap::SCREEN_SIZE_X / 4, ap::SCREEN_SIZE_Y + IMG_BG_POS_Y, imgBG, true);
 
 	if(data_.GetData().playerNum_ == 1)
 	{
 
-		//DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - SCORE_STRING_POS_X, Application::SCREEN_SIZE_Y / 2 - GetDrawFormatStringWidth("%.d"),
-		//	10, 10, 0xff0000, "%.d", score_.GetScore());
-
 		//ゲーム大祭用
 		DrawExtendFormatString(Application::SCREEN_SIZE_X / 2 - GetDrawFormatStringWidth("%.d") - SCORE_STRING_POS_X, Application::SCREEN_SIZE_Y / 2 - GetDrawFormatStringWidth("%.d"),
-			10, 10, 0xff0000, "%.d", score_.GetScore());
+			SCORE_SIZE, SCORE_SIZE, 0xff0000, "%.d", score_.GetScore());
 	}
 	else
 	{
@@ -142,18 +148,12 @@ void GameOverScene::Draw(void)
 		}
 	}
 
-	//背景
-	DrawRotaGraphFastF(1600, 600, 3.0f, 0.0f, imgSelectBG_, true);
-
-	//文字表示
-	//float fontScl = 3.0f;
-	//DrawExtendFormatString(reTryFontBasePos_.x, reTryFontBasePos_.y, fontScl, fontScl, reTryFontColor_, "リトライ");
-	//DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, fontScl, fontScl, endFontColor_, "終わる");
+	//背景画像
+	DrawRotaGraphFastF(IMG_SELECT_BG_POS_X, IMG_SELECT_BG_POS_Y, IMG_SELECT_BG_SIZE, 0.0f, imgSelectBG_, true);
 
 	//ゲーム大祭用文字表示
-	float fontScl = 3.0f;
-	DrawExtendFormatString(reTryFontBasePos_.x, reTryFontBasePos_.y, fontScl, fontScl, reTryFontColor_, "リトライ");
-	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, fontScl, fontScl, endFontColor_, "終わる");
+	DrawExtendFormatString(reTryFontBasePos_.x, reTryFontBasePos_.y, RETRY_SIZE, RETRY_SIZE, reTryFontColor_, "RETRY");
+	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, END_SIZE, END_SIZE, endFontColor_, "END");
 }
 
 void GameOverScene::DecideProcess(void)

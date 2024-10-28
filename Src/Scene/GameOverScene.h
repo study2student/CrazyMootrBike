@@ -28,44 +28,43 @@ private:
 	// 複数プレイヤー
 	std::vector<std::shared_ptr<Bike>> bikes_;
 
-	//スコア描画の背景
-	int img_BG;
-	int imgPush_;
+	// スコア描画の背景
+	int imgBG;
 
-	//セレクト背景
+	// セレクト背景
 	int imgSelectBG_;
 
-	//状態
+	// 状態
 	PAUSE_STATE pState_;
 
-	//左上のリトライポジション
+	// 左上のリトライポジション
 	Vector2 reTryFontBasePos_;
 
-	//左上の終わるポジション
+	// 左上の終わるポジション
 	Vector2 endFontBasePos_;
 
-	//リトライ文字色
+	// リトライ文字色
 	int reTryFontColor_;
 
-	//終わる文字色
+	// 終わる文字色
 	int endFontColor_;
 
-	//現カーソル位置
+	// 現カーソル位置
 	int nowCursor_;
 
-	//カーソルが文字にあってるかどうか
+	// カーソルが文字にあってるかどうか
 	bool isCursorHit_;
 
-	//マウス操作
+	// マウス操作
 	void DecideProcess(void);
 
-	//キー操作
+	// キー操作
 	void SelectProcess(void);
 
-	//状態遷移
+	// 状態遷移
 	void ChangePState(PAUSE_STATE pState);
 
-	//現カーソル番号から状態を変化させる
+	// 現カーソル番号から状態を変化させる
 	void CursorToPState(int cursor);
 };
 

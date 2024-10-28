@@ -55,6 +55,8 @@
 	const int IMG_BIKE_BOX_POS = 4;
 	//コイン画像の大きさ
 	const int IMG_COIN_SIZE = 60;
+	//コイン画像の最大の大きさ
+	const int IMG_COIN_MAX_SIZE = 180;
 	//プレイヤー人数
 	const int PLAYER_NUM = 4;
 	//バイク画像の移動量
@@ -69,10 +71,10 @@ SelectScene::SelectScene(void)
 	skyDome_(nullptr),
 	onePersonFontBasePos_({}),
 	fourPersonFontBasePos_({}),
-	background_(0),
-	aloneImg_(0),
-	everyoneImg_(0),
-	Operation(0),
+	imgBackground_(0),
+	imgAlone(0),
+	imgEveryone_(0),
+	imgOperation_(0),
 	imgPush_(0),
 	coinImg_(0),
 	coinImgPos_({}),
@@ -88,7 +90,7 @@ SelectScene::SelectScene(void)
 	selectSE_(0),
 	decideSE_(0),
 	state_(STATE::ONE_PERSON),
-	stepFlash_(0.0f),
+	stepImgFlash_(0.0f),
 	isInvisible_(false)
 {
 }
@@ -107,14 +109,14 @@ void SelectScene::Init(void)
 	fourPersonFontBasePos_ = { Application::SCREEN_SIZE_X / 2 + FOUR_PERSON_FONT_LENGTH, Application::SCREEN_SIZE_Y / 2 };
 
 	// 背景画像
-	background_ = resMng_.Load(ResourceManager::SRC::IMG_BACKGROUND).handleId_;
+	imgBackground_ = resMng_.Load(ResourceManager::SRC::IMG_BACKGROUND).handleId_;
 
-	aloneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
-	everyoneImg_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
+	imgAlone = resMng_.Load(ResourceManager::SRC::IMG_SELECT_ALONE).handleId_;
+	imgEveryone_ = resMng_.Load(ResourceManager::SRC::IMG_SELECT_EVERYONE).handleId_;
 
 	imgPush_ = resMng_.Load(ResourceManager::SRC::PUSH_SPACE).handleId_;
 
-	Operation = resMng_.Load(ResourceManager::SRC::IMG_OPERATION).handleId_;
+	imgOperation_ = resMng_.Load(ResourceManager::SRC::IMG_OPERATION).handleId_;
 
 	//コイン画像
 	coinImg_ = resMng_.Load(ResourceManager::SRC::IMG_COIN).handleId_;
@@ -148,7 +150,7 @@ void SelectScene::Update(void)
 void SelectScene::Draw(void)
 {
 
-	DrawExtendGraph(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, background_, true);
+	DrawExtendGraph(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, imgBackground_, true);
 
 
 	//ひとりプレイ選択時
@@ -174,13 +176,13 @@ void SelectScene::Draw(void)
 		}
 
 		// 画像表示:ひとりで
-		DrawRotaGraphFastF(onePersonFontBasePos_.x, onePersonFontBasePos_.y,selectAloneImgScale_,0.0, aloneImg_, true);
+		DrawRotaGraphFastF(onePersonFontBasePos_.x, onePersonFontBasePos_.y,selectAloneImgScale_,0.0, imgAlone, true);
 	}
 	else
 	{
 		selectAloneImgScale_ = SELECT_IMG_MIN_SCALE;
 		// 画像表示:ひとりで
-		DrawRotaGraphFastF(onePersonFontBasePos_.x, onePersonFontBasePos_.y, selectAloneImgScale_, 0.0, aloneImg_, true);
+		DrawRotaGraphFastF(onePersonFontBasePos_.x, onePersonFontBasePos_.y, selectAloneImgScale_, 0.0, imgAlone, true);
 	}
 
 	//四人プレイ選択時
@@ -206,13 +208,13 @@ void SelectScene::Draw(void)
 		}
 
 		// 画像表示:みんなで
-		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, everyoneImg_, true);
+		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, imgEveryone_, true);
 	}
 	else
 	{
 		selectFourImgScale_ = SELECT_FOUR_IMG_MIN_SCALE;
 		// 画像表示:みんなで
-		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, everyoneImg_, true);
+		DrawRotaGraphFastF(fourPersonFontBasePos_.x, fourPersonFontBasePos_.y, selectFourImgScale_, 0.0, imgEveryone_, true);
 	}
 
 
@@ -220,16 +222,16 @@ void SelectScene::Draw(void)
 	//点滅表示
 	if (!isInvisible_)
 	{
-		stepFlash_ += SceneManager::GetInstance().GetDeltaTime();
-		if (stepFlash_ >= MAX_STEP_FLASH)
+		stepImgFlash_ += SceneManager::GetInstance().GetDeltaTime();
+		if (stepImgFlash_ >= MAX_STEP_FLASH)
 		{
 			isInvisible_ = true;
 		}
 	}
 	else
 	{
-		stepFlash_ -= SceneManager::GetInstance().GetDeltaTime();
-		if (stepFlash_ <= MIN_STEP_FLASH)
+		stepImgFlash_ -= SceneManager::GetInstance().GetDeltaTime();
+		if (stepImgFlash_ <= MIN_STEP_FLASH)
 		{
 			isInvisible_ = false;
 		}
@@ -250,13 +252,13 @@ void SelectScene::DrawOpe(void)
 	int scY = Application::SCREEN_SIZE_Y;
 
 	//操作説明画像描画
-	DrawRotaGraphFast(scX / 2, IMG_OPERATION_POS_Y, IMG_OPERATION_MAGNIFICATION, 0.0f, Operation, true);
+	DrawRotaGraphFast(scX / 2, IMG_OPERATION_POS_Y, IMG_OPERATION_MAGNIFICATION, 0.0f, imgOperation_, true);
 
 
 	if (bikeImgPos_.x - IMG_BIKE_MOVE_BOX_POS_X / IMG_BIKE_MOVE_POS_RATIO <= coinImgPos_.x)
 	{
 		// コイン画像の大きさ
-		for (int i = 0; i < 180; i += IMG_COIN_SIZE)
+		for (int i = 0; i < IMG_COIN_MAX_SIZE; i += IMG_COIN_SIZE)
 		{
 			DrawExtendGraph(coinImgPos_.x + i, coinImgPos_.y, coinImgPos_.x + IMG_COIN_SIZE + i, coinImgPos_.y + IMG_COIN_SIZE, coinImg_, true);
 		}
@@ -283,8 +285,8 @@ void SelectScene::DecideProcess(void)
 	if (mousePos_.x >= onePersonFontBasePos_.x && mousePos_.x <= startFontLenPos_.x
 		&& mousePos_.y >= onePersonFontBasePos_.y && mousePos_.y <= startFontLenPos_.y)
 	{
-		/*nowCursor_ = (int)STATE::ONE_PERSON;
-		isCursorHit_ = true;*/
+		nowCursor_ = (int)STATE::ONE_PERSON;
+		isCursorHit_ = true;
 	}
 	else
 	{
@@ -322,8 +324,8 @@ void SelectScene::DecideProcess(void)
 	if (mousePos_.x >= fourPersonFontBasePos_.x && mousePos_.x <= exitFontLenPos_.x
 		&& mousePos_.y >= fourPersonFontBasePos_.y && mousePos_.y <= exitFontLenPos_.y )
 	{
-		/*nowCursor_ = (int)STATE::FOUR_PERSON;
-		isCursorHit_ = true;*/
+		nowCursor_ = (int)STATE::FOUR_PERSON;
+		isCursorHit_ = true;
 	}
 	else
 	{
