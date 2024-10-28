@@ -81,7 +81,4 @@ private:
 	//フレームレート計算
 	void CalcFrameRate();
 
-	// フレームレート表示用(デバッグ)
-	void DrawFrameRate();
-
 };

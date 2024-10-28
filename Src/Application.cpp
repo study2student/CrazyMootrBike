@@ -103,9 +103,6 @@ void Application::Run(void)
 			// フレームレート計算
 			CalcFrameRate();
 
-			// フレームレート表示
-			DrawFrameRate();
-
 			ScreenFlip();
 		}
 
@@ -189,9 +186,4 @@ void Application::CalcFrameRate()
 		// フレームレート更新時間を更新
 		updateFrameRateTime = currentTime;
 	}
-}
-
-void Application::DrawFrameRate()
-{
-	DrawFormatString(SCREEN_SIZE_X - 90, 0, GetColor(255, 30, 30), "FPS[%.2f]", frameRate);
 }

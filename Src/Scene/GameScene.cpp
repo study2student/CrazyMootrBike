@@ -502,7 +502,7 @@ void GameScene::Draw(void)
 		// スタート時のカウントを減らす
 		if (startCount_ >= 0.0f)
 		{
-			DrawExtendFormatString(ap::SCREEN_SIZE_X / 2 - 50 - GetDrawFormatStringWidth("%.f"), ap::SCREEN_SIZE_Y / 2 -95, START_COUNT_SIZE, START_COUNT_SIZE, 0xffffff, "%.f", startCount_);
+			DrawExtendFormatString(ap::SCREEN_SIZE_X / 2 - START_COUNT_POS_X - GetDrawFormatStringWidth("%.f"), ap::SCREEN_SIZE_Y / 2 - START_COUNT_POS_Y, START_COUNT_SIZE, START_COUNT_SIZE, 0xffffff, "%.f", startCount_);
 		}
 
 	}
