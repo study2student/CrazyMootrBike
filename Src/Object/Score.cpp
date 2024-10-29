@@ -18,6 +18,14 @@ Score& Score::GetInstance(void)
 	return *instance_;
 }
 
+Score::Score() : scoreNum_(0)
+{
+}
+
+Score::~Score(void)
+{
+}
+
 void Score::Init(void)
 {
 }

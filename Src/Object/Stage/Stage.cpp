@@ -284,7 +284,7 @@ const VECTOR& Stage::GetForwardLoopPos(void) const
 {
 	//先頭ループステージの座標を取得
 	int size = (int)loopStage_.size();
-	return loopStage_[size - 1]->GetPos();
+	return loopStage_[static_cast<std::deque<std::shared_ptr<LoopStage>, std::allocator<std::shared_ptr<LoopStage>>>::size_type>(size) - 1]->GetPos();
 }
 
 const int& Stage::GetLoopStageSize(void) const
@@ -432,7 +432,6 @@ void Stage::MakeCity(void)
 		cityTrans.pos = { CITY_START_POS.x,  CITY_START_POS.y,  CITY_START_POS.z + STAGE_WIDTH * (size + 1) };
 
 		cityTrans.Update();
-
 
 		city = std::make_shared<City>(bikes_.front(), cityTrans);
 		city->Init();

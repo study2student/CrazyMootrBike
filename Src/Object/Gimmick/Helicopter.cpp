@@ -245,7 +245,6 @@ void Helicopter::UpdateDead(void)
 {
 }
 
-
 void Helicopter::DrawDebug(void)
 {
 	DrawFormatString(0, 100, 0xffffff, "copterPos : %f, %f, %f", transform_.pos.x, transform_.pos.y, transform_.pos.z);

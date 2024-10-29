@@ -229,7 +229,6 @@ void Spike::ChangeStateIdle(void)
 	isCol_ = false;
 }
 
-
 void Spike::ChangeStateThrow(void)
 {
 
@@ -347,7 +346,6 @@ void Spike::UpdateThrowMove(void)
 	if (transform_.pos.x >= Stage::STAGE_RIGHT_POS_X_MAX)
 	{
 		targetDir_ = VAdd(targetDirSave_, Stage::RIGHT_NORMAL_VEC);
-
 	}
 
 	// ˆÚ“®‚³‚¹‚é

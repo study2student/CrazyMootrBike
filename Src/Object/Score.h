@@ -12,6 +12,9 @@ public:
 	// 静的インスタンスの取得
 	static Score& GetInstance(void);
 
+	Score(void);
+	~Score(void);
+
 	void Init(void);
 
 	//スコア加算

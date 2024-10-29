@@ -100,12 +100,12 @@ private:
 	void PauseDraw(void);
 
 	//[再開]ボタンにマウスカーソルがあっているか(あっているならtrue)
-	const bool& IsHitRestartMouseCursor(void) const;
+	const bool IsHitRestartMouseCursor(void) const;
 
 	//[リトライ]ボタンにマウスカーソルがあっているか(あっているならtrue)
-	const bool& IsHitReTryMouseCursor(void) const;
+	const bool IsHitReTryMouseCursor(void) const;
 
 	//[終わる]ボタンにマウスカーソルがあっているか(あっているならtrue)
-	const bool& IsHitEndMouseCursor(void) const;
+	const bool IsHitEndMouseCursor(void) const;
 };
 

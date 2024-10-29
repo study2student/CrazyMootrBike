@@ -443,7 +443,6 @@ void CoinBase::CollisionCapsule(void)
 void CoinBase::BikeCollision(void)
 {
 	//バイクとの衝突判定
-
 	auto& ins = InputManager::GetInstance();
 
 	// X軸回転を除いた、重力方向に垂直なカメラ角度(XZ平面)を取得

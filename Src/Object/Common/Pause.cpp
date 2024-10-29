@@ -88,7 +88,8 @@ Pause::Pause(void)
 	endFontColor_(0),
 	isPause_(false),
 	isCursorHit_(false),
-	stepPauseKeyHit_(0.0f)
+	stepPauseKeyHit_(0.0f),
+	state_(STATE::RESTART)
 {
 }
 
@@ -137,7 +138,7 @@ void Pause::PausePrevious(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	//ポーズメニューを開く
-	InputManager::JOYPAD_NO padNum[PAD_MAX];
+	InputManager::JOYPAD_NO padNum[PAD_MAX]{};
 	for (int i = 0; i < PAD_MAX; i++)
 	{
 		switch (i)
@@ -188,7 +189,7 @@ void Pause::DecideProcess(void)
 	mousePos_ = InputManager::GetInstance().GetMousePos();
 
 	//パッドの設定
-	InputManager::JOYPAD_NO padNum[PAD_MAX];
+	InputManager::JOYPAD_NO padNum[PAD_MAX]{};
 	for (int i = 0; i < PAD_MAX; i++)
 	{
 		switch (i)
@@ -358,7 +359,7 @@ void Pause::SelectProcess(void)
 
 
 	//PAD
-	InputManager::JOYPAD_NO padNum[PAD_MAX];
+	InputManager::JOYPAD_NO padNum[PAD_MAX]{};
 	for (int i = 0; i < PAD_MAX; i++)
 	{
 		switch (i)
@@ -430,7 +431,7 @@ void Pause::CursorToState(int cursor)
 void Pause::PauseDraw(void)
 {
 	//ポーズ背景画像
-	DrawRotaGraphFastF(Application::SCREEN_SIZE_X / 2, Application::SCREEN_SIZE_Y / 2, IMAGE_SCALE, 0.0f, imgPause_, true);
+	DrawRotaGraphFastF(static_cast<float>(Application::SCREEN_SIZE_X) / 2, static_cast<float>(Application::SCREEN_SIZE_Y) / 2, IMAGE_SCALE, 0.0f, imgPause_, true);
 
 	//文字表示
 	DrawExtendFormatString(reStartFontBasePos_.x, reStartFontBasePos_.y, FONT_SCALE, FONT_SCALE, reStartFontColor_, RESTART_FONT.c_str());
@@ -438,7 +439,7 @@ void Pause::PauseDraw(void)
 	DrawExtendFormatString(endFontBasePos_.x, endFontBasePos_.y, FONT_SCALE, FONT_SCALE, endFontColor_, END_FONT.c_str());
 }
 
-const bool& Pause::IsHitRestartMouseCursor(void) const
+const bool Pause::IsHitRestartMouseCursor(void) const
 {
 	//文字の長さ
 	Vector2 reStartFontLenPos_ = { reStartFontBasePos_.x + RESTART_FONT_LENGTH ,reStartFontBasePos_.y + RESTART_FONT_HEIGHT };
@@ -447,7 +448,7 @@ const bool& Pause::IsHitRestartMouseCursor(void) const
 		&& mousePos_.y >= reStartFontBasePos_.y && mousePos_.y <= reStartFontLenPos_.y;
 }
 
-const bool& Pause::IsHitReTryMouseCursor(void) const
+const bool Pause::IsHitReTryMouseCursor(void) const
 {
 	//文字の長さ
 	Vector2 reTryFontLenPos_ = { reTryFontBasePos_.x + RETRY_FONT_LENGTH ,reTryFontBasePos_.y + RETRY_FONT_HEIGHT };
@@ -456,7 +457,7 @@ const bool& Pause::IsHitReTryMouseCursor(void) const
 		&& mousePos_.y >= reTryFontBasePos_.y && mousePos_.y <= reTryFontLenPos_.y;
 }
 
-const bool& Pause::IsHitEndMouseCursor(void) const
+const bool Pause::IsHitEndMouseCursor(void) const
 {
 	//文字の長さ
 	Vector2 endFontLenPos_ = { endFontBasePos_.x + END_FONT_LENGTH ,endFontBasePos_.y + END_FONT_HEIGHT };
