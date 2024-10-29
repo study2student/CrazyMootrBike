@@ -22,7 +22,7 @@ public:
 	static constexpr float DIR_LEN = 500.0f;
 
 	//縦のコイン間距離
-	static constexpr float X_LEN = 400.0f;
+	static constexpr float DURING_X_LEN = 400.0f;
 
 	//コイン生成時の横の調整用
 	static constexpr float ADJUST_POS_X = 14300.0f;

@@ -92,11 +92,11 @@ const float BOMB_EFFECT_SCL = 30.0f;
 
 Spike::Spike()
 	:
-	transformTarget_(Transform()),
+	transformTarget_({}),
 	state_(STATE::IDLE),
 	targetDir_({}),
 	targetDirSave_({}),
-	rotX_(Quaternion()),
+	rotX_({}),
 	isCol_(false),
 	stepPlaceDrawTime_(0.0f),
 	stepToDeleteTime_(0.0f),
@@ -242,9 +242,11 @@ void Spike::ChangeStateThrow(void)
 	switch (dir)
 	{
 	case Spike::DIR::LEFT:
+		//左から投下
 		transform_.pos.x = MAKE_LEFT_POS_X;
 		break;
 	case Spike::DIR::RIGHT:
+		//右から投下
 		transform_.pos.x = MAKE_RIGHT_POS_X;
 		break;
 	case Spike::DIR::MAX:
@@ -260,6 +262,8 @@ void Spike::ChangeStateThrow(void)
 	VECTOR targetPos;
 	VECTOR throwLocalPos;
 
+	//角度を決める
+	//どこに向かって投げるか(最初に投下された位置からtargetPosに向かって行く)
 	switch (angle)
 	{
 	case Spike::ANGLE::SIDE:
@@ -300,6 +304,7 @@ void Spike::ChangeStateThrow(void)
 		break;
 	}
 
+	//飛んでいく向き
 	targetDir_ = VNorm(VSub(targetPos, transform_.pos));
 	//保存
 	targetDirSave_ = targetDir_;

@@ -867,7 +867,7 @@ void GameScene::CoinPlace(void)
 	for (int i = 0; i < CoinBase::MAX_MAKE_NUM; i++)
 	{
 		//縦に並ぶコインとコインの距離
-		float len = CoinBase::X_LEN;
+		float len = CoinBase::DURING_X_LEN;
 
 		//コインの生成
 		CoinBase* c = nullptr;

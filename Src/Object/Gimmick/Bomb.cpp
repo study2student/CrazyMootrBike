@@ -225,6 +225,7 @@ void Bomb::UpdateReserve(void)
 
 	// d—Í‚É‚æ‚éˆÚ“®—Ê
 	CalcGravityPow();
+
 	// Õ“Ë”»’è
 	Collision();
 	transform_.Update();
@@ -246,6 +247,7 @@ void Bomb::UpdateBlast(void)
 {
 	// d—Í‚É‚æ‚éˆÚ“®—Ê
 	CalcGravityPow();
+
 	// Õ“Ë”»’è
 	Collision();
 	transform_.Update();

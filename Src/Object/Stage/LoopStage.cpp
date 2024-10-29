@@ -33,9 +33,6 @@ void LoopStage::Update(void)
 	case LoopStage::STATE::IDLE:
 		UpdateIdle();
 		break;
-	case LoopStage::STATE::MAKE:
-		UpdateMake();
-		break;
 	case LoopStage::STATE::BACK:
 		UpdateBack();
 		break;
@@ -50,7 +47,7 @@ void LoopStage::Draw(void)
 
 void LoopStage::Destroy(void)
 {
-	state_ = STATE::BACK;
+	ChangeState(STATE::BACK);
 	MV1DeleteModel(transform_.modelId);
 }
 
@@ -66,7 +63,7 @@ const LoopStage::STATE& LoopStage::GetState(void) const
 
 const bool& LoopStage::IsDestroy(void)
 {
-	return state_==STATE::BACK;
+	return state_ == STATE::BACK;
 }
 
 void LoopStage::ChangeState(STATE state)
@@ -83,9 +80,6 @@ void LoopStage::ChangeState(STATE state)
 	case LoopStage::STATE::IDLE:
 		ChangeStateIdle();
 		break;
-	case LoopStage::STATE::MAKE:
-		ChangeStateMake();
-		break;
 	case LoopStage::STATE::BACK:
 		ChangeStateBack();
 		break;
@@ -100,12 +94,6 @@ void LoopStage::ChangeStateIdle(void)
 {
 }
 
-void LoopStage::ChangeStateMake(void)
-{
-
-
-}
-
 void LoopStage::ChangeStateBack(void)
 {
 }
@@ -115,10 +103,6 @@ void LoopStage::UpdateNone(void)
 }
 
 void LoopStage::UpdateIdle(void)
-{
-}
-
-void LoopStage::UpdateMake(void)
 {
 }
 

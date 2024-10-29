@@ -151,6 +151,7 @@ void GimmickBase::CollisionCapsule(void)
 				if (pHit)
 				{
 					movedPos_ = VAdd(movedPos_, VScale(hit.Normal, 1.0f));
+
 					// ƒJƒvƒZƒ‹‚ðˆÚ“®‚³‚¹‚é
 					trans.pos = movedPos_;
 					trans.Update();

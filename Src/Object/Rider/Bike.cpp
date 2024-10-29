@@ -30,7 +30,7 @@
 	const float SPEED_MOVE = 100.0f;
 
 	// プレイヤーの傾き
-	const float PLAYER_______________________________________________SLOPE = 45.0f;
+	const float PLAYER_SLOPE = 45.0f;
 
 	// ブースト使用時の加速速度
 	const float ADD_SPEED_BOOST = 50.0f;
@@ -390,7 +390,8 @@ void Bike::UpdateCrash(void)
 	else
 	{
 		// Y軸起点に揺れを追加
-		float swayAngle = MyUtility::Deg2RadF(CLASH_SWAY_ANGLE);  // 揺れの角度の範囲
+		// 揺れの角度の範囲
+		float swayAngle = MyUtility::Deg2RadF(CLASH_SWAY_ANGLE); 
 		float sway = swayAngle * sinf(CLASH_SWAY_SPEED * currentTime_);
 
 		// Y軸周りの揺れを設定
@@ -445,13 +446,13 @@ void Bike::ProcessMove(void)
 
 	//右
 	if (padState & static_cast<int>(input.right)) {
-		rotRadZ = MyUtility::Deg2RadF(-PLAYER_______________________________________________SLOPE);
+		rotRadZ = MyUtility::Deg2RadF(-PLAYER_SLOPE);
 		dir = cameraRot.GetRight();
 	}
 
 	//左
 	if (padState & static_cast<int>(input.left)) {
-		rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
+		rotRadZ = MyUtility::Deg2RadF(PLAYER_SLOPE);
 		dir = cameraRot.GetLeft();
 	}
 
@@ -474,14 +475,14 @@ void Bike::ProcessMove(void)
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(PLAYER_SLOPE);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(PLAYER_SLOPE);
 				dir = cameraRot.GetLeft();
 
 			}
@@ -507,14 +508,14 @@ void Bike::ProcessMove(void)
 			// カメラ方向から右側へ移動したい
 			if (ins.IsNew(KEY_INPUT_D))
 			{
-				rotRadZ = MyUtility::Deg2RadF(-PLAYER_______________________________________________SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(-PLAYER_SLOPE);
 				dir = cameraRot.GetRight();
 			}
 
 			// カメラ方向から左側へ移動したい
 			if (ins.IsNew(KEY_INPUT_A))
 			{
-				rotRadZ = MyUtility::Deg2RadF(PLAYER_______________________________________________SLOPE);
+				rotRadZ = MyUtility::Deg2RadF(PLAYER_SLOPE);
 				dir = cameraRot.GetLeft();
 
 			}

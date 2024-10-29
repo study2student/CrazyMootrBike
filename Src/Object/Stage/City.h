@@ -12,7 +12,6 @@ public:
 	{
 		NONE,
 		IDLE,
-		MAKE,
 		BACK
 	};
 
@@ -43,13 +42,11 @@ private:
 	void ChangeState(STATE state);
 	void ChangeStateNone(void);
 	void ChangeStateIdle(void);
-	void ChangeStateMake(void);
 	void ChangeStateBack(void);
 
 	// 更新ステップ
 	void UpdateNone(void);
 	void UpdateIdle(void);
-	void UpdateMake(void);
 	void UpdateBack(void);
 };
 

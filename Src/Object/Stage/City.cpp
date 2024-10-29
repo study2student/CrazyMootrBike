@@ -32,9 +32,6 @@ void City::Update(void)
 	case City::STATE::IDLE:
 		UpdateIdle();
 		break;
-	case City::STATE::MAKE:
-		UpdateMake();
-		break;
 	case City::STATE::BACK:
 		UpdateBack();
 		break;
@@ -48,7 +45,7 @@ void City::Draw(void)
 
 void City::Destroy(void)
 {
-	state_ = STATE::BACK;
+	ChangeState(STATE::BACK);
 	MV1DeleteModel(transform_.modelId);
 }
 
@@ -81,9 +78,6 @@ void City::ChangeState(STATE state)
 	case City::STATE::IDLE:
 		ChangeStateIdle();
 		break;
-	case City::STATE::MAKE:
-		ChangeStateMake();
-		break;
 	case City::STATE::BACK:
 		ChangeStateBack();
 		break;
@@ -98,10 +92,6 @@ void City::ChangeStateIdle(void)
 {
 }
 
-void City::ChangeStateMake(void)
-{
-}
-
 void City::ChangeStateBack(void)
 {
 }
@@ -111,10 +101,6 @@ void City::UpdateNone(void)
 }
 
 void City::UpdateIdle(void)
-{
-}
-
-void City::UpdateMake(void)
 {
 }
 

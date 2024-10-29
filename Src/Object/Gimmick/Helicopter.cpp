@@ -69,7 +69,7 @@ Helicopter::Helicopter(GameScene* gameScene)
 	gameScene_(gameScene),
 	rotor_(nullptr),
 	bomb_(nullptr),
-	targetTrans_(Transform()),
+	targetTransform_({}),
 	isTargetOutside_(false),
 	state_(STATE::NONE),
 	attackState_(),
@@ -141,7 +141,7 @@ void Helicopter::SetBikeIsOutside(const bool& isOutside)
 
 void Helicopter::SetBikeTrans(const Transform& bikeTrans)
 {
-	targetTrans_ = bikeTrans;
+	targetTransform_ = bikeTrans;
 }
 
 std::shared_ptr<Bomb> Helicopter::GetBomb(void)
@@ -277,11 +277,13 @@ void Helicopter::ProcessMove(void)
 		int playNum = gameScene_->GetPlayNum();
 		if (playNum == 1)
 		{
-			transform_.pos.x = targetTrans_.pos.x;
+			//プレイヤーとヘリの位置を合わせる
+			transform_.pos.x = targetTransform_.pos.x;
 		}
 		else
 		{
-			transform_.pos.x = MyUtility::Lerp(transform_.pos.x, targetTrans_.pos.x, TO_TARGET_MATCH_RATE_MULTI);
+			//先頭のバイクに位置を合わせる
+			transform_.pos.x = MyUtility::Lerp(transform_.pos.x, targetTransform_.pos.x, TO_TARGET_MATCH_RATE_MULTI);
 		}
 		
 	}
@@ -305,7 +307,10 @@ void Helicopter::ProcessMove(void)
 
 void Helicopter::ProcessAttack(void)
 {
+	//爆弾
 	NormalAttack();
+
+	//遠距離攻撃
 	LongAttack();
 }
 
@@ -392,8 +397,8 @@ void Helicopter::CalcGravityPow(void)
 void Helicopter::BikeDisFunc(void)
 {
 	//バイクとヘリの距離をはかる
-	VECTOR atkLinePos = VAdd(targetTrans_.pos, ATTACK_LINE_LOCAL_POS);
-	VECTOR atkLineMaxPos = VAdd(targetTrans_.pos, ATTACK_LINE_MAX_LOCAL_POS);
+	VECTOR atkLinePos = VAdd(targetTransform_.pos, ATTACK_LINE_LOCAL_POS);
+	VECTOR atkLineMaxPos = VAdd(targetTransform_.pos, ATTACK_LINE_MAX_LOCAL_POS);
 
 	switch (state_)
 	{

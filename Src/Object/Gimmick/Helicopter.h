@@ -75,7 +75,7 @@ private:
 	std::shared_ptr<Bomb> bomb_;
 
 	//バイク情報
-	Transform targetTrans_;
+	Transform targetTransform_;
 
 	//バイクがステージ外にいるかどうか
 	bool isTargetOutside_;
@@ -117,13 +117,18 @@ private:
 	void DrawDebug(void);
 
 	// 操作
-	void ProcessMove(void);//移動
-	void ProcessAttack(void);//攻撃
-	void ProcessDebug(void);//デバッグ用
+	//移動
+	void ProcessMove(void);
+	//攻撃
+	void ProcessAttack(void);
+	//デバッグ用
+	void ProcessDebug(void);
 
 	// 攻撃種別
-	void NormalAttack(void);//通常攻撃
-	void LongAttack(void);//遠距離攻撃
+	//通常攻撃
+	void NormalAttack(void);
+	//遠距離攻撃
+	void LongAttack(void);
 
 	// 回転
 	void SetGoalRotate(float rotRad);

@@ -134,9 +134,12 @@ private:
 	// バイク同士の衝突判定
 	void BikeCollision(void);
 
-	float hitStopDuration;  // ヒットストップの持続時間（秒）
-	float hitStopTimer;      // ヒットストップのタイマー
-	bool isHitStop;        // ヒットストップ中かどうかのフラグ
+	// ヒットストップの持続時間（秒）
+	float hitStopDuration;
+	// ヒットストップのタイマー
+	float hitStopTimer;
+	// ヒットストップ中かどうかのフラグ
+	bool isHitStop;       
 
 	//プレイヤー人数
 	int playNumber_;

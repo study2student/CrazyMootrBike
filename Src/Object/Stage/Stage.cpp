@@ -27,10 +27,10 @@
 	//ステージの初期位置
 	const VECTOR STAGE_START_POS = { -12600.0f, -5000.0f, 0.0f };
 
-	//モデルのサイズ
+	//ステージモデルのサイズ
 	const float STAGE_SCL = 1.0f;
 
-	//モデルの拡大率
+	//ステージモデルの拡大率
 	const float STAGE_RATIO = 2.5f;
 
 	// ステージの生成距離(Z方向)
@@ -50,6 +50,16 @@
 
 	//ステージ生成する位置(プレイヤーからの増分)
 	const float TO_MAKE_STAGE_ADD_POS_Z = 6000.0f;
+
+	//街モデルのサイズ
+	const float CITY_SCL = 1.0f;
+
+	//街の回転
+	const VECTOR CITY_LOCAL_ROT = { 0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f };
+
+	//街生成する位置(プレイヤーからの増分)
+	const float TO_MAKE_CITY_ADD_POS_Z = 6000.0f;
+
 
 #pragma endregion
 
@@ -403,21 +413,22 @@ void Stage::MakeCity(void)
 	//先頭のバイクに合わせる
 	float z = bikes_[posZMaxIndex]->GetTransform().pos.z;
 
-	int mapZ = (int)((z + 6000.0f) / STAGE_WIDTH);
+	int mapZ = (int)((z + TO_MAKE_CITY_ADD_POS_Z) / STAGE_WIDTH);
 	int size = (int)city_.size();
 
 	//一定の距離超えたら
 	if (size <= mapZ)
 	{
 
+		//モデル読み込み
 		cityTrans.SetModel(
 			resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
 
-		float scale = 1.0f;
-		cityTrans.scl = { scale,scale,scale };
+		//モデル位置回転大きさ
+		cityTrans.scl = { CITY_SCL,CITY_SCL,CITY_SCL };
 		cityTrans.quaRot = Quaternion();
 		cityTrans.quaRotLocal =
-			Quaternion::Euler({ 0.0f, MyUtility::Deg2RadF(-90.0f), 0.0f });
+			Quaternion::Euler(CITY_LOCAL_ROT);
 		cityTrans.pos = { CITY_START_POS.x,  CITY_START_POS.y,  CITY_START_POS.z + STAGE_WIDTH * (size + 1) };
 
 		cityTrans.Update();
@@ -436,10 +447,10 @@ void Stage::MakeCity(void)
 	}
 
 
-	//後ろのステージを削除
+	//後ろの街を削除
 	if (city_.size() >= DELETION_NUM)
 	{
-		// ステージを削除する
+		// 街を削除する
 		std::shared_ptr<City> tailLoop = city_[size - (DELETION_NUM - 1)];
 		tailLoop->Destroy();
 	}
