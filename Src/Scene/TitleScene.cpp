@@ -158,11 +158,11 @@ void TitleScene::Init(void)
 	mainStage_.Update();
 
 	// ビル
-	sity_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
-	sity_.pos = { SITY_POS };
-	sity_.scl = { SITY_SIZE };
-	sity_.quaRotLocal = Quaternion::Euler(SITY_ROT);
-	sity_.Update();
+	city_.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::CITY));
+	city_.pos = { SITY_POS };
+	city_.scl = { SITY_SIZE };
+	city_.quaRotLocal = Quaternion::Euler(SITY_ROT);
+	city_.Update();
 
 	//バイク
 	bike.SetModel(resMng_.LoadModelDuplicate(ResourceManager::SRC::BIKE));
@@ -247,7 +247,7 @@ void TitleScene::Draw(void)
 	MV1DrawModel(charactor_.modelId);
 	MV1DrawModel(bike.modelId);
 	MV1DrawModel(mainStage_.modelId);
-	MV1DrawModel(sity_.modelId);
+	MV1DrawModel(city_.modelId);
 	MV1DrawModel(frontTyre_.modelId);
 	MV1DrawModel(rearTyre_.modelId);
 	//ボタンが押されたら表示しない

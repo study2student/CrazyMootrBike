@@ -114,6 +114,25 @@ private:
 	//コインが追加されたタイミングかどうか
 	bool isCreateCoin_;
 
+	// ヒットストップの持続時間（秒）
+	float hitStopDuration;
+	// ヒットストップのタイマー
+	float hitStopTimer;
+	// ヒットストップ中かどうかのフラグ
+	bool isHitStop;
+
+	//プレイヤー人数
+	int playNumber_;
+
+	//ポーズメニュー中かどうか
+	bool isPause_;
+
+	//FINISH文字の位置
+	Vector2 finishImgMovePos_;
+
+	//ゴールしてからの経過時間
+	float stepGoalAfter_;
+
 	//ポーズ
 	std::unique_ptr<Pause> pause_;
 
@@ -133,25 +152,6 @@ private:
 
 	// バイク同士の衝突判定
 	void BikeCollision(void);
-
-	// ヒットストップの持続時間（秒）
-	float hitStopDuration;
-	// ヒットストップのタイマー
-	float hitStopTimer;
-	// ヒットストップ中かどうかのフラグ
-	bool isHitStop;       
-
-	//プレイヤー人数
-	int playNumber_;
-
-	//ポーズメニュー中かどうか
-	bool isPause_;
-
-	//FINISH文字の位置
-	Vector2 finishImgMovePos_;
-
-	//ゴールしてからの経過時間
-	float stepGoalAfter_;
 
 	//警告
 	void WarningDraw(void);

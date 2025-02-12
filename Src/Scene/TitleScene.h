@@ -48,7 +48,7 @@ private:
 	Transform mainStage_;
 
 	//ビル
-	Transform sity_;
+	Transform city_;
 
 	// キャラクター
 	Transform charactor_;

@@ -174,6 +174,22 @@ private:
 	float flipSpeed_;
 	VECTOR flipDir_;
 
+	// ブースト時の加算速度
+	float speedBoost_;
+
+	// ブースト使用間隔
+	float deleyBoost_;
+
+	// ブーストを使用したか
+	bool isBoost_;
+
+	//ゴールしたか
+	bool isGoal_;
+
+	//ブーストエフェクト
+	int effectBoostResId_;
+	int effectBoostPlayId_;
+
 	//アニメーション
 	void InitAnimation(void);
 
@@ -209,22 +225,6 @@ private:
 
 	// 移動量の計算
 	void CalcGravityPow(void);
-
-	// ブースト時の加算速度
-	float speedBoost_;
-
-	// ブースト使用間隔
-	float deleyBoost_;
-
-	// ブーストを使用したか
-	bool isBoost_;
-
-	//ゴールしたか
-	bool isGoal_;
-
-	//ブーストエフェクト
-	int effectBoostResId_;
-	int effectBoostPlayId_;
 
 	// エフェクト初期化
 	void InitEffect(void);

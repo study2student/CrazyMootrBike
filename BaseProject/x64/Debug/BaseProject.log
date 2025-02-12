@@ -1,0 +1,24 @@
+﻿  Camera.cpp
+  ResourceManager.cpp
+  SceneManager.cpp
+  CoinBase.cpp
+  CopperCoin.cpp
+  GoldCoin.cpp
+  SilverCoin.cpp
+  Pause.cpp
+  Helicopter.cpp
+  Spike.cpp
+  Bike.cpp
+  LoopStage.cpp
+  Stage.cpp
+C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\Src\Object\Stage\Stage.cpp(292,24): warning C4267: 'return': 'size_t' から 'const int' に変換しました。データが失われているかもしれません。
+  GameOverScene.cpp
+  GameScene.cpp
+C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\Src\Scene\GameScene.cpp(979,22): warning C4244: '初期化中': '__int64' から 'int' への変換です。データが失われる可能性があります。
+C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\Src\Scene\GameScene.cpp(1029,21): warning C4244: '初期化中': '__int64' から 'int' への変換です。データが失われる可能性があります。
+  TitleScene.cpp
+  コードを生成中...
+C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\Src\Object\Stage\Stage.cpp(292,1): warning C4172: ローカル変数またはテンポラリ  のアドレスを返します
+C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\Src\Object\Stage\LoopStage.cpp(66,1): warning C4172: ローカル変数またはテンポラリ  のアドレスを返します
+C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\Src\Object\Coin\CoinBase.cpp(186,1): warning C4172: ローカル変数またはテンポラリ  のアドレスを返します
+  BaseProject.vcxproj -> C:\Users\2216011\Desktop\CrazyMotrBike\CrazyMootrBike\x64\Debug\BaseProject.exe

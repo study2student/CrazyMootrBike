@@ -73,7 +73,7 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::SKY_DOME, res);
 
 	// 最初の惑星
-	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Stage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::MAIN_PLANET, res);
 
 	// 落とし穴の惑星
@@ -161,36 +161,24 @@ void ResourceManager::Init(void)
 	resourcesMap_.emplace(SRC::IMG_BIKE, res);
 
 	// 仮ステージ
-	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Stage1.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Stage/Stage1.mv1");
 	resourcesMap_.emplace(SRC::DEMO_STAGE, res);
 
 	//カーブ
-	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/Curve.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Stage/Curve.mv1");
 	resourcesMap_.emplace(SRC::CURVE, res);
 
 	// ジャンプ台
-	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/jampRanp/janpudai.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Stage/jampRanp/janpudai.mv1");
 	resourcesMap_.emplace(SRC::JUMP_RAMP, res);
 
 	//背景街並み
-	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/city/city.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Stage/city/city.mv1");
 	resourcesMap_.emplace(SRC::CITY, res);
 
 	//ゴール
-	res = new RES(RES_T::MODEL, PATH_MDL + "demoStage/GoalPost/Goal.mv1");
+	res = new RES(RES_T::MODEL, PATH_MDL + "Stage/GoalPost/Goal.mv1");
 	resourcesMap_.emplace(SRC::GOAL, res);
-
-	//// 近距離敵
-	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemy.mv1");
-	//resourcesMap_.emplace(SRC::ENEMY_SHORT, res);
-
-	//// 遠距離敵
-	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyLong.mv1");
-	//resourcesMap_.emplace(SRC::ENEMY_LONG, res);
-
-	//// 爆弾敵
-	//res = new RES(RES_T::MODEL, PATH_MDL + "Enemy/enemyBomb.mv1");
-	//resourcesMap_.emplace(SRC::ENEMY_MAGIC, res);
 
 	//ヘリ
 	res = new RES(RES_T::MODEL, PATH_MDL + "Helicopter/Aircraft04.mv1");
@@ -215,7 +203,6 @@ void ResourceManager::Init(void)
 	// 銅メダル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Medal/CopperCoin.mv1");
 	resourcesMap_.emplace(SRC::COPPER_COIN, res);
-
 
 	// バイクモデル
 	res = new RES(RES_T::MODEL, PATH_MDL + "Bike/bike.mv1");
@@ -257,7 +244,6 @@ void ResourceManager::Init(void)
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BombPlace/bombPlace.efkefc");
 	resourcesMap_.emplace(SRC::BOMB_PLACE_EFFECT, res);
 
-
 	// 投げモノ発生のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Throw/makeThrow.efkefc");
 	resourcesMap_.emplace(SRC::THROW_MAKE_EFFECT, res);
@@ -269,12 +255,6 @@ void ResourceManager::Init(void)
 	// 爆弾場所のエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "BombPlace/bombPlace.efkefc");
 	resourcesMap_.emplace(SRC::BOMB_PLACE_EFFECT, res);
-
-
-	// ソニックエフェクト
-	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "HitSprite/HitSprite.efkefc");
-	//res = new RES(RES_T::EFFEKSEER, PATH_EFF + "SonicBoom/SonicBoom.efkefc");
-	//resourcesMap_.emplace(SRC::SonicEffect, res);
 
 	// ブーストエフェクト
 	res = new RES(RES_T::EFFEKSEER, PATH_EFF + "Boost/boostEffect.efkefc");
